@@ -1,9 +1,11 @@
 package com.js.nowakelock.xposedhook.hook
 
+import android.app.AndroidAppHelper
 import android.content.Context
 import android.content.LocusId
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.os.SystemClock
 import android.os.WorkSource
 import com.js.nowakelock.base.getUserId
@@ -122,12 +124,7 @@ class WakelockHook {
                                 val pN = param.args[4] as String
                                 val uid = param.args[7] as Int
 
-                                val context =
-                                    XposedHelpers.getObjectField(
-                                        param.thisObject,
-                                        "mContext"
-                                    ) as Context
-
+                                val context = AndroidAppHelper.currentApplication()
                                 handleWakeLockAcquire(param, pN, wN, uid, lock, context)
                             } catch (e: Exception) {
                                 XpUtil.log("${e.message}")
@@ -145,10 +142,7 @@ class WakelockHook {
                 object : XC_MethodHook() {
                     @Throws(Throwable::class)
                     override fun beforeHookedMethod(param: MethodHookParam) {
-                        val context = XposedHelpers.getObjectField(
-                            param.thisObject,
-                            "mContext"
-                        ) as Context
+                        val context = AndroidAppHelper.currentApplication()
                         val lock = param.args[0] as IBinder
                         handleWakeLockRelease(lock, context)
                     }
@@ -198,12 +192,8 @@ class WakelockHook {
                                 val pN = param.args[3] as String
                                 val uid = param.args[6] as Int
 
-                                val context =
-                                    XposedHelpers.getObjectField(
-                                        param.thisObject,
-                                        "mContext"
-                                    ) as Context
-
+                                val context: Context =
+                                    AndroidAppHelper.currentApplication().applicationContext
                                 handleWakeLockAcquire(param, pN, wN, uid, lock, context)
                             } catch (e: Exception) {
                                 XpUtil.log("${e.message}")
@@ -221,10 +211,8 @@ class WakelockHook {
                 object : XC_MethodHook() {
                     @Throws(Throwable::class)
                     override fun beforeHookedMethod(param: MethodHookParam) {
-                        val context = XposedHelpers.getObjectField(
-                            param.thisObject,
-                            "mContext"
-                        ) as Context
+                        val context: Context =
+                            AndroidAppHelper.currentApplication().applicationContext
                         val lock = param.args[0] as IBinder
                         handleWakeLockRelease(lock, context)
                     }
@@ -242,8 +230,9 @@ class WakelockHook {
 //            XpUtil.log("$pN wakeLock:$wN uid:$uid userid:$userId")
 
             val now = SystemClock.elapsedRealtime() //current time
+            val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
-            val block = block(wN, pN, userId, lastAllowTime[wN] ?: 0, now)
+            val block = block(wN, pN, userId, lastAllowTime[wN] ?: 0, now, !pm.isInteractive)
 
             if (block) {//block wakelock
 
@@ -281,10 +270,11 @@ class WakelockHook {
         // get wakelock should block or not
         private fun block(
             wN: String, packageName: String, userId: Int,
-            lastActive: Long, now: Long
+            lastActive: Long, now: Long, isLocked: Boolean
         ): Boolean {
             val xpNSP = XpNSP.getInstance()
             return xpNSP.flag(wN, packageName, type, userId)
+                    || isLocked && xpNSP.flagLock(wN, packageName, type, userId)
                     || xpNSP.aTI(now, lastActive, wN, packageName, type, userId)
                     || xpNSP.rE(wN, packageName, type, userId)
         }

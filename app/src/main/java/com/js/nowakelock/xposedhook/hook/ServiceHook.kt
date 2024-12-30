@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.xposedhook.XpUtil
 import com.js.nowakelock.xposedhook.model.XpNSP
@@ -194,8 +195,8 @@ class ServiceHook {
 
 
 //            XpUtil.log("$packageName service: $serviceName userid:$userId")
-
-            val block = block(serviceName, packageName, userId)
+            val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            val block = block(serviceName, packageName, userId, !pm.isInteractive)
 
             if (block) {
                 param.result = null
@@ -210,9 +211,10 @@ class ServiceHook {
             }
         }
 
-        private fun block(name: String, packageName: String, userId: Int): Boolean {
+        private fun block(name: String, packageName: String, userId: Int, isLocked: Boolean): Boolean {
             val xpNSP = XpNSP.getInstance()
             return xpNSP.flag(name, packageName, type, userId)
+                    || isLocked && xpNSP.flag(name, packageName, type, userId)
         }
 
     }

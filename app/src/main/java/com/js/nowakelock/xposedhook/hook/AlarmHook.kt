@@ -1,7 +1,9 @@
 package com.js.nowakelock.xposedhook.hook
 
+import android.app.AndroidAppHelper
 import android.content.Context
 import android.os.Build
+import android.os.PowerManager
 import android.os.SystemClock
 import com.js.nowakelock.base.getUserId
 import com.js.nowakelock.data.db.Type
@@ -46,8 +48,8 @@ class AlarmHook {
                     @Throws(Throwable::class)
                     override fun afterHookedMethod(param: MethodHookParam) {
                         val triggerList = param.args[0] as ArrayList<*>
-                        val context =
-                            XposedHelpers.getObjectField(param.thisObject, "mContext") as Context
+                        val context: Context =
+                            AndroidAppHelper.currentApplication().applicationContext
                         hookAlarmsLocked(
 //                            param,
                             triggerList, context
@@ -66,8 +68,8 @@ class AlarmHook {
                     @Throws(Throwable::class)
                     override fun afterHookedMethod(param: MethodHookParam) {
                         val triggerList = param.args[0] as ArrayList<*>
-                        val context =
-                            XposedHelpers.getObjectField(param.thisObject, "mContext") as Context
+                        val context: Context =
+                            AndroidAppHelper.currentApplication().applicationContext
                         hookAlarmsLocked(
 //                            param,
                             triggerList, context
@@ -88,8 +90,8 @@ class AlarmHook {
 //                        val nowELAPSED = param.args[1] as Long
 //                        val nowRTC = param.args[2] as Long
 //                            log("Alarm N ${triggerList.size} $nowELAPSED $nowRTC")
-                        val context =
-                            XposedHelpers.getObjectField(param.thisObject, "mContext") as Context
+                        val context: Context =
+                            AndroidAppHelper.currentApplication().applicationContext
                         hookAlarmsLocked(
 //                            param,
                             triggerList, context
@@ -125,10 +127,11 @@ class AlarmHook {
 //                XpUtil.log("$packageName alarm: $alarmName uid:$uid userid:$userId")
 
                 val now = SystemClock.elapsedRealtime() //current time
+                val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
                 // block or not
                 val block =
-                    block(alarmName, packageName, userId, lastAllowTime[alarmName] ?: 0, now)
+                    block(alarmName, packageName, userId, lastAllowTime[alarmName] ?: 0, now, !pm.isInteractive)
 
                 if (block) {//block alarm
                     triggerList.removeAt(i)
@@ -145,10 +148,11 @@ class AlarmHook {
         }
 
         private fun block(
-            name: String, packageName: String, userId: Int, lastActive: Long, now: Long
+            name: String, packageName: String, userId: Int, lastActive: Long, now: Long, isLocked: Boolean
         ): Boolean {
             val xpNSP = XpNSP.getInstance()
             return xpNSP.flag(name, packageName, type, userId)
+                    || isLocked && xpNSP.flagLock(name, packageName, type, userId)
                     || xpNSP.aTI(now, lastActive, name, packageName, type, userId)
                     || xpNSP.rE(name, packageName, type, userId)
         }

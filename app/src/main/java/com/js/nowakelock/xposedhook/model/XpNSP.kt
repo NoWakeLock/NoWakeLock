@@ -41,6 +41,10 @@ class XpNSP {
 //        XpUtil.log("${name}_${type}_${packageName}_${userId}_flag, flag:${getBool("${name}_${type}_${packageName}_${userId}_flag")}")
         return getBool("${name}_${type}_${packageName}_${userId}_flag")
     }
+    fun flagLock(name: String, packageName: String, type: Type, userId: Int): Boolean {
+//        XpUtil.log("${name}_${type}_${packageName}_${userId}_flag, flag:${getBool("${name}_${type}_${packageName}_${userId}_flag")}")
+        return getBool("${name}_${type}_${packageName}_${userId}_flag_lock")
+    }
 
     fun aTI(
         now: Long, lastActive: Long,

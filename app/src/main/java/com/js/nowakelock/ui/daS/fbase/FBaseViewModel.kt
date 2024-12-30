@@ -118,6 +118,7 @@ class FBaseViewModel(
 
     private fun saveSt(st: St) {
         SPTools.setBoolean("${st.name}_${st.type}_${st.packageName}_${st.userId}_flag", st.flag)
+        SPTools.setBoolean("${st.name}_${st.type}_${st.packageName}_${st.userId}_flag_lock", st.flagLock ?: false)
         SPTools.setLong(
             "${st.name}_${st.type}_${st.packageName}_${st.userId}_aTI", st.allowTimeInterval
         )

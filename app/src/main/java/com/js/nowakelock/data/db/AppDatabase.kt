@@ -15,12 +15,13 @@ import com.js.nowakelock.data.db.entity.*
     entities = [
         AppInfo::class, AppSt::class, St::class, Info::class
     ],
-    version = 9,
+    version = 10,
     autoMigrations = [
         androidx.room.AutoMigration(from = 1, to = 2),
         androidx.room.AutoMigration(from = 2, to = 3),
         androidx.room.AutoMigration(from = 3, to = 4),
-        androidx.room.AutoMigration(from = 4, to = 5, spec = AppDatabase.C4To5::class)
+        androidx.room.AutoMigration(from = 4, to = 5, spec = AppDatabase.C4To5::class),
+        androidx.room.AutoMigration(from = 9, to = 10)
     ]
 )
 @TypeConverters(SetConvert::class, TypeConvert::class)
@@ -62,4 +63,5 @@ abstract class AppDatabase : RoomDatabase() {
         tableName = "appSt", fromColumnName = "userId", toColumnName = "userId_appSt"
     )
     class C4To5 : AutoMigrationSpec
+
 }

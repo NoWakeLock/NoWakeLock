@@ -65,6 +65,7 @@
         JasperHale: ljy087621@gmail.com</string>
     <string name="ATIText">Allow interval</string>
     <string name="FlagText">Allow</string>
+    <string name="FlagLockText">Allow while sleeping</string>
     <string name="wakelockFlagText">Allow wakelock</string>
     <string name="ATIUnit">sec</string>
     <string name="Re_Alarm">Alarm Block Regular expression</string>

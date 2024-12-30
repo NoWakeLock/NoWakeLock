@@ -71,8 +71,35 @@
             android:onClick="@{()-> item.handle.saveSt(item.data)}"
             android:text=""
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/FlagText"
+            app:layout_constraintStart_toStartOf="@+id/FlagLock"
             app:layout_constraintTop_toBottomOf="@+id/ListName"
+            tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
+
+        <TextView
+            android:id="@+id/FlagLockText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/FlagLockText"
+            android:maxWidth="250px"
+            android:layout_marginTop="20px"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/FlagText"
+            app:layout_constraintStart_toEndOf="@+id/Count"
+            tools:ignore="MissingConstraints" />
+
+        <Switch
+            android:id="@+id/FlagLock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:checked="@={!item.data.st.flagLock}"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:onClick="@{()-> item.handle.saveSt(item.data)}"
+            android:text=""
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/FlagLockText"
+            app:layout_constraintTop_toTopOf="@+id/FlagLockText"
             tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
 
         <TextView
@@ -80,6 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ATIText"
+            android:maxWidth="200px"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/ATI"
             app:layout_constraintEnd_toStartOf="@+id/ATI"
