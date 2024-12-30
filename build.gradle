@@ -1,9 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        agp_version = '8.1.0'
+        agp_version = '8.7.2'
     }
-    ext.kotlin_version = '1.9.0'
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         gradlePluginPortal()
@@ -16,7 +16,7 @@ buildscript {
         classpath "com.android.tools.build:gradle:$agp_version"
         //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        def nav_version = '2.6.0'
+        def nav_version = '2.8.5'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -25,7 +25,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.google.devtools.ksp' version '1.9.0-1.0.13' apply false
+    id 'com.google.devtools.ksp' version '2.1.0-1.0.29' apply false
 }
 
 allprojects {
