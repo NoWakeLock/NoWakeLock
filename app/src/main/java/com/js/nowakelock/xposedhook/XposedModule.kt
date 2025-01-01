@@ -1,16 +1,20 @@
 package com.js.nowakelock.xposedhook
 
+import android.app.AndroidAppHelper
+import android.content.IntentFilter
 import com.js.nowakelock.BuildConfig
 import com.js.nowakelock.xposedhook.hook.AlarmHook
 import com.js.nowakelock.xposedhook.hook.ServiceHook
 import com.js.nowakelock.xposedhook.hook.SettingsProviderHook
 import com.js.nowakelock.xposedhook.hook.WakelockHook
+import com.js.nowakelock.xposedhook.hook.WakelockHook.Companion.booted
 import de.robv.android.xposed.*
 import de.robv.android.xposed.IXposedHookZygoteInit.StartupParam
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
 
 open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
+    private var booted = false
 
     override fun initZygote(startupParam: StartupParam?) {
         XpUtil.log(": initZygote")
@@ -22,6 +26,27 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         when (lpparam.packageName) {
             "android" -> {//hook Android system
+                try {
+                    XposedHelpers.findAndHookConstructor("com.android.server.devicepolicy.DevicePolicyManagerService",
+                        lpparam.classLoader,
+                        "com.android.server.devicepolicy.DevicePolicyManagerService.Injector",
+                        object : XC_MethodHook() {
+                            @Throws(Throwable::class)
+                            override fun beforeHookedMethod(param: MethodHookParam) {
+                                AndroidAppHelper.currentApplication().applicationContext.registerReceiver(
+                                    IntentFilter("android.intent.action.BOOT_COMPLETED")
+                                ) { intent ->
+                                    WakelockHook.booted = true
+                                    ServiceHook.booted = true
+                                    AlarmHook.booted = true
+                                }
+                            }
+
+                        })
+                } catch (e: Exception) {
+                    XpUtil.log("${e.message}")
+                    XpUtil.log("${e.stackTrace}")
+                }
                 try {
                     WakelockHook.hookWakeLocks(lpparam)
                 } catch (e: Exception) {

@@ -20,6 +20,7 @@ class AlarmHook {
     companion object {
 
         private val type = Type.Alarm
+        var booted = false
 
         @Volatile
         private var lastAllowTime = HashMap<String, Long>()//last allow time
@@ -131,12 +132,12 @@ class AlarmHook {
 
                 // block or not
                 val block =
-                    block(alarmName, packageName, userId, lastAllowTime[alarmName] ?: 0, now, !pm.isInteractive)
+                    block(alarmName, packageName, userId, lastAllowTime[alarmName] ?: 0, now, booted and !pm.isInteractive)
 
                 if (block) {//block alarm
                     triggerList.removeAt(i)
 
-                    XpUtil.log("$packageName alarm: $alarmName block")
+                    XpUtil.log("$packageName alarm: $alarmName block $booted ${pm.isInteractive}")
                     //update blockCount
                     XpRecord.upBlockCount(alarmName, packageName, type, context, userId)
 

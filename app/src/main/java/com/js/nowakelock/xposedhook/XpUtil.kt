@@ -1,5 +1,9 @@
 package com.js.nowakelock.xposedhook
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
@@ -24,4 +28,14 @@ object XpUtil {
             null
         }
     }
+}
+
+fun Context.registerReceiver(intentFilter: IntentFilter, onReceive: (intent: Intent?) -> Unit): BroadcastReceiver {
+    val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            onReceive(intent)
+        }
+    }
+    this.registerReceiver(receiver, intentFilter)
+    return receiver
 }

@@ -2,6 +2,7 @@ package com.js.nowakelock.xposedhook.hook
 
 import android.app.AndroidAppHelper
 import android.content.Context
+import android.content.IntentFilter
 import android.content.LocusId
 import android.os.Build
 import android.os.IBinder
@@ -13,6 +14,7 @@ import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.xposedhook.XpUtil
 import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
+import com.js.nowakelock.xposedhook.registerReceiver
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -22,6 +24,7 @@ class WakelockHook {
     companion object {
 
         private val type = Type.Wakelock
+        var booted = false
 
         @Volatile
         private var wlTs = HashMap<IBinder, WLT>()//wakelock witch active
@@ -31,7 +34,7 @@ class WakelockHook {
 
         fun hookWakeLocks(lpparam: XC_LoadPackage.LoadPackageParam) {
             //for test
-            wakelockTest(lpparam)
+//            wakelockTest(lpparam)
 
             when (Build.VERSION.SDK_INT) {
                 //Try for alarm hooks for API levels >= 31 (S or higher)
@@ -232,11 +235,11 @@ class WakelockHook {
             val now = SystemClock.elapsedRealtime() //current time
             val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
-            val block = block(wN, pN, userId, lastAllowTime[wN] ?: 0, now, !pm.isInteractive)
+            val block = block(wN, pN, userId, lastAllowTime[wN] ?: 0, now, booted and !pm.isInteractive)
 
             if (block) {//block wakelock
 
-                XpUtil.log("$pN wakeLock:$wN block")
+                XpUtil.log("$pN wakeLock:$wN block '${pm.isInteractive}' '$booted'")
                 param.result = null
 
                 XpRecord.upBlockCount(wN, pN, Type.Wakelock, context, userId) //update blockCount
