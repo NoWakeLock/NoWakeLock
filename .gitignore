@@ -98,3 +98,8 @@ lint/tmp/
 
 app/release/*
 app/release/output.json
+
+/.env
+/vendor
+/release
+/certs

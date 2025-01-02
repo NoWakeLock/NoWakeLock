@@ -1,0 +1,173 @@
+name: Release Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        type: choice
+        default: patch
+        description: What kind of version upgrade
+        options: 
+        - none
+        - code
+        - patch
+        - minor
+        - major
+      publish:
+        description: "Should we publish?"
+        required: true
+        type: boolean
+        default: false
+      github:
+        description: "Should we publish on Github?"
+        default: true
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: tree:0
+          submodules: recursive
+      
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          actor: farfromrefug
+          name: Martin Guillon
+          email: dev@akylas.fr
+
+      - name: Git config
+        run: |
+          git config pull.rebase false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3' # Not needed with a `.ruby-version` or `.tool-versions`
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9" # Quotes required to prevent YAML converting to number
+
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2.3.0
+        with:
+          mode: ci
+          load-mode: strict
+
+      
+      - name: Generate flavor ci file name
+        id: define_flavor_ci_string
+        run: |
+          echo "FLAVOR_CI_FILENAME=.env.ci.${{ inputs.flavor }}" >> $GITHUB_ENV
+          echo "FLAVOR_CI_MODE=ci.${{ inputs.flavor }}" >> $GITHUB_ENV
+
+
+      - name: Load flavor .env file
+        uses: xom9ikk/dotenv@v2.3.0
+        if: ${{ hashFiles(env.FLAVOR_CI_FILENAME) != '' }}
+        with:
+          mode: ${{ env.FLAVOR_CI_MODE }}
+          load-mode: strict
+
+      - name: get current version
+        run: | 
+          echo "CURRENT_VERSION=$(bundle exec fastlane run android_get_version_name gradle_file:build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
+      - name: get current version
+        run: | 
+          echo "CURRENT_VERSION_CODE=$(bundle exec fastlane run android_get_version_code gradle_file:build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
+
+
+      - id: release_type_string
+        uses: ASzc/change-string-case-action@v6
+        with:
+          string: ${{ github.event.inputs.release_type }}
+
+      - name: Bump release version
+        id: bump_version
+        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
+        uses: boromir674/action-semver-bumper@v1.0.0
+        with:
+          sem_ver: ${{ env.CURRENT_VERSION }}
+          bump_operator: ${{ steps.release_type_string.outputs.uppercase }}
+
+      - name: update Version
+        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
+        run: |
+          echo "change version to ${{ github.event.inputs.release_type }}"
+          echo "NEW_VERSION=${{ steps.bump_version.outputs.new_sem_ver }}" >> $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  >> $GITHUB_ENV
+
+      - name: update Version
+        if: github.event.inputs.release_type == 'code'
+        run: |
+          echo "change version to ${{ github.event.inputs.release_type }}"
+          echo "NEW_VERSION=${{ env.CURRENT_VERSION }}"  >> $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  >> $GITHUB_ENV
+
+      - name: update Version Str
+        run: |
+          echo "VERSION_STR=${{env.NEW_VERSION}}.${{env.NEW_VERSION_CODE}}"  >> $GITHUB_ENV
+
+      - name: Bump version
+        uses: Swisyn/android-version-generator-actions@v1.5
+        if: github.event.inputs.release_type != 'none'
+        with:
+          gradlePath: build.gradle # or app/build.gradle.kts 
+          versionCode: ${{env.NEW_VERSION_CODE}}
+          versionName: ${{env.NEW_VERSION}}
+
+      - name: Run shell prepare script
+        if: ${{ hashFiles('scripts/ci.prepare.sh') != '' }}
+        run: |
+          sh scripts/ci.prepare.sh --platform android --flavor "${{ github.event.inputs.flavor }}" --version "${{ env.VERSION_STR }}"
+
+      - name: Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PATH: ${{ secrets.KEYSTORE_PATH }}
+        run: |
+          mkdir -p "$(dirname "$KEYSTORE_PATH")"
+          echo $KEYSTORE_BASE64 | base64 -d > $KEYSTORE_PATH
+
+      # - name: publish beta
+      #   if: github.event.inputs.publish == 'true'
+      #   run: |
+      #     bundle exec fastlane android beta create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:false
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: publish github
+        if: github.event.inputs.github == 'true'
+        run: |
+          bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true --verbose
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            
+      - uses: actions/upload-artifact@v4
+        with:
+          name:  ${{ env.APP_ID }}.${{ env.VERSION_STR }}
+          path: |
+            aardict-release.apk
+          retention-days: 7
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
