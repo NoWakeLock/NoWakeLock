@@ -14,6 +14,7 @@ import com.js.nowakelock.xposedhook.model.XpRecord
 import com.js.nowakelock.xposedhook.registerReceiver
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.findClass
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 class ServiceHook {
@@ -27,8 +28,10 @@ class ServiceHook {
             XpUtil.log("Hooking Service ${Build.VERSION.SDK_INT}")
 
             when (Build.VERSION.SDK_INT) {
-                //Try for alarm hooks for API levels >= 31 (S)
-                in Build.VERSION_CODES.S..40 -> serviceHook31to32(lpparam)
+                //Try for alarm hooks for API levels >= 34 (U)
+                in Build.VERSION_CODES.UPSIDE_DOWN_CAKE..40 -> serviceHook34(lpparam)
+                //Try for alarm hooks for API levels = 31 (S)
+                 Build.VERSION_CODES.S -> serviceHook31to32(lpparam)
                 //Try for alarm hooks for API levels = 30 (R)
                 Build.VERSION_CODES.R -> serviceHook30(lpparam)
                 //Try for alarm hooks for API levels = 29 (Q)
@@ -45,6 +48,48 @@ class ServiceHook {
          * @param lpparam LoadPackageParam
          * @throws Throwable
          */
+
+        private fun serviceHook34(lpparam: XC_LoadPackage.LoadPackageParam) {
+            findMethod(
+                findClass(
+                    "com.android.server.am.ActiveServices",
+                    lpparam.classLoader
+                )
+            ) { name == "bindServiceLocked" }
+                .hookBefore {
+                    val service = it.args[2] as Intent?
+                    val callingPackage = it.args[11] as String
+                    val userId: Int = it.args[12] as Int
+//                    XpUtil.log("bindServiceLocked " + service + " " + callingPackage + " " + userId)
+                    val context: Context =
+                        AndroidAppHelper.currentApplication().applicationContext
+                    hookStartServiceLocked(it, service, callingPackage, context, userId)
+                }
+//            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+//                lpparam.classLoader,
+//                "bindServiceLocked",
+//                "android.app.IApplicationThread",
+//                IBinder::class.java,//paramIBinder
+//                Intent::class.java,//service
+//                String::class.java,//resolvedType
+//                "android.app.IServiceConnection",//paramIServiceConnection
+//                Int::class.javaPrimitiveType,//callingUid
+//                String::class.java,//callingPackage
+//                String::class.java,//callingFeatureId
+//                Int::class.javaPrimitiveType,//userId
+//                object : XC_MethodHook() {
+//                    @Throws(Throwable::class)
+//                    override fun beforeHookedMethod(param: MethodHookParam) {
+////                        XpUtil.log("serviceHook31to32")
+//                        val service = param.args[1] as Intent?
+//                        val callingPackage = param.args[6] as String
+//                        val userId: Int = param.args[8] as Int
+//                        val context: Context =
+//                            AndroidAppHelper.currentApplication().applicationContext
+//                        hookStartServiceLocked(param, service, callingPackage, context, userId)
+//                    }
+//                })
+        }
 
         private fun serviceHook31to32(lpparam: XC_LoadPackage.LoadPackageParam) {
 

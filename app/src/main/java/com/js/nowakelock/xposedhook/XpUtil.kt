@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
@@ -17,6 +18,12 @@ object XpUtil {
     fun log(string: String) {
         if (log) {
             XposedBridge.log("$Tag: $string")
+        }
+    }
+    fun error(thr: Throwable) {
+        if (log) {
+            Log.e(Tag, "", thr)
+            XposedBridge.log("$Tag: ${thr.toString()}")
         }
     }
 
