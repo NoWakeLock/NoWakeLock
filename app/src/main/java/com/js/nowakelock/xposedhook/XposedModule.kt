@@ -27,22 +27,19 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
         when (lpparam.packageName) {
             "android" -> {//hook Android system
                 try {
-                    XposedHelpers.findAndHookConstructor("com.android.server.devicepolicy.DevicePolicyManagerService",
+                    XposedBridge.log("handleLoadPackage ${AndroidAppHelper.currentApplication()}")
+
+                    XposedHelpers.findAndHookMethod("com.android.server.policy.keyguard.KeyguardServiceDelegate",
                         lpparam.classLoader,
-                        "com.android.server.devicepolicy.DevicePolicyManagerService.Injector",
+                        "onBootCompleted",
                         object : XC_MethodHook() {
                             @Throws(Throwable::class)
                             override fun beforeHookedMethod(param: MethodHookParam) {
-                                AndroidAppHelper.currentApplication().applicationContext.registerReceiver(
-                                    IntentFilter("android.intent.action.BOOT_COMPLETED")
-                                ) { intent ->
-                                    WakelockHook.booted = true
-                                    ServiceHook.booted = true
-                                    AlarmHook.booted = true
-                                }
+                                WakelockHook.booted = true
+                                ServiceHook.booted = true
+                                AlarmHook.booted = true
                             }
-
-                        })
+                    })
                 } catch (e: Exception) {
                     XpUtil.log("${e.message}")
                     XpUtil.log("${e.stackTrace}")
