@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import com.js.nowakelock.BuildConfig
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
@@ -13,7 +14,7 @@ object XpUtil {
     private const val Tag = "Xposed.NoWakeLock"
     const val authority = "com.js.nowakelock"
 
-    private var log = true
+    private var log = BuildConfig.DEBUG
 
     fun log(string: String) {
         if (log) {
