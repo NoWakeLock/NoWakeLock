@@ -1,5 +1,6 @@
 package com.js.nowakelock.xposedhook.hook
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -14,9 +15,8 @@ import java.lang.reflect.Method
 class SettingsProviderHook {
     companion object {
 
+        @SuppressLint("PrivateApi")
         fun hook(lpparam: XC_LoadPackage.LoadPackageParam) {
-
-            XpUtil.log("SettingsProvider")
 
             // https://android.googlesource.com/platform/frameworks/base/+/master/packages/SettingsProvider/src/com/android/providers/settings/SettingsProvider.java
             val clsSet = Class.forName(

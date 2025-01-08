@@ -100,7 +100,7 @@ class XpNSP {
 
     fun reFresh() {
         if (SystemClock.elapsedRealtime() - lastRefresh > (30 * 1000)) {
-            XpUtil.log("pref reFresh ${SystemClock.elapsedRealtime()}")
+//            XpUtil.log("pref reFresh ${SystemClock.elapsedRealtime()}")
             pref = makePref()
             pref?.reload()
             lastRefresh = SystemClock.elapsedRealtime()
