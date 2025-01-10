@@ -92,10 +92,10 @@ jobs:
 
       - name: get current version
         run: | 
-          echo "CURRENT_VERSION=$(bundle exec fastlane run android_get_version_name gradle_file:build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
+          echo "CURRENT_VERSION=$(bundle exec fastlane run android_get_version_name gradle_file:app/build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
       - name: get current version
         run: | 
-          echo "CURRENT_VERSION_CODE=$(bundle exec fastlane run android_get_version_code gradle_file:build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
+          echo "CURRENT_VERSION_CODE=$(bundle exec fastlane run android_get_version_code gradle_file:app/build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
 
 
       - id: release_type_string
