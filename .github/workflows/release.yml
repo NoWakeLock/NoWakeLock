@@ -133,7 +133,7 @@ jobs:
         uses: Swisyn/android-version-generator-actions@v1.5
         if: github.event.inputs.release_type != 'none'
         with:
-          gradlePath: build.gradle # or app/build.gradle.kts 
+          gradlePath: app/build.gradle # or app/build.gradle.kts 
           versionCode: ${{env.NEW_VERSION_CODE}}
           versionName: ${{env.NEW_VERSION}}
 
