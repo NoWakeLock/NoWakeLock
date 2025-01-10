@@ -85,8 +85,8 @@ lane :build_flavor do |params|
   platform = params[:platform]
   flavor = params[:flavor]
   options = params[:options]
-  version = android_get_version_name(gradle_file:"build.gradle")
-  versionCode = android_get_version_code(gradle_file:"build.gradle")
+  version = android_get_version_name(gradle_file:"app/build.gradle")
+  versionCode = android_get_version_code(gradle_file:"app/build.gradle")
   
   # there we add the platform to the dist paramater. The idea is to have different dist for ios android
   # this is because we generate different sources for android and ios so we have different sourceMaps
