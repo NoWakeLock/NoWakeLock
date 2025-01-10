@@ -13,8 +13,8 @@ on:
         - patch
         - minor
         - major
-      publish:
-        description: "Should we publish?"
+      build:
+        description: "Should we build?"
         required: true
         type: boolean
         default: false
@@ -158,7 +158,7 @@ jobs:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: publish github
-        if: github.event.inputs.github == 'true'
+        if: github.event.inputs.build == 'true'
         run: |
           bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true --verbose
         env:
