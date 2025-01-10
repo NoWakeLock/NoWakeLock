@@ -1,0 +1,1 @@
+Android app for controlling wakelocks, alarms and services. Requires Xposed. 

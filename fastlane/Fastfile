@@ -1,0 +1,334 @@
+require 'json'
+require 'fileutils'
+require 'pathname'
+class String
+  def titlecase
+    split(/([[:alpha:]]+)/).map(&:capitalize).join
+  end
+end
+
+def truncate(string, length = 20)
+  string.size > length+5 ? [string[0,length],string[-5,5]].join("...") : string
+end
+def writeFileIfNotExist(filePath, string)
+  if !File.exist?(filePath) 
+    if (Dir.exist?(File.basename(filePath)) == false)
+      FileUtils.mkdir File.basename(filePath)
+    end
+    File.write(filePath, string)
+  end
+end
+
+def deleteFolder(filePath)
+  if (Dir.exist?(filePath))
+    puts "deleting: #{filePath}"
+    FileUtils.rm_rf(filePath, :secure=>true)
+    puts "deleted: #{filePath} exists: #{Dir.exist?(filePath)}"
+  end
+end
+
+fastlane_version '2.135.2'
+opt_out_usage
+
+project_root_path = Pathname.new("../").realpath.to_s
+
+# sentry_cli_path = File.join(project_root_path, 'node_modules/.bin/sentry-cli')
+
+app_identifier = ENV["APP_ID"] || CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+metadata_path = ENV["SUPPLY_METADATA_PATH"]  || "metadata"
+metadata_languages = ENV["SUPPLY_METADATA_LANGUAGES"]  || ["en-US", "fr-FR"]
+metadata_path_realpath = File.join(project_root_path, 'fastlane', metadata_path)
+
+tag_prefix = ENV["TAG_PREFIX"] || ""
+ignore_app_scope = ENV["IGNORE_APP_SCOPE"]
+puts "app_identifier:"  + app_identifier
+puts "metadata_path:"  + metadata_path
+puts "metadata_path_realpath:"  + metadata_path_realpath
+puts "project_root_path:"  + project_root_path
+
+desc 'Check Git Status'
+lane :checkGitStatus do
+    # we dont test for git status in ci cause we modify files
+    if (ENV["GITHUB_ACTIONS"] != 'true')
+      repo_status = Actions.sh("git status --porcelain -uno")
+      repo_clean = repo_status.empty?
+      if repo_clean
+        UI.success('Git status is clean, all good! 💪')
+      else
+        error_message = "Git repository is dirty! Please ensure the repo is in a clean state by committing/stashing/discarding all changes first."
+        UI.user_error!(error_message)
+      end
+    end
+end
+
+desc 'Setup'
+lane :setup do |params| 
+  options = params[:options]
+  if (ENV["GITHUB_ACTIONS"] == 'true')
+    setup_ci
+  end
+  if (options[:create_tag] != false)
+    checkGitStatus
+  end
+end
+
+
+lane :build_and_publish do |params|
+  platform = params[:platform]
+  flavor = params[:flavor]
+  options = params[:options]
+  setup(options: options)
+  build_flavor(platform:platform, flavor:flavor, options: options)
+end
+
+lane :build_flavor do |params| 
+  platform = params[:platform]
+  flavor = params[:flavor]
+  options = params[:options]
+  version = android_get_version_name(gradle_file:"build.gradle")
+  versionCode = android_get_version_code(gradle_file:"build.gradle")
+  
+  # there we add the platform to the dist paramater. The idea is to have different dist for ios android
+  # this is because we generate different sources for android and ios so we have different sourceMaps
+  # and so to map errors correctly we use different dist for ios and android
+  sentryDist =  versionCode + '.' + platform # optional distribution of the release usually the buildnumber
+
+  repository_name = ENV['REPOSITORY'].match(/([^\/]+\/[^\/]+)(\.git)?$/)[1]
+  dist_path = File.expand_path(File.join(project_root_path, 'dist'))
+  puts "working directory:"  + Dir.getwd
+  puts "dist_path:"  + dist_path
+  puts "platform:"  + platform
+  puts "repository_name:"  + repository_name
+  puts "flavor:"  + flavor
+  puts "version:"  + version
+  puts "versionCode:"  + versionCode
+  puts "options:"  + JSON.generate(options.to_json)
+
+  # if (options[:sentry])
+  #   sentry_create_release(
+  #     sentry_cli_path: sentry_cli_path,
+  #     version: sentry_version
+  #   )
+  # end
+
+  build_output = build(flavor: flavor, options: options)
+  puts "build_output #{JSON.pretty_generate(build_output)}"
+  # copy dist files to dist, already done on iOS
+  if (platform == 'android')
+    puts "copy dist files #{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]} to #{dist_path}"
+    if (Dir.exist?(dist_path) == false)
+      FileUtils.mkdir dist_path
+    end
+    FileUtils.cp_r(Dir.glob(lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]),dist_path )
+  end
+
+  if (ENV["GITHUB_ACTIONS"] != 'true')
+    # push anything standing
+    push_to_git_remote(tags:false)
+  end
+
+  # commit version changes
+  if (ENV["GITHUB_ACTIONS"] == 'true')
+    # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
+    git_add(path: ["./*.gradle"])
+    git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
+  end
+
+  tag = "#{tag_prefix}#{version}/#{versionCode}";
+  changelog = get_changelog(platform:platform, flavor:flavor)
+
+  if (options[:publish] != false)
+    if (flavor != 'github' && platform == 'android')
+      write_changelog(version:versionCode, changelog: flavor != 'github' ? changelog : get_changelog(platform:platform, flavor:'store'));
+    end
+    case flavor
+    when 'appcenter'
+      upload_appcenter(changelog:changelog, version: version, versionCode: versionCode, flavor:flavor)
+    when 'github'
+      set_github_release(
+        repository_name: repository_name,
+        api_bearer: ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"],
+        name: "v#{version} Build #{versionCode}",
+        tag_name: tag,
+        description: changelog,
+        upload_assets: Dir.glob(File.join(dist_path, "*.apk"))
+      )
+    # when 'fdroid'
+    #   if (fastlaneOptions['sftp'])
+    #     server_url = fastlaneOptions['sftp']['url']
+    #     server_user = fastlaneOptions['sftp']['user']
+    #     server_port = fastlaneOptions['sftp']['port']
+    #     target_dir = fastlaneOptions['sftp']['target_dir']
+    #     server_key = fastlaneOptions['sftp']['server_key'] || "#{Dir.home}/.ssh/id_rsa"
+    #     sftp_upload(
+    #       server_url: server_url,
+    #       server_port: server_port,
+    #       server_user: server_user,
+    #       server_key: server_key,
+    #       target_dir:  target_dir, 
+    #       file_paths: Dir.glob(File.expand_path("./platforms/android/app/build/outputs/apk/release/*.apk")),
+    #     )
+    #   end
+      when 'alpha','beta','production'
+        upload_store(changelog:changelog, version: version, versionCode: versionCode, flavor:flavor, options:options, build_output:build_output)
+    end
+    if (options[:create_tag] != false)
+      if !git_tag_exists(tag: tag)
+        add_git_tag(tag: tag, force: true)
+        push_git_tags(force: true)
+      end
+    end
+    # we need to pull to be able to push again
+    git_pull
+    # push any change
+    push_to_git_remote(tags:false)
+  end
+end
+
+lane :get_changelog  do |params| 
+  platform = params[:platform]
+  flavor = params[:flavor]
+  changelogFormat = params[:format] ||  flavor == 'github' ? 'markdown' : 'plain'
+  ignoredScopes = []
+  if (ignore_app_scope)
+    ignoredScopes.push(ignore_app_scope)
+  end
+  display_links = changelogFormat == 'markdown'
+  puts "get_changelog "+  platform + " "+  flavor
+  puts "tag_prefix "+ tag_prefix
+  puts "changelogFormat "+  changelogFormat
+  # puts "display_links "+  display_links
+  puts "ignoredScopes "+  ignoredScopes.join(", ")
+  isReleasable = analyze_commits(match: "\"#{tag_prefix}*\"", ignore_scopes: ignoredScopes, debug:true)
+  logs = conventional_changelog(format: changelogFormat, title: "#{platform.capitalize} Beta", display_title:false, display_links:display_links, display_scopes:false, order:["feat", "fix", "refactor", "perf"], ignore_scopes: ignoredScopes, debug:true ) || ""
+  if (!logs.empty?)
+    logs = logs.split(/[\n]/).uniq
+    translateLogs = logs.select {|v| v =~ /Translated using Weblate/ }
+    logs = (logs - translateLogs).map {|l| 
+      if (!display_links)
+        # remove github issues
+        l = l.gsub(/\s\#\d*/, '')
+      end
+      # remove platform tags
+      l = l.gsub(/\*\*\w*:\*\*\s/, '')
+      # remove sentry references
+      l = l.gsub(/[A-Z]+-[A-Z0-9]+(?=$|\s\()/, '')
+      l
+    }
+    if (!translateLogs.empty?)
+      logs.push("- Translations update")
+    end
+    logs = logs.join("\n")
+    puts logs
+  end
+  logs
+end
+
+platform :android do
+
+  lane :write_changelog do |params| 
+    version = params[:version]
+    changelog = params[:changelog]
+
+    if (changelog && changelog.length > 500) 
+      changelog = changelog[0..499]
+    end
+
+    metadata_dir=File.join(metadata_path_realpath,"android")
+    puts "current dir: #{Dir.getwd}"
+    puts "metadata_dir: #{metadata_dir}"
+    system 'mkdir', '-p', metadata_dir
+    files = []
+    metadata_languages.each { |lang| 
+      changelogFolderPath = File.join(metadata_dir, lang, "changelogs")
+      puts "changelogFolderPath: #{changelogFolderPath}"
+      if (Dir.exist?(changelogFolderPath)) 
+        changelogFilePath = File.join(changelogFolderPath, "#{version}.txt")
+        writeFileIfNotExist(changelogFilePath, changelog)
+        files.push(changelogFilePath)
+      end
+    }
+    # Create a new branch and upload a PR for it.
+    if (files.length > 0)
+      git_add(path: files)
+      git_commit(path: files, message: "#{version} release notes", allow_nothing_to_commit: true)
+    end
+    # sh("git add #{metadata_dir}; git commit -m '#{version} release notes' --allow-empty")
+  end
+
+  lane :get_version do
+    android_get_version_name
+  end
+
+  lane :upload_store   do |params| 
+    options = params[:options]
+    track = params[:flavor]
+    if (track == 'beta') 
+      track = 'internal'
+    end
+
+    puts "upload_to_play_store dir: #{Dir.getwd}"
+    puts "metadata_dir: #{Pathname.new(File.join(metadata_path_realpath, "android")).realpath.to_s}"
+    upload_to_play_store(
+      track: track,
+      metadata_path:File.join(metadata_path_realpath, "android"),
+      track_promote_to: track,
+      aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+      skip_upload_screenshots: !options[:upload_screenshots],
+      skip_upload_images: !options[:upload_images],
+      skip_upload_metadata: !options[:upload_metadata]
+    )
+  end
+
+  desc 'Build the Android application.'
+  lane :build do |params|
+    options = params[:options]
+    puts "build flavor:"  + params[:flavor]
+    puts "build options:"  + JSON.generate(options.to_json)
+    case params[:flavor]
+    when 'fdroid','github'
+      gradle(
+        task: "assemble",
+        build_type: "Release",
+        properties: {
+          "android.injected.signing.store.file" => File.join(project_root_path, ENV["KEYSTORE_PATH"]),
+          "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+          "android.injected.signing.key.alias" => ENV["KEYSTORE_ALIAS"],
+          "android.injected.signing.key.password" => ENV["KEYSTORE_ALIAS_PASSWORD"],
+        }
+      )
+    else
+      gradle(
+        task: "bundle",
+        build_type: "Release",
+        properties: {
+          "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"],
+          "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+          "android.injected.signing.key.alias" => ENV["KEYSTORE_ALIAS"],
+          "android.injected.signing.key.password" => ENV["KEYSTORE_ALIAS_PASSWORD"],
+        }
+      )
+    end
+  end
+
+
+  desc 'Ship to Github.'
+  lane :github do |options|
+    build_and_publish(platform:'android', flavor:'github', options: options)
+  end
+
+  desc 'build for fdroid.'
+  lane :fdroid do |options|
+    build_and_publish(platform:'android', flavor:'fdroid', options: options)
+  end
+
+  desc 'Ship to Android Playstore Beta.'
+  lane :beta do |options|
+    build_and_publish(platform:'android', flavor:'beta', options: options)
+  end
+
+  desc 'Ship to Android Playstore Alpha.'
+  lane :alpha do |options|
+    build_and_publish(platform:'android', flavor:'alpha', options: options)
+  end
+end

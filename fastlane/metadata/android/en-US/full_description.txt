@@ -1,0 +1,12 @@
+**NoWakeLock** allows you to get control over Wakelocks, Services and Alarms
+With the update of Android version, doze mode is enough to suppress the power consumption of the background of the application, but some advanced users still hope to be able to control the wakelock by themselves.
+
+**Features**
+
+* Lookup queries are punctuation, diacritics and case
+insensitive.
+* See which apps are triggering Wakelock / Alarm / Service
+* Block any wakelock
+* Block any alarm
+* Prevent any service from running
+* possibility to block any of those only while the screen is locked
