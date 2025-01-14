@@ -10,6 +10,7 @@ plugins {
 android {
 //    compileSdkVersion 33
 //    buildToolsVersion '33.0.0'
+    namespace 'com.js.nowakelock'
 
     defaultConfig {
         applicationId "com.js.nowakelock"
@@ -58,8 +59,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    namespace 'com.js.nowakelock'
 
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
 }
 
 ksp {
