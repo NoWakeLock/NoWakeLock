@@ -72,7 +72,7 @@
             app:layout_constraintTop_toTopOf="@+id/Flag"
             tools:ignore="MissingConstraints" />
 
-        <Switch
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/Flag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,22 +83,21 @@
             android:text=""
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@+id/FlagLock"
-            app:layout_constraintTop_toBottomOf="@+id/Count"
-            tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
+            app:layout_constraintTop_toBottomOf="@+id/Count" />
 
         <TextView
             android:id="@+id/FlagLockText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/FlagLockText"
-            android:maxWidth="250px"
+            android:maxWidth="210px"
             android:layout_marginTop="20px"
             android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@+id/FlagText"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingConstraints" />
 
-        <Switch
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/FlagLock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

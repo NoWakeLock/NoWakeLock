@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawer_layout)
         toolbar = findViewById(R.id.toolbar)
 
-        setSupportActionBar(toolbar)// toolbar 替换 ActionBar
+//        setSupportActionBar(toolbar)// toolbar 替换 ActionBar
         drawerLayout.setStatusBarBackground(R.color.colorPrimaryDark)//设置侧边栏颜色
 
         /* 设置导航组件,一定要在 setSupportActionBar 之后 */
