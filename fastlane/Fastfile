@@ -193,12 +193,12 @@ lane :get_changelog  do |params|
   platform = params[:platform]
   flavor = params[:flavor]
   commit_url = params[:commit_url]
-  changelogFormat = params[:format] ||  flavor == 'github' ? 'markdown' : 'plain'
+  changelogFormat = params[:format] ||  flavor == 'github' ? 'github' : 'plain'
   ignoredScopes = []
   if (ignore_app_scope)
     ignoredScopes.push(ignore_app_scope)
   end
-  display_links = changelogFormat == 'markdown'
+  display_links = changelogFormat != 'plain'
   puts "get_changelog "+  platform + " "+ flavor + " " + commit_url
   puts "tag_prefix "+ tag_prefix
   puts "changelogFormat "+  changelogFormat
