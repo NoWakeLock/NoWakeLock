@@ -8,6 +8,7 @@ import java.io.Serializable
 
 @Entity(tableName = "info", primaryKeys = ["name_info", "type_info", "userid_info"])
 data class Info(
+
     @ColumnInfo(name = "name_info")
     var name: String = "",
     @ColumnInfo(name = "type_info")
@@ -20,6 +21,10 @@ data class Info(
     @ColumnInfo(name = "userid_info", defaultValue = "0")
     var userId: Int = 0,
 ) : Serializable {
+    companion object {
+        @JvmStatic private val serialVersionUID = 3245751629200196467L
+    }
+
     @Ignore
     var blockCountTime: Long = 0
 }
