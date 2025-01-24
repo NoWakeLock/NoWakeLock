@@ -1,6 +1,6 @@
 # NoWakeLock
 
-For china user 中文用户 -> [NoWakelock Wiki](https://github.com/Jasper-1024/NoWakeLock/wiki)
+For china user 中文用户 -> [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki)
 
 ## Introduction
 
@@ -28,17 +28,18 @@ Android 7 ~ Android 12.
 
 Tested with the EdXposed / LSPosed.
 
+
 ## Installation
 
-[Play](https://play.google.com/store/apps/details?id=com.js.nowakelock) beta (Recommend)
+<div align="center">
 
-[酷 安](https://www.coolapk.com/apk/260112) beta version
-
-[Github releases](https://github.com/Jasper-1024/NoWakeLock/releases) alpha/beta version.
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.js.nowakelock)
+[<img src="assets/badge_github.png" alt="Get it on GitHub" height="80">](https://github.com/NoWakeLock/NoWakeLock/releases)
+</div>
 
 ## FAQ
 
-Please check [NoWakelock Wiki](https://github.com/Jasper-1024/NoWakeLock/wiki)
+Please check [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki)
 
 ## About
 
@@ -73,26 +74,26 @@ Release:
 
 ## Compile
 
-~~[master](https://github.com/Jasper-1024/NoWakeLock): stable version (not ready yet)~~
+~~[master](https://github.com/NoWakeLock/NoWakeLock): stable version (not ready yet)~~
 
-[dev](https://github.com/Jasper-1024/NoWakeLock/tree/dev): Beta version, may not be stable.
+[dev](https://github.com/NoWakeLock/NoWakeLock/tree/dev): Beta version, may not be stable.
 
-[feature](https://github.com/Jasper-1024/NoWakeLock/tree/feature): Alpha version
+[feature](https://github.com/NoWakeLock/NoWakeLock/tree/feature): Alpha version
 
 ## Support
 
 Only NoWakeLock downloaded from the above channels is supported
 
-Please submit [ISSUE](https://github.com/Jasper-1024/NoWakeLock/issues)
+Please submit [ISSUE](https://github.com/NoWakeLock/NoWakeLock/issues)
 
 ## Contributing
 
-- [Jasper Hale](https://github.com/Jasper-1024)
+- [Jasper Hale](https://github.com/NoWakeLock)
 
 ## License
 
 NoWakeLock is released under GNU
-GPLv3 ([License](https://github.com/Jasper-1024/NoWakeLock/blob/master/LICENSE)).
+GPLv3 ([License](https://github.com/NoWakeLock/NoWakeLock/blob/master/LICENSE)).
 
 ## Thanks
 
