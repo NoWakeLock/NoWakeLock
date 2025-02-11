@@ -228,7 +228,7 @@ lane :get_changelog  do |params|
       }
       puts "contributors "+  contributors.join(", ")
       if (display_links) 
-        logs.push("- Translations update by " +  contributors.join(", "))
+        logs.push("- Translations update by " +  contributors.uniq.join(", "))
       else
         logs.push("- Translations update")
       end
