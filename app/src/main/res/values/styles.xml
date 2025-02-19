@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="AppThemeOverlay" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:statusBarColor">#99000000</item>
         <item name="android:navigationBarColor">#99000000</item>
@@ -24,10 +24,5 @@
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-    </style>
-
-    <style name="Preference.SwitchPreferenceCompat" parent="@style/Preference.SwitchPreferenceCompat.Material"
-        tools:ignore="ResourceCycle">
-        <item name="widgetLayout">@layout/md3switch</item>
     </style>
 </resources>
