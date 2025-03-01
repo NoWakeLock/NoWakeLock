@@ -20,6 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.js.nowakelock.BasicApp.Companion.context
 import com.js.nowakelock.R
+import com.js.nowakelock.base.isModuleActive
 import com.js.nowakelock.ui.base.AppType
 import com.js.nowakelock.ui.base.Sort
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -28,11 +29,6 @@ import org.koin.core.qualifier.named
 
 
 class MainActivity : AppCompatActivity() {
-
-    //check module active
-    private fun isModuleActive(): Boolean {
-        return false
-    }
 
     private lateinit var toolbar: Toolbar
     private lateinit var drawerLayout: DrawerLayout
@@ -66,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         toolbar.setupWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)//设置导航组件
 
-        //检查模块是否激活
+        //check module active
         if (!isModuleActive()) {
             Toast.makeText(this, getString(R.string.active), Toast.LENGTH_LONG).show()
         }

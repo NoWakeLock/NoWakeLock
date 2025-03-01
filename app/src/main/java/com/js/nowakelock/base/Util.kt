@@ -15,6 +15,7 @@ import com.js.nowakelock.BasicApp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.entity.Info
+import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.provider.getURI
 import java.util.*
 
@@ -202,3 +203,24 @@ fun multiUser(): Boolean {
     return false
 }
 
+/**
+ * check module active
+ * @return Boolean
+ */
+fun isModuleActive(): Boolean {
+    return try {
+        val args = Bundle()
+        val result = getCPResult(BasicApp.context, ProviderMethod.CheckHookActive.value, args)
+        val active = result?.getBoolean("active", false) ?: false
+
+        if (active) {
+            val version = result?.getString("version")
+            LogUtil.d("ModuleCheck", "Module active, version: $version")
+        }
+
+        active
+    } catch (e: Exception) {
+        LogUtil.e("ModuleCheck", "Error checking module status: ${e.message}")
+        false
+    }
+}

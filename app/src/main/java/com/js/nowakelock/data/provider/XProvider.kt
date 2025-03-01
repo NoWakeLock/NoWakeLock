@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import com.js.nowakelock.BuildConfig
 import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.base.infoToBundle
 import com.js.nowakelock.base.stringToType
@@ -28,7 +29,8 @@ enum class ProviderMethod(var value: String) {
     LoadInfos("LoadInfos"),
     LoadInfo("LoadInfo"),
     ClearCount("ClearCount"),
-    ClearAll("ClearAll")
+    ClearAll("ClearAll"),
+    CheckHookActive("CheckHookActive")
 }
 
 class XProvider(
@@ -60,6 +62,7 @@ class XProvider(
             ProviderMethod.LoadInfo.value -> loadInfo(bundle)
             ProviderMethod.ClearCount.value -> clearCount(bundle)
             ProviderMethod.ClearAll.value -> clearAll(bundle)
+            ProviderMethod.CheckHookActive.value -> checkHookActive(bundle)
             "test" -> test(bundle)
             else -> null
         }
@@ -205,5 +208,12 @@ class XProvider(
             dao.clearAll()
         }
         return Bundle()
+    }
+
+    private fun checkHookActive(bundle: Bundle): Bundle {
+        return Bundle().apply {
+            putBoolean("active", true)
+            putString("version", BuildConfig.VERSION_NAME)
+        }
     }
 }
