@@ -12,6 +12,7 @@ import androidx.collection.ArrayMap
 import androidx.core.content.getSystemService
 import com.js.nowakelock.BasicApp
 import com.js.nowakelock.BasicApp.Companion.context
+import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.base.getUserId
 import com.js.nowakelock.data.db.Type
@@ -62,11 +63,17 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
         }
 
         val result = getCPResult(BasicApp.context, ProviderMethod.LoadInfos.value, args)
-
         result?.let {
-            val infos = result.getSerializable("infos") as Array<Info>?
-            infos?.toList()?.let {
-                daDao.insert(it)
+            try {
+                val infos = result.getSerializable("infos") as Array<Info>?
+                infos?.toList()?.let {
+                    daDao.insert(it)
+                }
+            }catch (e:Exception){
+                getCPResult(BasicApp.context, ProviderMethod.ClearAll.value, Bundle())
+                LogUtil.d("AppDasAR", "getSerializable err: $e")
+            }finally {
+                LogUtil.d("AppDasAR", "getSerializable err clearAll")
             }
         }
     }
