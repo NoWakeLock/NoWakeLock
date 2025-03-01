@@ -66,14 +66,14 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
             "com.android.providers.settings" -> {//hook SettingsProvider
                 SettingsProviderHook.hook(lpparam)
             }
-            // BuildConfig.APPLICATION_ID -> {// hook myself
-            //     XposedHelpers.findAndHookMethod(
-            //         "${BuildConfig.APPLICATION_ID}.ui.mainActivity.MainActivity",
-            //         lpparam.classLoader,
-            //         "isModuleActive",
-            //         XC_MethodReplacement.returnConstant(true)
-            //     )
-            }
+//             BuildConfig.APPLICATION_ID -> {// hook myself
+//                 XposedHelpers.findAndHookMethod(
+//                     "${BuildConfig.APPLICATION_ID}.ui.mainActivity.MainActivity",
+//                     lpparam.classLoader,
+//                     "isModuleActive",
+//                     XC_MethodReplacement.returnConstant(true)
+//                 )
+//            }
         }
     }
 }
