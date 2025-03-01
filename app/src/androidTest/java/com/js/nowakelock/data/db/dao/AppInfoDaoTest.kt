@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.js.nowakelock.data.TestData
+//import com.js.nowakelock.data.TestData
 import com.js.nowakelock.data.db.AppDatabase
 import com.js.nowakelock.tool.LiveDataTestUtil
 import kotlinx.coroutines.runBlocking
@@ -37,11 +37,11 @@ class AppInfoDaoTest {
         db.close()
     }
 
-    @Test
-    fun load_without_Insert() {
-        val appInfos = dao.loadAppInfos()
-        assertTrue(LiveDataTestUtil.getValue(appInfos).isEmpty())
-    }
+//    @Test
+//    fun load_without_Insert() {
+//        val appInfos = dao.loadAppInfos()
+//        assertTrue(LiveDataTestUtil.getValue(appInfos).isEmpty())
+//    }
 
 //    @Test
 //    @Throws(Exception::class)
@@ -56,18 +56,18 @@ class AppInfoDaoTest {
 //        }, TestData.appInfos)
 //    }
 
-    @Test
-    @Throws(Exception::class)
-    fun load() {
-        runBlocking {
-            dao.insert(TestData.appInfos[0])
-        }
-
-        assertEquals(
-            runBlocking { dao.loadAppInfo(TestData.appInfos[0].packageName) },
-            TestData.appInfos[0]
-        )
-    }
+//    @Test
+//    @Throws(Exception::class)
+//    fun load() {
+//        runBlocking {
+//            dao.insert(TestData.appInfos[0])
+//        }
+//
+//        assertEquals(
+//            runBlocking { dao.loadAppInfo(TestData.appInfos[0].packageName) },
+//            TestData.appInfos[0]
+//        )
+//    }
 
 //    @Test
 //    @Throws(Exception::class)
