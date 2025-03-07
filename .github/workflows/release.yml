@@ -23,6 +23,14 @@ on:
         default: true
         required: true
         type: boolean
+      release_status:
+        type: choice
+        default: prerelease
+        description: "Release status on GitHub (if publishing)"
+        options:
+        - release
+        - prerelease
+        required: true
 
 jobs:
   build:
@@ -160,7 +168,7 @@ jobs:
       - name: publish github
         if: github.event.inputs.build == 'true'
         run: |
-          bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true --verbose
+          bundle exec fastlane android github create_tag:${{ github.event.inputs.publish }} publish:${{ github.event.inputs.publish }} github:true release_status:${{ github.event.inputs.release_status }} --verbose
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
