@@ -28,28 +28,27 @@ class ServiceHook {
             XpUtil.log("Hooking Service ${Build.VERSION.SDK_INT}")
 
             when (Build.VERSION.SDK_INT) {
-                //Try for alarm hooks for API levels >= 34 (U)
-                in Build.VERSION_CODES.UPSIDE_DOWN_CAKE..40 -> serviceHook34(lpparam)
-                //Try for alarm hooks for API levels = 31 (S)
-                 Build.VERSION_CODES.S -> serviceHook31to32(lpparam)
-                //Try for alarm hooks for API levels = 30 (R)
+                //Try for service hooks for API levels >= 34 (U)
+                in (Build.VERSION_CODES.VANILLA_ICE_CREAM + 1)..40 -> serviceHook(lpparam)
+                //Try for service hooks for API levels 34 ~ 35 (U), Android 14 15
+                Build.VERSION_CODES.VANILLA_ICE_CREAM -> serviceHook34to35(lpparam)
+                Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> serviceHook34to35(lpparam)
+                //Try for service hooks for API 31 ~ 32 (T), Android 12 13
+                Build.VERSION_CODES.TIRAMISU -> serviceHook31to33(lpparam)
+                Build.VERSION_CODES.S_V2 -> serviceHook31to33(lpparam)
+                Build.VERSION_CODES.S -> serviceHook31to33(lpparam)
+                //Try for service hooks for API levels = 30 (R)
                 Build.VERSION_CODES.R -> serviceHook30(lpparam)
-                //Try for alarm hooks for API levels = 29 (Q)
+                //Try for service hooks for API levels = 29 (Q)
                 Build.VERSION_CODES.Q -> serviceHook29(lpparam)
-                //Try for alarm hooks for API levels 26 ~ 28 (O ~ P)
+                //Try for service hooks for API levels 26 ~ 28 (O ~ P)
                 in Build.VERSION_CODES.O..Build.VERSION_CODES.P -> serviceHook26to28(lpparam)
-                //Try for alarm hooks for API levels 24 ~ 25 (N)
+                //Try for service hooks for API levels 24 ~ 25 (N)
                 in Build.VERSION_CODES.N..Build.VERSION_CODES.N_MR1 -> serviceHook24to25(lpparam)
             }
         }
 
-        /**
-         * https://cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=613?q=startServiceLocked
-         * @param lpparam LoadPackageParam
-         * @throws Throwable
-         */
-
-        private fun serviceHook34(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun serviceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
             findMethod(
                 findClass(
                     "com.android.server.am.ActiveServices",
@@ -65,33 +64,43 @@ class ServiceHook {
                         AndroidAppHelper.currentApplication().applicationContext
                     hookStartServiceLocked(it, service, callingPackage, context, userId)
                 }
-//            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
-//                lpparam.classLoader,
-//                "bindServiceLocked",
-//                "android.app.IApplicationThread",
-//                IBinder::class.java,//paramIBinder
-//                Intent::class.java,//service
-//                String::class.java,//resolvedType
-//                "android.app.IServiceConnection",//paramIServiceConnection
-//                Int::class.javaPrimitiveType,//callingUid
-//                String::class.java,//callingPackage
-//                String::class.java,//callingFeatureId
-//                Int::class.javaPrimitiveType,//userId
-//                object : XC_MethodHook() {
-//                    @Throws(Throwable::class)
-//                    override fun beforeHookedMethod(param: MethodHookParam) {
-////                        XpUtil.log("serviceHook31to32")
-//                        val service = param.args[1] as Intent?
-//                        val callingPackage = param.args[6] as String
-//                        val userId: Int = param.args[8] as Int
-//                        val context: Context =
-//                            AndroidAppHelper.currentApplication().applicationContext
-//                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-//                    }
-//                })
         }
 
-        private fun serviceHook31to32(lpparam: XC_LoadPackage.LoadPackageParam) {
+        // android 14 15
+        // https://cs.android.com/android/platform/superproject/+/android-14.0.0_r59:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=909
+        private fun serviceHook34to35(lpparam: XC_LoadPackage.LoadPackageParam) {
+            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+                lpparam.classLoader,
+                "startServiceLocked",
+                "android.app.IApplicationThread",
+                Intent::class.java,//service
+                String::class.java,//resolvedType
+                Int::class.javaPrimitiveType,//callingPid
+                Int::class.javaPrimitiveType,//callingUid
+                Boolean::class.java,//fgRequired
+                String::class.java,//callingPackage
+                String::class.java,//callingFeatureId
+                Int::class.javaPrimitiveType,//userId
+                Int::class.javaPrimitiveType,//sdkSandboxClientAppUid
+                String::class.java,//sdkSandboxClientAppPackage
+                String::class.java,//instanceName
+                object : XC_MethodHook() {
+                    @Throws(Throwable::class)
+                    override fun beforeHookedMethod(param: MethodHookParam) {
+//                        XpUtil.log("serviceHook31to32")
+                        val service = param.args[1] as Intent?
+                        val callingPackage = param.args[6] as String
+                        val userId: Int = param.args[8] as Int
+                        val context: Context =
+                            AndroidAppHelper.currentApplication().applicationContext
+                        hookStartServiceLocked(param, service, callingPackage, context, userId)
+                    }
+                })
+        }
+
+        // android 12-13
+        // https://cs.android.com/android/platform/superproject/+/android-12.1.0_r27:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=621
+        private fun serviceHook31to33(lpparam: XC_LoadPackage.LoadPackageParam) {
 
             XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
                 lpparam.classLoader,
@@ -121,7 +130,7 @@ class ServiceHook {
                 })
         }
 
-        //https://cs.android.com/android/platform/superproject/+/android-10.0.0_r1:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=184?q=ActiveServices&ss=android%2Fplatform%2Fsuperproject:
+        //https://cs.android.com/android/platform/superproject/+/android-10.0.0_r1:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=408?q=ActiveServices&ss=android%2Fplatform%2Fsuperproject
         private fun serviceHook30(lpparam: XC_LoadPackage.LoadPackageParam) {
             XpUtil.log("Hooking Service for API levels 30")
 
