@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoWakeLock - App Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="flex items-center">
+            <i class="fas fa-arrow-left mr-4"></i>
+            <div class="app-bar-title">App Details</div>
+        </div>
+        <div>
+            <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+    </div>
+
+    <!-- App Header -->
+    <div class="bg-white p-4 flex items-center border-b border-gray-200">
+        <div class="app-icon">
+            <img src="https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG4yRuqiJIZSYUnu9Us-0g=w240-h480-rw" alt="Facebook">
+        </div>
+        <div>
+            <h2 class="text-xl font-medium">Facebook</h2>
+            <p class="text-gray-600 text-sm">com.facebook.katana</p>
+            <div class="mt-1 text-xs text-gray-500">System App • Enabled</div>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-card px-4 py-3">
+        <div class="stat">
+            <div class="stat-value">47</div>
+            <div class="stat-label">Wakelocks</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Alarms</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">8</div>
+            <div class="stat-label">Services</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">5h 32m</div>
+            <div class="stat-label">Total Time</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active">App</div>
+        <div class="tab">Wakelocks</div>
+        <div class="tab">Alarms</div>
+        <div class="tab">Services</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content pb-16">
+        <!-- App Settings -->
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">App Settings</h3>
+            
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="font-medium">Allow Wakelocks</div>
+                    <div class="text-sm text-gray-600">Enable all wakelocks for this app</div>
+                </div>
+                <label class="md-switch">
+                    <input type="checkbox">
+                    <span class="md-switch-slider"></span>
+                </label>
+            </div>
+            
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="font-medium">Allow While Sleeping</div>
+                    <div class="text-sm text-gray-600">Allow wakelocks when screen is off</div>
+                </div>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-switch-slider"></span>
+                </label>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="font-medium">Allow Time Interval</div>
+                    <div class="text-sm text-gray-600">Time between allowed wakelocks</div>
+                </div>
+                <div class="flex items-center">
+                    <input type="number" value="60" class="w-16 h-10 px-2 border border-gray-300 rounded-md text-right">
+                    <span class="ml-2 text-gray-600">sec</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regular Expression Blocks -->
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">Wakelock Block Patterns</h3>
+            <div class="mb-2 text-sm text-gray-600">Block wakelocks matching these patterns</div>
+            <textarea class="w-full h-24 p-2 border border-gray-300 rounded-md text-sm" placeholder="One rule per line, new rule input enter">*alarm*
+*sync*
+*location*</textarea>
+            <button class="md-button mt-3 w-full">Save</button>
+        </div>
+
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">Alarm Block Patterns</h3>
+            <div class="mb-2 text-sm text-gray-600">Block alarms matching these patterns</div>
+            <textarea class="w-full h-24 p-2 border border-gray-300 rounded-md text-sm" placeholder="One rule per line, new rule input enter">*background*
+*periodic*</textarea>
+            <button class="md-button mt-3 w-full">Save</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Apps</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-bolt"></i>
+            <span>Wakelocks</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Alarms</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Services</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-sliders-h"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+</body>
+</html> 

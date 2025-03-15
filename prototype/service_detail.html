@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoWakeLock - Service Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="flex items-center">
+            <i class="fas fa-arrow-left mr-4"></i>
+            <div class="app-bar-title">Service Detail</div>
+        </div>
+        <div>
+            <i class="fas fa-copy mr-4"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+    </div>
+
+    <!-- Service Header -->
+    <div class="bg-white p-4 border-b border-gray-200">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-cogs text-2xl text-green-700"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-medium">com.facebook.katana.BackgroundService</h2>
+                <p class="text-gray-600 text-sm">com.facebook.katana</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-card px-4 py-3">
+        <div class="stat">
+            <div class="stat-value">42</div>
+            <div class="stat-label">Count</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">28</div>
+            <div class="stat-label">Blocked</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">2h 10m</div>
+            <div class="stat-label">Total Time</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">1h 25m</div>
+            <div class="stat-label">Saved Time</div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content pb-16">
+        <!-- Service Settings -->
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">Service Settings</h3>
+            
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="font-medium">Block Service</div>
+                    <div class="text-sm text-gray-600">Prevent this service from running</div>
+                </div>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-switch-slider"></span>
+                </label>
+            </div>
+            
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="font-medium">Block While Sleeping</div>
+                    <div class="text-sm text-gray-600">Block only when screen is off</div>
+                </div>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-switch-slider"></span>
+                </label>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="font-medium">Allow Time Interval</div>
+                    <div class="text-sm text-gray-600">Time between allowed runs</div>
+                </div>
+                <div class="flex items-center">
+                    <input type="number" value="180" class="w-16 h-10 px-2 border border-gray-300 rounded-md text-right">
+                    <span class="ml-2 text-gray-600">sec</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Info -->
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">Service Information</h3>
+            
+            <div class="mb-4">
+                <div class="text-sm font-medium text-gray-700">Service Type</div>
+                <div class="text-sm mt-1">Background Service</div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="text-sm font-medium text-gray-700">Start Type</div>
+                <div class="text-sm mt-1">START_STICKY</div>
+            </div>
+            
+            <div>
+                <div class="text-sm font-medium text-gray-700">Process</div>
+                <div class="text-sm mt-1">com.facebook.katana:background</div>
+            </div>
+        </div>
+
+        <!-- Activity Chart -->
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">Activity Timeline</h3>
+            <div class="text-sm text-gray-600 mb-3">Last 24 hours</div>
+            
+            <div class="h-40 flex items-end justify-between">
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 5%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 80%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 15%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 70%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 25%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 80%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 45%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 65%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 65%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 75%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 55%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 70%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 35%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 65%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 20%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 75%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 30%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 60%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 50%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 70%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 70%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 75%;"></div>
+                </div>
+                <div class="w-6 bg-green-200 rounded-t-sm" style="height: 40%;">
+                    <div class="bg-green-600 w-full rounded-t-sm" style="height: 65%;"></div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                <div>12 AM</div>
+                <div>4 AM</div>
+                <div>8 AM</div>
+                <div>12 PM</div>
+                <div>4 PM</div>
+                <div>8 PM</div>
+                <div>Now</div>
+            </div>
+            
+            <div class="flex mt-4">
+                <div class="flex items-center mr-4">
+                    <div class="w-3 h-3 bg-green-600 rounded-sm mr-1"></div>
+                    <span class="text-xs text-gray-600">Blocked</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 bg-green-200 rounded-sm mr-1"></div>
+                    <span class="text-xs text-gray-600">Total</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h3 class="text-lg font-medium mb-4">Recent Activity</h3>
+            
+            <div class="border-l-2 border-green-500 pl-4 mb-4">
+                <div class="text-sm font-medium">Blocked</div>
+                <div class="text-xs text-gray-600">Today, 11:30 AM</div>
+                <div class="text-sm mt-1">Would have run for approximately 15 minutes</div>
+            </div>
+            
+            <div class="border-l-2 border-green-500 pl-4 mb-4">
+                <div class="text-sm font-medium">Blocked</div>
+                <div class="text-xs text-gray-600">Today, 10:45 AM</div>
+                <div class="text-sm mt-1">Would have run for approximately 12 minutes</div>
+            </div>
+            
+            <div class="border-l-2 border-green-500 pl-4 mb-4">
+                <div class="text-sm font-medium">Blocked</div>
+                <div class="text-xs text-gray-600">Today, 10:00 AM</div>
+                <div class="text-sm mt-1">Would have run for approximately 18 minutes</div>
+            </div>
+            
+            <div class="border-l-2 border-green-500 pl-4">
+                <div class="text-sm font-medium">Blocked</div>
+                <div class="text-xs text-gray-600">Today, 9:15 AM</div>
+                <div class="text-sm mt-1">Would have run for approximately 14 minutes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Apps</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-bolt"></i>
+            <span>Wakelocks</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Alarms</span>
+        </div>
+        <div class="nav-item active">
+            <i class="fas fa-cogs"></i>
+            <span>Services</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-sliders-h"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+</body>
+</html> 

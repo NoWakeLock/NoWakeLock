@@ -1,0 +1,417 @@
+/* Material Design 3 Colors */
+:root {
+  --md-primary: #6750A4;
+  --md-primary-container: #EADDFF;
+  --md-on-primary: #FFFFFF;
+  --md-on-primary-container: #21005E;
+  --md-secondary: #625B71;
+  --md-secondary-container: #E8DEF8;
+  --md-on-secondary: #FFFFFF;
+  --md-on-secondary-container: #1E192B;
+  --md-tertiary: #7D5260;
+  --md-tertiary-container: #FFD8E4;
+  --md-on-tertiary: #FFFFFF;
+  --md-on-tertiary-container: #370B1E;
+  --md-error: #B3261E;
+  --md-error-container: #F9DEDC;
+  --md-on-error: #FFFFFF;
+  --md-on-error-container: #370B1E;
+  --md-background: #FFFBFE;
+  --md-on-background: #1C1B1F;
+  --md-surface: #FFFBFE;
+  --md-on-surface: #1C1B1F;
+  --md-surface-variant: #E7E0EC;
+  --md-on-surface-variant: #49454F;
+  --md-outline: #79747E;
+  --md-outline-variant: #CAC4D0;
+  --md-shadow: #000000;
+  --md-scrim: #000000;
+  --md-inverse-surface: #313033;
+  --md-inverse-on-surface: #F4EFF4;
+  --md-inverse-primary: #D0BCFF;
+}
+
+/* Common Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--md-background);
+  color: var(--md-on-background);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Status Bar */
+.status-bar {
+  background-color: var(--md-surface);
+  color: var(--md-on-surface);
+  padding: 4px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* App Bar */
+.app-bar {
+  background-color: var(--md-surface);
+  color: var(--md-on-surface);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.app-bar-title {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  background-color: var(--md-surface);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+}
+
+.nav-item.active {
+  color: var(--md-primary);
+}
+
+.nav-item i {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+/* Content Area */
+.content {
+  padding: 16px;
+  overflow-y: auto;
+  height: calc(100vh - 120px); /* Adjust based on top and bottom bars */
+}
+
+/* Cards */
+.card {
+  background-color: var(--md-surface);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+.md-button {
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  border: none;
+  border-radius: 20px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.md-button-outlined {
+  background-color: transparent;
+  color: var(--md-primary);
+  border: 1px solid var(--md-primary);
+  border-radius: 20px;
+  padding: 9px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Switches */
+.md-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 32px;
+}
+
+.md-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.md-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--md-surface-variant);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.md-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 24px;
+  width: 24px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .md-switch-slider {
+  background-color: var(--md-primary);
+}
+
+input:checked + .md-switch-slider:before {
+  transform: translateX(20px);
+}
+
+/* Fab Button */
+.fab {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  background-color: var(--md-primary);
+  color: var(--md-on-primary);
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.fab i {
+  font-size: 24px;
+}
+
+/* List Items */
+.list-item {
+  display: flex;
+  padding: 16px;
+  border-bottom: 1px solid var(--md-outline-variant);
+  align-items: center;
+}
+
+.list-item-icon {
+  margin-right: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.list-item-content {
+  flex: 1;
+}
+
+.list-item-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.list-item-subtitle {
+  font-size: 14px;
+  color: var(--md-on-surface-variant);
+}
+
+.list-item-action {
+  margin-left: 16px;
+}
+
+/* Chips */
+.chip {
+  background-color: var(--md-surface-variant);
+  color: var(--md-on-surface-variant);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+.chip.active {
+  background-color: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+/* Search Bar */
+.search-bar {
+  background-color: var(--md-surface-variant);
+  border-radius: 28px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-bar input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  margin-left: 8px;
+  font-size: 16px;
+  color: var(--md-on-surface);
+}
+
+.search-bar input:focus {
+  outline: none;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--md-outline-variant);
+  margin-bottom: 16px;
+}
+
+.tab {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  position: relative;
+}
+
+.tab.active {
+  color: var(--md-primary);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--md-primary);
+}
+
+/* Stats Card */
+.stats-card {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.stat {
+  background-color: var(--md-surface);
+  border-radius: 16px;
+  padding: 16px;
+  flex: 1;
+  margin: 0 8px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+
+/* App Icon */
+.app-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-right: 16px;
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Settings Item */
+.settings-item {
+  display: flex;
+  padding: 16px;
+  border-bottom: 1px solid var(--md-outline-variant);
+  align-items: center;
+}
+
+.settings-item-icon {
+  margin-right: 16px;
+  color: var(--md-on-surface-variant);
+}
+
+.settings-item-content {
+  flex: 1;
+}
+
+.settings-item-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.settings-item-description {
+  font-size: 14px;
+  color: var(--md-on-surface-variant);
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+  --md-primary: #D0BCFF;
+  --md-primary-container: #4F378B;
+  --md-on-primary: #371E73;
+  --md-on-primary-container: #EADDFF;
+  --md-secondary: #CCC2DC;
+  --md-secondary-container: #4A4458;
+  --md-on-secondary: #332D41;
+  --md-on-secondary-container: #E8DEF8;
+  --md-tertiary: #EFB8C8;
+  --md-tertiary-container: #633B48;
+  --md-on-tertiary: #492532;
+  --md-on-tertiary-container: #FFD8E4;
+  --md-error: #F2B8B5;
+  --md-error-container: #8C1D18;
+  --md-on-error: #601410;
+  --md-on-error-container: #F9DEDC;
+  --md-background: #1C1B1F;
+  --md-on-background: #E6E1E5;
+  --md-surface: #1C1B1F;
+  --md-on-surface: #E6E1E5;
+  --md-surface-variant: #49454F;
+  --md-on-surface-variant: #CAC4D0;
+  --md-outline: #938F99;
+  --md-outline-variant: #49454F;
+  --md-shadow: #000000;
+  --md-scrim: #000000;
+  --md-inverse-surface: #E6E1E5;
+  --md-inverse-on-surface: #313033;
+  --md-inverse-primary: #6750A4;
+} 

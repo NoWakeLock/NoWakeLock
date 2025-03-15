@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoWakeLock - Wakelocks</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="app-bar-title">Wakelocks</div>
+        <div>
+            <i class="fas fa-search mr-4"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="px-4 pt-3 pb-2 overflow-x-auto whitespace-nowrap">
+        <div class="chip active">All</div>
+        <div class="chip">Blocked</div>
+        <div class="chip">Allowed</div>
+    </div>
+
+    <!-- Sort Options -->
+    <div class="px-4 py-2 flex text-sm text-gray-600">
+        <div class="flex items-center mr-4">
+            <i class="fas fa-sort-amount-down mr-1"></i>
+            <span>Sort by: </span>
+        </div>
+        <div class="flex items-center mr-3">
+            <span>Name</span>
+        </div>
+        <div class="flex items-center mr-3 text-purple-700 font-medium">
+            <i class="fas fa-check mr-1 text-xs"></i>
+            <span>Count</span>
+        </div>
+        <div class="flex items-center">
+            <span>Time</span>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content pb-16">
+        <!-- Wakelock Stats Summary -->
+        <div class="card">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-medium">Wakelock Summary</h3>
+                    <p class="text-sm text-gray-600">Last 24 hours</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-medium text-purple-700">247</div>
+                    <div class="text-sm text-gray-600">Total Wakelocks</div>
+                </div>
+            </div>
+            
+            <div class="mt-4 bg-gray-100 rounded-full h-4 overflow-hidden">
+                <div class="bg-purple-600 h-full" style="width: 65%"></div>
+            </div>
+            
+            <div class="mt-2 flex justify-between text-xs text-gray-600">
+                <div>65% Blocked (160)</div>
+                <div>35% Allowed (87)</div>
+            </div>
+        </div>
+
+        <!-- Wakelock List -->
+        <div class="list-item">
+            <div class="list-item-icon bg-purple-100 rounded-full">
+                <i class="fas fa-bolt text-purple-700"></i>
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">KEEP_SCREEN_ON_FLAG</div>
+                <div class="list-item-subtitle">com.facebook.katana</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-ban mr-1"></i> Blocked
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 2h 15m saved
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <div class="text-lg font-medium text-gray-700">47</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-item-icon bg-purple-100 rounded-full">
+                <i class="fas fa-bolt text-purple-700"></i>
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">GCM_RECONNECT_WAKELOCK</div>
+                <div class="list-item-subtitle">com.google.android.gms</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-check mr-1"></i> Allowed
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 1h 30m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <div class="text-lg font-medium text-gray-700">36</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-item-icon bg-purple-100 rounded-full">
+                <i class="fas fa-bolt text-purple-700"></i>
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">NlpWakeLock</div>
+                <div class="list-item-subtitle">com.google.android.gms</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-ban mr-1"></i> Blocked
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 1h 45m saved
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <div class="text-lg font-medium text-gray-700">32</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-item-icon bg-purple-100 rounded-full">
+                <i class="fas fa-bolt text-purple-700"></i>
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">SyncWakeLock</div>
+                <div class="list-item-subtitle">com.instagram.android</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-ban mr-1"></i> Blocked
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 1h 10m saved
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <div class="text-lg font-medium text-gray-700">28</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-item-icon bg-purple-100 rounded-full">
+                <i class="fas fa-bolt text-purple-700"></i>
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">AudioMix</div>
+                <div class="list-item-subtitle">com.spotify.music</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-check mr-1"></i> Allowed
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 3h 20m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <div class="text-lg font-medium text-gray-700">25</div>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="list-item-icon bg-purple-100 rounded-full">
+                <i class="fas fa-bolt text-purple-700"></i>
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">LocationManagerService</div>
+                <div class="list-item-subtitle">android</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-check mr-1"></i> Allowed
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 45m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <div class="text-lg font-medium text-gray-700">18</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Apps</span>
+        </div>
+        <div class="nav-item active">
+            <i class="fas fa-bolt"></i>
+            <span>Wakelocks</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Alarms</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Services</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-sliders-h"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+</body>
+</html> 

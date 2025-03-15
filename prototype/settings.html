@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoWakeLock - Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="app-bar-title">Settings</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content pb-16">
+        <!-- General Settings -->
+        <div class="mb-4">
+            <div class="text-sm font-medium text-purple-700 px-4 py-2 uppercase">General</div>
+            
+            <div class="bg-white">
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Record Data</div>
+                        <div class="settings-item-description">Record device wake-up data</div>
+                    </div>
+                    <label class="md-switch">
+                        <input type="checkbox" checked>
+                        <span class="md-switch-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Data Synchronization</div>
+                        <div class="settings-item-description">Sync wake-up data (seconds)</div>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="number" value="60" class="w-16 h-10 px-2 border border-gray-300 rounded-md text-right">
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Sync Settings</div>
+                        <div class="settings-item-description">Sync disable configuration (seconds)</div>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="number" value="300" class="w-16 h-10 px-2 border border-gray-300 rounded-md text-right">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Theme Settings -->
+        <div class="mb-4">
+            <div class="text-sm font-medium text-purple-700 px-4 py-2 uppercase">Theme</div>
+            
+            <div class="bg-white">
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Theme</div>
+                        <div class="settings-item-description">Choose app theme</div>
+                    </div>
+                    <div class="text-purple-700">
+                        <span class="mr-2">System</span>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Dark Mode</div>
+                        <div class="settings-item-description">Enable dark theme</div>
+                    </div>
+                    <label class="md-switch">
+                        <input type="checkbox">
+                        <span class="md-switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Management -->
+        <div class="mb-4">
+            <div class="text-sm font-medium text-purple-700 px-4 py-2 uppercase">Data Management</div>
+            
+            <div class="bg-white">
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Reset Count After Charge</div>
+                        <div class="settings-item-description">Reset counters when device is charged</div>
+                    </div>
+                    <label class="md-switch">
+                        <input type="checkbox" checked>
+                        <span class="md-switch-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-broom"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Clear Inactive Records</div>
+                        <div class="settings-item-description">Remove records for uninstalled apps</div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Backup & Restore -->
+        <div class="mb-4">
+            <div class="text-sm font-medium text-purple-700 px-4 py-2 uppercase">Backup & Restore</div>
+            
+            <div class="bg-white">
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Create Backup</div>
+                        <div class="settings-item-description">Backup settings to file</div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Restore from Backup</div>
+                        <div class="settings-item-description">Restore settings from file</div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Advanced Settings -->
+        <div class="mb-4">
+            <div class="text-sm font-medium text-purple-700 px-4 py-2 uppercase">Advanced</div>
+            
+            <div class="bg-white">
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">Debug Mode</div>
+                        <div class="settings-item-description">Enable detailed logging</div>
+                    </div>
+                    <label class="md-switch">
+                        <input type="checkbox">
+                        <span class="md-switch-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-item-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="settings-item-content">
+                        <div class="settings-item-title">About</div>
+                        <div class="settings-item-description">Version 2.1.0</div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Apps</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-bolt"></i>
+            <span>Wakelocks</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Alarms</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Services</span>
+        </div>
+        <div class="nav-item active">
+            <i class="fas fa-sliders-h"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+</body>
+</html> 

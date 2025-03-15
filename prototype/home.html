@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoWakeLock - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="app-bar-title">NoWakeLock</div>
+        <div>
+            <i class="fas fa-search mr-4"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="px-4 pt-3 pb-2 overflow-x-auto whitespace-nowrap">
+        <div class="chip active">All Apps</div>
+        <div class="chip">User Apps</div>
+        <div class="chip">System Apps</div>
+        <div class="chip">Modified</div>
+    </div>
+
+    <!-- Sort Options -->
+    <div class="px-4 py-2 flex text-sm text-gray-600">
+        <div class="flex items-center mr-4">
+            <i class="fas fa-sort-amount-down mr-1"></i>
+            <span>Sort by: </span>
+        </div>
+        <div class="flex items-center mr-3 text-purple-700 font-medium">
+            <i class="fas fa-check mr-1 text-xs"></i>
+            <span>Name</span>
+        </div>
+        <div class="flex items-center mr-3">
+            <span>Count</span>
+        </div>
+        <div class="flex items-center">
+            <span>Time</span>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content pb-16">
+        <!-- App List -->
+        <div class="list-item">
+            <div class="app-icon">
+                <img src="https://play-lh.googleusercontent.com/bYtqbOcTYOlgc6gqZ2rwb8lptHuwlNE75zYJu6Bn076-hTmvd96HH-6v7S0YUAAJXoJN=w240-h480-rw" alt="Chrome">
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">Chrome</div>
+                <div class="list-item-subtitle">com.android.chrome</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-1"></i> 24 wakelocks
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 2h 15m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="app-icon">
+                <img src="https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG4yRuqiJIZSYUnu9Us-0g=w240-h480-rw" alt="Facebook">
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">Facebook</div>
+                <div class="list-item-subtitle">com.facebook.katana</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-1"></i> 47 wakelocks
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 5h 32m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="app-icon">
+                <img src="https://play-lh.googleusercontent.com/VRMWkE5p3CkWhJs6nv-9ZsLAs1QOg5ob1_3qg-rckwYW7yp1fMrYZqnEFpk0IoVP4LM=w240-h480-rw" alt="Instagram">
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">Instagram</div>
+                <div class="list-item-subtitle">com.instagram.android</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-1"></i> 36 wakelocks
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 3h 45m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="app-icon">
+                <img src="https://play-lh.googleusercontent.com/TBRwjS_qfJCSj1m7zZB93FnpJM5fSpMA_wUlFDLxWAb45T9RmwBvQd5cWR5viJJOhkI=w240-h480-rw" alt="Netflix">
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">Netflix</div>
+                <div class="list-item-subtitle">com.netflix.mediaclient</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-1"></i> 18 wakelocks
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 1h 20m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="app-icon">
+                <img src="https://play-lh.googleusercontent.com/PCpXdqvUWfCW1mXhH1Y_98yBpgsWxuTSTofy3NGMo9yBTATDyzVkqU580bfSln50bFU=w240-h480-rw" alt="Gmail">
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">Gmail</div>
+                <div class="list-item-subtitle">com.google.android.gm</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-1"></i> 29 wakelocks
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 2h 50m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+
+        <div class="list-item">
+            <div class="app-icon">
+                <img src="https://play-lh.googleusercontent.com/Zz_wYF0D8hxOQCfKu57dtaP3j0Tl-nQsQU6AGi9mPOJKzfV9UqN8g0lQwvvJwi4XKA=w240-h480-rw" alt="Spotify">
+            </div>
+            <div class="list-item-content">
+                <div class="list-item-title">Spotify</div>
+                <div class="list-item-subtitle">com.spotify.music</div>
+                <div class="flex mt-1">
+                    <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-md mr-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-1"></i> 32 wakelocks
+                    </div>
+                    <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-md">
+                        <i class="far fa-clock mr-1"></i> 4h 10m
+                    </div>
+                </div>
+            </div>
+            <div class="list-item-action">
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <i class="fas fa-mobile-alt"></i>
+            <span>Apps</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-bolt"></i>
+            <span>Wakelocks</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-clock"></i>
+            <span>Alarms</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Services</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-sliders-h"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+</body>
+</html> 
