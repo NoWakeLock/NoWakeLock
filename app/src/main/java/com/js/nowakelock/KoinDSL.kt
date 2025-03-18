@@ -13,12 +13,6 @@ import com.js.nowakelock.data.repository.das.FR
 import com.js.nowakelock.data.repository.das.IAlarmR
 import com.js.nowakelock.data.repository.das.IServiceR
 import com.js.nowakelock.data.repository.das.IWakelockR
-import com.js.nowakelock.ui.appDa.AppDaViewModel
-import com.js.nowakelock.ui.appDaS.AppDaSViewModel
-import com.js.nowakelock.ui.da.DaViewModel
-import com.js.nowakelock.ui.daS.fbase.FBaseViewModel
-import com.js.nowakelock.ui.mainActivity.MainViewModel
-import com.js.nowakelock.ui.settings.SettingViewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -65,36 +59,36 @@ var repository = module {
 
 var viewModel = module {
 
-    viewModel(named("FVm")) { (packageName: String, userId: Int, type: Type) ->
-        FBaseViewModel(
-            packageName, userId, when (type) {
-                Type.Wakelock -> get(named("WakelockR"))
-                Type.Alarm -> get(named("AlarmR"))
-                Type.Service -> get(named("ServiceR"))
-                else -> get(named("WakelockR"))
-            }
-        )
-    }
+//    viewModel(named("FVm")) { (packageName: String, userId: Int, type: Type) ->
+//        FBaseViewModel(
+//            packageName, userId, when (type) {
+//                Type.Wakelock -> get(named("WakelockR"))
+//                Type.Alarm -> get(named("AlarmR"))
+//                Type.Service -> get(named("ServiceR"))
+//                else -> get(named("WakelockR"))
+//            }
+//        )
+//    }
 
     // MainViewModel
-    viewModel(named("MainVm")) {
-        MainViewModel()
-    }
-
-    viewModel(named("AppDaSVM")) {
-        AppDaSViewModel(get(named("AppDasR")))
-    }
-
-    viewModel(named("DaVm")) { (name: String, type: Type, userId: Int) ->
-        DaViewModel(name, type, userId)
-    }
-
-    viewModel(named("AppDaVm")) { (packageName: String, userId: Int) ->
-        AppDaViewModel(packageName, userId)
-    }
-
-    viewModel(named("SettingVm")) {
-        SettingViewModel(get(named("BackupR")))
-    }
+//    viewModel(named("MainVm")) {
+//        MainViewModel()
+//    }
+//
+//    viewModel(named("AppDaSVM")) {
+//        AppDaSViewModel(get(named("AppDasR")))
+//    }
+//
+//    viewModel(named("DaVm")) { (name: String, type: Type, userId: Int) ->
+//        DaViewModel(name, type, userId)
+//    }
+//
+//    viewModel(named("AppDaVm")) { (packageName: String, userId: Int) ->
+//        AppDaViewModel(packageName, userId)
+//    }
+//
+//    viewModel(named("SettingVm")) {
+//        SettingViewModel(get(named("BackupR")))
+//    }
 
 }

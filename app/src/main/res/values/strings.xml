@@ -98,4 +98,5 @@
         <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
+    <string name="title_activity_main2">MainActivity2</string>
 </resources>
