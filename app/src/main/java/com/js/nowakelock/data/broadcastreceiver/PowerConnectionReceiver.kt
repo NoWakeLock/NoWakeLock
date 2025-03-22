@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.preference.PreferenceManager
+import android.preference.PreferenceManager
 import com.js.nowakelock.BasicApp
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.data.db.AppDatabase

@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.js.nowakelock.data.broadcastreceiver.PowerConnectionReceiver
 import org.koin.android.ext.koin.androidContext
