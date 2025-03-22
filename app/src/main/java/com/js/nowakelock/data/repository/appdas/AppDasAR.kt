@@ -19,11 +19,10 @@ import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.AppInfoDao
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.entity.*
+import com.js.nowakelock.data.model.AppWithStats
 import com.js.nowakelock.data.provider.ProviderMethod
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : AppDasRepo {
@@ -76,6 +75,98 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
                 LogUtil.d("AppDasAR", "getSerializable err clearAll")
             }
         }
+    }
+
+    /**
+     * Gets all applications with their wakelock statistics
+     */
+    override fun getAppsWithStats(): Flow<List<AppWithStats>> {
+        return appInfoDao.loadAppInfosDBFlow().distinctUntilChanged().map { appInfoList ->
+            // Transform to AppWithStats by looking up wake lock info for each app
+            appInfoList.map { appInfo ->
+                appInfoToAppWithStats(appInfo)
+            }
+        }
+    }
+
+    /**
+     * Gets applications sorted by application name
+     */
+    override fun getAppsWithStatsSortedByName(): Flow<List<AppWithStats>> {
+        return getAppsWithStats().map { list ->
+            list.sortedBy { it.appInfo.label }
+        }
+    }
+
+    /**
+     * Gets applications sorted by wakelock count (descending)
+     */
+    override fun getAppsWithStatsSortedByCount(): Flow<List<AppWithStats>> {
+        return getAppsWithStats().map { list ->
+            list.sortedByDescending { it.wakelockCount }
+        }
+    }
+
+    /**
+     * Gets applications sorted by wakelock time (descending)
+     */
+    override fun getAppsWithStatsSortedByTime(): Flow<List<AppWithStats>> {
+        return getAppsWithStats().map { list ->
+            list.sortedByDescending { it.wakelockTime }
+        }
+    }
+
+    /**
+     * Gets only user (non-system) applications with their stats
+     */
+    override fun getUserAppsWithStats(): Flow<List<AppWithStats>> {
+        return getAppsWithStats().map { list ->
+            list.filter { !it.appInfo.system }
+        }
+    }
+
+    /**
+     * Gets only system applications with their stats
+     */
+    override fun getSystemAppsWithStats(): Flow<List<AppWithStats>> {
+        return getAppsWithStats().map { list ->
+            list.filter { it.appInfo.system }
+        }
+    }
+
+    /**
+     * Gets only applications that have wakelock activity
+     */
+    override fun getModifiedAppsWithStats(): Flow<List<AppWithStats>> {
+        return getAppsWithStats().map { list ->
+            list.filter { it.wakelockCount > 0 }
+        }
+    }
+
+    /**
+     * Helper method to convert AppInfo to AppWithStats by querying wakelock data
+     */
+    private suspend fun appInfoToAppWithStats(appInfo: AppInfo): AppWithStats = withContext(Dispatchers.IO) {
+        // Get all wake lock infos for this app
+        val wakelockInfos = daDao.getInfosByPackageAndType(
+            appInfo.packageName,
+            Type.Wakelock,
+            appInfo.userId
+        )
+        
+        // Calculate statistics
+        val wakelockCount = wakelockInfos.sumOf { it.count }
+        val wakelockBlockedCount = wakelockInfos.sumOf { it.blockCount }
+        val wakelockTime = wakelockInfos.sumOf { it.countTime }
+        val wakelockNames = wakelockInfos.map { it.name }
+        
+        return@withContext AppWithStats(
+            appInfo = appInfo,
+            wakelockCount = wakelockCount,
+            wakelockBlockedCount = wakelockBlockedCount,
+            wakelockTime = wakelockTime,
+            wakelockNames = wakelockNames
+        )
     }
 
     /**db 插入新应用*/

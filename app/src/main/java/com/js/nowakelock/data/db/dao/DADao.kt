@@ -59,4 +59,11 @@ interface DADao : BaseDao<St> {
                 "and packageName_info = packageName_st and userId_info = userId_st)"
     )
     suspend fun clearNoActive()
+
+    /**
+     * Retrieves Info records for a specific package and type
+     * Used for aggregating statistics for an application
+     */
+    @Query("SELECT * FROM info WHERE packageName_info = :packageName AND type_info = :type AND userid_info = :userId")
+    suspend fun getInfosByPackageAndType(packageName: String, type: Type, userId: Int): List<Info>
 }
