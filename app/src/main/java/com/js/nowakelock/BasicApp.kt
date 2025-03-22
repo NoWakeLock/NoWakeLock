@@ -1,5 +1,6 @@
 package com.js.nowakelock
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import org.koin.core.context.startKoin
 
 class BasicApp : Application() {
     companion object {
+        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         lateinit var gson: Gson
     }
@@ -21,9 +23,13 @@ class BasicApp : Application() {
         gson = Gson()
 
         //koin
+        //startKoin {
+        //    androidContext(this@BasicApp)
+        //    modules(repository, viewModel)
+        //}
         startKoin {
             androidContext(this@BasicApp)
-            modules(repository, viewModel)
+            modules(appModule())
         }
 
         // for PowerConnectionReceiver

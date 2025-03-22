@@ -13,82 +13,39 @@ import com.js.nowakelock.data.repository.das.FR
 import com.js.nowakelock.data.repository.das.IAlarmR
 import com.js.nowakelock.data.repository.das.IServiceR
 import com.js.nowakelock.data.repository.das.IWakelockR
+import com.js.nowakelock.ui.screens.apps.AppsViewModel
+import com.js.nowakelock.ui.screens.alarms.AlarmsViewModel
+import com.js.nowakelock.ui.screens.services.ServicesViewModel
+import com.js.nowakelock.ui.screens.settings.SettingsViewModel
+import com.js.nowakelock.ui.screens.wakelocks.WakelocksViewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.bind
 
-var repository = module {
+fun appModule() = module {
 
-    /** AppRepo */
-    single<AppDasRepo>(named("AppDasR")) {
-        AppDasAR(
-            AppDatabase.getInstance(BasicApp.context).appInfoDao(),
-            AppDatabase.getInstance(BasicApp.context).dADao(),
-        )
-    }
+    // Repository
+    singleOf(::AppDasAR) { bind<AppDasRepo>() }
+    singleOf(::AppDaR) { bind<AppDaRepo>() }
+    singleOf(::IWakelockR) { bind<FR>(); named("WakelockR") }
+    singleOf(::IAlarmR) { bind<FR>(); named("AlarmR") }
+    singleOf(::IServiceR) { bind<FR>(); named("ServiceR") }
+    singleOf(::DaR) { bind<DaRepo>() }
+    singleOf(::BackupRepo)
 
-    single<AppDaRepo>(named("AppDaR")) {
-        AppDaR(
-            AppDatabase.getInstance(BasicApp.context).appDaDao()
-        )
-    }
+    //
+    single { AppDatabase.getInstance(get()) }
+    factory { get<AppDatabase>().appInfoDao() }
+    factory { get<AppDatabase>().dADao() }
+    factory { get<AppDatabase>().appDaDao() }
 
-    single<FR>(named("WakelockR")) {
-        IWakelockR(AppDatabase.getInstance(BasicApp.context).dADao())
-    }
-
-    single<FR>(named("AlarmR")) {
-        IAlarmR(AppDatabase.getInstance(BasicApp.context).dADao())
-    }
-
-    single<FR>(named("ServiceR")) {
-        IServiceR(AppDatabase.getInstance(BasicApp.context).dADao())
-    }
-
-    single<DaRepo>(named("DaR")) {
-        DaR(AppDatabase.getInstance(BasicApp.context).dADao())
-    }
-
-    single<BackupRepo>(named("BackupR")) {
-        BackupRepo(
-            AppDatabase.getInstance(BasicApp.context).appDaDao(),
-            AppDatabase.getInstance(BasicApp.context).dADao()
-        )
-    }
-}
-
-var viewModel = module {
-
-//    viewModel(named("FVm")) { (packageName: String, userId: Int, type: Type) ->
-//        FBaseViewModel(
-//            packageName, userId, when (type) {
-//                Type.Wakelock -> get(named("WakelockR"))
-//                Type.Alarm -> get(named("AlarmR"))
-//                Type.Service -> get(named("ServiceR"))
-//                else -> get(named("WakelockR"))
-//            }
-//        )
-//    }
-
-    // MainViewModel
-//    viewModel(named("MainVm")) {
-//        MainViewModel()
-//    }
-//
-//    viewModel(named("AppDaSVM")) {
-//        AppDaSViewModel(get(named("AppDasR")))
-//    }
-//
-//    viewModel(named("DaVm")) { (name: String, type: Type, userId: Int) ->
-//        DaViewModel(name, type, userId)
-//    }
-//
-//    viewModel(named("AppDaVm")) { (packageName: String, userId: Int) ->
-//        AppDaViewModel(packageName, userId)
-//    }
-//
-//    viewModel(named("SettingVm")) {
-//        SettingViewModel(get(named("BackupR")))
-//    }
-
+    // ViewModel
+    viewModelOf(::AppsViewModel)
+    viewModelOf(::WakelocksViewModel)
+    viewModelOf(::AlarmsViewModel)
+    viewModelOf(::ServicesViewModel)
+    viewModelOf(::SettingsViewModel)
 }
