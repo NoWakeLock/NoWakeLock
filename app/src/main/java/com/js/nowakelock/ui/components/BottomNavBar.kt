@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Apps
 //import androidx.compose.material.icons.filled.BoltOn
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -36,8 +37,7 @@ fun NoWakeLockBottomNavBar(navController: NavController) {
         BottomNavItem(
             route = NavRoutes.WAKELOCKS,
             titleResId = R.string.WakeLock,
-            // TODO
-            icon = { Icon(Icons.Default.Apps, contentDescription = null) }
+            icon = { Icon(Icons.Default.Lock, contentDescription = null) }
         ),
         BottomNavItem(
             route = NavRoutes.ALARMS,

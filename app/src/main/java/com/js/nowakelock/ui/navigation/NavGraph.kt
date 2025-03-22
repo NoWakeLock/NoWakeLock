@@ -17,10 +17,6 @@ fun NoWakeLockNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-//    Text(
-//        text = "Hello!",
-//        modifier = modifier
-//    )
     NavHost(
         navController = navController,
         startDestination = NavRoutes.APPS,
