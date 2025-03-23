@@ -1,15 +1,15 @@
 package com.js.nowakelock.data.db.dao
 
-import android.content.Context
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.asLiveData
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
-//import com.js.nowakelock.data.TestData
-import com.js.nowakelock.data.db.AppDatabase
-import com.js.nowakelock.tool.LiveDataTestUtil
-import kotlinx.coroutines.runBlocking
-import org.junit.*
+//import android.content.Context
+//import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+//import androidx.lifecycle.asLiveData
+//import androidx.room.Room
+//import androidx.test.core.app.ApplicationProvider
+////import com.js.nowakelock.data.TestData
+//import com.js.nowakelock.data.db.AppDatabase
+//import com.js.nowakelock.tool.LiveDataTestUtil
+//import kotlinx.coroutines.runBlocking
+//import org.junit.*
 
 //class AlarmDaoTest {
 //    @get:Rule

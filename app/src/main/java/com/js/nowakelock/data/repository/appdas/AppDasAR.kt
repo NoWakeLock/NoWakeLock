@@ -47,7 +47,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
 
     override suspend fun syncAppInfos() = withContext(Dispatchers.Default) {
         val dbAppInfos = getDBAppInfos()//db AppInfos
-        val sysAppInfos = getSysAppInfos()//system AppInfos
+        val sysAppInfos = getInstalledAppInfos()//system AppInfos
 
         //取差集更新删除
         insertAll(sysAppInfos.keys subtract dbAppInfos.keys, sysAppInfos)
@@ -195,7 +195,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
 
     // 获取全部 system AppInfos
     @SuppressLint("QueryPermissionsNeeded")
-    private suspend fun getSysAppInfos(): ArrayMap<String, AppInfo> =
+    private suspend fun getInstalledAppInfos(): ArrayMap<String, AppInfo> =
         withContext(Dispatchers.IO) {
             val sysAppInfo = ArrayMap<String, AppInfo>()
 

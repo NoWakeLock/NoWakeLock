@@ -115,6 +115,7 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.1.3"
     implementation 'androidx.compose.material:material-icons-extended' // 更多图标
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.34.0" // 系统 UI 控制
+    implementation("androidx.compose.material:material:1.8.0-rc01") // 下拉刷新
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'

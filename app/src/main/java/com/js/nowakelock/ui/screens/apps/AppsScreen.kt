@@ -1,8 +1,14 @@
 package com.js.nowakelock.ui.screens.apps
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,7 +26,10 @@ import org.koin.androidx.compose.koinViewModel
 
 /**
  * Main screen for displaying apps with wakelock statistics
+ * Layout optimized for better visual hierarchy and spacing
+ * Following MD3 best practices with subtle dividers instead of background differences
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AppsScreen(
     viewModel: AppsViewModel = koinViewModel(),
@@ -28,65 +37,100 @@ fun AppsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    Column(
-        modifier = Modifier.fillMaxSize()
+    // Whether to show the pull refresh indicator
+    val showPullRefresh = uiState.isLoading && uiState.loadingSource == LoadingSource.USER_PULL
+    // Whether to show the central loader
+    val showCentralLoader = uiState.isLoading && uiState.loadingSource != LoadingSource.USER_PULL && uiState.loadingSource != LoadingSource.NONE
+    
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = showPullRefresh,
+        onRefresh = { viewModel.refreshData(LoadingSource.USER_PULL) }
+    )
+    
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        // Filter tabs
-        AppsFilterSection(
-            currentFilter = uiState.currentFilterOption,
-            onFilterChange = { viewModel.changeFilterOption(it) }
-        )
-        
-        // Sort control
-        AppsSortSection(
-            currentSort = uiState.currentSortOption,
-            onSortChange = { viewModel.changeSortOption(it) }
-        )
-        
-        // Content
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            // Loading indicator
-            if (uiState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
+            // Control panel section with filter and sort - no background color difference
+            Column {
+                // Filter section
+                AppsFilterSection(
+                    currentFilter = uiState.currentFilterOption,
+                    onFilterChange = { viewModel.changeFilterOption(it) }
                 )
-            } else if (uiState.apps.isEmpty()) {
-                // Empty state
-                EmptyAppsContent(
-                    filterOption = uiState.currentFilterOption,
-                    modifier = Modifier.align(Alignment.Center)
+                
+                // Sort section
+                AppsSortSection(
+                    currentSort = uiState.currentSortOption,
+                    onSortChange = { viewModel.changeSortOption(it) }
                 )
-            } else {
-                // Apps list
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 8.dp)
-                ) {
-                    items(
-                        items = uiState.apps,
-                        key = { "${it.appInfo.packageName}_${it.appInfo.userId}" }
-                    ) { app ->
-                        AppListItem(
-                            appWithStats = app,
-                            onItemClick = onAppClick
-                        )
-                    }
-                }
+                
+                // Clean divider between controls and content - subtle but visible
+                HorizontalDivider(
+                    thickness = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
             }
             
-            // Error message
-            if (uiState.message.isNotEmpty()) {
-                Snackbar(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.BottomCenter)
-                ) {
-                    Text(text = uiState.message)
+            // Content area
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .pullRefresh(pullRefreshState)
+            ) {
+                // Show the central loader if needed
+                if (showCentralLoader) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else if (!uiState.isLoading && uiState.apps.isEmpty()) {
+                    // Empty state - show when not loading and list is empty
+                    EmptyAppsContent(
+                        filterOption = uiState.currentFilterOption,
+                        modifier = Modifier.align(Alignment.Center),
+                        viewModel = viewModel
+                    )
+                } else {
+                    // Apps list
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 8.dp)
+                    ) {
+                        items(
+                            items = uiState.apps,
+                            key = { "${it.appInfo.packageName}_${it.appInfo.userId}" }
+                        ) { app ->
+                            AppListItem(
+                                appWithStats = app,
+                                onItemClick = onAppClick
+                            )
+                        }
+                    }
                 }
+                
+                // Error message
+                if (uiState.message.isNotEmpty()) {
+                    Snackbar(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .align(Alignment.BottomCenter)
+                    ) {
+                        Text(text = uiState.message)
+                    }
+                }
+
+                // Show the pull refresh indicator only when needed
+                PullRefreshIndicator(
+                    refreshing = showPullRefresh,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }
@@ -98,7 +142,8 @@ fun AppsScreen(
 @Composable
 private fun EmptyAppsContent(
     filterOption: FilterOption,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AppsViewModel
 ) {
     Column(
         modifier = modifier.padding(16.dp),
@@ -131,7 +176,7 @@ private fun EmptyAppsContent(
         Spacer(modifier = Modifier.height(16.dp))
         
         Button(
-            onClick = { /* Call viewModel.refreshData() */ }
+            onClick = { viewModel.refreshData(LoadingSource.INITIAL) }
         ) {
             Text(text = "Refresh Data")
         }
