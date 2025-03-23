@@ -22,7 +22,6 @@ import com.js.nowakelock.R
 import com.js.nowakelock.data.model.AppWithStats
 import com.js.nowakelock.ui.screens.apps.components.AppListItem
 import com.js.nowakelock.ui.screens.apps.components.AppsFilterSection
-import com.js.nowakelock.ui.screens.apps.components.AppsSearchBar
 import com.js.nowakelock.ui.screens.apps.components.AppsSortSection
 import org.koin.androidx.compose.koinViewModel
 
@@ -39,8 +38,7 @@ fun AppsScreen(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {},
-    showSearchBarInContent: Boolean = true // Default to showing the search bar in content
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -80,25 +78,8 @@ fun AppsScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Control panel section with search, filter and sort - no background color difference
+            // Control panel section with filter and sort - no background color difference
             Column {
-                // Search Bar - placed above filter section (only if showSearchBarInContent is true)
-                if (showSearchBarInContent) {
-                    AppsSearchBar(
-                        searchQuery = uiState.searchQuery,
-                        onSearchQueryChange = { 
-                            viewModel.updateSearchQuery(it)
-                            onSearchQueryChange(it)
-                        },
-                        onSearch = { viewModel.updateSearchQuery(it) },
-                        onActiveChange = { 
-                            viewModel.setSearchActive(it)
-                            onSearchActiveChange(it)
-                        },
-                        isSearchActive = uiState.isSearchActive
-                    )
-                }
-                
                 // Filter section
                 AppsFilterSection(
                     currentFilter = uiState.currentFilterOption,

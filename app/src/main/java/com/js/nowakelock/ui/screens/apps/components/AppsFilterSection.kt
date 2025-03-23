@@ -6,8 +6,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.R
 import com.js.nowakelock.ui.screens.apps.FilterOption
 
 /**
@@ -60,10 +62,10 @@ fun AppsFilterSection(
                 ) {
                     Text(
                         text = when (filter) {
-                            FilterOption.ALL -> "All Apps"
-                            FilterOption.USER -> "User Apps"
-                            FilterOption.SYSTEM -> "System Apps"
-                            FilterOption.MODIFIED -> "Modified"
+                            FilterOption.ALL -> stringResource(R.string.menu_filter_all)
+                            FilterOption.USER -> stringResource(R.string.menu_filter_user)
+                            FilterOption.SYSTEM -> stringResource(R.string.menu_filter_system)
+                            FilterOption.MODIFIED -> stringResource(R.string.menu_filter_modified)
                         },
                         style = MaterialTheme.typography.labelMedium, // Slightly smaller text
                         textAlign = TextAlign.Center

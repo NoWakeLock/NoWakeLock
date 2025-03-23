@@ -31,8 +31,7 @@ fun NoWakeLockNavGraph(
                 isSearchActive = isSearchActive,
                 onSearchActiveChange = onSearchActiveChange,
                 searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange,
-                showSearchBarInContent = false // Hide the duplicate search bar in content
+                onSearchQueryChange = onSearchQueryChange
             )
         }
         composable(NavRoutes.WAKELOCKS) {

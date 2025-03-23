@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,6 +29,15 @@ fun NoWakeLockApp() {
             val isSearchActive = rememberSaveable { mutableStateOf(false) }
             val searchQuery = rememberSaveable { mutableStateOf("") }
             
+            // 每次路线变化时重置搜索状态
+            val navBackStackEntry = navController.currentBackStackEntry
+            LaunchedEffect(navBackStackEntry) {
+                val currentRoute = navBackStackEntry?.destination?.route
+                if (currentRoute != NavRoutes.APPS) {
+                    isSearchActive.value = false
+                }
+            }
+            
             Scaffold(
                 topBar = { 
                     NoWakeLockTopAppBar(
@@ -37,25 +47,24 @@ fun NoWakeLockApp() {
                         onEvent = { event ->
                             when (event) {
                                 is TopAppBarEvent.SearchClicked -> {
-                                    // Toggle search active state
+                                    // 激活搜索模式
                                     isSearchActive.value = true
                                     
-                                    // If we're on the Apps screen, activate search
+                                    // 如果不在Apps页面，先导航到Apps页面
                                     val currentRoute = navController.currentBackStackEntry?.destination?.route
                                     if (currentRoute != NavRoutes.APPS) {
-                                        // Navigate to apps screen with search activated
                                         navController.navigate(NavRoutes.APPS)
                                     }
                                 }
                                 is TopAppBarEvent.MenuClicked -> {
-                                    // Handle menu click (not implemented)
+                                    // 处理菜单点击（暂未实现）
                                 }
                                 is TopAppBarEvent.SearchQueryChanged -> {
-                                    // Update search query
+                                    // 更新搜索查询
                                     searchQuery.value = event.query
                                 }
                                 is TopAppBarEvent.SearchDismissed -> {
-                                    // Close search
+                                    // 关闭搜索并清空查询
                                     isSearchActive.value = false
                                     searchQuery.value = ""
                                 }
