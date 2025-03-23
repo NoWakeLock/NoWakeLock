@@ -38,10 +38,10 @@
     <string name="BlockCountTime">BlockCountTime</string>
     <string name="search_title">Search</string>
     <string name="menu_filter">filter</string>
-    <string name="menu_filter_user">show user app</string>
-    <string name="menu_filter_system">show system app</string>
-    <string name="menu_filter_modified">show modified app</string>
-    <string name="menu_filter_all">show all app</string>
+    <string name="menu_filter_user">User apps</string>
+    <string name="menu_filter_system">System app</string>
+    <string name="menu_filter_modified">Modified</string>
+    <string name="menu_filter_all">All apps</string>
     <string name="menu_filter_count">order by count</string>
     <string name="menu_filter_name">order by name</string>
     <string name="menu_filter_countime">order by count time</string>
