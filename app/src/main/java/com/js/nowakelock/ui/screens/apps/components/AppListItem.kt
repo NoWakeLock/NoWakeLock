@@ -15,12 +15,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.graphics.drawable.toBitmap
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.entity.AppInfo
@@ -52,151 +55,148 @@ fun AppListItem(
     // Determine if this is a system app
     val isSystemApp = appWithStats.appInfo.system
 
-    // Single Box container for the entire item
-    Box(
+    // Use Row as the outer container
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 72.dp)
             .clickable { onItemClick(appWithStats) }
+            .let {
+                // primary color for system apps
+                val indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                it.drawWithContent {
+                    if (isSystemApp) {
+                        val barHeight = 48.dp.toPx()
+                        val yOffset = (size.height - barHeight) / 2
+
+                        drawRoundRect(
+                            color = indicatorColor,
+                            topLeft = androidx.compose.ui.geometry.Offset(6.dp.toPx(), yOffset),
+                            size = Size(3.dp.toPx(), barHeight),
+                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(1.5.dp.toPx())
+                        )
+                    }
+                    drawContent()
+                }
+            }
+            .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
-        // System app indicator - absolutely positioned
-        if (isSystemApp) {
-            Box(
-                modifier = Modifier
-                    .width(4.dp)
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .align(Alignment.CenterStart)
-            )
+        // App icon
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant.takeIf { appIcon == null }
+                        ?: Color.Transparent
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (appIcon != null) {
+                Image(
+                    bitmap = appIcon,
+                    contentDescription = "Icon for ${appWithStats.appInfo.label}"
+                )
+            } else {
+                // Fallback if icon can't be loaded
+                Text(
+                    text = appWithStats.appInfo.label.take(1).uppercase(),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
-        // Main content - consistent padding regardless of system app status
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        // Text and chips content
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+                .weight(1f)
+                .padding(start = 16.dp)
         ) {
-            // App icon
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.Center
+            // App name
+            Text(
+                text = appWithStats.appInfo.label,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            // Package name
+            Text(
+                text = appWithStats.appInfo.packageName,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            // Indicator chips using simplified Surface components
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (appIcon != null) {
-                    Image(
-                        bitmap = appIcon,
-                        contentDescription = "Icon for ${appWithStats.appInfo.label}"
-                    )
-                } else {
-                    // Fallback if icon can't be loaded
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
-                        contentAlignment = Alignment.Center
+                // Wakelock count indicator
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.height(28.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Bolt,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = appWithStats.appInfo.label.take(1).uppercase(),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "${appWithStats.wakelockCount} wakelocks",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                }
+
+                // Duration indicator
+                Surface(
+                    color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.height(28.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccessTime,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = appWithStats.getFormattedTime(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
                 }
             }
-
-            // Text and chips content
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp)
-            ) {
-                // App name
-                Text(
-                    text = appWithStats.appInfo.label,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                // Package name
-                Text(
-                    text = appWithStats.appInfo.packageName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                // Indicator chips using simplified Surface components
-                Row(
-                    modifier = Modifier.padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Wakelock count indicator
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.height(28.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Bolt,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${appWithStats.wakelockCount} wakelocks",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
-                    }
-
-                    // Duration indicator
-                    Surface(
-                        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.height(28.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.AccessTime,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = appWithStats.getFormattedTime(),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                        }
-                    }
-                }
-            }
         }
-
-        // Divider at the bottom
-        HorizontalDivider(
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .align(Alignment.BottomStart)
-                .fillMaxWidth(),
-            thickness = 0.5.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
     }
+
+    // Divider at the bottom (outside the Row)
+    HorizontalDivider(
+        modifier = Modifier
+            .padding(start = 16.dp)
+            .fillMaxWidth(),
+        thickness = 0.5.dp,
+        color = MaterialTheme.colorScheme.outlineVariant
+    )
 }
 
 @Composable
