@@ -17,7 +17,8 @@ enum class LoadingSource {
     INITIAL,        // 初始加载
     USER_PULL,      // 用户下拉刷新
     FILTER_CHANGE,  // 过滤器更改
-    SORT_CHANGE     // 排序更改
+    SORT_CHANGE,    // 排序更改
+    SEARCH_CHANGE   // 搜索条件更改
 }
 
 /**
@@ -29,6 +30,8 @@ data class AppsUiState(
     val apps: List<AppWithStats> = emptyList(),
     val currentSortOption: SortOption = SortOption.NAME,
     val currentFilterOption: FilterOption = FilterOption.ALL,
+    val searchQuery: String = "",
+    val isSearchActive: Boolean = false,
     val message: String = ""
 )
 
@@ -48,7 +51,7 @@ enum class FilterOption {
 
 /**
  * ViewModel for Apps Screen
- * Handles loading, sorting and filtering of application data
+ * Handles loading, sorting, filtering and searching of application data
  */
 class AppsViewModel(
     private val appDasRepo: AppDasRepo
@@ -71,7 +74,7 @@ class AppsViewModel(
     }
 
     /**
-     * Loads apps based on current sort and filter options
+     * Loads apps based on current sort, filter and search options
      * @param source 加载操作的来源
      */
     private fun loadApps(source: LoadingSource = LoadingSource.NONE) {
@@ -88,19 +91,30 @@ class AppsViewModel(
                 
                 // Update UI state with the apps flow
                 appsFlow.collect { appsList ->
-                    // Filter as needed
-                    val filteredApps = when (_uiState.value.currentFilterOption) {
+                    // Filter by app type first
+                    val typeFilteredApps = when (_uiState.value.currentFilterOption) {
                         FilterOption.ALL -> appsList
                         FilterOption.USER -> appsList.filter { !it.appInfo.system }
                         FilterOption.SYSTEM -> appsList.filter { it.appInfo.system }
                         FilterOption.MODIFIED -> appsList.filter { it.wakelockCount > 0 }
                     }
                     
+                    // Then apply search filter if needed
+                    val searchQuery = _uiState.value.searchQuery.trim().lowercase()
+                    val searchFilteredApps = if (searchQuery.isNotEmpty()) {
+                        typeFilteredApps.filter { app ->
+                            app.appInfo.label.lowercase().contains(searchQuery) ||
+                                    app.appInfo.packageName.lowercase().contains(searchQuery)
+                        }
+                    } else {
+                        typeFilteredApps
+                    }
+                    
                     _uiState.update { 
                         it.copy(
                             isLoading = false,
                             loadingSource = LoadingSource.NONE,
-                            apps = filteredApps
+                            apps = searchFilteredApps
                         )
                     }
                 }
@@ -133,6 +147,27 @@ class AppsViewModel(
         if (_uiState.value.currentFilterOption != option) {
             _uiState.update { it.copy(currentFilterOption = option) }
             loadApps(LoadingSource.FILTER_CHANGE)
+        }
+    }
+
+    /**
+     * Updates the search query and reloads data
+     */
+    fun updateSearchQuery(query: String) {
+        if (_uiState.value.searchQuery != query) {
+            _uiState.update { it.copy(searchQuery = query) }
+            loadApps(LoadingSource.SEARCH_CHANGE)
+        }
+    }
+
+    /**
+     * Updates the search active state
+     */
+    fun setSearchActive(active: Boolean) {
+        _uiState.update { it.copy(isSearchActive = active) }
+        // If search is deactivated and there was a search query, clear it
+        if (!active && _uiState.value.searchQuery.isNotEmpty()) {
+            updateSearchQuery("")
         }
     }
 

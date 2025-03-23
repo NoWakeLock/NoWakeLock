@@ -15,7 +15,11 @@ import com.js.nowakelock.ui.screens.wakelocks.WakelocksScreen
 @Composable
 fun NoWakeLockNavGraph(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSearchActive: Boolean = false,
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -23,7 +27,13 @@ fun NoWakeLockNavGraph(
         modifier = modifier
     ) {
         composable(NavRoutes.APPS) {
-            AppsScreen()
+            AppsScreen(
+                isSearchActive = isSearchActive,
+                onSearchActiveChange = onSearchActiveChange,
+                searchQuery = searchQuery,
+                onSearchQueryChange = onSearchQueryChange,
+                showSearchBarInContent = false // Hide the duplicate search bar in content
+            )
         }
         composable(NavRoutes.WAKELOCKS) {
             WakelocksScreen()
