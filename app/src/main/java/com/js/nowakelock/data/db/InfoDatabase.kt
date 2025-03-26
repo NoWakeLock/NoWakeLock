@@ -6,13 +6,16 @@ import androidx.room.migration.AutoMigrationSpec
 import com.js.nowakelock.data.db.converters.SetConvert
 import com.js.nowakelock.data.db.converters.TypeConvert
 import com.js.nowakelock.data.db.dao.InfoDao
+import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
+import com.js.nowakelock.data.db.entity.InfoEvent
 
 @Database(
     entities = [
-        Info::class
+        Info::class,
+        InfoEvent::class
     ],
-    version = 8,
+    version = 10,
     autoMigrations = [
         androidx.room.AutoMigration(from = 1, to = 2),
         androidx.room.AutoMigration(from = 2, to = 3),
@@ -23,6 +26,7 @@ import com.js.nowakelock.data.db.entity.Info
 @TypeConverters(SetConvert::class, TypeConvert::class)
 abstract class InfoDatabase : RoomDatabase() {
     abstract fun infoDao(): InfoDao
+    abstract fun infoEventDao(): InfoEventDao
 
     companion object {
         private const val DATABASE_NAME = "info_db"
@@ -41,7 +45,7 @@ abstract class InfoDatabase : RoomDatabase() {
             context, InfoDatabase::class.java,
             DATABASE_NAME
         )
-            .fallbackToDestructiveMigration() //if version change, it will delete all data.
+            .fallbackToDestructiveMigration()
             .build()
     }
 

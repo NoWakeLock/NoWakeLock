@@ -259,12 +259,21 @@ class ServiceHook {
                 param.result = null
 
                 XpUtil.log("$packageName service: $serviceName block $booted ${pm.isInteractive}")
-                XpRecord.upBlockCount(
-                    serviceName, packageName, type,
-                    context, userId
-                )//update BlockCount
+                XpRecord.blockEvent(
+                    serviceName, 
+                    packageName, 
+                    type,
+                    context, 
+                    userId
+                )
             } else {
-                XpRecord.upCount(serviceName, packageName, type, context, userId)//update Count
+                XpRecord.addEvent(
+                    serviceName, 
+                    packageName, 
+                    type, 
+                    context, 
+                    userId
+                )
             }
         }
 

@@ -5,41 +5,51 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import com.js.nowakelock.BuildConfig
-import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.base.infoToBundle
 import com.js.nowakelock.base.stringToType
 import com.js.nowakelock.data.db.InfoDatabase
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.InfoDao
+import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
-import com.js.nowakelock.xposedhook.XpUtil
-import kotlinx.coroutines.CoroutineScope
+import com.js.nowakelock.data.db.entity.InfoEvent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * Get the ContentProvider URI
+ */
 fun getURI(): Uri {
     return Settings.System.CONTENT_URI
 }
 
+/**
+ * Content Provider method identifiers
+ */
 enum class ProviderMethod(var value: String) {
-    UpCount("UpCount"),
-    UpBlockCount("GetExtends"),
-    UpCountTime("UpCountTime"),
-    LoadInfos("LoadInfos"),
-    LoadInfo("LoadInfo"),
-    ClearCount("ClearCount"),
-    ClearAll("ClearAll"),
-    CheckHookActive("CheckHookActive")
+    // Event-related methods
+    RecordEvent("RecordEvent"),     // Record event start/block with statistics update
+    EndEvent("EndEvent"),           // Record end time for events (primarily for wakelock)
+    
+    // Data access methods
+    LoadInfos("LoadInfos"),         // Load statistics summaries
+    LoadEvents("LoadEvents"),       // Load detailed event records
+    
+    // Management methods
+    ClearData("ClearData"),         // Clear statistics and events
+    CheckHookActive("CheckHookActive") // Verify hook is active
 }
 
+/**
+ * Content Provider implementation for NoWakeLock
+ * Handles database interactions for tracking events and statistics
+ */
 class XProvider(
     context: Context
 ) {
-//    private val tag = "ProviderHandler"
-
     private var db: InfoDatabase = InfoDatabase.getInstance(context)
     private var dao: InfoDao = db.infoDao()
+    private var eventDao: InfoEventDao = db.infoEventDao()
 
     companion object {
         @Volatile
@@ -53,163 +63,238 @@ class XProvider(
         }
     }
 
+    /**
+     * Route method calls to appropriate handler functions
+     */
     fun getMethod(methodName: String, bundle: Bundle): Bundle? {
         return when (methodName) {
-            ProviderMethod.UpCount.value -> upCount(bundle)
-            ProviderMethod.UpBlockCount.value -> upBlockCount(bundle)
-            ProviderMethod.UpCountTime.value -> upCountTime(bundle)
+            ProviderMethod.RecordEvent.value -> recordEvent(bundle)
+            ProviderMethod.EndEvent.value -> endEvent(bundle)
             ProviderMethod.LoadInfos.value -> loadInfos(bundle)
-            ProviderMethod.LoadInfo.value -> loadInfo(bundle)
-            ProviderMethod.ClearCount.value -> clearCount(bundle)
-            ProviderMethod.ClearAll.value -> clearAll(bundle)
+            ProviderMethod.LoadEvents.value -> loadEvents(bundle)
+            ProviderMethod.ClearData.value -> clearData(bundle)
             ProviderMethod.CheckHookActive.value -> checkHookActive(bundle)
-            "test" -> test(bundle)
             else -> null
         }
     }
 
-    private fun test(bundle: Bundle): Bundle {
-        val name: String = bundle.getString("name") ?: ""
-        val type: String = bundle.getString("type") ?: ""
-        val count: Int = bundle.getInt("count")
-
-        val info = Info(
-            name = name,
-            type = stringToType(type),
-            count = count
-        )
-
-        runBlocking {
-            db.infoDao().insert(info)
-            db.infoDao().upBlockCountPO(name, stringToType(type))
-        }
-
-        val tmp = Bundle()
-        tmp.putString("name", name)
-        return tmp
-    }
-
-    private fun upCount(bundle: Bundle): Bundle {
+    /**
+     * Record event start or block with statistics update
+     * Handles both normal and blocked events in a unified method
+     * 
+     * @param bundle Parameters including:
+     *   - name: Event name
+     *   - type: Event type
+     *   - packageName: Package name
+     *   - userId: User ID
+     *   - startTime: Event start time
+     *   - isBlocked: Whether the event is blocked (default false)
+     * @return Bundle containing eventKey for normal events
+     */
+    private fun recordEvent(bundle: Bundle): Bundle {
         val name: String = bundle.getString("name") ?: ""
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
-
-//        LogUtil.d(XpUtil.Tag, "upCount: $name, $type, $packageName, $userId")
-
+        val startTime = bundle.getLong("startTime", System.currentTimeMillis())
+        val isBlocked = bundle.getBoolean("isBlocked", false)
+        
+        // Generate unique event key
+        val eventKey = InfoEvent.generateEventKey(name, packageName, type, userId, startTime)
+        
         runBlocking(Dispatchers.IO) {
+            val infoEvent = InfoEvent(
+                name = name,
+                type = type,
+                packageName = packageName,
+                userId = userId,
+                startTime = startTime,
+                isBlocked = isBlocked,
+                eventKey = eventKey
+            )
+            eventDao.insert(infoEvent)
+            
+            // Update statistics
             val info = dao.loadInfo(name, type, userId)
             if (info != null) {
-                dao.upCountPO(name, type, userId)
+                if (isBlocked) {
+                    dao.upBlockCountPO(name, type, userId)
+                } else {
+                    dao.upCountPO(name, type, userId)
+                }
             } else {
                 dao.insert(
                     Info(
-                        name = name, type = type,
-                        packageName = packageName, userId = userId,
-                        count = 1
+                        name = name, 
+                        type = type,
+                        packageName = packageName, 
+                        userId = userId,
+                        count = if (!isBlocked) 1 else 0,
+                        blockCount = if (isBlocked) 1 else 0
                     )
                 )
             }
         }
-        return Bundle()
+        
+        // Return event key for later reference
+        return Bundle().apply {
+            if (!isBlocked) {
+                putString("eventKey", eventKey)
+            }
+        }
     }
-
-    private fun upBlockCount(bundle: Bundle): Bundle {
+    
+    /**
+     * Record event end time (primarily for wakelock events)
+     * Updates event record and duration statistics
+     * 
+     * @param bundle Parameters including:
+     *   - name: Event name
+     *   - type: Event type (must be Wakelock)
+     *   - packageName: Package name
+     *   - userId: User ID
+     *   - endTime: Event end time
+     *   - startTime: Optional start time for rebuilding eventKey
+     *   - eventKey: Optional direct event key for faster lookup
+     * @return Empty bundle
+     */
+    private fun endEvent(bundle: Bundle): Bundle {
         val name: String = bundle.getString("name") ?: ""
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val info = dao.loadInfo(name, type, userId)
-            if (info != null) {
-                dao.upBlockCountPO(name, type, userId)
-            } else {
-                dao.insert(
-                    Info(
-                        name = name, type = type,
-                        packageName = packageName, userId = userId,
-                        blockCount = 1
-                    )
-                )
+        val endTime = bundle.getLong("endTime", System.currentTimeMillis())
+        val startTime = bundle.getLong("startTime", 0)  // For rebuilding eventKey
+        
+        if (type != Type.Wakelock) {
+            return Bundle()
+        }
+        
+        // Get event key from parameters or rebuild it
+        val eventKey = bundle.getString("eventKey") ?: 
+                      InfoEvent.generateEventKey(name, packageName, type, userId, startTime)
+        
+        runBlocking(Dispatchers.IO) {
+            // Find event by key for efficient lookup
+            val targetEvent = eventDao.loadEventByKey(eventKey)
+            
+            if (targetEvent != null && targetEvent.endTime == null && !targetEvent.isBlocked) {
+                // Calculate duration
+                val duration = endTime - targetEvent.startTime
+                
+                // Update event end time
+                targetEvent.endTime = endTime
+                eventDao.insert(targetEvent)
+                
+                // Update duration statistics
+                dao.upCountTime(duration, name, type, userId)
             }
         }
-
+        
         return Bundle()
     }
-
-    private fun upCountTime(bundle: Bundle): Bundle {
-        val name: String = bundle.getString("name") ?: ""
+    
+    /**
+     * Load event records with optional filtering
+     * 
+     * @param bundle Parameters including:
+     *   - type: Optional event type filter
+     *   - packageName: Optional package name filter
+     *   - userId: User ID filter
+     *   - startTime: Optional time range start
+     *   - endTime: Optional time range end
+     * @return Bundle containing array of InfoEvent objects
+     */
+    private fun loadEvents(bundle: Bundle): Bundle {
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
-        val time = bundle.getLong("time")
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val info = dao.loadInfo(name, type, userId)
-            if (info != null) {
-                dao.upCountTime(time, name, type, userId)
+        val startTime = bundle.getLong("startTime", 0)
+        val endTime = bundle.getLong("endTime", System.currentTimeMillis())
+        
+        val events: Array<InfoEvent> = runBlocking(Dispatchers.IO) {
+            if (packageName.isEmpty() && type == Type.UnKnow) {
+                eventDao.loadAllEvents().toTypedArray()
+            } else if (packageName.isEmpty() && type != Type.UnKnow) {
+                eventDao.loadEvents(type).toTypedArray()
+            } else if (packageName.isNotEmpty() && type == Type.UnKnow) {
+                if (startTime > 0) {
+                    eventDao.loadEventsInTimeRange(packageName, startTime, endTime, userId).toTypedArray()
+                } else {
+                    eventDao.loadEvents(packageName, userId).toTypedArray()
+                }
             } else {
-                dao.insert(
-                    Info(
-                        name = name, type = type,
-                        packageName = packageName, userId = userId,
-                        countTime = time
-                    )
-                )
+                if (startTime > 0) {
+                    eventDao.loadEventsInTimeRange(packageName, type, startTime, endTime, userId).toTypedArray()
+                } else {
+                    eventDao.loadEvents(packageName, type, userId).toTypedArray()
+                }
             }
         }
-
-        return Bundle()
+        
+        return Bundle().apply {
+            putSerializable("events", events)
+        }
     }
 
+    /**
+     * Load statistics summaries with optional filtering
+     * 
+     * @param bundle Parameters including:
+     *   - type: Optional event type filter
+     *   - packageName: Optional package name filter
+     *   - userId: User ID filter
+     * @return Bundle containing array of Info objects
+     */
     private fun loadInfos(bundle: Bundle): Bundle {
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
         val infos: Array<Info> = runBlocking(Dispatchers.IO) {
-            if (packageName == "" && type == Type.UnKnow)
+            if (packageName.isEmpty() && type == Type.UnKnow) {
                 dao.loadInfos().toTypedArray()
-            else if (packageName == "" && type != Type.UnKnow)
+            } else if (packageName.isEmpty() && type != Type.UnKnow) {
                 dao.loadInfos(type).toTypedArray()
-            else if (packageName != "" && type == Type.UnKnow)
+            } else if (packageName.isNotEmpty() && type == Type.UnKnow) {
                 dao.loadInfos(packageName, userId).toTypedArray()
-            else
+            } else {
                 dao.loadInfos(packageName, type, userId).toTypedArray()
+            }
         }
 
-        return Bundle().let {
-            it.putSerializable("infos", infos)
-            it
+        return Bundle().apply {
+            putSerializable("infos", infos)
         }
     }
 
-    private fun loadInfo(bundle: Bundle): Bundle {
-        val name: String = bundle.getString("name") ?: ""
-        val type: Type = stringToType(bundle.getString("type") ?: "")
-
-        val info: Info = runBlocking {
-            dao.loadInfo(name, type) ?: Info(name = name, type = type)
-        }
-
-        return infoToBundle(info)
-    }
-
-    private fun clearCount(bundle: Bundle): Bundle {
+    /**
+     * Clear statistics and events data
+     * 
+     * @param bundle Parameters:
+     *   - clearAll: Whether to clear all data (true) or just counts (false)
+     * @return Empty bundle
+     */
+    private fun clearData(bundle: Bundle): Bundle {
+        val clearAll = bundle.getBoolean("clearAll", false)
+        
         runBlocking {
-            dao.rstAllCount()
-            dao.rstAllCountTime()
+            if (clearAll) {
+                dao.clearAll()
+                eventDao.clearAll()
+            } else {
+                dao.rstAllCount()
+                dao.rstAllCountTime()
+                eventDao.clearAll()
+            }
         }
         return Bundle()
     }
 
-    private fun clearAll(bundle: Bundle): Bundle {
-        runBlocking {
-            dao.clearAll()
-        }
-        return Bundle()
-    }
-
+    /**
+     * Check if hook is active and get version information
+     * 
+     * @return Bundle with active status and version
+     */
     private fun checkHookActive(bundle: Bundle): Bundle {
         return Bundle().apply {
             putBoolean("active", true)

@@ -69,7 +69,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
                     daDao.insert(it)
                 }
             }catch (e:Exception){
-                getCPResult(BasicApp.context, ProviderMethod.ClearAll.value, Bundle())
+                getCPResult(BasicApp.context, ProviderMethod.ClearData.value, Bundle())
                 LogUtil.d("AppDasAR", "getSerializable err: $e")
             }finally {
                 LogUtil.d("AppDasAR", "getSerializable err clearAll")

@@ -139,11 +139,23 @@ class AlarmHook {
 
                     XpUtil.log("$packageName alarm: $alarmName block $booted ${pm.isInteractive}")
                     //update blockCount
-                    XpRecord.upBlockCount(alarmName, packageName, type, context, userId)
+                    XpRecord.blockEvent(
+                        alarmName,
+                        packageName,
+                        type,
+                        context,
+                        userId
+                    )
 
                 } else {//allow alarm
                     lastAllowTime[alarmName] = now
-                    XpRecord.upCount(alarmName, packageName, type, context, userId)//update count
+                    XpRecord.addEvent(
+                        alarmName,
+                        packageName,
+                        type,
+                        context,
+                        userId
+                    )
                 }
             }
         }

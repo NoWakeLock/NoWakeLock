@@ -242,13 +242,17 @@ class WakelockHook {
                 XpUtil.log("$pN wakeLock:$wN block '${pm.isInteractive}' '$booted'")
                 param.result = null
 
-                XpRecord.upBlockCount(wN, pN, Type.Wakelock, context, userId) //update blockCount
+                // Record blocked event
+                XpRecord.blockEvent(wN, pN, Type.Wakelock, context, userId, now)
             } else { // allow wakelock
                 lastAllowTime[wN] = now //update last allow time
 
-                wlTs[lock] ?: WLT(wN, pN, userId, startTime = now).let {
-                    wlTs[lock] = it // add to wlT
-                }
+                // Record start event and get event key
+                val bundle = XpRecord.addEvent(wN, pN, Type.Wakelock, context, userId, now)
+                
+                // Create or update WLT with event key
+                val eventKey = bundle?.getString("eventKey") ?: ""
+                wlTs[lock] = WLT(wN, pN, userId, now, eventKey)
             }
         }
 
@@ -257,15 +261,19 @@ class WakelockHook {
             val now = SystemClock.elapsedRealtime() //current time
             val wlT: WLT = wlTs[lock] ?: return
 
-            XpRecord.upCount(
-                wlT.wakelockName, wlT.packageName, Type.Wakelock, context, wlT.userId
-            ) //update count
-
-            XpRecord.upCountTime(
-                now - wlT.startTime,
-                wlT.wakelockName, wlT.packageName, Type.Wakelock,
-                context, wlT.userId
-            ) //update countTime
+            // End event using appropriate method based on available data
+            if (wlT.eventKey.isNotEmpty()) {
+                XpRecord.endEventWithKey(
+                    wlT.wakelockName, wlT.packageName, 
+                    context, wlT.userId, now, wlT.eventKey
+                )
+            } else {
+                // Fallback for backward compatibility
+                XpRecord.endEvent(
+                    wlT.wakelockName, wlT.packageName,
+                    context, wlT.userId, now, wlT.startTime
+                )
+            }
 
             wlTs.remove(lock)
         }
@@ -287,6 +295,7 @@ class WakelockHook {
         val wakelockName: String,
         val packageName: String,
         var userId: Int = 0,
-        var startTime: Long = 0
+        var startTime: Long = 0,
+        var eventKey: String = ""
     )
 }

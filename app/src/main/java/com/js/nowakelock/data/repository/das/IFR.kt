@@ -98,7 +98,7 @@ open class IFR(private val daDao: DADao) : FR {
                 val infos = result.getSerializable("infos") as Array<Info>?
                 infos?.toList() ?: emptyList()
             } catch (e: Exception) {
-                getCPResult(BasicApp.context, ProviderMethod.ClearAll.value, Bundle())
+                getCPResult(BasicApp.context, ProviderMethod.ClearData.value, Bundle())
                 emptyList()
             }
         } else {

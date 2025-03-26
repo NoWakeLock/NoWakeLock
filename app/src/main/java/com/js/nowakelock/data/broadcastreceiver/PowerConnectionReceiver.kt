@@ -64,6 +64,6 @@ class PowerConnectionReceiver : BroadcastReceiver() {
     // clear infoDb
     private fun clearCPAll() {
         val args = Bundle()
-        getCPResult(BasicApp.context, ProviderMethod.ClearAll.value, args)
+        getCPResult(BasicApp.context, ProviderMethod.ClearData.value, args)
     }
 }
