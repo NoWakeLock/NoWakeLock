@@ -13,6 +13,8 @@ import com.js.nowakelock.data.repository.das.FR
 import com.js.nowakelock.data.repository.das.IAlarmR
 import com.js.nowakelock.data.repository.das.IServiceR
 import com.js.nowakelock.data.repository.das.IWakelockR
+import com.js.nowakelock.data.repository.wakelock.WakelockRepository
+import com.js.nowakelock.data.repository.wakelock.WakelockRepositoryImpl
 import com.js.nowakelock.ui.screens.apps.AppsViewModel
 import com.js.nowakelock.ui.screens.alarms.AlarmsViewModel
 import com.js.nowakelock.ui.screens.services.ServicesViewModel
@@ -35,6 +37,9 @@ fun appModule() = module {
     singleOf(::IServiceR) { bind<FR>(); named("ServiceR") }
     singleOf(::DaR) { bind<DaRepo>() }
     singleOf(::BackupRepo)
+    
+    // Wakelock Repository
+    singleOf(::WakelockRepositoryImpl) { bind<WakelockRepository>() }
 
     //
     single { AppDatabase.getInstance(get()) }

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,6 +58,7 @@ import com.js.nowakelock.ui.navigation.NavRoutes
 sealed class TopAppBarEvent {
     object SearchClicked : TopAppBarEvent()
     object MenuClicked : TopAppBarEvent()
+    object RefreshClicked : TopAppBarEvent()
     data class SearchQueryChanged(val query: String) : TopAppBarEvent()
     object SearchDismissed : TopAppBarEvent()
 }
@@ -67,12 +69,14 @@ fun NoWakeLockTopAppBar(
     navController: NavController,
     onEvent: (TopAppBarEvent) -> Unit = {},
     isSearchActive: Boolean = false,
-    searchQuery: String = ""
+    searchQuery: String = "",
+    currentRoute: String? = null
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    // Use passed currentRoute or get it from NavController if not provided
+    val route = currentRoute ?: navBackStackEntry?.destination?.route
 
-    val title = when (currentRoute) {
+    val title = when (route) {
         NavRoutes.APPS -> stringResource(id = R.string.Apps)
         NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
         NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
@@ -82,7 +86,7 @@ fun NoWakeLockTopAppBar(
     }
 
     // Only show search interface in apps screen
-    val showSearch = isSearchActive && currentRoute == NavRoutes.APPS
+    val showSearch = isSearchActive && route == NavRoutes.APPS
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -155,28 +159,74 @@ fun NoWakeLockTopAppBar(
             )
         )
     } else {
-        // Normal TopAppBar
+        // Normal TopAppBar with dynamic actions based on current route
         TopAppBar(
             title = { Text(text = title) },
             actions = {
                 Row {
-                    // Search button
-                    if (currentRoute == NavRoutes.APPS) {
-                        IconButton(
-                            onClick = { onEvent(TopAppBarEvent.SearchClicked) },
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .clip(CircleShape)
-                        ) {
-                            Icon(
-                                Icons.Default.Search,
-                                contentDescription = "搜索",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
+                    // Dynamic actions based on current route
+                    when (route) {
+                        NavRoutes.APPS -> {
+                            // Search button for Apps screen
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                        NavRoutes.WAKELOCKS -> {
+                            // Refresh and search buttons for Wakelocks screen
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = "Refresh",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                        NavRoutes.ALARMS, NavRoutes.SERVICES -> {
+                            // Add specific actions for other screens as needed
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = "Refresh",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
 
-                    //todo: more options button?
+                    // Common menu button (optional, currently disabled)
 //                    IconButton(
 //                        onClick = { onEvent(TopAppBarEvent.MenuClicked) },
 //                        modifier = Modifier
@@ -185,7 +235,7 @@ fun NoWakeLockTopAppBar(
 //                    ) {
 //                        Icon(
 //                            Icons.Default.MoreVert,
-//                            contentDescription = "更多选项",
+//                            contentDescription = "More options",
 //                            tint = MaterialTheme.colorScheme.onSurface
 //                        )
 //                    }

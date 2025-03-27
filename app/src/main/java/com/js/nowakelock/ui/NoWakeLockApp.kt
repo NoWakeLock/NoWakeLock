@@ -1,12 +1,17 @@
 package com.js.nowakelock.ui
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,9 +21,15 @@ import com.js.nowakelock.ui.components.NoWakeLockTopAppBar
 import com.js.nowakelock.ui.components.TopAppBarEvent
 import com.js.nowakelock.ui.navigation.NavRoutes
 import com.js.nowakelock.ui.navigation.NoWakeLockNavGraph
+import com.js.nowakelock.ui.screens.wakelocks.WakelocksViewModel
 import com.js.nowakelock.ui.theme.NoWakeLockTheme
 import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Main app composable that sets up the overall UI structure
+ * Edge-to-edge display is handled by enableEdgeToEdge() in MainActivity
+ */
 @Composable
 fun NoWakeLockApp() {
     KoinAndroidContext{
@@ -29,11 +40,17 @@ fun NoWakeLockApp() {
             val isSearchActive = rememberSaveable { mutableStateOf(false) }
             val searchQuery = rememberSaveable { mutableStateOf("") }
             
-            // 每次路线变化时重置搜索状态
+            // Obtain the wakelocks ViewModel for app-level access to refresh function
+            val wakelocksViewModel: WakelocksViewModel = koinViewModel()
+            
+            // Navigation state for dynamic TopAppBar
             val navBackStackEntry = navController.currentBackStackEntry
+            val currentRoute = navBackStackEntry?.destination?.route
+            
+            // Reset search state whenever route changes
             LaunchedEffect(navBackStackEntry) {
-                val currentRoute = navBackStackEntry?.destination?.route
-                if (currentRoute != NavRoutes.APPS) {
+                val route = navBackStackEntry?.destination?.route
+                if (route != NavRoutes.APPS) {
                     isSearchActive.value = false
                 }
             }
@@ -47,29 +64,38 @@ fun NoWakeLockApp() {
                         onEvent = { event ->
                             when (event) {
                                 is TopAppBarEvent.SearchClicked -> {
-                                    // 激活搜索模式
+                                    // Activate search mode
                                     isSearchActive.value = true
                                     
-                                    // 如果不在Apps页面，先导航到Apps页面
-                                    val currentRoute = navController.currentBackStackEntry?.destination?.route
-                                    if (currentRoute != NavRoutes.APPS) {
+                                    // If not on Apps screen, navigate to Apps screen first
+                                    val route = navController.currentBackStackEntry?.destination?.route
+                                    if (route != NavRoutes.APPS) {
                                         navController.navigate(NavRoutes.APPS)
                                     }
                                 }
                                 is TopAppBarEvent.MenuClicked -> {
-                                    // 处理菜单点击（暂未实现）
+                                    // Handle menu click (not yet implemented)
                                 }
                                 is TopAppBarEvent.SearchQueryChanged -> {
-                                    // 更新搜索查询
+                                    // Update search query
                                     searchQuery.value = event.query
                                 }
                                 is TopAppBarEvent.SearchDismissed -> {
-                                    // 关闭搜索并清空查询
+                                    // Close search and clear query
                                     isSearchActive.value = false
                                     searchQuery.value = ""
                                 }
+                                is TopAppBarEvent.RefreshClicked -> {
+                                    // Handle refresh based on current route
+                                    when (currentRoute) {
+                                        NavRoutes.WAKELOCKS -> wakelocksViewModel.refreshData()
+                                        // Add other screen refresh actions as needed
+                                    }
+                                }
                             }
-                        }
+                        },
+                        // Pass current route for dynamic actions in TopAppBar
+                        currentRoute = currentRoute
                     ) 
                 },
                 bottomBar = { NoWakeLockBottomNavBar(navController) }
@@ -80,7 +106,9 @@ fun NoWakeLockApp() {
                     isSearchActive = isSearchActive.value,
                     onSearchActiveChange = { isSearchActive.value = it },
                     searchQuery = searchQuery.value,
-                    onSearchQueryChange = { searchQuery.value = it }
+                    onSearchQueryChange = { searchQuery.value = it },
+                    // Pass the ViewModel to screens that need it
+                    wakelocksViewModel = wakelocksViewModel
                 )
             }
         }
@@ -91,20 +119,4 @@ fun NoWakeLockApp() {
 @Preview
 fun NoWakeLockAppPreview() {
     NoWakeLockApp()
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NoWakeLockTheme {
-        Greeting("Android")
-    }
 }

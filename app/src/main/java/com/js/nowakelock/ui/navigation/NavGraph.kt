@@ -11,7 +11,12 @@ import com.js.nowakelock.ui.screens.apps.AppsScreen
 import com.js.nowakelock.ui.screens.services.ServicesScreen
 import com.js.nowakelock.ui.screens.settings.SettingsScreen
 import com.js.nowakelock.ui.screens.wakelocks.WakelocksScreen
+import com.js.nowakelock.ui.screens.wakelocks.WakelocksViewModel
 
+/**
+ * Main navigation graph for the NoWakeLock app.
+ * Handles navigation between main screens and passing shared state/viewmodels.
+ */
 @Composable
 fun NoWakeLockNavGraph(
     navController: NavHostController,
@@ -19,7 +24,8 @@ fun NoWakeLockNavGraph(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    wakelocksViewModel: WakelocksViewModel? = null
 ) {
     NavHost(
         navController = navController,
@@ -35,7 +41,10 @@ fun NoWakeLockNavGraph(
             )
         }
         composable(NavRoutes.WAKELOCKS) {
-            WakelocksScreen()
+            // Pass the ViewModel from parent to avoid duplicate ViewModel instances
+            wakelocksViewModel?.let {
+                WakelocksScreen(viewModel = it)
+            } ?: WakelocksScreen()
         }
         composable(NavRoutes.ALARMS) {
             AlarmsScreen()

@@ -8,6 +8,10 @@ import androidx.activity.enableEdgeToEdge
 import com.js.nowakelock.base.isModuleActive
 import com.js.nowakelock.ui.NoWakeLockApp
 
+/**
+ * Main activity that hosts the entire app UI
+ * Uses Material 3 edge-to-edge display
+ */
 class MainActivity : ComponentActivity() {
 
 //    private lateinit var toolbar: Toolbar
@@ -19,12 +23,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //check module active
+        // Check if the module is active
         if (!isModuleActive()) {
             Toast.makeText(this, getString(R.string.active), Toast.LENGTH_LONG).show()
         }
 
+        // Enable edge-to-edge display (must be called before setContent)
+        // This replaces the SystemUiController functionality with official API
         enableEdgeToEdge()
+        
         setContent {
             NoWakeLockApp()
         }
