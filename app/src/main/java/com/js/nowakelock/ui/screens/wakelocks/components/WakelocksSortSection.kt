@@ -1,8 +1,10 @@
 package com.js.nowakelock.ui.screens.wakelocks.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material.icons.outlined.SortByAlpha
@@ -10,16 +12,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.js.nowakelock.R
 import com.js.nowakelock.ui.screens.wakelocks.WakelockSortOption
 
 /**
  * Sort section component for the wakelocks screen
  * Provides options to sort by name, count, or time
+ * Styled to match AppsSortSection for UI consistency
  */
 @Composable
 fun WakelocksSortSection(
@@ -27,88 +28,98 @@ fun WakelocksSortSection(
     onSortChanged: (WakelockSortOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showSortMenu by remember { mutableStateOf(false) }
-    
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp), // Reduced vertical padding for better spacing
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "Sort by:",
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(end = 8.dp)
-        )
+        // Sort by label with icon for better visual hierarchy
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Sort,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "Sort by:",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         
-        // Name sort button
-        SortButton(
-            selected = currentSort == WakelockSortOption.NAME,
-            onClick = { onSortChanged(WakelockSortOption.NAME) },
-            text = "Name",
-            icon = Icons.Outlined.SortByAlpha
-        )
+        Spacer(modifier = Modifier.width(12.dp))
         
-        Spacer(modifier = Modifier.width(8.dp))
-        
-        // Count sort button
-        SortButton(
-            selected = currentSort == WakelockSortOption.COUNT,
-            onClick = { onSortChanged(WakelockSortOption.COUNT) },
-            text = "Count",
-            icon = Icons.Outlined.Sort
-        )
-        
-        Spacer(modifier = Modifier.width(8.dp))
-        
-        // Time sort button
-        SortButton(
-            selected = currentSort == WakelockSortOption.TIME,
-            onClick = { onSortChanged(WakelockSortOption.TIME) },
-            text = "Time",
-            icon = Icons.Outlined.AccessTime
-        )
+        // Simple text options for sorting
+        Row(
+            modifier = Modifier.wrapContentWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Name sort option
+            SortOption(
+                text = "Name",
+                selected = currentSort == WakelockSortOption.NAME,
+                onClick = { onSortChanged(WakelockSortOption.NAME) }
+            )
+            
+            // Count sort option
+            SortOption(
+                text = "Count",
+                selected = currentSort == WakelockSortOption.COUNT,
+                onClick = { onSortChanged(WakelockSortOption.COUNT) }
+            )
+            
+            // Time sort option
+            SortOption(
+                text = "Time",
+                selected = currentSort == WakelockSortOption.TIME,
+                onClick = { onSortChanged(WakelockSortOption.TIME) }
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Individual sort option component
+ */
 @Composable
-private fun SortButton(
-    selected: Boolean,
-    onClick: () -> Unit,
+private fun SortOption(
     text: String,
-    icon: Any  // Can be ImageVector, Painter, etc.
+    selected: Boolean,
+    onClick: () -> Unit
 ) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { 
-            Text(
-                text = text,
-                textAlign = TextAlign.Center
+    Row(
+        modifier = Modifier
+            .wrapContentSize()
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.primary
             )
-        },
-        leadingIcon = {
-            when (icon) {
-                is androidx.compose.ui.graphics.vector.ImageVector -> {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
-        },
-        trailingIcon = if (selected) {
-            {
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        } else null
-    )
+        }
+        
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (selected) 
+                MaterialTheme.colorScheme.primary 
+            else 
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable

@@ -1,18 +1,25 @@
 package com.js.nowakelock.ui.screens.wakelocks.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.ui.screens.wakelocks.WakelockFilterOption
 
 /**
  * Filter section component for the wakelocks screen
- * Provides filter chips to select between All, Blocked and Allowed wakelocks
+ * Provides filter buttons to select between All, Blocked and Allowed wakelocks
+ * Styled to match AppsFilterSection for UI consistency
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WakelocksFilterSection(
     currentFilter: WakelockFilterOption,
@@ -22,41 +29,115 @@ fun WakelocksFilterSection(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(horizontal = 12.dp, vertical = 6.dp), // Reduced padding
+        horizontalArrangement = Arrangement.spacedBy(6.dp), // Reduced spacing
+        verticalAlignment = Alignment.CenterVertically
     ) {
         // All filter
-        FilterChip(
-            selected = currentFilter == WakelockFilterOption.ALL,
+        FilterButton(
+            text = "All",
+            isSelected = currentFilter == WakelockFilterOption.ALL,
             onClick = { onFilterChanged(WakelockFilterOption.ALL) },
-            label = { Text("All") },
-            colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            modifier = Modifier.weight(1f)
         )
         
         // Blocked filter
-        FilterChip(
-            selected = currentFilter == WakelockFilterOption.BLOCKED,
+        FilterButton(
+            text = "Blocked",
+            isSelected = currentFilter == WakelockFilterOption.BLOCKED,
             onClick = { onFilterChanged(WakelockFilterOption.BLOCKED) },
-            label = { Text("Blocked") },
-            colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = MaterialTheme.colorScheme.errorContainer,
-                selectedLabelColor = MaterialTheme.colorScheme.onErrorContainer
-            )
+            modifier = Modifier.weight(1f),
+            selectedColor = MaterialTheme.colorScheme.errorContainer,
+            selectedContentColor = MaterialTheme.colorScheme.onErrorContainer
         )
         
         // Allowed filter
-        FilterChip(
-            selected = currentFilter == WakelockFilterOption.ALLOWED,
+        FilterButton(
+            text = "Allowed",
+            isSelected = currentFilter == WakelockFilterOption.ALLOWED,
             onClick = { onFilterChanged(WakelockFilterOption.ALLOWED) },
-            label = { Text("Allowed") },
-            colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                selectedLabelColor = MaterialTheme.colorScheme.onTertiaryContainer
-            )
+            modifier = Modifier.weight(1f),
+            selectedColor = MaterialTheme.colorScheme.tertiaryContainer,
+            selectedContentColor = MaterialTheme.colorScheme.onTertiaryContainer
         )
+        
+        // Invisible fourth filter (placeholder to match Apps screen's layout)
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .alpha(0f) // Completely invisible
+                .semantics { 
+                    contentDescription = "" // Empty for accessibility services to ignore
+                }
+        ) {
+            // Empty box with same size/weight characteristics
+            Surface(
+                shape = MaterialTheme.shapes.large,
+                color = Color.Transparent,
+                contentColor = Color.Transparent,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "",
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Filter button component to ensure consistent styling across filters
+ */
+@Composable
+private fun FilterButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    selectedColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    selectedContentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer
+) {
+    Surface(
+        modifier = modifier,
+        onClick = onClick,
+        shape = MaterialTheme.shapes.large, // More rounded corners
+        color = if (isSelected) 
+            selectedColor 
+        else 
+            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), // Lighter background when not selected
+        contentColor = if (isSelected)
+            selectedContentColor
+        else
+            MaterialTheme.colorScheme.onSurface,
+        tonalElevation = 0.dp, // Flatter appearance
+        shadowElevation = if (isSelected) 1.dp else 0.dp, // Minimal shadow
+        border = BorderStroke(
+            width = 0.5.dp,
+            color = if (isSelected)
+                selectedColor.copy(alpha = 0.5f)
+            else
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp), // Reduced vertical padding
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelMedium, // Slightly smaller text
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

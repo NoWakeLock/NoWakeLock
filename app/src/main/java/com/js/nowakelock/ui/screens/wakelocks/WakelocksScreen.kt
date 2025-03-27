@@ -37,26 +37,28 @@ fun WakelocksScreen(
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
-        // Filter section
-        WakelocksFilterSection(
-            currentFilter = uiState.currentFilterOption,
-            onFilterChanged = viewModel::changeFilterOption
-        )
+        // Control panel section with filter and sort options
+        Column {
+            // Filter section
+            WakelocksFilterSection(
+                currentFilter = uiState.currentFilterOption,
+                onFilterChanged = viewModel::changeFilterOption
+            )
+            
+            // Sort section
+            WakelocksSortSection(
+                currentSort = uiState.currentSortOption,
+                onSortChanged = viewModel::changeSortOption
+            )
+            
+            // Clean divider between controls and content - subtle but visible
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
+        }
         
-        // Sort section
-        WakelocksSortSection(
-            currentSort = uiState.currentSortOption,
-            onSortChanged = viewModel::changeSortOption
-        )
-        
-        // Summary card
-        WakelocksSummary(
-            totalWakelocks = uiState.totalWakelocks,
-            blockedCount = uiState.blockedCount,
-            allowedCount = uiState.allowedCount
-        )
-        
-        // Wakelock list
+        // Content area - list with Summary card as first item
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -75,8 +77,20 @@ fun WakelocksScreen(
                 )
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 8.dp)
                 ) {
+                    // Summary card as first list item
+                    item(key = "summary_card") {
+                        WakelocksSummary(
+                            totalWakelocks = uiState.totalWakelocks,
+                            blockedCount = uiState.blockedCount,
+                            allowedCount = uiState.allowedCount,
+                            modifier = Modifier.padding(top = 8.dp) // Add some top padding
+                        )
+                    }
+                    
+                    // Wakelock list items
                     items(
                         items = uiState.wakelocks,
                         key = { "${it.name}_${it.packageName}_${it.userId}" }
