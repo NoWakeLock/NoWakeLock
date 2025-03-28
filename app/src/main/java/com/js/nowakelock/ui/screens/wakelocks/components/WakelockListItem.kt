@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,13 +22,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.js.nowakelock.data.model.WakelockItem
 import com.js.nowakelock.ui.theme.AllowedGreen
 import com.js.nowakelock.ui.theme.BlockedRed
 
 /**
  * WakelockListItem displays a single wakelock with its settings
- * Redesigned to match AppListItem styling for consistency
+ * Redesigned with ConstraintLayout for better spacing and alignment
  * Includes status indicator, info section, and compact controls
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,58 +53,62 @@ fun WakelockListItem(
         mutableStateOf(wakelockItem.timeWindow?.toString() ?: "60")
     }
 
-    // Row container
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    // Main container with status bar indicator
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 72.dp)
             .clickable { onItemClick(wakelockItem) }
-            .let {
-                // primary color for system apps
-                val indicatorColor = statusBarColor
-                it.drawWithContent {
-                    val barHeight = 48.dp.toPx()
-                    val yOffset = (size.height - barHeight) / 2
-                    drawRoundRect(
-                        color = indicatorColor,
-                        topLeft = androidx.compose.ui.geometry.Offset(6.dp.toPx(), yOffset),
-                        size = Size(3.dp.toPx(), barHeight),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(1.5.dp.toPx())
-                    )
-                    drawContent()
-                }
+            .drawWithContent {
+                val barHeight = 48.dp.toPx()
+                val yOffset = (size.height - barHeight) / 2
+                drawRoundRect(
+                    color = statusBarColor,
+                    topLeft = androidx.compose.ui.geometry.Offset(6.dp.toPx(), yOffset),
+                    size = Size(3.dp.toPx(), barHeight),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(1.5.dp.toPx())
+                )
+                drawContent()
             }
             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
-        // Icon
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Bolt,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(24.dp)
-            )
-        }
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            // Create references for the composables
+            val (icon, wakelockName, packageName, statsRow, timeInput, blockSwitch) = createRefs()
 
-        // Info column
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp)
-        ) {
+            // Icon
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .constrainAs(icon) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Bolt,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
             // Wakelock name
             Text(
                 text = wakelockItem.name,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.constrainAs(wakelockName) {
+                    width = Dimension.fillToConstraints
+                    start.linkTo(icon.end, 16.dp)
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                }
             )
 
             // Package name
@@ -110,13 +117,20 @@ fun WakelockListItem(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.constrainAs(packageName) {
+                    start.linkTo(wakelockName.start)
+                    top.linkTo(wakelockName.bottom, 4.dp)
+                }
             )
 
-            // Stats chips in a row - similar to AppListItem
+            // Stats row
             Row(
-                modifier = Modifier.padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.constrainAs(statsRow) {
+                    start.linkTo(wakelockName.start)
+                    top.linkTo(packageName.bottom, 4.dp)
+                }
             ) {
                 // Count chip
                 Surface(
@@ -168,15 +182,8 @@ fun WakelockListItem(
                     }
                 }
             }
-        }
 
-        // Quick settings - horizontal layout
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            // Compact time window input
+            // Simplified time window input
             OutlinedTextField(
                 value = timeWindowText,
                 onValueChange = { newValue ->
@@ -192,13 +199,17 @@ fun WakelockListItem(
                     }
                 },
                 modifier = Modifier
-                    .width(65.dp)
-                    .height(56.dp),
+                    .width(90.dp)
+                    .constrainAs(timeInput) {
+                        end.linkTo(blockSwitch.start, 4.dp)
+                        top.linkTo(blockSwitch.top, 4.dp)
+                        bottom.linkTo(statsRow.bottom, 4.dp)
+                    },
                 textStyle = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 enabled = !wakelockItem.isBlocked,
                 singleLine = true,
-                trailingIcon = {
+                suffix = {
                     Text(
                         text = "s",
                         style = MaterialTheme.typography.labelSmall,
@@ -218,12 +229,19 @@ fun WakelockListItem(
             Switch(
                 checked = wakelockItem.isBlocked,
                 onCheckedChange = onToggleBlock,
+                modifier = Modifier
+                    .scale(0.9f)
+                    .constrainAs(blockSwitch) {
+                        end.linkTo(parent.end)
+                        top.linkTo(wakelockName.bottom, 4.dp)
+                        bottom.linkTo(statsRow.bottom)
+                    },
                 thumbContent = if (wakelockItem.isBlocked) {
                     {
                         Icon(
                             imageVector = Icons.Outlined.Bolt,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(0.dp)
                         )
                     }
                 } else null
