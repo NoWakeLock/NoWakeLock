@@ -154,7 +154,7 @@ fun AppListItem(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${appWithStats.wakelockCount} wakelocks",
+                            text = "${appWithStats.wakelockCount}",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
