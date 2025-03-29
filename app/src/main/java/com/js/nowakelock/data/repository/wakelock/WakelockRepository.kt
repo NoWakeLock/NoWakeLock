@@ -1,6 +1,6 @@
 package com.js.nowakelock.data.repository.wakelock
 
-import com.js.nowakelock.data.model.WakelockItem
+import com.js.nowakelock.data.model.DAItem
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -12,17 +12,17 @@ interface WakelockRepository {
     /**
      * Retrieves all wakelocks sorted by name
      */
-    fun getWakelocksSortedByName(): Flow<List<WakelockItem>>
+    fun getWakelocksSortedByName(): Flow<List<DAItem>>
     
     /**
      * Retrieves all wakelocks sorted by count
      */
-    fun getWakelocksSortedByCount(): Flow<List<WakelockItem>>
+    fun getWakelocksSortedByCount(): Flow<List<DAItem>>
     
     /**
      * Retrieves all wakelocks sorted by time
      */
-    fun getWakelocksSortedByTime(): Flow<List<WakelockItem>>
+    fun getWakelocksSortedByTime(): Flow<List<DAItem>>
     
     /**
      * Updates wakelock settings (block status and time window)

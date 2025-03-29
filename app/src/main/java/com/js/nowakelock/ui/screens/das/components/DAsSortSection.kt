@@ -1,13 +1,10 @@
-package com.js.nowakelock.ui.screens.wakelocks.components
+package com.js.nowakelock.ui.screens.das.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material.icons.outlined.AccessTime
-import androidx.compose.material.icons.outlined.Sort
-import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,17 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.js.nowakelock.ui.screens.wakelocks.WakelockSortOption
+import com.js.nowakelock.ui.screens.das.DASortOption
 
 /**
- * Sort section component for the wakelocks screen
+ * Sort section component for the DAs screen
  * Provides options to sort by name, count, or time
  * Styled to match AppsSortSection for UI consistency
  */
 @Composable
-fun WakelocksSortSection(
-    currentSort: WakelockSortOption,
-    onSortChanged: (WakelockSortOption) -> Unit,
+fun DAsSortSection(
+    currentSort: DASortOption,
+    onSortChanged: (DASortOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -63,22 +60,22 @@ fun WakelocksSortSection(
             // Name sort option
             SortOption(
                 text = "Name",
-                selected = currentSort == WakelockSortOption.NAME,
-                onClick = { onSortChanged(WakelockSortOption.NAME) }
+                selected = currentSort == DASortOption.NAME,
+                onClick = { onSortChanged(DASortOption.NAME) }
             )
             
             // Count sort option
             SortOption(
                 text = "Count",
-                selected = currentSort == WakelockSortOption.COUNT,
-                onClick = { onSortChanged(WakelockSortOption.COUNT) }
+                selected = currentSort == DASortOption.COUNT,
+                onClick = { onSortChanged(DASortOption.COUNT) }
             )
             
             // Time sort option
             SortOption(
                 text = "Time",
-                selected = currentSort == WakelockSortOption.TIME,
-                onClick = { onSortChanged(WakelockSortOption.TIME) }
+                selected = currentSort == DASortOption.TIME,
+                onClick = { onSortChanged(DASortOption.TIME) }
             )
         }
     }
@@ -125,8 +122,8 @@ private fun SortOption(
 @Composable
 @Preview(showBackground = true)
 fun PreviewWakelocksSortSection() {
-    WakelocksSortSection(
-        currentSort = WakelockSortOption.COUNT,
+    DAsSortSection(
+        currentSort = DASortOption.COUNT,
         onSortChanged = {}
     )
 } 

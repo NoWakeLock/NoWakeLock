@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.wakelocks.components
+package com.js.nowakelock.ui.screens.das.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -8,24 +8,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.ui.theme.AllowedGreen
 import com.js.nowakelock.ui.theme.BlockedRed
 
 /**
- * Summary component for the wakelocks screen
- * Shows total wakelocks count and blocked/allowed distribution
+ * Summary component for the DAs screen
+ * Shows total DA count and blocked/allowed distribution
  */
 @Composable
-fun WakelocksSummary(
-    totalWakelocks: Int,
+fun DAsSummary(
+    type: Type,
+    total: Int,
     blockedCount: Int,
     allowedCount: Int,
     modifier: Modifier = Modifier
 ) {
     // Calculate percentages
-    val blockedPercentage = if (totalWakelocks > 0) (blockedCount.toFloat() / totalWakelocks) * 100 else 0f
-    val allowedPercentage = if (totalWakelocks > 0) (allowedCount.toFloat() / totalWakelocks) * 100 else 0f
-    
+    val blockedPercentage =
+        if (total > 0) (blockedCount.toFloat() / total) * 100 else 0f
+    val allowedPercentage =
+        if (total > 0) (allowedCount.toFloat() / total) * 100 else 0f
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -44,25 +48,25 @@ fun WakelocksSummary(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Wakelock Summary",
+                    text = type.value + " Summary",
                     style = MaterialTheme.typography.titleMedium
                 )
-                
+
                 Text(
-                    text = "$totalWakelocks",
+                    text = "$total",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            
+
             Text(
                 text = "Last 24 hours",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Progress indicator
             LinearProgressIndicator(
                 progress = blockedPercentage / 100f,
@@ -72,9 +76,9 @@ fun WakelocksSummary(
                 color = BlockedRed,
                 trackColor = AllowedGreen
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // Stats breakdown
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -85,7 +89,7 @@ fun WakelocksSummary(
                     style = MaterialTheme.typography.bodySmall,
                     color = BlockedRed
                 )
-                
+
                 Text(
                     text = "${allowedPercentage.toInt()}% Allowed (${allowedCount})",
                     style = MaterialTheme.typography.bodySmall,
@@ -99,9 +103,10 @@ fun WakelocksSummary(
 
 @Composable
 @Preview(showBackground = true)
-fun PreviewWakelocksSummary() {
-    WakelocksSummary(
-        totalWakelocks = 247,
+fun PreviewDAsSummary() {
+    DAsSummary(
+        type = Type.Wakelock,
+        total = 247,
         blockedCount = 160,
         allowedCount = 87
     )

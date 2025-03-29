@@ -8,7 +8,9 @@ import android.content.IntentFilter
 import com.google.gson.Gson
 import com.js.nowakelock.data.broadcastreceiver.PowerConnectionReceiver
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 class BasicApp : Application() {
     companion object {
@@ -30,6 +32,7 @@ class BasicApp : Application() {
         startKoin {
             androidContext(this@BasicApp)
             modules(appModule())
+            androidLogger(Level.DEBUG)
         }
 
         // for PowerConnectionReceiver

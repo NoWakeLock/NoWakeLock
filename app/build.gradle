@@ -71,6 +71,8 @@ android {
 
 ksp {
     arg(new RoomSchemaArgProvider(new File(projectDir, "schemas")))
+    // koin check
+    arg("KOIN_CONFIG_CHECK","true")
 }
 
 class RoomSchemaArgProvider implements CommandLineArgumentProvider {
@@ -136,7 +138,7 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$room_version"    // Test helpers
 
     // koin
-    def koin_android_version = '4.0.2'
+    def koin_android_version = '4.0.3'
     implementation "io.insert-koin:koin-androidx-compose:$koin_android_version"
     implementation "io.insert-koin:koin-androidx-compose-navigation:$koin_android_version"
 

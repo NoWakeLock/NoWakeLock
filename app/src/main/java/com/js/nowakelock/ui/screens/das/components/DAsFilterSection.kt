@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.wakelocks.components
+package com.js.nowakelock.ui.screens.das.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.js.nowakelock.ui.screens.wakelocks.WakelockFilterOption
+import com.js.nowakelock.ui.screens.das.DAFilterOption
 
 /**
  * Filter section component for the wakelocks screen
@@ -21,9 +21,9 @@ import com.js.nowakelock.ui.screens.wakelocks.WakelockFilterOption
  * Styled to match AppsFilterSection for UI consistency
  */
 @Composable
-fun WakelocksFilterSection(
-    currentFilter: WakelockFilterOption,
-    onFilterChanged: (WakelockFilterOption) -> Unit,
+fun DAFilterSection(
+    currentFilter: DAFilterOption,
+    onFilterChanged: (DAFilterOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -36,16 +36,16 @@ fun WakelocksFilterSection(
         // All filter
         FilterButton(
             text = "All",
-            isSelected = currentFilter == WakelockFilterOption.ALL,
-            onClick = { onFilterChanged(WakelockFilterOption.ALL) },
+            isSelected = currentFilter == DAFilterOption.ALL,
+            onClick = { onFilterChanged(DAFilterOption.ALL) },
             modifier = Modifier.weight(1f)
         )
         
         // Blocked filter
         FilterButton(
             text = "Blocked",
-            isSelected = currentFilter == WakelockFilterOption.BLOCKED,
-            onClick = { onFilterChanged(WakelockFilterOption.BLOCKED) },
+            isSelected = currentFilter == DAFilterOption.BLOCKED,
+            onClick = { onFilterChanged(DAFilterOption.BLOCKED) },
             modifier = Modifier.weight(1f),
             selectedColor = MaterialTheme.colorScheme.errorContainer,
             selectedContentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -54,8 +54,8 @@ fun WakelocksFilterSection(
         // Allowed filter
         FilterButton(
             text = "Allowed",
-            isSelected = currentFilter == WakelockFilterOption.ALLOWED,
-            onClick = { onFilterChanged(WakelockFilterOption.ALLOWED) },
+            isSelected = currentFilter == DAFilterOption.ALLOWED,
+            onClick = { onFilterChanged(DAFilterOption.ALLOWED) },
             modifier = Modifier.weight(1f),
             selectedColor = MaterialTheme.colorScheme.tertiaryContainer,
             selectedContentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -144,8 +144,8 @@ private fun FilterButton(
 @Composable
 @Preview(showBackground = true)
 fun PreviewWakelocksFilterSection() {
-    WakelocksFilterSection(
-        currentFilter = WakelockFilterOption.ALL,
+    DAFilterSection(
+        currentFilter = DAFilterOption.ALL,
         onFilterChanged = {}
     )
 } 

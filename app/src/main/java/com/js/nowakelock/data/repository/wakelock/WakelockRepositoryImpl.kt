@@ -6,7 +6,7 @@ import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.St
-import com.js.nowakelock.data.model.WakelockItem
+import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.provider.ProviderMethod
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -27,13 +27,13 @@ class WakelockRepositoryImpl(
     /**
      * Maps the database entities to WakelockItem domain model
      */
-    private fun mapToWakelockItems(infoToStMap: Map<Info, St?>): List<WakelockItem> {
+    private fun mapToWakelockItems(infoToStMap: Map<Info, St?>): List<DAItem> {
         return infoToStMap.map { (info, st) ->
-            WakelockItem.fromEntities(info, st)
+            DAItem.fromEntities(info, st)
         }
     }
     
-    override fun getWakelocksSortedByName(): Flow<List<WakelockItem>> {
+    override fun getWakelocksSortedByName(): Flow<List<DAItem>> {
         return daDao.loadISs(Type.Wakelock)
             .distinctUntilChanged()
             .map { infoToStMap ->
@@ -42,7 +42,7 @@ class WakelockRepositoryImpl(
             }
     }
     
-    override fun getWakelocksSortedByCount(): Flow<List<WakelockItem>> {
+    override fun getWakelocksSortedByCount(): Flow<List<DAItem>> {
         return daDao.loadISs(Type.Wakelock)
             .distinctUntilChanged()
             .map { infoToStMap ->
@@ -51,7 +51,7 @@ class WakelockRepositoryImpl(
             }
     }
     
-    override fun getWakelocksSortedByTime(): Flow<List<WakelockItem>> {
+    override fun getWakelocksSortedByTime(): Flow<List<DAItem>> {
         return daDao.loadISs(Type.Wakelock)
             .distinctUntilChanged()
             .map { infoToStMap ->
@@ -73,10 +73,10 @@ class WakelockRepositoryImpl(
             type = Type.Wakelock,
             packageName = packageName,
             userId = userId,
-            flag = isBlocked,
+            fullBlock = isBlocked,
             // If isBlocked is false or timeWindow is null, set flag to false (fully blocked)
             // Otherwise, use the specified time window
-            allowTimeInterval = if (isBlocked && timeWindow != null) {
+            timeWindowMs = if (!isBlocked && timeWindow != null) {
                 TimeUnit.SECONDS.toMillis(timeWindow.toLong())
             } else {
                 0

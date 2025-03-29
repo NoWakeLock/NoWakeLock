@@ -1,17 +1,15 @@
 package com.js.nowakelock.ui.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.js.nowakelock.ui.screens.alarms.AlarmsScreen
 import com.js.nowakelock.ui.screens.apps.AppsScreen
-import com.js.nowakelock.ui.screens.services.ServicesScreen
+import com.js.nowakelock.ui.screens.das.AlarmScreen
 import com.js.nowakelock.ui.screens.settings.SettingsScreen
-import com.js.nowakelock.ui.screens.wakelocks.WakelocksScreen
-import com.js.nowakelock.ui.screens.wakelocks.WakelocksViewModel
+import com.js.nowakelock.ui.screens.das.ServiceScreen
+import com.js.nowakelock.ui.screens.das.WakelockScreen
 
 /**
  * Main navigation graph for the NoWakeLock app.
@@ -24,8 +22,7 @@ fun NoWakeLockNavGraph(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {},
-    wakelocksViewModel: WakelocksViewModel? = null
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -40,18 +37,19 @@ fun NoWakeLockNavGraph(
                 onSearchQueryChange = onSearchQueryChange
             )
         }
+
         composable(NavRoutes.WAKELOCKS) {
-            // Pass the ViewModel from parent to avoid duplicate ViewModel instances
-            wakelocksViewModel?.let {
-                WakelocksScreen(viewModel = it)
-            } ?: WakelocksScreen()
+            WakelockScreen()
         }
+
         composable(NavRoutes.ALARMS) {
-            AlarmsScreen()
+            AlarmScreen()
         }
+
         composable(NavRoutes.SERVICES) {
-            ServicesScreen()
+            ServiceScreen()
         }
+
         composable(NavRoutes.SETTINGS) {
             SettingsScreen()
         }

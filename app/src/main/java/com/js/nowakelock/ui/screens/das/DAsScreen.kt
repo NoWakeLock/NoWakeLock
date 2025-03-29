@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.wakelocks
+package com.js.nowakelock.ui.screens.das
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,10 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.ui.components.EmptyView
 import com.js.nowakelock.ui.components.LoadingView
-import com.js.nowakelock.ui.screens.wakelocks.components.*
-import org.koin.androidx.compose.koinViewModel
+import com.js.nowakelock.ui.screens.das.components.DAListItem
+import com.js.nowakelock.ui.screens.das.components.DAFilterSection
+import com.js.nowakelock.ui.screens.das.components.DAsSortSection
+import com.js.nowakelock.ui.screens.das.components.DAsSummary
 
 /**
  * Main screen for Wakelocks display
@@ -21,16 +24,17 @@ import org.koin.androidx.compose.koinViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WakelocksScreen(
-    navigateToWakelockDetail: (name: String, packageName: String) -> Unit = { _, _ -> },
-    viewModel: WakelocksViewModel = koinViewModel()
+fun DAsScreen(
+    navigateToDADetail: (name: String, packageName: String) -> Unit = { _, _ -> },
+    type: Type,
+    viewModel: DAsViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     // Top app bar scrolling behavior 
     // We keep the scrolling behavior for content padding
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    
+
     // Content only, the TopAppBar is in the parent NoWakeLockApp
     Column(
         modifier = Modifier
@@ -40,39 +44,39 @@ fun WakelocksScreen(
         // Control panel section with filter and sort options
         Column {
             // Filter section
-            WakelocksFilterSection(
+            DAFilterSection(
                 currentFilter = uiState.currentFilterOption,
                 onFilterChanged = viewModel::changeFilterOption
             )
-            
+
             // Sort section
-            WakelocksSortSection(
+            DAsSortSection(
                 currentSort = uiState.currentSortOption,
                 onSortChanged = viewModel::changeSortOption
             )
-            
+
             // Clean divider between controls and content - subtle but visible
             HorizontalDivider(
                 thickness = 0.5.dp,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
             )
         }
-        
+
         // Content area - list with Summary card as first item
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            if (uiState.isLoading && uiState.wakelocks.isEmpty()) {
+            if (uiState.isLoading && uiState.das.isEmpty()) {
                 LoadingView(
                     modifier = Modifier.fillMaxSize(),
-                    message = "Loading wakelocks..."
+                    message = "Loading " + type.value,
                 )
-            } else if (!uiState.isLoading && uiState.wakelocks.isEmpty()) {
+            } else if (!uiState.isLoading && uiState.das.isEmpty()) {
                 EmptyView(
                     modifier = Modifier.fillMaxSize(),
-                    message = "No wakelocks found",
+                    message = "No " + type.value + " found",
                     onRefresh = { viewModel.refreshData() }
                 )
             } else {
@@ -82,49 +86,46 @@ fun WakelocksScreen(
                 ) {
                     // Summary card as first list item
                     item(key = "summary_card") {
-                        WakelocksSummary(
-                            totalWakelocks = uiState.totalWakelocks,
+                        DAsSummary(
+                            type = type,
+                            total = uiState.totalDAs,
                             blockedCount = uiState.blockedCount,
                             allowedCount = uiState.allowedCount,
                             modifier = Modifier.padding(top = 8.dp) // Add some top padding
                         )
                     }
-                    
-                    // Wakelock list items
+
+                    // DA list items
                     items(
-                        items = uiState.wakelocks,
+                        items = uiState.das,
                         key = { "${it.name}_${it.packageName}_${it.userId}" }
-                    ) { wakelockItem ->
-                        WakelockListItem(
-                            wakelockItem = wakelockItem,
-                            onToggleBlock = { isBlocked ->
-                                viewModel.updateWakelockBlockState(
-                                    name = wakelockItem.name,
-                                    packageName = wakelockItem.packageName,
-                                    userId = wakelockItem.userId,
-                                    isBlocked = isBlocked
+                    ) { daItem ->
+                        DAListItem(
+                            daItem = daItem, onToggleFullBlock = { enable ->
+                                viewModel.updateDAFullBlockState(
+                                    daItem = daItem, isBlocked = !enable
                                 )
-                            },
-                            onTimeWindowChange = { timeWindow ->
-                                viewModel.updateWakelockTimeWindow(
-                                    name = wakelockItem.name,
-                                    packageName = wakelockItem.packageName,
-                                    userId = wakelockItem.userId,
-                                    timeWindow = timeWindow
+                            }, onToggleScreenOffBlock = { enable ->
+                                viewModel.updateDAScreenOffBlockState(
+                                    daItem = daItem, isBlocked = !enable
+                                )
+                            }, onTimeWindowChange = { timeWindow ->
+                                viewModel.updateDATimeWindow(
+                                    daItem = daItem, timeWindow = timeWindow
                                 )
                             },
                             onItemClick = {
-                                navigateToWakelockDetail(it.name, it.packageName)
+                                navigateToDADetail(it.name, it.packageName)
                             }
                         )
                     }
-                    
+
                     // Extra space at the bottom
                     item {
                         Spacer(modifier = Modifier.height(80.dp))
                     }
                 }
-                
+
                 // Show refresh indicator for pull-to-refresh
                 if (uiState.isLoading && uiState.loadingSource == LoadingSource.USER_PULL) {
                     LinearProgressIndicator(
@@ -132,7 +133,7 @@ fun WakelocksScreen(
                     )
                 }
             }
-            
+
             // Show error message as a Snackbar
             if (uiState.message.isNotEmpty()) {
                 Snackbar(

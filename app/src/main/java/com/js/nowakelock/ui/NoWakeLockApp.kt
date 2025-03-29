@@ -1,16 +1,9 @@
 package com.js.nowakelock.ui
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -21,7 +14,7 @@ import com.js.nowakelock.ui.components.NoWakeLockTopAppBar
 import com.js.nowakelock.ui.components.TopAppBarEvent
 import com.js.nowakelock.ui.navigation.NavRoutes
 import com.js.nowakelock.ui.navigation.NoWakeLockNavGraph
-import com.js.nowakelock.ui.screens.wakelocks.WakelocksViewModel
+import com.js.nowakelock.ui.screens.das.DAsViewModel
 import com.js.nowakelock.ui.theme.NoWakeLockTheme
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.androidx.compose.koinViewModel
@@ -39,10 +32,10 @@ fun NoWakeLockApp() {
             // Create app-level search state
             val isSearchActive = rememberSaveable { mutableStateOf(false) }
             val searchQuery = rememberSaveable { mutableStateOf("") }
-            
+
             // Obtain the wakelocks ViewModel for app-level access to refresh function
-            val wakelocksViewModel: WakelocksViewModel = koinViewModel()
-            
+//            val DAsViewModel: DAsViewModel = koinViewModel()
+
             // Navigation state for dynamic TopAppBar
             val navBackStackEntry = navController.currentBackStackEntry
             val currentRoute = navBackStackEntry?.destination?.route
@@ -88,7 +81,7 @@ fun NoWakeLockApp() {
                                 is TopAppBarEvent.RefreshClicked -> {
                                     // Handle refresh based on current route
                                     when (currentRoute) {
-                                        NavRoutes.WAKELOCKS -> wakelocksViewModel.refreshData()
+//                                        NavRoutes.WAKELOCKS -> DAsViewModel.refreshData()
                                         // Add other screen refresh actions as needed
                                     }
                                 }
@@ -107,8 +100,6 @@ fun NoWakeLockApp() {
                     onSearchActiveChange = { isSearchActive.value = it },
                     searchQuery = searchQuery.value,
                     onSearchQueryChange = { searchQuery.value = it },
-                    // Pass the ViewModel to screens that need it
-                    wakelocksViewModel = wakelocksViewModel
                 )
             }
         }
