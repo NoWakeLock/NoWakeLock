@@ -24,7 +24,7 @@ data class DAItem(
     // Settings
     val fullBlocked: Boolean = false,
     val screenOffBlock: Boolean = false,
-    val timeWindowSec: Int? = null  // in seconds
+    val timeWindowSec: Int = 0  // in seconds
 ) {
     /**
      * Percentage of times this was blocked
@@ -36,7 +36,7 @@ data class DAItem(
      * Whether this is partially blocked (has time window)
      */
     val isPartiallyBlocked: Boolean
-        get() = fullBlocked && timeWindowSec != null
+        get() = fullBlocked && timeWindowSec != 0
 
     /**
      * Formats the time for display in the UI

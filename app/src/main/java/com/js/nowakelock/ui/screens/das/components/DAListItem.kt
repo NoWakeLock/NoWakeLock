@@ -49,7 +49,7 @@ fun DAListItem(
     val statusBarColor = when {
         daItem.fullBlocked -> BlockedRed.copy(alpha = 0.7f) // Red with alpha
         // only for wakelocks / alarm
-        (daItem.type == Type.Wakelock || daItem.type == Type.Alarm) && daItem.timeWindowSec != null -> Color(
+        (daItem.type == Type.Wakelock || daItem.type == Type.Alarm) && daItem.timeWindowSec != 0 -> Color(
             0xFFFF9800
         ).copy(alpha = 0.7f) // Orange
         else -> AllowedGreen.copy(alpha = 0.7f)
@@ -196,8 +196,8 @@ fun DAListItem(
                 }
             }
 
-            // Time window input, only for wakelocks
-            if (daItem.type == Type.Wakelock) {
+            // Time window input, for wakelocks and alarms
+            if (daItem.type == Type.Wakelock || daItem.type == Type.Alarm) {
                 OutlinedTextField(
                     value = timeWindowText,
                     onValueChange = { newValue ->
@@ -301,7 +301,29 @@ fun PreviewDAListItem() {
         blockCount = 12,
         countTime = 8100000, // 2h 15m in milliseconds
         fullBlocked = true,
-        timeWindowSec = null
+        timeWindowSec = 0
+    )
+
+    DAListItem(
+        daItem = dAItem,
+        onToggleFullBlock = {},
+        onToggleScreenOffBlock = {},
+        onTimeWindowChange = {}
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+fun Preview2() {
+    // Sample  for preview
+    val dAItem = DAItem(
+        name = "KEEP_SCREEN_ON_FLAG",
+        packageName = "com.facebook.katana",
+        count = 47,
+        blockCount = 12,
+        countTime = 8100000, // 2h 15m in milliseconds
+        fullBlocked = false,
+        timeWindowSec = 1
     )
 
     DAListItem(
