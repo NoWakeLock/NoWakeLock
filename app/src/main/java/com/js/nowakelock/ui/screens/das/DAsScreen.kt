@@ -62,7 +62,8 @@ fun DAsScreen(
             // Sort section
             DAsSortSection(
                 currentSort = uiState.currentSortOption,
-                onSortChanged = viewModel::changeSortOption
+                onSortChanged = viewModel::changeSortOption,
+                type = type
             )
 
             // Clean divider between controls and content - subtle but visible

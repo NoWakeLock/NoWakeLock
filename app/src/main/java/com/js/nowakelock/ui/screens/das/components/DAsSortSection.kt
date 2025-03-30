@@ -12,19 +12,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.ui.screens.das.DASortOption
 
 /**
  * Sort section component for the DAs screen
- * Provides options to sort by name, count, or time
+ * Provides options to sort by name, count, or time (time only for Wakelock type)
  * Styled to match AppsSortSection for UI consistency
  */
 @Composable
 fun DAsSortSection(
     currentSort: DASortOption,
     onSortChanged: (DASortOption) -> Unit,
+    type: Type = Type.Wakelock, // Add type parameter with default value
     modifier: Modifier = Modifier
 ) {
+    // If current sort is TIME but type doesn't support TIME sorting, switch to NAME
+    LaunchedEffect(type, currentSort) {
+        if (currentSort == DASortOption.TIME && type != Type.Wakelock) {
+            onSortChanged(DASortOption.NAME)
+        }
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -71,12 +80,14 @@ fun DAsSortSection(
                 onClick = { onSortChanged(DASortOption.COUNT) }
             )
             
-            // Time sort option
-            SortOption(
-                text = "Time",
-                selected = currentSort == DASortOption.TIME,
-                onClick = { onSortChanged(DASortOption.TIME) }
-            )
+            // Time sort option - only show for Wakelock type
+            if (type == Type.Wakelock) {
+                SortOption(
+                    text = "Time",
+                    selected = currentSort == DASortOption.TIME,
+                    onClick = { onSortChanged(DASortOption.TIME) }
+                )
+            }
         }
     }
 }
@@ -124,6 +135,17 @@ private fun SortOption(
 fun PreviewWakelocksSortSection() {
     DAsSortSection(
         currentSort = DASortOption.COUNT,
-        onSortChanged = {}
+        onSortChanged = {},
+        type = Type.Wakelock
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+fun PreviewAlarmSortSection() {
+    DAsSortSection(
+        currentSort = DASortOption.NAME,
+        onSortChanged = {},
+        type = Type.Alarm
     )
 } 
