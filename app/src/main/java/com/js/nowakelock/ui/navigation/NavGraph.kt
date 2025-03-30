@@ -39,15 +39,30 @@ fun NoWakeLockNavGraph(
         }
 
         composable(NavRoutes.WAKELOCKS) {
-            WakelockScreen()
+            WakelockScreen(
+                isSearchActive = isSearchActive,
+                onSearchActiveChange = onSearchActiveChange,
+                searchQuery = searchQuery,
+                onSearchQueryChange = onSearchQueryChange
+            )
         }
 
         composable(NavRoutes.ALARMS) {
-            AlarmScreen()
+            AlarmScreen(
+                isSearchActive = isSearchActive,
+                onSearchActiveChange = onSearchActiveChange,
+                searchQuery = searchQuery,
+                onSearchQueryChange = onSearchQueryChange
+            )
         }
 
         composable(NavRoutes.SERVICES) {
-            ServiceScreen()
+            ServiceScreen(
+                isSearchActive = isSearchActive,
+                onSearchActiveChange = onSearchActiveChange,
+                searchQuery = searchQuery,
+                onSearchQueryChange = onSearchQueryChange
+            )
         }
 
         composable(NavRoutes.SETTINGS) {

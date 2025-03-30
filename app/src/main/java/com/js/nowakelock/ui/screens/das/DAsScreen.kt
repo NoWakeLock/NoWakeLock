@@ -27,9 +27,19 @@ import com.js.nowakelock.ui.screens.das.components.DAsSummary
 fun DAsScreen(
     navigateToDADetail: (name: String, packageName: String) -> Unit = { _, _ -> },
     type: Type,
-    viewModel: DAsViewModel
+    viewModel: DAsViewModel,
+    isSearchActive: Boolean = false,
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // Update viewModel search state when external search state changes
+    LaunchedEffect(isSearchActive, searchQuery) {
+        viewModel.setSearchActive(isSearchActive)
+        viewModel.updateSearchQuery(searchQuery)
+    }
 
     // Top app bar scrolling behavior 
     // We keep the scrolling behavior for content padding
@@ -76,7 +86,11 @@ fun DAsScreen(
             } else if (!uiState.isLoading && uiState.das.isEmpty()) {
                 EmptyView(
                     modifier = Modifier.fillMaxSize(),
-                    message = "No " + type.value + " found",
+                    message = if (searchQuery.isNotEmpty()) {
+                        "No ${type.value} found matching \"$searchQuery\""
+                    } else {
+                        "No ${type.value} found"
+                    },
                     onRefresh = { viewModel.refreshData() }
                 )
             } else {

@@ -43,7 +43,11 @@ fun NoWakeLockApp() {
             // Reset search state whenever route changes
             LaunchedEffect(navBackStackEntry) {
                 val route = navBackStackEntry?.destination?.route
-                if (route != NavRoutes.APPS) {
+                // Don't reset search when in searching screens
+                if (route != NavRoutes.APPS && 
+                    route != NavRoutes.WAKELOCKS && 
+                    route != NavRoutes.ALARMS && 
+                    route != NavRoutes.SERVICES) {
                     isSearchActive.value = false
                 }
             }
@@ -57,14 +61,14 @@ fun NoWakeLockApp() {
                         onEvent = { event ->
                             when (event) {
                                 is TopAppBarEvent.SearchClicked -> {
-                                    // Activate search mode
+                                    // Activate search mode without navigating to Apps screen
                                     isSearchActive.value = true
                                     
-                                    // If not on Apps screen, navigate to Apps screen first
-                                    val route = navController.currentBackStackEntry?.destination?.route
-                                    if (route != NavRoutes.APPS) {
-                                        navController.navigate(NavRoutes.APPS)
-                                    }
+                                    // Remove navigation to Apps screen
+                                    // val route = navController.currentBackStackEntry?.destination?.route
+                                    // if (route != NavRoutes.APPS) {
+                                    //     navController.navigate(NavRoutes.APPS)
+                                    // }
                                 }
                                 is TopAppBarEvent.MenuClicked -> {
                                     // Handle menu click (not yet implemented)

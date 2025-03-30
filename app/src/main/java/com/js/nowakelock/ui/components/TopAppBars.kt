@@ -85,8 +85,11 @@ fun NoWakeLockTopAppBar(
         else -> stringResource(id = R.string.app_name)
     }
 
-    // Only show search interface in apps screen
-    val showSearch = isSearchActive && route == NavRoutes.APPS
+    // Only show search interface in relevant screens
+    val showSearch = isSearchActive && (route == NavRoutes.APPS || 
+                                      route == NavRoutes.WAKELOCKS || 
+                                      route == NavRoutes.ALARMS || 
+                                      route == NavRoutes.SERVICES)
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -119,7 +122,17 @@ fun NoWakeLockTopAppBar(
                 TextField(
                     value = searchQuery,
                     onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
-                    placeholder = { Text("Search apps") },
+                    placeholder = { 
+                        Text(
+                            when(route) {
+                                NavRoutes.APPS -> "Search apps"
+                                NavRoutes.WAKELOCKS -> "Search wakelocks"
+                                NavRoutes.ALARMS -> "Search alarms"
+                                NavRoutes.SERVICES -> "Search services"
+                                else -> "Search"
+                            }
+                        ) 
+                    },
                     modifier = Modifier
                         .fillMaxWidth(0.85f) // avoid full width
                         .focusRequester(focusRequester),
@@ -182,7 +195,7 @@ fun NoWakeLockTopAppBar(
                             }
                         }
                         NavRoutes.WAKELOCKS -> {
-                            // Refresh and search buttons for Wakelocks screen
+                            // Search and refresh buttons for Wakelocks screen
                             IconButton(
                                 onClick = { onEvent(TopAppBarEvent.SearchClicked) },
                                 modifier = Modifier
@@ -209,8 +222,49 @@ fun NoWakeLockTopAppBar(
                                 )
                             }
                         }
-                        NavRoutes.ALARMS, NavRoutes.SERVICES -> {
-                            // Add specific actions for other screens as needed
+                        NavRoutes.ALARMS -> {
+                            // Search and refresh buttons for Alarms screen
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = "Refresh",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                        NavRoutes.SERVICES -> {
+                            // Search and refresh buttons for Services screen
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            
                             IconButton(
                                 onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
                                 modifier = Modifier

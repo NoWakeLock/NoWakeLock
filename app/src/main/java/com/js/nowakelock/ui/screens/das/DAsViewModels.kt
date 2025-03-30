@@ -11,14 +11,20 @@ import org.koin.core.qualifier.named
 fun WakelockScreen(
     navigateToDADetail: (name: String, packageName: String) -> Unit = { _, _ -> },
     type: Type = Type.Wakelock,
-//    viewModel: DAsViewModel = koinViewModel(qualifier = named("WakelockViewModel"))  // 使用命名限定符
-    viewModel: DAsViewModel = koinViewModel(qualifier = named("WakelockViewModel"))
-
+    viewModel: DAsViewModel = koinViewModel(qualifier = named("WakelockViewModel")),
+    isSearchActive: Boolean = false,
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     DAsScreen(
         type = type,
         viewModel = viewModel,
-        navigateToDADetail = navigateToDADetail
+        navigateToDADetail = navigateToDADetail,
+        isSearchActive = isSearchActive,
+        onSearchActiveChange = onSearchActiveChange,
+        searchQuery = searchQuery,
+        onSearchQueryChange = onSearchQueryChange
     )
 }
 
@@ -26,12 +32,20 @@ fun WakelockScreen(
 fun AlarmScreen(
     navigateToDADetail: (name: String, packageName: String) -> Unit = { _, _ -> },
     type: Type = Type.Alarm,
-    viewModel: DAsViewModel = koinViewModel(qualifier = named("AlarmViewModel"))  // 使用命名限定符
+    viewModel: DAsViewModel = koinViewModel(qualifier = named("AlarmViewModel")),
+    isSearchActive: Boolean = false,
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     DAsScreen(
         type = type,
         viewModel = viewModel,
-        navigateToDADetail = navigateToDADetail
+        navigateToDADetail = navigateToDADetail,
+        isSearchActive = isSearchActive,
+        onSearchActiveChange = onSearchActiveChange,
+        searchQuery = searchQuery,
+        onSearchQueryChange = onSearchQueryChange
     )
 }
 
@@ -39,11 +53,19 @@ fun AlarmScreen(
 fun ServiceScreen(
     navigateToDADetail: (name: String, packageName: String) -> Unit = { _, _ -> },
     type: Type = Type.Service,
-    viewModel: DAsViewModel = koinViewModel(qualifier = named("ServiceViewModel"))  // 使用命名限定符
+    viewModel: DAsViewModel = koinViewModel(qualifier = named("ServiceViewModel")),
+    isSearchActive: Boolean = false,
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {}
 ) {
     DAsScreen(
         type = type,
         viewModel = viewModel,
-        navigateToDADetail = navigateToDADetail
+        navigateToDADetail = navigateToDADetail,
+        isSearchActive = isSearchActive,
+        onSearchActiveChange = onSearchActiveChange,
+        searchQuery = searchQuery,
+        onSearchQueryChange = onSearchQueryChange
     )
 }
