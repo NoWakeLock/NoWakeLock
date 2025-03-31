@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Screen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --md-primary: #006A6A;
+            --md-primary-container: #84F3F3;
+            --md-on-primary: #FFFFFF;
+            --md-on-primary-container: #002020;
+            --md-secondary: #4A6363;
+            --md-secondary-container: #CCE8E7;
+            --md-on-secondary: #FFFFFF;
+            --md-on-secondary-container: #051F1F;
+            --md-tertiary: #4D5F7E;
+            --md-tertiary-container: #D6E3FF;
+            --md-on-tertiary: #FFFFFF;
+            --md-on-tertiary-container: #041836;
+            --md-error: #BA1A1A;
+            --md-error-container: #FFDAD6;
+            --md-on-error: #FFFFFF;
+            --md-on-error-container: #410002;
+            --md-background: #FAFDFC;
+            --md-on-background: #191C1C;
+            --md-surface: #FAFDFC;
+            --md-on-surface: #191C1C;
+            --md-surface-variant: #DAE4E3;
+            --md-on-surface-variant: #3F4948;
+            --md-outline: #6F7978;
+            --md-inverse-on-surface: #EFF1F0;
+            --md-inverse-surface: #2D3131;
+            --md-shadow: #000000;
+            --md-surface-tint: #006A6A;
+            --md-outline-variant: #BEC9C8;
+            --md-scrim: #000000;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--md-background);
+            color: var(--md-on-background);
+        }
+
+        .status-bar {
+            height: 28px;
+            background-color: var(--md-surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 12px;
+            color: var(--md-on-surface);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .top-app-bar {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+        }
+
+        .headline-large {
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 32px;
+        }
+
+        .filter-pills {
+            display: flex;
+            padding: 8px 16px;
+            overflow-x: auto;
+            gap: 8px;
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .pill.active {
+            background-color: var(--md-tertiary-container);
+            color: var(--md-on-tertiary-container);
+        }
+
+        .pill.inactive {
+            background-color: var(--md-surface-variant);
+            color: var(--md-on-surface-variant);
+        }
+
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--md-outline-variant);
+            font-size: 14px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .sort-option {
+            display: flex;
+            align-items: center;
+            margin-left: 16px;
+            font-weight: 500;
+        }
+
+        .sort-option.active {
+            color: var(--md-primary);
+        }
+
+        .summary-card {
+            background-color: var(--md-surface-variant);
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px;
+        }
+
+        .summary-headline {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .summary-data {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-count {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--md-primary);
+        }
+
+        .summary-period {
+            font-size: 14px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .progress-container {
+            margin-top: 16px;
+            width: 100%;
+            height: 12px;
+            background-color: #E0E0E0;
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 100px;
+            background-color: #4CAF50;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .alarm-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--md-outline-variant);
+            position: relative;
+        }
+
+        .alarm-item-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .alarm-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--md-surface-variant);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 16px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .alarm-item-content {
+            flex: 1;
+        }
+
+        .alarm-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+
+        .alarm-package {
+            font-size: 14px;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 8px;
+        }
+
+        .alarm-stats {
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-chip {
+            display: flex;
+            align-items: center;
+            background-color: var(--md-tertiary-container);
+            color: var(--md-on-tertiary-container);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .stat-chip i {
+            margin-right: 4px;
+            font-size: 10px;
+        }
+
+        .alarm-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .md-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 32px;
+        }
+
+        .md-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .md-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--md-surface-variant);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .md-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--md-on-surface-variant);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .md-slider {
+            background-color: var(--md-primary-container);
+        }
+
+        input:checked + .md-slider:before {
+            transform: translateX(20px);
+            background-color: var(--md-primary);
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--md-surface);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 0 8px 0;
+            border-top: 1px solid var(--md-outline-variant);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--md-on-surface-variant);
+            font-size: 12px;
+        }
+
+        .nav-item.active {
+            color: var(--md-primary);
+        }
+
+        .nav-item i {
+            margin-bottom: 4px;
+            font-size: 20px;
+        }
+
+        .time-input {
+            width: 80px;
+            text-align: center;
+            background-color: var(--md-surface);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 14px;
+            color: var(--md-on-surface);
+        }
+
+        .time-unit {
+            font-size: 14px;
+            color: var(--md-on-surface-variant);
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="left">12:30</div>
+        <div class="right">
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-three-quarters ml-2"></i>
+        </div>
+    </div>
+
+    <!-- Top App Bar -->
+    <div class="top-app-bar">
+        <div class="headline-large">Alarm</div>
+        <div class="flex-grow"></div>
+        <i class="fas fa-search text-xl mx-2"></i>
+        <i class="fas fa-sync-alt text-xl"></i>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="filter-pills">
+        <div class="pill active">All</div>
+        <div class="pill inactive">Blocked</div>
+        <div class="pill inactive">Allowed</div>
+    </div>
+
+    <!-- Sort Bar -->
+    <div class="sort-bar">
+        <i class="fas fa-sort-amount-down mr-2"></i>
+        <span>Sort by:</span>
+        <div class="sort-option active">
+            <i class="fas fa-check mr-2"></i>
+            <span>Name</span>
+        </div>
+        <div class="sort-option">
+            <span>Count</span>
+        </div>
+    </div>
+
+    <!-- Summary Card -->
+    <div class="summary-card">
+        <div class="summary-headline">Alarm Summary</div>
+        <div class="summary-data">
+            <div>
+                <div class="summary-count">51</div>
+                <div class="summary-period">Last 24 hours</div>
+            </div>
+            <div class="flex-grow"></div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 100%"></div>
+        </div>
+        <div class="progress-labels">
+            <div>0% Blocked (0)</div>
+            <div>100% Allowed (51)</div>
+        </div>
+    </div>
+
+    <!-- Alarm Items -->
+    <div class="alarm-list">
+        <div class="alarm-item">
+            <div class="alarm-item-left">
+                <div class="alarm-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="alarm-item-content">
+                    <div class="alarm-name">*CountQuotaTracker.cleanup*</div>
+                    <div class="alarm-package">android</div>
+                    <div class="alarm-stats">
+                        <div class="stat-chip">
+                            <i class="fas fa-bolt"></i>
+                            <span>91</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alarm-controls">
+                <input type="text" class="time-input" value="0">
+                <span class="time-unit">s</span>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="alarm-item">
+            <div class="alarm-item-left">
+                <div class="alarm-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="alarm-item-content">
+                    <div class="alarm-name">*job.cleanup*</div>
+                    <div class="alarm-package">android</div>
+                    <div class="alarm-stats">
+                        <div class="stat-chip">
+                            <i class="fas fa-bolt"></i>
+                            <span>34</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alarm-controls">
+                <input type="text" class="time-input" value="0">
+                <span class="time-unit">s</span>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="alarm-item">
+            <div class="alarm-item-left">
+                <div class="alarm-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="alarm-item-content">
+                    <div class="alarm-name">*job.deadline*</div>
+                    <div class="alarm-package">android</div>
+                    <div class="alarm-stats">
+                        <div class="stat-chip">
+                            <i class="fas fa-bolt"></i>
+                            <span>24</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alarm-controls">
+                <input type="text" class="time-input" value="0">
+                <span class="time-unit">s</span>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="alarm-item">
+            <div class="alarm-item-left">
+                <div class="alarm-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="alarm-item-content">
+                    <div class="alarm-name">*job.delay*</div>
+                    <div class="alarm-package">android</div>
+                    <div class="alarm-stats">
+                        <div class="stat-chip">
+                            <i class="fas fa-bolt"></i>
+                            <span>207</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alarm-controls">
+                <input type="text" class="time-input" value="0">
+                <span class="time-unit">s</span>
+                <label class="md-switch">
+                    <input type="checkbox" checked>
+                    <span class="md-slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <i class="fas fa-th"></i>
+            <span>App</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-lock"></i>
+            <span>WakeLock</span>
+        </div>
+        <div class="nav-item active">
+            <i class="fas fa-bell"></i>
+            <span>Alarm</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Service</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+    </div>
+</body>
+</html> 
