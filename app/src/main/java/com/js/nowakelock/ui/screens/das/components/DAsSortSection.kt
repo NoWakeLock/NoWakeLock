@@ -1,5 +1,6 @@
 package com.js.nowakelock.ui.screens.das.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -25,7 +26,7 @@ fun DAsSortSection(
     currentSort: DASortOption,
     onSortChanged: (DASortOption) -> Unit,
     type: Type = Type.Wakelock, // Add type parameter with default value
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     // If current sort is TIME but type doesn't support TIME sorting, switch to NAME
     LaunchedEffect(type, currentSort) {
