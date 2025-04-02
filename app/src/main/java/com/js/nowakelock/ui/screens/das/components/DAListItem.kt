@@ -17,11 +17,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,15 +46,8 @@ fun DAListItem(
     onTimeWindowChange: (Int) -> Unit,
     onItemClick: (DAItem) -> Unit = {}
 ) {
-    // Status bar color based on wakelock state
-    val statusBarColor = when {
-        daItem.fullBlocked -> BlockedRed.copy(alpha = 0.7f) // Red with alpha
-        // only for wakelocks / alarm
-        (daItem.type == Type.Wakelock || daItem.type == Type.Alarm) && daItem.timeWindowSec != 0 -> Color(
-            0xFFFF9800
-        ).copy(alpha = 0.7f) // Orange
-        else -> AllowedGreen.copy(alpha = 0.7f)
-    }
+    // get status color
+    val statusColor = getStatusColor(daItem)
 
     // For time window input
     var timeWindowText by remember {
@@ -68,50 +59,116 @@ fun DAListItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp),
-//        onClick = { onItemClick(appWithStats) },
-        shape = RoundedCornerShape(16.dp), // Slightly more rounded corners for the card
+        shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 0.5.dp, // Very subtle tonal elevation for depth
-        shadowElevation = 1.dp // Minimal shadow for the floating effect
+        tonalElevation = 0.5.dp,
+        shadowElevation = 1.dp
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(0.dp) //
-        ) {
-            // Info section
-            InfoSection(daItem)
+        // measure content, then apply correct height to status bar
+        SubcomposeLayout { constraints ->
+            // measure content
+            val contentPlaceable = subcompose("content") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    // Info section
+                    InfoSection(daItem)
 
-            // Subtle divider - more subtle
-            HorizontalDivider(
-                modifier = Modifier
-                    .padding(horizontal = 0.dp)
-                    .fillMaxWidth(),
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-            )
+                    // Subtle divider
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .padding(horizontal = 0.dp)
+                            .fillMaxWidth(),
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
 
-            // Control section
-            ControlSection(
-                daItem = daItem,
-                timeWindowText = timeWindowText,
-                onTimeWindowTextChange = { newValue ->
-                    // only accept digits and empty input
-                    if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-                        // null or empty input should not trigger onTimeWindowChange
-                        if (newValue.isEmpty()) {
-                            timeWindowText = "0"
-                            onTimeWindowChange(0)
-                        } else {
-                            timeWindowText = newValue
-                            newValue.toIntOrNull()?.let { intValue ->
-                                onTimeWindowChange(intValue)
+                    // Control section
+                    ControlSection(
+                        daItem = daItem,
+                        timeWindowText = timeWindowText,
+                        onTimeWindowTextChange = { newValue ->
+                            // only accept digits and empty input
+                            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                // null or empty input should not trigger onTimeWindowChange
+                                if (newValue.isEmpty()) {
+                                    timeWindowText = "0"
+                                    onTimeWindowChange(0)
+                                } else {
+                                    timeWindowText = newValue
+                                    newValue.toIntOrNull()?.let { intValue ->
+                                        onTimeWindowChange(intValue)
+                                    }
+                                }
                             }
-                        }
-                    }
-                },
-                onToggleFullBlock = onToggleFullBlock,
-                onToggleScreenOffBlock = onToggleScreenOffBlock
-            )
+                        },
+                        onToggleFullBlock = onToggleFullBlock,
+                        onToggleScreenOffBlock = onToggleScreenOffBlock
+                    )
+                }
+            }.first().measure(constraints)
+
+            // measure content height
+            val contentHeight = contentPlaceable.height
+            val indicatorPlaceable = subcompose("indicator") {
+                Box(
+                    modifier = Modifier
+                        .width(4.dp)
+                        .height(contentHeight.toDp())
+                        .background(
+                            color = statusColor,
+                            shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
+                        )
+                )
+            }.first()
+                .measure(constraints.copy(minWidth = 4.dp.roundToPx(), maxWidth = 4.dp.roundToPx()))
+
+            // layout content
+            layout(constraints.maxWidth, contentHeight) {
+                // place content (set padding to leave space for status bar)
+                contentPlaceable.place(4.dp.roundToPx(), 0)
+                // place status bar
+                indicatorPlaceable.place(0, 0)
+            }
         }
+    }
+}
+
+/**
+ * get status color
+ * follow Material Design 3 color system semantic colors
+ * there are 5 states:
+ * 1. no restrictions
+ * 2. full block
+ * 3. screen off block only
+ * 4. time window block only
+ * 5. screen off + time window block
+ */
+@Composable
+private fun getStatusColor(daItem: DAItem): Color {
+    return when {
+        // 1. full block
+        daItem.fullBlocked ->
+            MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+
+        // 2. screen off block + time window block
+        daItem.screenOffBlock && daItem.timeWindowSec != 0 ->
+            Color(0xFFE65100).copy(alpha = 0.85f) // Deep Orange
+
+        // 3. screen off block only
+        daItem.screenOffBlock ->
+            Color(0xFFFF9800).copy(alpha = 0.85f) // Orange
+
+        // 4. time window block only
+        daItem.timeWindowSec != 0 ->
+            Color(0xFFFFC107).copy(alpha = 0.85f) // Amber
+
+        // 5. no restrictions
+        else ->
+            AllowedGreen.copy(alpha = 0.85f)
     }
 }
 
@@ -334,10 +391,8 @@ private fun ControlSection(
                 .height(36.dp)
                 .border(
                     width = 1.dp,
-                    color = if (!daItem.fullBlocked)
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                    else
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
+                    color = if (!daItem.fullBlocked) MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                    else MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(horizontal = 8.dp, vertical = 8.dp)
