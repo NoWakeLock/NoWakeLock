@@ -1,9 +1,11 @@
 package com.js.nowakelock.ui.screens.das.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,8 +36,8 @@ import com.js.nowakelock.ui.theme.BlockedRed
 
 /**
  * WakelockListItem displays a single wakelock with its settings
- * Redesigned with ConstraintLayout for better spacing and alignment
- * Includes status indicator, info section, and compact controls
+ * Redesigned with Card layout for better presentation
+ * Optimized for information density following MD3 guidelines
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,221 +63,336 @@ fun DAListItem(
         mutableStateOf(daItem.timeWindowSec?.toString() ?: "0")
     }
 
-    // Main container with status bar indicator
-    Box(
+    // Card with status bar indicator
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 72.dp)
-            .clickable { onItemClick(daItem) }
-            .drawWithContent {
-                val barHeight = 48.dp.toPx()
-                val yOffset = (size.height - barHeight) / 2
-                drawRoundRect(
-                    color = statusBarColor,
-                    topLeft = androidx.compose.ui.geometry.Offset(6.dp.toPx(), yOffset),
-                    size = Size(3.dp.toPx(), barHeight),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(1.5.dp.toPx())
-                )
-                drawContent()
-            }
-            .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+//        onClick = { onItemClick(appWithStats) },
+        shape = RoundedCornerShape(16.dp), // Slightly more rounded corners for the card
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.5.dp, // Very subtle tonal elevation for depth
+        shadowElevation = 1.dp // Minimal shadow for the floating effect
     ) {
-        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-            // Create references for the compos
-            val (icon, name, packageName, statsRow, timeInput, blockSwitch) = createRefs()
+        Column(
+            modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(0.dp) //
+        ) {
+            // Info section
+            InfoSection(daItem)
 
-            // Icon
-            Box(
+            // Subtle divider - more subtle
+            HorizontalDivider(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .constrainAs(icon) {
-                        start.linkTo(parent.start)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = when (daItem.type) {
-                        Type.Wakelock -> Icons.Outlined.Lock
-                        Type.Alarm -> Icons.Outlined.AccessTime
-                        Type.Service -> Icons.Outlined.Build
-                        else -> Icons.Outlined.Lock
-                    },
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            // name
-            Text(
-                text = daItem.name,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.constrainAs(name) {
-                    width = Dimension.fillToConstraints
-                    start.linkTo(icon.end, 16.dp)
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                }
+                    .padding(horizontal = 0.dp)
+                    .fillMaxWidth(),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
             )
 
-            // Package name
-            Text(
-                text = daItem.packageName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.constrainAs(packageName) {
-                    start.linkTo(name.start)
-                    top.linkTo(name.bottom, 4.dp)
-                }
-            )
-
-            // Stats row
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.constrainAs(statsRow) {
-                    start.linkTo(name.start)
-                    top.linkTo(packageName.bottom, 4.dp)
-                }
-            ) {
-                // Count chip
-                Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.height(28.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Bolt,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = "${daItem.count}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
-                }
-                // Time chip, only for wakelocks
-                if (daItem.type == Type.Wakelock) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.height(28.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.AccessTime,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = formatTime(daItem.countTime),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Time window input, for wakelocks and alarms
-            if (daItem.type == Type.Wakelock || daItem.type == Type.Alarm) {
-                OutlinedTextField(
-                    value = timeWindowText,
-                    onValueChange = { newValue ->
-                        // only accept digits and empty input
-                        if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-                            // null or empty input should not trigger onTimeWindowChange
-                            if (newValue.isEmpty()) {
-                                timeWindowText = "0"
-                                onTimeWindowChange(0)
-                            } else {
-                                timeWindowText = newValue
-                                newValue.toIntOrNull()?.let { intValue ->
-                                    onTimeWindowChange(intValue)
-                                }
+            // Control section
+            ControlSection(
+                daItem = daItem,
+                timeWindowText = timeWindowText,
+                onTimeWindowTextChange = { newValue ->
+                    // only accept digits and empty input
+                    if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                        // null or empty input should not trigger onTimeWindowChange
+                        if (newValue.isEmpty()) {
+                            timeWindowText = "0"
+                            onTimeWindowChange(0)
+                        } else {
+                            timeWindowText = newValue
+                            newValue.toIntOrNull()?.let { intValue ->
+                                onTimeWindowChange(intValue)
                             }
                         }
-                    },
-                    modifier = Modifier
-                        .width(90.dp)
-                        .constrainAs(timeInput) {
-                            end.linkTo(blockSwitch.start, 4.dp)
-                            top.linkTo(blockSwitch.top, 4.dp)
-                            bottom.linkTo(statsRow.bottom, 4.dp)
-                        },
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    enabled = !daItem.fullBlocked,
-                    singleLine = true,
-                    suffix = {
-                        Text(
-                            text = "s",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                        disabledBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f),
-                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                            alpha = 0.38f
-                        )
-                    )
-                )
-            }
-
-            // Block switch
-            Switch(
-                checked = !daItem.fullBlocked,
-                onCheckedChange = onToggleFullBlock,
-                modifier = Modifier
-                    .scale(0.9f)
-                    .constrainAs(blockSwitch) {
-                        end.linkTo(parent.end)
-                        top.linkTo(name.bottom, 4.dp)
-                        bottom.linkTo(statsRow.bottom)
-                    },
-                thumbContent = if (daItem.fullBlocked) {
-                    {
-                        Icon(
-                            imageVector = Icons.Outlined.Bolt,
-                            contentDescription = null,
-                            modifier = Modifier.size(0.dp)
-                        )
                     }
-                } else null
+                },
+                onToggleFullBlock = onToggleFullBlock,
+                onToggleScreenOffBlock = onToggleScreenOffBlock
             )
         }
     }
+}
 
-    // Divider
-    HorizontalDivider(
+/**
+ * Info section containing icon, name, package name and stats
+ * Optimized for density and vertical space
+ */
+@Composable
+private fun InfoSection(daItem: DAItem) {
+    ConstraintLayout(
         modifier = Modifier
-            .padding(start = 16.dp)
-            .fillMaxWidth(),
-        thickness = 0.5.dp,
-        color = MaterialTheme.colorScheme.outlineVariant
-    )
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        val (icon, name, packageName, count, countTime) = createRefs()
+
+        // Icon
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .constrainAs(icon) {
+                    start.linkTo(parent.start, 8.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }, contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = when (daItem.type) {
+                    Type.Wakelock -> Icons.Outlined.Lock
+                    Type.Alarm -> Icons.Outlined.AccessTime
+                    Type.Service -> Icons.Outlined.Build
+                    else -> Icons.Outlined.Lock
+                },
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
+        // Name - put stats on same row for longer names
+        Text(
+            text = daItem.name,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.constrainAs(name) {
+                width = Dimension.fillToConstraints
+                start.linkTo(icon.end, 12.dp)
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+            })
+
+
+        // Package name
+        Text(
+            text = daItem.packageName,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.constrainAs(packageName) {
+                start.linkTo(icon.end, 12.dp)
+                top.linkTo(name.bottom, 4.dp)
+            })
+
+        // Count chip - more compact
+        Surface(
+            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .height(22.dp)
+                .constrainAs(count) {
+                    start.linkTo(icon.end, 12.dp)
+                    top.linkTo(packageName.bottom, 8.dp)
+                }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Bolt,
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp),
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(Modifier.width(2.dp))
+                Text(
+                    text = "${daItem.count}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+        }
+
+        Surface(
+            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .height(22.dp)
+                .constrainAs(countTime) {
+                    start.linkTo(count.end, 8.dp)
+                    top.linkTo(packageName.bottom, 8.dp)
+                }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AccessTime,
+                    contentDescription = null,
+                    modifier = Modifier.size(12.dp),
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+                Spacer(Modifier.width(2.dp))
+                Text(
+                    text = formatTime(daItem.countTime),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+            }
+
+        }
+
+    }
+}
+
+/**
+ * Control section containing switches and time window input
+ * Optimized for compact layout
+ */
+@Composable
+private fun ControlSection(
+    daItem: DAItem,
+    timeWindowText: String,
+    onTimeWindowTextChange: (String) -> Unit,
+    onToggleFullBlock: (Boolean) -> Unit,
+    onToggleScreenOffBlock: (Boolean) -> Unit
+) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        val (blockLabel, block, screenOffLabel, screenOffBlock, timeLabel, time) = createRefs()
+        // Block section
+        // Full block label and switch
+        Text(
+            text = "Allow",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.constrainAs(blockLabel) {
+                start.linkTo(parent.start, 16.dp)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            },
+        )
+        Switch(
+            checked = !daItem.fullBlocked,
+            onCheckedChange = onToggleFullBlock,
+            modifier = Modifier
+                .scale(0.75f)
+                .constrainAs(block) {
+                    start.linkTo(blockLabel.end, 4.dp)
+                    top.linkTo(blockLabel.top)
+                    bottom.linkTo(blockLabel.bottom)
+                },
+
+            thumbContent = if (daItem.fullBlocked) {
+                {
+                    Icon(
+                        imageVector = Icons.Outlined.Bolt,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+            } else null)
+
+        // Screen off label and switch
+        Text(
+            text = "Screen Off",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.constrainAs(screenOffLabel) {
+                start.linkTo(block.end, 8.dp)
+                top.linkTo(block.top)
+                bottom.linkTo(block.bottom)
+            })
+        Switch(
+            checked = !daItem.screenOffBlock,
+            onCheckedChange = onToggleScreenOffBlock,
+            enabled = !daItem.fullBlocked,
+            modifier = Modifier
+                .scale(0.75f)
+                .constrainAs(screenOffBlock) {
+                    start.linkTo(screenOffLabel.end, 4.dp)
+                    top.linkTo(screenOffLabel.top)
+                    bottom.linkTo(screenOffLabel.bottom)
+                })
+
+
+        // Timeout section
+        Text(
+            text = "Time",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.constrainAs(timeLabel) {
+                start.linkTo(screenOffBlock.end, 8.dp)
+                top.linkTo(screenOffBlock.top)
+                bottom.linkTo(screenOffBlock.bottom)
+            })
+
+        // BasicTextField
+        BasicTextField(
+            value = timeWindowText,
+            onValueChange = onTimeWindowTextChange,
+            modifier = Modifier
+                .width(65.dp)
+                .height(36.dp)
+                .border(
+                    width = 1.dp,
+                    color = if (!daItem.fullBlocked)
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                    else
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .constrainAs(time) {
+                    start.linkTo(timeLabel.end, 0.dp)
+                    top.linkTo(timeLabel.top)
+                    bottom.linkTo(timeLabel.bottom)
+                    end.linkTo(parent.end)
+                },
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                textAlign = TextAlign.End,
+                color = if (!daItem.fullBlocked)
+                    MaterialTheme.colorScheme.onSurface
+                else
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            enabled = !daItem.fullBlocked,
+            singleLine = true,
+            decorationBox = { innerTextField ->
+                if (timeWindowText.isEmpty()) {
+                    Text(
+                        text = "0",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                        textAlign = TextAlign.End
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = "s",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (!daItem.fullBlocked)
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                    )
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            innerTextField()
+                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "s",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (!daItem.fullBlocked)
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                        )
+                    }
+                }
+            }
+        )
+    }
 }
 
 /**
@@ -293,7 +411,7 @@ private fun formatTime(timeInMillis: Long): String {
 @Composable
 @Preview(showBackground = true)
 fun PreviewDAListItem() {
-    // Sample  for preview
+    // Sample for preview
     val dAItem = DAItem(
         name = "KEEP_SCREEN_ON_FLAG",
         packageName = "com.facebook.katana",
@@ -301,21 +419,22 @@ fun PreviewDAListItem() {
         blockCount = 12,
         countTime = 8100000, // 2h 15m in milliseconds
         fullBlocked = true,
-        timeWindowSec = 0
+        timeWindowSec = 0,
+        screenOffBlock = false,
+        type = Type.Wakelock
     )
 
     DAListItem(
         daItem = dAItem,
         onToggleFullBlock = {},
         onToggleScreenOffBlock = {},
-        onTimeWindowChange = {}
-    )
+        onTimeWindowChange = {})
 }
 
 @Composable
 @Preview(showBackground = true)
 fun Preview2() {
-    // Sample  for preview
+    // Sample for preview
     val dAItem = DAItem(
         name = "KEEP_SCREEN_ON_FLAG",
         packageName = "com.facebook.katana",
@@ -323,35 +442,37 @@ fun Preview2() {
         blockCount = 12,
         countTime = 8100000, // 2h 15m in milliseconds
         fullBlocked = false,
-        timeWindowSec = 1
+        timeWindowSec = 1,
+        screenOffBlock = true,
+        type = Type.Wakelock
     )
 
     DAListItem(
         daItem = dAItem,
         onToggleFullBlock = {},
         onToggleScreenOffBlock = {},
-        onTimeWindowChange = {}
-    )
+        onTimeWindowChange = {})
 }
 
 @Composable
 @Preview(showBackground = true)
 fun PreviewDAListItemWithTimeWindow() {
     // Sample wakelock for preview with time window
-    val daItem = DAItem(
+    val dAItem = DAItem(
         name = "GCM_RECONNECT_WAKELOCK",
         packageName = "com.google.android.gms",
         count = 36,
         blockCount = 0,
         countTime = 5400000, // 1h 30m in milliseconds
         fullBlocked = false,
-        timeWindowSec = 60
+        timeWindowSec = 60,
+        screenOffBlock = false,
+        type = Type.Wakelock
     )
 
     DAListItem(
-        daItem = daItem,
+        daItem = dAItem,
         onToggleFullBlock = {},
         onToggleScreenOffBlock = {},
-        onTimeWindowChange = {}
-    )
-} 
+        onTimeWindowChange = {})
+}
