@@ -263,35 +263,36 @@ private fun InfoSection(daItem: DAItem) {
             }
         }
 
-        Surface(
-            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier
-                .height(22.dp)
-                .constrainAs(countTime) {
-                    start.linkTo(count.end, 8.dp)
-                    top.linkTo(packageName.bottom, 8.dp)
-                }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 6.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.AccessTime,
-                    contentDescription = null,
-                    modifier = Modifier.size(12.dp),
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer
-                )
-                Spacer(Modifier.width(2.dp))
-                Text(
-                    text = formatTime(daItem.countTime),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                )
+        // 仅在 Wakelock 类型时显示唤醒时间
+        if (daItem.type == Type.Wakelock) {
+            Surface(
+                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier
+                    .height(22.dp)
+                    .constrainAs(countTime) {
+                        start.linkTo(count.end, 8.dp)
+                        top.linkTo(packageName.bottom, 8.dp)
+                    }) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AccessTime,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                    Spacer(Modifier.width(2.dp))
+                    Text(
+                        text = formatTime(daItem.countTime),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
             }
-
         }
-
     }
 }
 
