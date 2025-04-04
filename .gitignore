@@ -94,3 +94,4 @@ app/release/output.json
 /vendor
 /release
 /certs
+.idea/misc.xml
