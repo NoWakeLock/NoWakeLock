@@ -35,22 +35,14 @@ import com.js.nowakelock.ui.theme.AllowedGreen
  * Redesigned with Card layout for better presentation
  * Optimized for information density following MD3 guidelines
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DAListItem(
+fun ServiceListItem(
     daItem: DAItem,
     onToggleFullBlock: (Boolean) -> Unit,
-    onToggleScreenOffBlock: (Boolean) -> Unit,
-    onTimeWindowChange: (Int) -> Unit,
     onItemClick: (DAItem) -> Unit = {}
 ) {
     // get status color
     val statusColor = getStatusColor(daItem)
-
-    // For time window input
-    var timeWindowText by remember {
-        mutableStateOf(daItem.timeWindowSec?.toString() ?: "0")
-    }
 
     // Card with status bar indicator
     Surface(
@@ -73,39 +65,8 @@ fun DAListItem(
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
                     // Info section
-                    InfoSection(daItem)
+                    InfoSection(daItem, onToggleFullBlock=onToggleFullBlock)
 
-                    // Subtle divider
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .padding(horizontal = 0.dp)
-                            .fillMaxWidth(),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-
-                    // Control section
-                    ControlSection(
-                        daItem = daItem,
-                        timeWindowText = timeWindowText,
-                        onTimeWindowTextChange = { newValue ->
-                            // only accept digits and empty input
-                            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-                                // null or empty input should not trigger onTimeWindowChange
-                                if (newValue.isEmpty()) {
-                                    timeWindowText = "0"
-                                    onTimeWindowChange(0)
-                                } else {
-                                    timeWindowText = newValue
-                                    newValue.toIntOrNull()?.let { intValue ->
-                                        onTimeWindowChange(intValue)
-                                    }
-                                }
-                            }
-                        },
-                        onToggleFullBlock = onToggleFullBlock,
-                        onToggleScreenOffBlock = onToggleScreenOffBlock
-                    )
                 }
             }.first().measure(constraints)
 
@@ -175,13 +136,13 @@ private fun getStatusColor(daItem: DAItem): Color {
  * Optimized for density and vertical space
  */
 @Composable
-private fun InfoSection(daItem: DAItem) {
+private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
     ConstraintLayout(
         modifier = Modifier
-            .fillMaxWidth()
+//            .fillMaxWidth()
             .padding(8.dp)
     ) {
-        val (icon, name, packageName, count, countTime) = createRefs()
+        val (icon, name, packageName, count, block) = createRefs()
 
         // Icon
         Box(
@@ -263,34 +224,26 @@ private fun InfoSection(daItem: DAItem) {
             }
         }
 
-        Surface(
-            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f),
-            shape = RoundedCornerShape(4.dp),
+        Switch(
+            checked = !daItem.fullBlocked,
+            onCheckedChange = onToggleFullBlock,
             modifier = Modifier
-                .height(22.dp)
-                .constrainAs(countTime) {
-                    start.linkTo(count.end, 8.dp)
-                    top.linkTo(packageName.bottom, 8.dp)
-                }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 6.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.AccessTime,
-                    contentDescription = null,
-                    modifier = Modifier.size(12.dp),
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer
-                )
-                Spacer(Modifier.width(2.dp))
-                Text(
-                    text = formatTime(daItem.countTime),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                )
-            }
+                .scale(0.75f)
+                .constrainAs(block) {
+                    start.linkTo(count.end, 160.dp)
+                    top.linkTo(count.top)
+                    bottom.linkTo(count.bottom)
+                },
 
-        }
+            thumbContent = if (daItem.fullBlocked) {
+                {
+                    Icon(
+                        imageVector = Icons.Outlined.Bolt,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+            } else null)
 
     }
 }
@@ -463,7 +416,7 @@ private fun formatTime(timeInMillis: Long): String {
 
 @Composable
 @Preview(showBackground = true)
-fun PreviewDAListItem() {
+fun PreviewServiceListItem() {
     // Sample for preview
     val dAItem = DAItem(
         name = "KEEP_SCREEN_ON_FLAG",
@@ -477,55 +430,7 @@ fun PreviewDAListItem() {
         type = Type.Wakelock
     )
 
-    DAListItem(
+    ServiceListItem(
         daItem = dAItem,
-        onToggleFullBlock = {},
-        onToggleScreenOffBlock = {},
-        onTimeWindowChange = {})
-}
-
-@Composable
-@Preview(showBackground = true)
-fun Preview2() {
-    // Sample for preview
-    val dAItem = DAItem(
-        name = "KEEP_SCREEN_ON_FLAG",
-        packageName = "com.facebook.katana",
-        count = 47,
-        blockCount = 12,
-        countTime = 8100000, // 2h 15m in milliseconds
-        fullBlocked = false,
-        timeWindowSec = 1,
-        screenOffBlock = true,
-        type = Type.Wakelock
-    )
-
-    DAListItem(
-        daItem = dAItem,
-        onToggleFullBlock = {},
-        onToggleScreenOffBlock = {},
-        onTimeWindowChange = {})
-}
-
-@Composable
-@Preview(showBackground = true)
-fun PreviewDAListItemWithTimeWindow() {
-    // Sample wakelock for preview with time window
-    val dAItem = DAItem(
-        name = "GCM_RECONNECT_WAKELOCK",
-        packageName = "com.google.android.gms",
-        count = 36,
-        blockCount = 0,
-        countTime = 5400000, // 1h 30m in milliseconds
-        fullBlocked = false,
-        timeWindowSec = 60,
-        screenOffBlock = false,
-        type = Type.Wakelock
-    )
-
-    DAListItem(
-        daItem = dAItem,
-        onToggleFullBlock = {},
-        onToggleScreenOffBlock = {},
-        onTimeWindowChange = {})
+        onToggleFullBlock = {})
 }

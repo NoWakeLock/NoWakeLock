@@ -16,6 +16,7 @@ import com.js.nowakelock.ui.screens.das.components.DAListItem
 import com.js.nowakelock.ui.screens.das.components.DAFilterSection
 import com.js.nowakelock.ui.screens.das.components.DAsSortSection
 import com.js.nowakelock.ui.screens.das.components.DAsSummary
+import com.js.nowakelock.ui.screens.das.components.ServiceListItem
 
 /**
  * Main screen for Wakelocks display
@@ -115,24 +116,31 @@ fun DAsScreen(
                         items = uiState.das,
                         key = { "${it.name}_${it.packageName}_${it.userId}" }
                     ) { daItem ->
-                        DAListItem(
-                            daItem = daItem, onToggleFullBlock = { enable ->
+                        when (type){
+                            Type.Service -> ServiceListItem(daItem = daItem, onToggleFullBlock = { enable ->
                                 viewModel.updateDAFullBlockState(
                                     daItem = daItem, isBlocked = !enable
                                 )
-                            }, onToggleScreenOffBlock = { enable ->
-                                viewModel.updateDAScreenOffBlockState(
-                                    daItem = daItem, isBlocked = !enable
-                                )
-                            }, onTimeWindowChange = { timeWindow ->
-                                viewModel.updateDATimeWindow(
-                                    daItem = daItem, timeWindow = timeWindow
-                                )
-                            },
-                            onItemClick = {
-                                navigateToDADetail(it.name, it.packageName)
-                            }
-                        )
+                            })
+                            else ->  DAListItem(
+                                daItem = daItem, onToggleFullBlock = { enable ->
+                                    viewModel.updateDAFullBlockState(
+                                        daItem = daItem, isBlocked = !enable
+                                    )
+                                }, onToggleScreenOffBlock = { enable ->
+                                    viewModel.updateDAScreenOffBlockState(
+                                        daItem = daItem, isBlocked = !enable
+                                    )
+                                }, onTimeWindowChange = { timeWindow ->
+                                    viewModel.updateDATimeWindow(
+                                        daItem = daItem, timeWindow = timeWindow
+                                    )
+                                },
+                                onItemClick = {
+                                    navigateToDADetail(it.name, it.packageName)
+                                }
+                            )
+                        }
                     }
 
                     // Extra space at the bottom
