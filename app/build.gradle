@@ -94,7 +94,7 @@ class RoomSchemaArgProvider implements CommandLineArgumentProvider {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20'
 
     //ktx
     implementation 'androidx.core:core-ktx:1.15.0'
@@ -138,7 +138,7 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$room_version"    // Test helpers
 
     // koin
-    def koin_android_version = '4.0.3'
+    def koin_android_version = '4.0.4'
     implementation "io.insert-koin:koin-androidx-compose:$koin_android_version"
     implementation "io.insert-koin:koin-androidx-compose-navigation:$koin_android_version"
 
@@ -156,12 +156,12 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.9.1'
 
     //gson
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.12.1'
     //Klaxon for json
     implementation 'com.beust:klaxon:5.6'
 
     // load app icon
-    implementation "io.coil-kt:coil-compose:2.6.0"
+    implementation 'io.coil-kt:coil-compose:2.7.0'
 
     implementation "androidx.core:core-splashscreen:1.0.1" // splash screen
 }
