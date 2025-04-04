@@ -3,11 +3,12 @@ package com.js.nowakelock.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.js.nowakelock.ui.components.NoWakeLockBottomNavBar
 import com.js.nowakelock.ui.components.NoWakeLockTopAppBar
@@ -40,15 +41,25 @@ fun NoWakeLockApp() {
             val navBackStackEntry = navController.currentBackStackEntry
             val currentRoute = navBackStackEntry?.destination?.route
             
-            // Reset search state whenever route changes
-            LaunchedEffect(navBackStackEntry) {
-                val route = navBackStackEntry?.destination?.route
-                // Don't reset search when in searching screens
-                if (route != NavRoutes.APPS && 
-                    route != NavRoutes.WAKELOCKS && 
-                    route != NavRoutes.ALARMS && 
-                    route != NavRoutes.SERVICES) {
-                    isSearchActive.value = false
+            // NavController.OnDestinationChangedListener
+            DisposableEffect(navController) {
+                val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+                    // Reset search state when navigating to a new destination
+                    searchQuery.value = ""
+                    
+                    // Reset search state if not on specific routes
+                    val route = destination.route
+                    if (route != NavRoutes.APPS && 
+                        route != NavRoutes.WAKELOCKS && 
+                        route != NavRoutes.ALARMS && 
+                        route != NavRoutes.SERVICES) {
+                        isSearchActive.value = false
+                    }
+                }
+
+                navController.addOnDestinationChangedListener(listener)
+                onDispose {
+                    navController.removeOnDestinationChangedListener(listener)
                 }
             }
             
@@ -63,12 +74,6 @@ fun NoWakeLockApp() {
                                 is TopAppBarEvent.SearchClicked -> {
                                     // Activate search mode without navigating to Apps screen
                                     isSearchActive.value = true
-                                    
-                                    // Remove navigation to Apps screen
-                                    // val route = navController.currentBackStackEntry?.destination?.route
-                                    // if (route != NavRoutes.APPS) {
-                                    //     navController.navigate(NavRoutes.APPS)
-                                    // }
                                 }
                                 is TopAppBarEvent.MenuClicked -> {
                                     // Handle menu click (not yet implemented)
