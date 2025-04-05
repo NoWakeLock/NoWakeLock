@@ -39,6 +39,18 @@ data class DAItem(
         get() = fullBlocked && timeWindowSec != 0
 
     /**
+     * Checks if this DAItem represents the same item as another
+     * based on core identity attributes (name, package, userId)
+     * This is useful for optimized UI updates
+     */
+    fun isSameItemAs(other: DAItem): Boolean {
+        return name == other.name &&
+               packageName == other.packageName &&
+               userId == other.userId &&
+               type == other.type
+    }
+
+    /**
      * Formats the time for display in the UI
      */
     fun getFormattedTime(): String {

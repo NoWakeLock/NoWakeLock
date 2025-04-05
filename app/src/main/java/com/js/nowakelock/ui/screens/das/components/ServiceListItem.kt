@@ -31,7 +31,7 @@ import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.ui.theme.AllowedGreen
 
 /**
- * WakelockListItem displays a single wakelock with its settings
+ * ServiceListItem displays a single service with its settings
  * Redesigned with Card layout for better presentation
  * Optimized for information density following MD3 guidelines
  */
@@ -41,8 +41,10 @@ fun ServiceListItem(
     onToggleFullBlock: (Boolean) -> Unit,
     onItemClick: (DAItem) -> Unit = {}
 ) {
-    // get status color
-    val statusColor = getStatusColor(daItem)
+    // Remember status color based on item state
+    val statusColor = remember(daItem.fullBlocked) {
+        getStatusColor(daItem)
+    }
 
     // Card with status bar indicator
     Surface(
@@ -52,7 +54,8 @@ fun ServiceListItem(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.5.dp,
-        shadowElevation = 1.dp
+        shadowElevation = 1.dp,
+        onClick = { onItemClick(daItem) }
     ) {
         // measure content, then apply correct height to status bar
         SubcomposeLayout { constraints ->
@@ -64,9 +67,13 @@ fun ServiceListItem(
                         .padding(start = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
-                    // Info section
-                    InfoSection(daItem, onToggleFullBlock=onToggleFullBlock)
-
+                    // Info section - static part that rarely changes
+                    key(daItem.name, daItem.packageName, daItem.count, daItem.type) {
+                        InfoSection(
+                            daItem = daItem,
+                            onToggleFullBlock = onToggleFullBlock
+                        )
+                    }
                 }
             }.first().measure(constraints)
 
@@ -106,12 +113,11 @@ fun ServiceListItem(
  * 4. time window block only
  * 5. screen off + time window block
  */
-@Composable
 private fun getStatusColor(daItem: DAItem): Color {
     return when {
         // 1. full block
         daItem.fullBlocked ->
-            MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+            Color(0xFFB3261E).copy(alpha = 0.85f) // MaterialTheme.colorScheme.error
 
         // 2. screen off block + time window block
         daItem.screenOffBlock && daItem.timeWindowSec != 0 ->
@@ -139,7 +145,6 @@ private fun getStatusColor(daItem: DAItem): Color {
 private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
     ConstraintLayout(
         modifier = Modifier
-//            .fillMaxWidth()
             .padding(8.dp)
     ) {
         val (icon, name, packageName, count, block) = createRefs()
@@ -224,27 +229,29 @@ private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
             }
         }
 
-        Switch(
-            checked = !daItem.fullBlocked,
-            onCheckedChange = onToggleFullBlock,
-            modifier = Modifier
-                .scale(0.75f)
-                .constrainAs(block) {
-                    start.linkTo(count.end, 160.dp)
-                    top.linkTo(count.top)
-                    bottom.linkTo(count.bottom)
-                },
-
-            thumbContent = if (daItem.fullBlocked) {
-                {
-                    Icon(
-                        imageVector = Icons.Outlined.Bolt,
-                        contentDescription = null,
-                        modifier = Modifier.size(12.dp)
-                    )
-                }
-            } else null)
-
+        // Switch - isolate with key to avoid unnecessary recompositions
+        key(daItem.fullBlocked) {
+            Switch(
+                checked = !daItem.fullBlocked,
+                onCheckedChange = onToggleFullBlock,
+                modifier = Modifier
+                    .scale(0.75f)
+                    .constrainAs(block) {
+                        start.linkTo(count.end, 160.dp)
+                        top.linkTo(count.top)
+                        bottom.linkTo(count.bottom)
+                    },
+                thumbContent = if (daItem.fullBlocked) {
+                    {
+                        Icon(
+                            imageVector = Icons.Outlined.Bolt,
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                } else null
+            )
+        }
     }
 }
 
@@ -427,7 +434,7 @@ fun PreviewServiceListItem() {
         fullBlocked = true,
         timeWindowSec = 0,
         screenOffBlock = false,
-        type = Type.Wakelock
+        type = Type.Service
     )
 
     ServiceListItem(
