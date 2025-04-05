@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoWakeLock - Wakelock Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --md-primary: #6750A4;
+            --md-primary-container: #EADDFF;
+            --md-secondary: #9A82DB;
+            --md-on-primary: #FFFFFF;
+            --md-surface: #FFFBFE;
+            --md-surface-variant: #E7E0EC;
+            --md-on-surface: #1C1B1F;
+            --md-on-surface-variant: #49454F;
+            --md-outline: #79747E;
+            --md-outline-variant: #CAC4D0;
+            --md-error: #B3261E;
+            --md-warning: #FFA629;
+            --md-success: #4CAF50;
+            --md-info: #2196F3;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--md-on-surface);
+            max-width: 412px; /* Pixel 8 width */
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .app-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            font-size: 20px;
+            font-weight: 500;
+            border-bottom: 1px solid var(--md-outline-variant);
+        }
+        
+        .app-bar-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 16px;
+            margin: 8px 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--md-outline-variant);
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 4px;
+        }
+        
+        .stat-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--md-primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--md-on-surface-variant);
+            margin-top: 2px;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: var(--md-outline-variant);
+            margin: 16px 0;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--md-on-surface);
+        }
+        
+        .section-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .recommendation {
+            display: flex;
+            padding: 12px;
+            background-color: #F8F9FA;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+        
+        .recommendation-icon {
+            color: var(--md-success);
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .recommendation-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .warning-icon {
+            color: var(--md-warning);
+        }
+        
+        .danger-icon {
+            color: var(--md-error);
+        }
+        
+        .md-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 32px;
+        }
+        
+        .md-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .md-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--md-surface-variant);
+            transition: .3s;
+            border-radius: 34px;
+        }
+        
+        .md-switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .md-switch-slider {
+            background-color: var(--md-primary);
+        }
+        
+        input:checked + .md-switch-slider:before {
+            transform: translateX(20px);
+        }
+        
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .setting-info {
+            flex: 1;
+        }
+        
+        .setting-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .setting-desc {
+            font-size: 12px;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .time-input {
+            width: 64px;
+            height: 32px;
+            border: 1px solid var(--md-outline);
+            border-radius: 4px;
+            padding: 0 8px;
+            margin-right: 8px;
+            font-size: 14px;
+            text-align: right;
+        }
+        
+        .chart-container {
+            height: 160px;
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        
+        .chart-bar {
+            width: 6px;
+            background-color: #E0E0E0;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .chart-bar-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--md-primary);
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .chart-legend {
+            display: flex;
+            margin-top: 16px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+        }
+        
+        .activity-item {
+            border-left: 2px solid var(--md-success);
+            padding-left: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .activity-status {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: var(--md-on-surface-variant);
+        }
+        
+        .activity-duration {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .blocked-activity {
+            border-left-color: var(--md-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal ml-2"></i>
+            <i class="fas fa-battery-full ml-2"></i>
+        </div>
+    </div>
+
+    <!-- App Bar -->
+    <div class="app-bar">
+        <div class="flex items-center">
+            <i class="fas fa-arrow-left mr-4"></i>
+            <div class="app-bar-title">唤醒锁详情</div>
+        </div>
+        <div>
+            <i class="fas fa-copy mr-4"></i>
+            <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+    </div>
+
+    <!-- Wakelock Header -->
+    <div class="bg-white p-4 border-b border-gray-200">
+        <div class="flex items-center">
+            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fas fa-bolt text-2xl text-purple-700"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-medium">KEEP_SCREEN_ON_FLAG</h2>
+                <p class="text-gray-600 text-sm">com.facebook.katana</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Statistics & Information Card -->
+    <div class="card">
+        <!-- Single row statistics area -->
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value">47</div>
+                <div class="stat-label">次数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">12</div>
+                <div class="stat-label">已阻止</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">2h 15m</div>
+                <div class="stat-label">总时间</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">35m</div>
+                <div class="stat-label">节省时间</div>
+            </div>
+        </div>
+        
+        <!-- Description section -->
+        <div class="mt-4">
+            <div class="section-title">关于此唤醒锁</div>
+            <div class="section-content">
+                KEEP_SCREEN_ON_FLAG 是一个由应用程序请求的唤醒锁，用于防止设备屏幕在使用过程中自动关闭。通常在视频播放、阅读或需要长时间显示内容的场景中使用。它会显著增加电池消耗，因为屏幕是设备中最耗电的组件之一。
+            </div>
+        </div>
+        
+        <!-- Recommendation section -->
+        <div class="mt-4">
+            <div class="section-title">推荐设置</div>
+            <div class="recommendation">
+                <i class="fas fa-lightbulb recommendation-icon"></i>
+                <div class="recommendation-text">
+                    建议仅在屏幕关闭时阻止此唤醒锁，这样可以在不影响应用正常使用的情况下省电。
+                </div>
+            </div>
+            <div class="recommendation mt-2">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <div class="recommendation-text">
+                    完全阻止此唤醒锁可能会导致某些应用（如视频播放器）在使用时屏幕意外关闭。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Card -->
+    <div class="card">
+        <div class="section-title mb-4">唤醒锁设置</div>
+        
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">阻止唤醒锁</div>
+                <div class="setting-desc">阻止此唤醒锁的触发</div>
+            </div>
+            <label class="md-switch">
+                <input type="checkbox" checked>
+                <span class="md-switch-slider"></span>
+            </label>
+        </div>
+        
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">仅在休眠时阻止</div>
+                <div class="setting-desc">仅在屏幕关闭时阻止</div>
+            </div>
+            <label class="md-switch">
+                <input type="checkbox" checked>
+                <span class="md-switch-slider"></span>
+            </label>
+        </div>
+        
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">允许时间间隔</div>
+                <div class="setting-desc">允许唤醒锁触发的时间间隔</div>
+            </div>
+            <div class="flex items-center">
+                <input type="number" value="60" class="time-input">
+                <span class="text-gray-600">秒</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Timeline Card -->
+    <div class="card">
+        <div class="section-title">活动时间线</div>
+        <div class="text-xs text-gray-500 mt-1 mb-3">过去 24 小时</div>
+        
+        <div class="chart-container">
+            <div class="chart-bar" style="height: 15%;">
+                <div class="chart-bar-fill" style="height: 60%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 25%;">
+                <div class="chart-bar-fill" style="height: 70%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 40%;">
+                <div class="chart-bar-fill" style="height: 65%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 60%;">
+                <div class="chart-bar-fill" style="height: 75%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 80%;">
+                <div class="chart-bar-fill" style="height: 60%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 50%;">
+                <div class="chart-bar-fill" style="height: 80%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 30%;">
+                <div class="chart-bar-fill" style="height: 70%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 20%;">
+                <div class="chart-bar-fill" style="height: 50%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 45%;">
+                <div class="chart-bar-fill" style="height: 60%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 70%;">
+                <div class="chart-bar-fill" style="height: 75%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 90%;">
+                <div class="chart-bar-fill" style="height: 65%;"></div>
+            </div>
+            <div class="chart-bar" style="height: 60%;">
+                <div class="chart-bar-fill" style="height: 80%;"></div>
+            </div>
+        </div>
+        
+        <div class="time-labels">
+            <div>12AM</div>
+            <div>4AM</div>
+            <div>8AM</div>
+            <div>12PM</div>
+            <div>4PM</div>
+            <div>8PM</div>
+            <div>现在</div>
+        </div>
+        
+        <div class="chart-legend">
+            <div class="legend-item">
+                <div class="legend-color bg-purple-600 rounded-sm"></div>
+                <span class="text-gray-600">已阻止</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color bg-gray-200 rounded-sm"></div>
+                <span class="text-gray-600">总计</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Card -->
+    <div class="card mb-16">
+        <div class="section-title mb-4">最近活动</div>
+        
+        <div class="activity-item">
+            <div class="activity-status">已允许</div>
+            <div class="activity-time">今天, 10:23 AM</div>
+            <div class="activity-duration">持续时间: 5 分钟</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-status">已允许</div>
+            <div class="activity-time">今天, 9:45 AM</div>
+            <div class="activity-duration">持续时间: 3 分钟</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-status">已允许</div>
+            <div class="activity-time">今天, 8:30 AM</div>
+            <div class="activity-duration">持续时间: 7 分钟</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-status">已允许</div>
+            <div class="activity-time">今天, 7:15 AM</div>
+            <div class="activity-duration">持续时间: 2 分钟</div>
+        </div>
+    </div>
+</body>
+</html> 
