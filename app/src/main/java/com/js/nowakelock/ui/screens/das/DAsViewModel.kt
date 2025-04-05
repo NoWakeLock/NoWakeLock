@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.repository.daitem.DARepository
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -47,7 +50,7 @@ enum class DAFilterOption {
 data class DAsUiState(
     val isLoading: Boolean = false,
     val loadingSource: LoadingSource = LoadingSource.NONE,
-    val das: List<DAItem> = emptyList(),
+    val das: ImmutableList<DAItem> = kotlinx.collections.immutable.persistentListOf(),
     val currentSortOption: DASortOption = DASortOption.NAME,
     val currentFilterOption: DAFilterOption = DAFilterOption.ALL,
     val searchQuery: String = "",
@@ -106,40 +109,61 @@ open class DAsViewModel(
                 }
 
                 // Collect and update UI state
-                daFlow.collect { daList ->
-                    // Apply filtering
-                    val filteredList = when (_uiState.value.currentFilterOption) {
-                        DAFilterOption.ALL -> daList
-                        DAFilterOption.BLOCKED -> daList.filter { it.fullBlocked }
-                        DAFilterOption.ALLOWED -> daList.filter { !it.fullBlocked }
-                    }
-
-                    // Apply search filter if needed
-                    val searchQuery = _uiState.value.searchQuery.trim().lowercase()
-                    val searchFilteredList = if (searchQuery.isNotEmpty()) {
-                        filteredList.filter { da ->
-                            da.name.lowercase().contains(searchQuery) || da.packageName.lowercase()
-                                .contains(searchQuery)
+                daFlow
+                    // Apply custom distinctUntilChanged to filter out equivalent lists
+                    .distinctUntilChanged { old, new ->
+                        if (old.size != new.size) return@distinctUntilChanged false
+                        
+                        // Check if lists contain the same items with the same state
+                        val oldMap = old.associateBy { "${it.name}_${it.packageName}_${it.userId}" }
+                        val newMap = new.associateBy { "${it.name}_${it.packageName}_${it.userId}" }
+                        
+                        if (oldMap.keys != newMap.keys) return@distinctUntilChanged false
+                        
+                        // Deep comparison of relevant state properties
+                        oldMap.keys.all { key ->
+                            val oldItem = oldMap[key]!!
+                            val newItem = newMap[key]!!
+                            
+                            oldItem.fullBlocked == newItem.fullBlocked &&
+                            oldItem.screenOffBlock == newItem.screenOffBlock &&
+                            oldItem.timeWindowSec == newItem.timeWindowSec
                         }
-                    } else {
-                        filteredList
                     }
+                    .collect { daList ->
+                        // Apply filtering
+                        val filteredList = when (_uiState.value.currentFilterOption) {
+                            DAFilterOption.ALL -> daList
+                            DAFilterOption.BLOCKED -> daList.filter { it.fullBlocked }
+                            DAFilterOption.ALLOWED -> daList.filter { !it.fullBlocked }
+                        }
 
-                    // Calculate summary statistics
-                    val blockedCount = daList.count { it.fullBlocked }
-                    val totalCount = daList.size
+                        // Apply search filter if needed
+                        val searchQuery = _uiState.value.searchQuery.trim().lowercase()
+                        val searchFilteredList = if (searchQuery.isNotEmpty()) {
+                            filteredList.filter { da ->
+                                da.name.lowercase().contains(searchQuery) || da.packageName.lowercase()
+                                    .contains(searchQuery)
+                            }
+                        } else {
+                            filteredList
+                        }
 
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            loadingSource = LoadingSource.NONE,
-                            das = searchFilteredList,
-                            totalDAs = totalCount,
-                            blockedCount = blockedCount,
-                            allowedCount = totalCount - blockedCount
-                        )
+                        // Calculate summary statistics
+                        val blockedCount = daList.count { it.fullBlocked }
+                        val totalCount = daList.size
+
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                loadingSource = LoadingSource.NONE,
+                                das = searchFilteredList.toImmutableList(),
+                                totalDAs = totalCount,
+                                blockedCount = blockedCount,
+                                allowedCount = totalCount - blockedCount
+                            )
+                        }
                     }
-                }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(

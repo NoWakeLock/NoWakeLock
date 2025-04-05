@@ -94,7 +94,7 @@ class RoomSchemaArgProvider implements CommandLineArgumentProvider {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0'
 
     //ktx
     implementation 'androidx.core:core-ktx:1.15.0'
@@ -103,6 +103,9 @@ dependencies {
     // xposed
     compileOnly files('libs/api-82.jar')
     compileOnly files('libs/api-82-sources.jar')
+
+    // Immutable collections for better performance
+    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7'
 
     //compose
     implementation 'androidx.appcompat:appcompat:1.7.0'

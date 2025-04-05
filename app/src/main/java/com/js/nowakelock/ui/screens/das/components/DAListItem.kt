@@ -44,11 +44,13 @@ fun DAListItem(
     onTimeWindowChange: (Int) -> Unit,
     onItemClick: (DAItem) -> Unit = {}
 ) {
-    // get status color
-    val statusColor = getStatusColor(daItem)
+    // Remember status color based on item state
+    val statusColor = remember(daItem.fullBlocked, daItem.screenOffBlock, daItem.timeWindowSec) {
+        getStatusColor(daItem)
+    }
 
     // For time window input
-    var timeWindowText by remember {
+    var timeWindowText by remember(daItem.timeWindowSec) {
         mutableStateOf(daItem.timeWindowSec?.toString() ?: "0")
     }
 
@@ -60,7 +62,8 @@ fun DAListItem(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.5.dp,
-        shadowElevation = 1.dp
+        shadowElevation = 1.dp,
+        onClick = { onItemClick(daItem) }
     ) {
         // measure content, then apply correct height to status bar
         SubcomposeLayout { constraints ->
@@ -72,8 +75,10 @@ fun DAListItem(
                         .padding(start = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
-                    // Info section
-                    InfoSection(daItem)
+                    // Info section - static part that rarely changes
+                    key(daItem.name, daItem.packageName, daItem.count, daItem.countTime, daItem.type) {
+                        InfoSection(daItem)
+                    }
 
                     // Subtle divider
                     HorizontalDivider(
@@ -84,28 +89,30 @@ fun DAListItem(
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                     )
 
-                    // Control section
-                    ControlSection(
-                        daItem = daItem,
-                        timeWindowText = timeWindowText,
-                        onTimeWindowTextChange = { newValue ->
-                            // only accept digits and empty input
-                            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-                                // null or empty input should not trigger onTimeWindowChange
-                                if (newValue.isEmpty()) {
-                                    timeWindowText = "0"
-                                    onTimeWindowChange(0)
-                                } else {
-                                    timeWindowText = newValue
-                                    newValue.toIntOrNull()?.let { intValue ->
-                                        onTimeWindowChange(intValue)
+                    // Control section - dynamic part that changes on interaction
+                    key(daItem.fullBlocked, daItem.screenOffBlock, daItem.timeWindowSec) {
+                        ControlSection(
+                            daItem = daItem,
+                            timeWindowText = timeWindowText,
+                            onTimeWindowTextChange = { newValue ->
+                                // only accept digits and empty input
+                                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                    // null or empty input should not trigger onTimeWindowChange
+                                    if (newValue.isEmpty()) {
+                                        timeWindowText = "0"
+                                        onTimeWindowChange(0)
+                                    } else {
+                                        timeWindowText = newValue
+                                        newValue.toIntOrNull()?.let { intValue ->
+                                            onTimeWindowChange(intValue)
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        onToggleFullBlock = onToggleFullBlock,
-                        onToggleScreenOffBlock = onToggleScreenOffBlock
-                    )
+                            },
+                            onToggleFullBlock = onToggleFullBlock,
+                            onToggleScreenOffBlock = onToggleScreenOffBlock
+                        )
+                    }
                 }
             }.first().measure(constraints)
 
@@ -145,12 +152,11 @@ fun DAListItem(
  * 4. time window block only
  * 5. screen off + time window block
  */
-@Composable
 private fun getStatusColor(daItem: DAItem): Color {
     return when {
         // 1. full block
         daItem.fullBlocked ->
-            MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+            Color(0xFFB3261E).copy(alpha = 0.85f) // MaterialTheme.colorScheme.error
 
         // 2. screen off block + time window block
         daItem.screenOffBlock && daItem.timeWindowSec != 0 ->

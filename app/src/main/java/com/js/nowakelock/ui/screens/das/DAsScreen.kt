@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.ui.components.EmptyView
 import com.js.nowakelock.ui.components.LoadingView
 import com.js.nowakelock.ui.screens.das.components.DAListItem
@@ -36,6 +37,11 @@ fun DAsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    // Use derivedStateOf to prevent unnecessary recompositions
+    val dasList by remember(uiState.das) {
+        derivedStateOf { uiState.das }
+    }
+    
     // Update viewModel search state when external search state changes
     LaunchedEffect(isSearchActive, searchQuery) {
         viewModel.setSearchActive(isSearchActive)
@@ -112,34 +118,50 @@ fun DAsScreen(
                     }
 
                     // DA list items
-                    items(
-                        items = uiState.das,
-                        key = { "${it.name}_${it.packageName}_${it.userId}" }
-                    ) { daItem ->
-                        when (type){
-                            Type.Service -> ServiceListItem(daItem = daItem, onToggleFullBlock = { enable ->
-                                viewModel.updateDAFullBlockState(
-                                    daItem = daItem, isBlocked = !enable
+                    items<DAItem>(
+                        items = dasList,
+                        key = { "${it.name}_${it.packageName}_${it.userId}" },
+                        contentType = { daItem ->
+                            when {
+                                daItem.fullBlocked -> "blocked"
+                                daItem.screenOffBlock -> "screen_off_blocked"
+                                daItem.timeWindowSec != 0 -> "time_window"
+                                else -> "normal"
+                            }
+                        }
+                    )  { daItem ->
+                        key(daItem.fullBlocked, daItem.screenOffBlock, daItem.timeWindowSec) {
+                            when (type){
+                                Type.Service -> ServiceListItem(
+                                    daItem = daItem, 
+                                    onToggleFullBlock = { enable ->
+                                        viewModel.updateDAFullBlockState(
+                                            daItem = daItem, isBlocked = !enable
+                                        )
+                                    }
                                 )
-                            })
-                            else ->  DAListItem(
-                                daItem = daItem, onToggleFullBlock = { enable ->
-                                    viewModel.updateDAFullBlockState(
-                                        daItem = daItem, isBlocked = !enable
-                                    )
-                                }, onToggleScreenOffBlock = { enable ->
-                                    viewModel.updateDAScreenOffBlockState(
-                                        daItem = daItem, isBlocked = !enable
-                                    )
-                                }, onTimeWindowChange = { timeWindow ->
-                                    viewModel.updateDATimeWindow(
-                                        daItem = daItem, timeWindow = timeWindow
-                                    )
-                                },
-                                onItemClick = {
-                                    navigateToDADetail(it.name, it.packageName)
-                                }
-                            )
+                                else -> DAListItem(
+                                    daItem = daItem, 
+                                    onToggleFullBlock = { enable ->
+                                        viewModel.updateDAFullBlockState(
+                                            daItem = daItem, isBlocked = !enable
+                                        )
+                                    }, 
+                                    onToggleScreenOffBlock = { enable ->
+                                        viewModel.updateDAScreenOffBlockState(
+                                            daItem = daItem, isBlocked = !enable
+                                        )
+                                    }, 
+                                    onTimeWindowChange = { timeWindow ->
+                                        viewModel.updateDATimeWindow(
+                                            daItem = daItem, timeWindow = timeWindow
+                                        )
+                                    },
+                                    onItemClick = {
+                                        navigateToDADetail(it.name, it.packageName)
+                                    }
+                                )
+                            }
                         }
                     }
 
