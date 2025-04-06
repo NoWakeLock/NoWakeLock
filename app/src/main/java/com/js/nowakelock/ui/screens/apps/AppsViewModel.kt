@@ -4,21 +4,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.AppWithStats
+import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.data.repository.appdas.AppDasRepo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 /**
- * 定义加载来源，用于区分不同类型的加载操作
+ * Loading source for apps screen
  */
 enum class LoadingSource {
-    NONE,           // 无加载
-    INITIAL,        // 初始加载
-    USER_PULL,      // 用户下拉刷新
-    FILTER_CHANGE,  // 过滤器更改
-    SORT_CHANGE,    // 排序更改
-    SEARCH_CHANGE   // 搜索条件更改
+    NONE,           // no loading
+    INITIAL,        // initial load
+    USER_PULL,      // user pull-to-refresh
+    FILTER_CHANGE,  // filter changed
+    SORT_CHANGE,    // sort changed
+    SEARCH_CHANGE,  // search changed
+    USER_CHANGE     // user changed
 }
 
 /**
@@ -32,6 +34,7 @@ data class AppsUiState(
     val currentFilterOption: FilterOption = FilterOption.ALL,
     val searchQuery: String = "",
     val isSearchActive: Boolean = false,
+    val currentUserId: Int = 0,
     val message: String = ""
 )
 
@@ -72,10 +75,21 @@ class AppsViewModel(
             refreshData(LoadingSource.INITIAL) // Sync with system
         }
     }
+    
+    /**
+     * change current user
+     * @param userId the user id to switch to
+     */
+    fun changeUser(userId: Int) {
+        if (_uiState.value.currentUserId != userId) {
+            _uiState.update { it.copy(currentUserId = userId) }
+            loadApps(LoadingSource.USER_CHANGE)
+        }
+    }
 
     /**
      * Loads apps based on current sort, filter and search options
-     * @param source 加载操作的来源
+     * @param source the source of the load operation
      */
     private fun loadApps(source: LoadingSource = LoadingSource.NONE) {
         viewModelScope.launch {
@@ -89,14 +103,20 @@ class AppsViewModel(
                     SortOption.TIME -> appDasRepo.getAppsWithStatsSortedByTime()
                 }
                 
+                // only filter apps for the current selected user
+                val currentUserId = _uiState.value.currentUserId
+                
                 // Update UI state with the apps flow
                 appsFlow.collect { appsList ->
-                    // Filter by app type first
+                    // filter apps by userId
+                    val userFilteredApps = appsList.filter { it.appInfo.userId == currentUserId }
+                    
+                    // filter by app type
                     val typeFilteredApps = when (_uiState.value.currentFilterOption) {
-                        FilterOption.ALL -> appsList
-                        FilterOption.USER -> appsList.filter { !it.appInfo.system }
-                        FilterOption.SYSTEM -> appsList.filter { it.appInfo.system }
-                        FilterOption.MODIFIED -> appsList.filter { it.wakelockCount > 0 }
+                        FilterOption.ALL -> userFilteredApps
+                        FilterOption.USER -> userFilteredApps.filter { !it.appInfo.system }
+                        FilterOption.SYSTEM -> userFilteredApps.filter { it.appInfo.system }
+                        FilterOption.MODIFIED -> userFilteredApps.filter { it.wakelockCount > 0 }
                     }
                     
                     // Then apply search filter if needed
@@ -173,7 +193,7 @@ class AppsViewModel(
 
     /**
      * Refreshes app data by syncing from system
-     * @param source 刷新操作的来源，默认为用户下拉
+     * @param source the source of the refresh operation, default is user pull
      */
     fun refreshData(source: LoadingSource = LoadingSource.USER_PULL) {
         viewModelScope.launch {
@@ -181,7 +201,8 @@ class AppsViewModel(
                 _uiState.update { it.copy(isLoading = true, loadingSource = source, message = "") }
                 appDasRepo.syncAppInfos()
                 appDasRepo.syncInfos()
-                // 保持加载来源一致
+                
+                // keep the loading source consistent
                 loadApps(source)
             } catch (e: Exception) {
                 _uiState.update { 

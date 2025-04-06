@@ -36,4 +36,7 @@ interface AppInfoDao : BaseDao<AppInfo> {
 
 //    @Query("select * from AppCount")
 //    suspend fun loadAppCount(): List<AppCount>
+
+    @Query("SELECT DISTINCT userId FROM appInfo ORDER BY userId")
+    suspend fun getDistinctUserIds(): List<Int>
 }

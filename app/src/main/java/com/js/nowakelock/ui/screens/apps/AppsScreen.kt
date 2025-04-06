@@ -14,15 +14,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.model.AppWithStats
+import com.js.nowakelock.ui.components.TopAppBarEvent
 import com.js.nowakelock.ui.screens.apps.components.AppListItem
 import com.js.nowakelock.ui.screens.apps.components.AppsFilterSection
 import com.js.nowakelock.ui.screens.apps.components.AppsSortSection
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -38,9 +41,12 @@ fun AppsScreen(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    onTopAppBarEvent: (TopAppBarEvent) -> Unit = {},
+    currentUserId: Int = 0
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     
     // Sync the external search active state with the viewModel
     LaunchedEffect(isSearchActive) {
@@ -58,6 +64,21 @@ fun AppsScreen(
     LaunchedEffect(uiState.searchQuery) {
         if (searchQuery != uiState.searchQuery) {
             onSearchQueryChange(uiState.searchQuery)
+        }
+    }
+    
+    // sync the external currentUserId with the viewModel
+    LaunchedEffect(currentUserId) {
+        if (uiState.currentUserId != currentUserId) {
+            viewModel.changeUser(currentUserId)
+        }
+    }
+    
+    // pass the user changed event to the top app bar
+    LaunchedEffect(uiState.currentUserId) {
+        // only notify the parent component when the user changes in the ViewModel, avoid circular
+        if (currentUserId != uiState.currentUserId) {
+            onTopAppBarEvent(TopAppBarEvent.UserChanged(uiState.currentUserId))
         }
     }
     

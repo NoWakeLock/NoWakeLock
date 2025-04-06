@@ -20,6 +20,7 @@ import com.js.nowakelock.data.db.dao.AppInfoDao
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.entity.*
 import com.js.nowakelock.data.model.AppWithStats
+import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.data.provider.ProviderMethod
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -250,5 +251,26 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
             ai.processName,
             getUserId(ai.uid)
         )
+    }
+
+    override suspend fun getAvailableUsers(): List<UserInfo> = withContext(Dispatchers.IO) {
+        try {
+            // get all userid
+            val userIds = appInfoDao.getDistinctUserIds()
+            
+            // if no user, return primary user
+            if (userIds.isEmpty()) {
+                return@withContext listOf(UserInfo.createPrimaryUser())
+            }
+            
+            // convert userid to UserInfo object
+            return@withContext userIds.map { userId ->
+                UserInfo.fromUserId(userId)
+            }
+        } catch (e: Exception) {
+            LogUtil.e("AppDasAR", "Error getting available users: ${e.message}")
+            // if error, return primary user
+            return@withContext listOf(UserInfo.createPrimaryUser())
+        }
     }
 }
