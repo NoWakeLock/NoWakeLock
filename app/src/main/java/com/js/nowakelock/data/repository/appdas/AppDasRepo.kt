@@ -3,6 +3,7 @@ package com.js.nowakelock.data.repository.appdas
 import com.js.nowakelock.data.db.entity.AppDA
 import com.js.nowakelock.data.db.entity.AppInfo
 import com.js.nowakelock.data.model.AppWithStats
+import com.js.nowakelock.data.model.UserInfo
 import kotlinx.coroutines.flow.Flow
 
 interface AppDasRepo {
@@ -45,4 +46,10 @@ interface AppDasRepo {
      * Gets only applications that have wakelock activity
      */
     fun getModifiedAppsWithStats(): Flow<List<AppWithStats>>
+    
+    /**
+     * Gets all available user IDs from the database
+     * @return List of UserInfo objects containing user information
+     */
+    suspend fun getAvailableUsers(): List<UserInfo>
 }

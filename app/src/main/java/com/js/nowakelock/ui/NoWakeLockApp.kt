@@ -1,116 +1,125 @@
 package com.js.nowakelock.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.js.nowakelock.ui.components.NoWakeLockBottomNavBar
-import com.js.nowakelock.ui.components.NoWakeLockTopAppBar
-import com.js.nowakelock.ui.components.TopAppBarEvent
-import com.js.nowakelock.ui.navigation.NavRoutes
+import com.js.nowakelock.R
+import com.js.nowakelock.data.model.UserInfo
+import com.js.nowakelock.data.repository.appdas.AppDasRepo
+import com.js.nowakelock.ui.components.*
 import com.js.nowakelock.ui.navigation.NoWakeLockNavGraph
-import com.js.nowakelock.ui.screens.das.DAsViewModel
-import com.js.nowakelock.ui.theme.NoWakeLockTheme
-import org.koin.androidx.compose.KoinAndroidContext
-import org.koin.androidx.compose.koinViewModel
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
 
 /**
  * Main app composable that sets up the overall UI structure
  * Edge-to-edge display is handled by enableEdgeToEdge() in MainActivity
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoWakeLockApp() {
-    KoinAndroidContext{
-        NoWakeLockTheme {
-            val navController = rememberNavController()
-            
-            // Create app-level search state
-            val isSearchActive = rememberSaveable { mutableStateOf(false) }
-            val searchQuery = rememberSaveable { mutableStateOf("") }
+fun NoWakeLockApp(
+    appDasRepo: AppDasRepo = koinInject(),
+    modifier: Modifier = Modifier
+) {
+    val navController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val showBottomBar = currentRoute != null
 
-            // Obtain the wakelocks ViewModel for app-level access to refresh function
-//            val DAsViewModel: DAsViewModel = koinViewModel()
-
-            // Navigation state for dynamic TopAppBar
-            val navBackStackEntry = navController.currentBackStackEntry
-            val currentRoute = navBackStackEntry?.destination?.route
-            
-            // NavController.OnDestinationChangedListener
-            DisposableEffect(navController) {
-                val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-                    // Reset search state when navigating to a new destination
-                    searchQuery.value = ""
-                    
-                    // Reset search state if not on specific routes
-                    val route = destination.route
-                    if (route != NavRoutes.APPS && 
-                        route != NavRoutes.WAKELOCKS && 
-                        route != NavRoutes.ALARMS && 
-                        route != NavRoutes.SERVICES) {
-                        isSearchActive.value = false
-                    }
-                }
-
-                navController.addOnDestinationChangedListener(listener)
-                onDispose {
-                    navController.removeOnDestinationChangedListener(listener)
+    // State for the search functionality
+    var isSearchActive by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    
+    // State for user management
+    var currentUserId by remember { mutableStateOf(0) } // Default to user 0 (primary user)
+    var availableUsers by remember { mutableStateOf(listOf(UserInfo.createPrimaryUser())) } // Initialize with primary user
+    
+    // Load available users on app start
+    LaunchedEffect(Unit) {
+        try {
+            // Asynchronously load users without blocking UI
+            val users = appDasRepo.getAvailableUsers()
+            if (users.isNotEmpty()) {
+                availableUsers = users
+                // Verify if current user is valid in the loaded list
+                if (users.none { it.userId == currentUserId }) {
+                    currentUserId = 0 // Reset to primary user if current ID is invalid
                 }
             }
-            
-            Scaffold(
-                topBar = { 
-                    NoWakeLockTopAppBar(
-                        navController = navController,
-                        isSearchActive = isSearchActive.value,
-                        searchQuery = searchQuery.value,
-                        onEvent = { event ->
-                            when (event) {
-                                is TopAppBarEvent.SearchClicked -> {
-                                    // Activate search mode without navigating to Apps screen
-                                    isSearchActive.value = true
-                                }
-                                is TopAppBarEvent.MenuClicked -> {
-                                    // Handle menu click (not yet implemented)
-                                }
-                                is TopAppBarEvent.SearchQueryChanged -> {
-                                    // Update search query
-                                    searchQuery.value = event.query
-                                }
-                                is TopAppBarEvent.SearchDismissed -> {
-                                    // Close search and clear query
-                                    isSearchActive.value = false
-                                    searchQuery.value = ""
-                                }
-                                is TopAppBarEvent.RefreshClicked -> {
-                                    // Handle refresh based on current route
-                                    when (currentRoute) {
-//                                        NavRoutes.WAKELOCKS -> DAsViewModel.refreshData()
-                                        // Add other screen refresh actions as needed
-                                    }
-                                }
-                            }
-                        },
-                        // Pass current route for dynamic actions in TopAppBar
-                        currentRoute = currentRoute
-                    ) 
-                },
-                bottomBar = { NoWakeLockBottomNavBar(navController) }
-            ) { paddingValues ->
-                NoWakeLockNavGraph(
-                    navController = navController,
-                    modifier = Modifier.padding(paddingValues),
-                    isSearchActive = isSearchActive.value,
-                    onSearchActiveChange = { isSearchActive.value = it },
-                    searchQuery = searchQuery.value,
-                    onSearchQueryChange = { searchQuery.value = it },
-                )
+        } catch (e: Exception) {
+            // Log and show error but don't block UI
+            scope.launch {
+                snackbarHostState.showSnackbar("Error loading users: ${e.message}")
             }
+        }
+    }
+
+    val onTopAppBarEvent: (TopAppBarEvent) -> Unit = { event ->
+        when (event) {
+            is TopAppBarEvent.SearchClicked -> {
+                isSearchActive = true
+            }
+            is TopAppBarEvent.SearchDismissed -> {
+                isSearchActive = false
+                searchQuery = ""
+            }
+            is TopAppBarEvent.SearchQueryChanged -> {
+                searchQuery = event.query
+            }
+            is TopAppBarEvent.UserChanged -> {
+                // Handle user change at app level
+                currentUserId = event.userId
+            }
+            is TopAppBarEvent.MenuClicked -> {
+                // Handle menu click
+            }
+            is TopAppBarEvent.RefreshClicked -> {
+                // Handle refresh
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            NoWakeLockTopAppBar(
+                navController = navController,
+                onEvent = onTopAppBarEvent,
+                isSearchActive = isSearchActive,
+                searchQuery = searchQuery,
+                currentUserId = currentUserId,
+                availableUsers = availableUsers
+            )
+        },
+        bottomBar = {
+            if (showBottomBar) {
+                NoWakeLockBottomNavBar(navController = navController)
+            }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = modifier.fillMaxSize()
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            NoWakeLockNavGraph(
+                navController = navController,
+                onTopAppBarEvent = onTopAppBarEvent,
+                isSearchActive = isSearchActive,
+                searchQuery = searchQuery,
+                currentUserId = currentUserId
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.js.nowakelock.ui.components.TopAppBarEvent
 import com.js.nowakelock.ui.screens.apps.AppsScreen
 import com.js.nowakelock.ui.screens.das.AlarmScreen
 import com.js.nowakelock.ui.screens.settings.SettingsScreen
@@ -22,7 +23,9 @@ fun NoWakeLockNavGraph(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    onTopAppBarEvent: (TopAppBarEvent) -> Unit = {},
+    currentUserId: Int = 0
 ) {
     NavHost(
         navController = navController,
@@ -34,7 +37,9 @@ fun NoWakeLockNavGraph(
                 isSearchActive = isSearchActive,
                 onSearchActiveChange = onSearchActiveChange,
                 searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange
+                onSearchQueryChange = onSearchQueryChange,
+                onTopAppBarEvent = onTopAppBarEvent,
+                currentUserId = currentUserId
             )
         }
 

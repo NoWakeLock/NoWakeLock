@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.js.nowakelock.R
+import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.ui.navigation.NavRoutes
 
 // Event to be handled by the appropriate screen
@@ -61,6 +62,7 @@ sealed class TopAppBarEvent {
     object RefreshClicked : TopAppBarEvent()
     data class SearchQueryChanged(val query: String) : TopAppBarEvent()
     object SearchDismissed : TopAppBarEvent()
+    data class UserChanged(val userId: Int) : TopAppBarEvent()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +72,9 @@ fun NoWakeLockTopAppBar(
     onEvent: (TopAppBarEvent) -> Unit = {},
     isSearchActive: Boolean = false,
     searchQuery: String = "",
-    currentRoute: String? = null
+    currentRoute: String? = null,
+    currentUserId: Int = 0,
+    availableUsers: List<UserInfo> = emptyList()
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Use passed currentRoute or get it from NavController if not provided
@@ -177,104 +181,55 @@ fun NoWakeLockTopAppBar(
             title = { Text(text = title) },
             actions = {
                 Row {
-                    // Dynamic actions based on current route
+                    // for all screens, display the search button first, then other operations (user switcher/refresh)
+                    // all related screens display the search button, ensure the size is consistent
+                    if (route == NavRoutes.APPS || 
+                        route == NavRoutes.WAKELOCKS || 
+                        route == NavRoutes.ALARMS || 
+                        route == NavRoutes.SERVICES) {
+                        
+                        IconButton(
+                            onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .size(48.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                    
+                    // 根据路由显示不同的额外操作按钮
                     when (route) {
                         NavRoutes.APPS -> {
-                            // Search button for Apps screen
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Icon(
-                                    Icons.Default.Search,
-                                    contentDescription = "Search",
-                                    tint = MaterialTheme.colorScheme.onSurface
+                            // 用户切换器 - 只在Apps界面显示
+                            if (availableUsers.isNotEmpty()) {
+                                UserSwitcher(
+                                    currentUserId = currentUserId,
+                                    availableUsers = availableUsers,
+                                    onUserChanged = { newUserId ->
+                                        onEvent(TopAppBarEvent.UserChanged(newUserId))
+                                    }
                                 )
                             }
                         }
-                        NavRoutes.WAKELOCKS -> {
-                            // Search and refresh buttons for Wakelocks screen
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Icon(
-                                    Icons.Default.Search,
-                                    contentDescription = "Search",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            
+                        NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
+                            // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
                             IconButton(
                                 onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
                                 modifier = Modifier
                                     .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
+                                    .size(48.dp)
                             ) {
                                 Icon(
                                     Icons.Default.Refresh,
                                     contentDescription = "Refresh",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                        NavRoutes.ALARMS -> {
-                            // Search and refresh buttons for Alarms screen
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Icon(
-                                    Icons.Default.Search,
-                                    contentDescription = "Search",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Icon(
-                                    Icons.Default.Refresh,
-                                    contentDescription = "Refresh",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        }
-                        NavRoutes.SERVICES -> {
-                            // Search and refresh buttons for Services screen
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.SearchClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Icon(
-                                    Icons.Default.Search,
-                                    contentDescription = "Search",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                Icon(
-                                    Icons.Default.Refresh,
-                                    contentDescription = "Refresh",
-                                    tint = MaterialTheme.colorScheme.onSurface
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
