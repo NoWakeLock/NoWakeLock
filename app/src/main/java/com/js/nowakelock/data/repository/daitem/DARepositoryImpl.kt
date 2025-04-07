@@ -6,7 +6,9 @@ import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
+import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
+import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.provider.ProviderMethod
@@ -17,7 +19,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 open class DARepositoryImpl(
-    private val daDao: DADao
+    private val daDao: DADao,
+    private val infoEventDao: InfoEventDao
 ) : DARepository {
     open val type: Type = Type.UnKnow
 
@@ -117,6 +120,56 @@ open class DARepositoryImpl(
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    /**
+     * Sync InfoEvent data from XProvider to AppDatabase
+     *
+     * @param packageName optional package name filter, empty string means get all packages
+     * @param userId optional user ID filter, -1 means no filter
+     * @param startTime optional start time filter, 0 means no filter
+     * @param endTime optional end time filter, 0 means no filter
+     */
+    override suspend fun syncEvents(packageName: String, userId: Int, startTime: Long, endTime: Long) = withContext(Dispatchers.IO) {
+        try {
+            // prepare parameters
+            val args = Bundle().apply {
+                putString("type", type.value)
+                if (packageName.isNotBlank()) {
+                    putString("packageName", packageName)
+                }
+                if (userId != -1) {
+                    putInt("userId", userId)
+                }
+                if (startTime > 0) {
+                    putLong("startTime", startTime)
+                }
+                if (endTime > 0) {
+                    putLong("endTime", endTime)
+                }
+            }
+
+            // call the LoadEvents method of XProvider to get event data
+            val result = getCPResult(BasicApp.context, ProviderMethod.LoadEvents.value, args)
+
+            if (result != null) {
+                try {
+                    // parse the InfoEvent array in the result
+                    val events = result.getSerializable("events") as Array<InfoEvent>?
+                    if (!events.isNullOrEmpty()) {
+                        // insert all events to the database
+                        infoEventDao.insert(events.toList())
+                        LogUtil.d("DARepositoryImpl", "Synced ${events.size} events")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    LogUtil.e("DARepositoryImpl", "Error syncing events: ${e.message}")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            LogUtil.e("DARepositoryImpl", "Error syncing events: ${e.message}")
         }
     }
 }

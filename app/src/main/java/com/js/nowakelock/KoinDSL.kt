@@ -35,6 +35,7 @@ fun appModule() = module {
     factory { get<AppDatabase>().appInfoDao() }
     factory { get<AppDatabase>().dADao() }
     factory { get<AppDatabase>().appDaDao() }
+    factory { get<AppDatabase>().infoEventDao() }
 
 
     // Repository
@@ -46,9 +47,9 @@ fun appModule() = module {
     singleOf(::DaR) { bind<DaRepo>() }
     singleOf(::BackupRepo)
 
-    single { WakelockRepositoryImpl(get()) }
-    single { AlarmRepositoryImpl(get()) }
-    single { ServiceRepositoryImpl(get()) }
+    single { WakelockRepositoryImpl(get(), get()) }
+    single { AlarmRepositoryImpl(get(), get()) }
+    single { ServiceRepositoryImpl(get(), get()) }
 
 
     // ViewModel

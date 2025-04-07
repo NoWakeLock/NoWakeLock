@@ -41,4 +41,14 @@ interface DARepository {
      * Synchronizes wakelock data with the system
      */
     suspend fun syncDB(packageName: String = "", userId: Int = -1)
+
+    /**
+     * Sync InfoEvent data from XProvider to AppDatabase
+     *
+     * @param packageName optional package name filter, empty string means get all packages
+     * @param userId optional user ID filter, -1 means no filter
+     * @param startTime optional start time filter, 0 means no filter
+     * @param endTime optional end time filter, 0 means no filter
+     */
+    suspend fun syncEvents(packageName: String = "", userId: Int = -1, startTime: Long = 0, endTime: Long = 0)
 }
