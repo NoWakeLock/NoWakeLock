@@ -9,20 +9,22 @@ import com.js.nowakelock.data.db.dao.AppInfoDao
 import com.js.nowakelock.data.db.dao.AppDaDao
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.dao.InfoDao
+import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.*
 
 @Database(
     entities = [
-        AppInfo::class, AppSt::class, St::class, Info::class
+        AppInfo::class, AppSt::class, St::class, Info::class, InfoEvent::class
     ],
-    version = 11,
+    version = 12,
     autoMigrations = [
-        androidx.room.AutoMigration(from = 1, to = 2),
-        androidx.room.AutoMigration(from = 2, to = 3),
-        androidx.room.AutoMigration(from = 3, to = 4),
-        androidx.room.AutoMigration(from = 4, to = 5, spec = AppDatabase.C4To5::class),
-        androidx.room.AutoMigration(from = 9, to = 10),
-        androidx.room.AutoMigration(from = 10, to = 11, spec = AppDatabase.C10To11::class)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5, spec = AppDatabase.C4To5::class),
+        AutoMigration(from = 9, to = 10),
+        AutoMigration(from = 10, to = 11, spec = AppDatabase.C10To11::class),
+        AutoMigration(from = 11, to = 12),
     ]
 )
 @TypeConverters(SetConvert::class, TypeConvert::class)
@@ -31,6 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun appDaDao(): AppDaDao
     abstract fun dADao(): DADao
     abstract fun infoDao(): InfoDao
+    abstract fun infoEventDao(): InfoEventDao
 
     companion object {
         private const val DATABASE_NAME = "noWakelock_db"
