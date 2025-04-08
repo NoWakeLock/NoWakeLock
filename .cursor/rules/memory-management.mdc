@@ -1,0 +1,374 @@
+---
+description: CursorRIPER Direct - Memory Management
+globs: 
+alwaysApply: true
+version: "1.0.1"
+date_created: "2025-04-05"
+last_updated: "2025-04-06"
+framework_component: "memory"
+priority: "medium"
+scope: "development"
+---
+<!-- Note: Cursor will strip out all the other header information and only keep the first three. -->
+# CursorRIPER Direct - Memory Management
+# Version 1.0.1
+
+## AI PROCESSING INSTRUCTIONS
+This file defines the memory management approach for CursorRIPER Direct. As an AI assistant, you MUST:
+- Help maintain a minimalist, task-oriented memory bank
+- Update memory files at appropriate times during development
+- Use memory bank content to maintain context across sessions
+- Focus on practical, useful information rather than exhaustive documentation
+
+## MEMORY BANK OVERVIEW
+
+```mermaid
+flowchart TD
+    A[Memory Bank] --> B[project.md]
+    A --> C[architecture.md]
+    A --> D[progress.md]
+    A --> E[notes.md]
+    
+    B -->|Project<br>Foundation| G[AI Assistant]
+    C -->|Technical<br>Decisions| G
+    D -->|Task<br>Status| G
+    E -->|Context &<br>Resources| G
+    
+    G -->|Updates| B
+    G -->|Updates| C
+    G -->|Updates| D
+    G -->|Updates| E
+    
+    style B fill:#e6f3ff,stroke:#0066cc
+    style C fill:#e6ffe6,stroke:#006600
+    style D fill:#fff0e6,stroke:#cc6600
+    style E fill:#ffe6e6,stroke:#cc0000
+```
+
+## CORE MEMORY FILES
+
+### project.md
+
+**Purpose**: Define project goals, scope, and requirements.
+
+**Structure**:
+- Project name and overview
+- Core goals and requirements
+- Stakeholders and users
+- Timeline and milestones
+
+**Update Triggers**:
+- Project initialization
+- Major requirement changes
+- Timeline adjustments
+- Scope changes
+
+### architecture.md
+
+**Purpose**: Document technical decisions and system structure.
+
+**Structure**:
+- Technology stack
+- System components and relationships
+- Key technical decisions with rationales
+- Patterns and conventions
+- Diagrams when helpful
+
+**Update Triggers**:
+- New architectural decisions
+- Technology changes
+- Pattern establishment
+- System structure changes
+
+### progress.md
+
+**Purpose**: Track development progress and task status.
+
+**Structure**:
+- Current focus
+- Recently completed items
+- In-progress work
+- Upcoming tasks
+- Known issues
+- Visual progress indicators
+
+**Update Triggers**:
+- Task completion
+- New task initiation
+- Issue discovery or resolution
+- Milestone achievement
+- Priority changes
+
+### notes.md
+
+**Purpose**: Capture contextual information and practical details.
+
+**Structure**:
+- Setup instructions
+- Useful commands
+- Development notes
+- Links to resources
+- Environment details
+- Tips and reminders
+
+**Update Triggers**:
+- New insights or discoveries
+- Environment changes
+- New resource availability
+- Learning worth preserving
+
+## MEMORY UPDATE PROCESS
+
+```mermaid
+flowchart TD
+    Start([Development Activity]) --> Trigger{Update<br>Triggered?}
+    Trigger -->|No| End([Continue])
+    Trigger -->|Yes| Identify[Identify Relevant Files]
+    Identify --> Read[Read Current Content]
+    Read --> Update[Update Content]
+    Update --> Format[Ensure Proper Formatting]
+    Format --> Save[Save Updates]
+    Save --> End
+```
+
+### When to Update Memory
+
+Memory updates should be:
+
+1. **Timely**: Update memory files when information is fresh
+2. **Relevant**: Only update what has changed or is new
+3. **Concise**: Focus on capturing essential information
+4. **Practical**: Prioritize information that will be useful later
+
+### Automatic Updates
+
+Unless configured otherwise, automatically update memory files:
+
+1. After completing a significant implementation in EXECUTE mode
+2. When transitioning from REVIEW mode back to another mode
+3. When new architectural decisions are made in INNOVATE mode
+4. When a plan is finalized in PLAN mode
+5. When explicitly requested by the user
+
+## MEMORY MANAGEMENT BEST PRACTICES
+
+### Progressive Detail
+
+Start with minimal information and add detail as the project evolves:
+
+1. **Initial Setup**: Basic project information and structure
+2. **Early Development**: Key decisions and initial progress
+3. **Active Development**: Detailed progress tracking and technical notes
+4. **Maintenance**: Comprehensive system documentation and issue tracking
+
+### Visual Elements
+
+Use visual elements to enhance memory files:
+
+1. **Mermaid Diagrams**: For system architecture, workflows, and relationships
+2. **Progress Indicators**: For task status (✅, 🔄, ⏳, etc.)
+3. **Severity Markers**: For issues (🟢, 🟡, 🔴)
+4. **Tables**: For structured information comparison
+
+### Relevance Scoring
+
+When organizing information, prioritize by relevance:
+
+1. **High Relevance**: Current focus, active decisions, immediate next steps
+2. **Medium Relevance**: Recent history, upcoming work, active patterns
+3. **Low Relevance**: Historical context, completed work, general notes
+
+## MEMORY FILE FORMATS
+
+### memory-bank/project.md Format
+
+```markdown
+# Project: [PROJECT_NAME]
+*Updated: [CURRENT_DATE]*
+
+## Overview
+[Brief description of the project]
+
+## Goals & Requirements
+- [Primary goal 1]
+- [Primary goal 2]
+- [Primary goal 3]
+
+## Stakeholders
+- [Primary user description]
+- [Key stakeholder]
+
+## Timeline
+- [Next milestone]: [Date]
+- [Future milestone]: [Date]
+
+---
+
+*This document defines the project's foundation and goals.*
+```
+
+### memory-bank/architecture.md Format
+
+```markdown
+# Architecture: [PROJECT_NAME]
+*Updated: [CURRENT_DATE]*
+
+## Stack
+- Language: [Language]
+- Framework: [Framework]
+- Database: [Database]
+- Deployment: [Deployment]
+
+## Components
+```mermaid
+flowchart TD
+    A[Component A] --> B[Component B]
+    A --> C[Component C]
+    B --> D[Component D]
+    C --> D
+```
+
+## Key Decisions
+- **[Decision 1]**: [Rationale]
+- **[Decision 2]**: [Rationale]
+
+## Data Flow
+[Brief description of data flow]
+
+---
+
+*This document captures technical decisions and system structure.*
+```
+
+### memory-bank/progress.md Format
+
+```markdown
+# Progress: [PROJECT_NAME]
+*Updated: [CURRENT_DATE]*
+
+## Current Focus
+[Current work being done]
+
+## Recently Completed
+- ✅ [Task 1]
+- ✅ [Task 2]
+
+## In Progress
+- 🔄 [Task 3] - [Status]
+- 🔄 [Task 4] - [Status]
+
+## Up Next
+- ⏳ [Task 5]
+- ⏳ [Task 6]
+
+## Issues
+- 🔴 [Critical Issue] - [Status]
+- 🟡 [Medium Issue] - [Status]
+- 🟢 [Minor Issue] - [Status]
+
+---
+
+*This document tracks development progress and task status.*
+```
+
+### memory-bank/notes.md Format
+
+```markdown
+# Notes: [PROJECT_NAME]
+*Updated: [CURRENT_DATE]*
+
+## Development Notes
+- [Note about specific implementation]
+- [Research finding]
+- [Exploration result]
+
+## Setup Instructions
+[Brief setup instructions]
+
+## Useful Commands
+```bash
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+```
+
+## Resources
+- [Link to documentation]
+- [Link to design files]
+
+---
+
+*This document captures contextual information and practical details.*
+```
+
+## CUSTOM MEMORY FILES
+
+Users can extend the memory bank with additional files for specific needs:
+
+### memory-bank/patterns.md (Optional)
+
+For projects with established patterns and conventions:
+
+```markdown
+# Patterns: [PROJECT_NAME]
+*Updated: [CURRENT_DATE]*
+
+## Code Patterns
+- **[Pattern Name]**: [Description and usage context]
+  ```[language]
+  // Example implementation
+  ```
+
+## UI Patterns
+- **[Pattern Name]**: [Description and usage context]
+
+## Data Patterns
+- **[Pattern Name]**: [Description and usage context]
+
+---
+
+*This document captures recurring patterns and conventions.*
+```
+
+### memory-bank/api.md (Optional)
+
+For projects with significant API components:
+
+```markdown
+# API Documentation: [PROJECT_NAME]
+*Updated: [CURRENT_DATE]*
+
+## Endpoints
+### [Endpoint Path]
+- **Method**: [HTTP Method]
+- **Purpose**: [Description]
+- **Request Format**: 
+  ```json
+  { "example": "request" }
+  ```
+- **Response Format**:
+  ```json
+  { "example": "response" }
+  ```
+
+---
+
+*This document captures API specifications and examples.*
+```
+
+## MEMORY MAINTENANCE
+
+Periodically review and maintain memory files:
+
+1. **Cleanup**: Remove outdated or irrelevant information
+2. **Consolidation**: Merge related information for clarity
+3. **Verification**: Ensure information is still accurate
+4. **Restructuring**: Reorganize as project evolves
+
+The goal is to keep the memory bank lightweight and useful, not comprehensive at the expense of usability.
+
+---
+
+*CursorRIPER Direct: Minimal framework, maximum productivity.*

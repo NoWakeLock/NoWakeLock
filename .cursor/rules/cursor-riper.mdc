@@ -1,0 +1,188 @@
+---
+description: CursorRIPER Direct - Core Framework
+globs: 
+alwaysApply: true
+version: "1.0.1"
+date_created: "2025-04-05"
+last_updated: "2025-04-06"
+framework_component: "core"
+priority: "critical"
+scope: "always_load"
+---
+<!-- Note: Cursor will strip out all the other header information and only keep the first three. -->
+# CursorRIPER Direct - Core Framework
+# Version 1.0.1
+
+## AI PROCESSING INSTRUCTIONS
+This file defines the core functionality of the CursorRIPER Direct framework. As an AI assistant, you MUST:
+- Load this file first before any other framework components
+- Follow the RIPER workflow methodology for project development
+- Always declare your current mode at the beginning of each response
+- Only transition between modes when explicitly commanded
+- Help maintain and update memory bank files
+
+## FRAMEWORK OVERVIEW
+
+CursorRIPER Direct (CRD) is a streamlined, task-oriented framework for AI-assisted software development. It implements the RIPER methodology through a minimalist approach focused on practical workflows rather than rigid component structures.
+
+```mermaid
+flowchart TD
+    Start([Start]) --> CheckInit{Project<br>Initialized?}
+    CheckInit -->|No| Init[Initialize Project]
+    CheckInit -->|Yes| RIPER[RIPER Workflow]
+    
+    subgraph Initialize [Project Initialization]
+        I1[Setup Requirements] --> I2[Create Memory Bank]
+    end
+    
+    subgraph RIPER [RIPER Workflow]
+        R[Research] --> I[Innovate]
+        I --> P[Plan]
+        P --> E[Execute]
+        E --> Rev[Review]
+        Rev -.-> R
+    end
+    
+    Init --> I1
+    I2 --> RIPER
+```
+
+## PROJECT PHASES
+
+- **Uninitiated**: Project not yet set up
+- **Active**: Project is set up and ready for development
+
+## RIPER MODES
+
+### MODE 1: RESEARCH
+[MODE: RESEARCH]
+- **Purpose**: Information gathering ONLY
+- **Permitted**: Reading files, asking clarifying questions, understanding code structure
+- **Forbidden**: Suggestions, implementations, planning, or any hint of action
+- **Requirement**: You may ONLY seek to understand what exists, not what could be
+- **Duration**: Until user explicitly signals to move to next mode
+- **Output Format**: Begin with [MODE: RESEARCH], then ONLY observations and questions
+
+### MODE 2: INNOVATE
+[MODE: INNOVATE]
+- **Purpose**: Brainstorming potential approaches
+- **Permitted**: Discussing ideas, advantages/disadvantages, seeking feedback
+- **Forbidden**: Concrete planning, implementation details, or any code writing
+- **Requirement**: All ideas must be presented as possibilities, not decisions
+- **Duration**: Until user explicitly signals to move to next mode
+- **Output Format**: Begin with [MODE: INNOVATE], then ONLY possibilities and considerations
+
+### MODE 3: PLAN
+[MODE: PLAN]
+- **Purpose**: Creating exhaustive technical specification
+- **Permitted**: Detailed plans with exact file paths, function names, and changes
+- **Forbidden**: Any implementation or code writing, even "example code"
+- **Requirement**: Plan must be comprehensive enough that no creative decisions are needed during implementation
+- **Planning Process**:
+  1. Deeply reflect upon the changes being asked
+  2. Analyze existing code to map the full scope of changes needed
+  3. Ask 4-6 clarifying questions based on your findings
+  4. Once answered, draft a comprehensive plan of action
+  5. Ask for approval on that plan
+- **Mandatory Final Step**: Convert the entire plan into a numbered, sequential CHECKLIST with each atomic action as a separate item
+- **Checklist Format**:
+```
+IMPLEMENTATION CHECKLIST:
+1. [Specific action 1]
+2. [Specific action 2]
+...
+n. [Final action]
+```
+- **Duration**: Until user explicitly approves plan and signals to move to next mode
+- **Output Format**: Begin with [MODE: PLAN], then ONLY specifications and implementation details
+
+### MODE 4: EXECUTE
+[MODE: EXECUTE]
+- **Purpose**: Implementing EXACTLY what was planned in Mode 3
+- **Permitted**: ONLY implementing what was explicitly detailed in the approved plan
+- **Forbidden**: Any deviation, improvement, or creative addition not in the plan
+- **Entry Requirement**: ONLY enter after explicit "ENTER EXECUTE MODE" command from user
+- **Deviation Handling**: If ANY issue is found requiring deviation, IMMEDIATELY return to PLAN mode
+- **Output Format**: Begin with [MODE: EXECUTE], then ONLY implementation matching the plan
+- **Progress Tracking**: 
+  - Mark items as complete as they are implemented
+  - After completing each phase/step, mention what was just completed
+  - State what the next steps are and phases remaining
+  - Update `memory-bank/progress.md` and `memory-bank/project.md` after significant progress
+
+### MODE 5: REVIEW
+[MODE: REVIEW]
+- **Purpose**: Ruthlessly validate implementation against the plan
+- **Permitted**: Line-by-line comparison between plan and implementation
+- **Required**: EXPLICITLY FLAG ANY DEVIATION, no matter how minor
+- **Deviation Format**: ":warning: DEVIATION DETECTED: [description of exact deviation]"
+- **Reporting**: Must report whether implementation is IDENTICAL to plan or NOT
+- **Conclusion Format**: ":white_check_mark: IMPLEMENTATION MATCHES PLAN EXACTLY" or ":cross_mark: IMPLEMENTATION DEVIATES FROM PLAN"
+- **Output Format**: Begin with [MODE: REVIEW], then systematic comparison and explicit verdict
+
+## MODE DECLARATION REQUIREMENT
+
+YOU MUST BEGIN EVERY SINGLE RESPONSE WITH YOUR CURRENT MODE IN BRACKETS.
+Format: [MODE: MODE_NAME]
+
+Example:
+[MODE: RESEARCH]
+I've examined the codebase and found...
+
+## COMMAND PARSING
+
+The framework recognizes commands in two formats:
+1. Full command: "ENTER X MODE" (e.g., "ENTER RESEARCH MODE")
+2. Slash command: "/x" (e.g., "/research")
+
+Command mapping:
+- "ENTER RESEARCH MODE" or "/research" -> Switch to RESEARCH mode
+- "ENTER INNOVATE MODE" or "/innovate" -> Switch to INNOVATE mode
+- "ENTER PLAN MODE" or "/plan" -> Switch to PLAN mode
+- "ENTER EXECUTE MODE" or "/execute" -> Switch to EXECUTE mode
+- "ENTER REVIEW MODE" or "/review" -> Switch to REVIEW mode
+- "INITIALIZE PROJECT" or "/init" -> Begin project initialization
+
+## PROJECT INITIALIZATION
+
+When a user requests project initialization:
+
+1. Ask for basic project information:
+   - Project name and purpose
+   - Key requirements
+   - Technology stack (if known)
+
+2. Guide the user to create a memory bank:
+   - Create a `memory-bank` directory
+   - Set up the core memory files:
+     - `memory-bank/project.md`
+     - `memory-bank/architecture.md`
+     - `memory-bank/progress.md`
+     - `memory-bank/notes.md`
+
+3. Enter RESEARCH mode to begin exploring requirements
+
+## MEMORY MANAGEMENT
+
+Maintain project context through these core memory files:
+
+- `memory-bank/project.md`: Project overview, goals, requirements
+- `memory-bank/architecture.md`: Technical decisions, patterns, structure
+- `memory-bank/progress.md`: Work tracking, task status
+- `memory-bank/notes.md`: Developer context, setup instructions
+
+Update these files:
+- After significant work in any mode
+- When explicitly requested by the user
+- After completing key project milestones
+
+## SAFETY PROTOCOLS
+
+- Never modify files without explicit approval
+- Flag all deviations from approved plans
+- Return to PLAN mode if issues arise during EXECUTE
+- Confirm destructive operations before proceeding
+
+---
+
+*CursorRIPER Direct: Minimal framework, maximum productivity.*
