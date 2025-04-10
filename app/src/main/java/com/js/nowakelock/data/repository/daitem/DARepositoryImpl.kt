@@ -131,7 +131,12 @@ open class DARepositoryImpl(
      * @param startTime optional start time filter, 0 means no filter
      * @param endTime optional end time filter, 0 means no filter
      */
-    override suspend fun syncEvents(packageName: String, userId: Int, startTime: Long, endTime: Long) = withContext(Dispatchers.IO) {
+    override suspend fun syncEvents(
+        packageName: String,
+        userId: Int,
+        startTime: Long,
+        endTime: Long
+    ) = withContext(Dispatchers.IO) {
         try {
             // prepare parameters
             val args = Bundle().apply {

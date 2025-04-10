@@ -115,7 +115,7 @@ data class DAItem(
                 userId = daItem.userId,
                 fullBlock = daItem.fullBlocked,
                 screenOffBlock = daItem.screenOffBlock,
-                timeWindowMs = TimeUnit.SECONDS.toMillis(daItem.timeWindowSec?.toLong() ?: 0)
+                timeWindowMs = TimeUnit.SECONDS.toMillis(daItem.timeWindowSec.toLong())
             )
         }
 

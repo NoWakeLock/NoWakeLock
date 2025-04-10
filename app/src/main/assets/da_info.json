@@ -1,0 +1,751 @@
+{
+    "version": 1,
+    "update_date": "2023-11-20",
+    "release_notes": [
+        {
+            "version": 1,
+            "date": "2023-11-20",
+            "notes": {
+                "en": "Initial version converted from INFO.md"
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "desc_nlpwakelock",
+            "name": "NlpWakeLock",
+            "type": "wakelock",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "NlpWakeLock is safe to limit. It's used by Google Play Services to determine your rough location using a combination of cell towers and WiFi. Once it has your location, it stores it locally so other apps, like Google Now, can access your location without using GPS or getting a new fix. Recommended settings are between 180 and 600 seconds."
+            },
+            "recommendation": {
+                "en": "Allow each 420 seconds (from Google Sheets - Amplify Module Database, row 41)"
+            }
+        },
+        {
+            "id": "desc_nlpcollectorwakelock",
+            "name": "NlpCollectorWakeLock",
+            "type": "wakelock",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "NlpCollectorWakeLock is safe to limit. It's used by Google Play Services to determine your rough location using a combination of cell towers and wifi. Once it has your location, it sends it back to Google so they can expand their database of WiFi locations. Recommended settings are between 180 and 600 seconds."
+            },
+            "recommendation": {
+                "en": "Allow each 900 seconds (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_alarmmanager",
+            "name": "AlarmManager",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "This provides access to the system alarm services. When an alarm goes off, the Intent that had been registered for it is broadcast by the system, automatically starting the target application if it is not already running. Registered alarms are retained while the device is asleep (and can optionally wake the device up if they go off during that time), but will be cleared if it is turned off and rebooted."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 17)"
+            }
+        },
+        {
+            "id": "desc_audiooffload",
+            "name": "AudioOffload",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Audio playback when your screen is turned off. If you disable this, you won't have background audio or music able to play when your screen is off."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 18)"
+            }
+        },
+        {
+            "id": "desc_activitymanagerlauncher",
+            "name": "ActivityManagerLauncher",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "unsafe",
+            "warning": null,
+            "description": {
+                "en": "Interacts with the overall activities running in the system. If you limit this, nothing will work well."
+            },
+            "recommendation": {
+                "en": "UNSAFE to limit (from Google Sheets - Amplify Module Database, row 16)"
+            }
+        },
+        {
+            "id": "desc_windowmanager",
+            "name": "WindowManager",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "This is an Android System level WakeLock. The interface that apps use to talk to the window manager - meaning, applications will require a WindowManager lock everytime they need to be shown on the screen."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 19)"
+            }
+        },
+        {
+            "id": "desc_rilj",
+            "name": "RILJ",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": "Do NOT block this wakelock if you have Android Oreo 8+ or it will bootloop",
+            "description": {
+                "en": "RILJ keeps your device awake while processing phone actions, such as phone calls and cell tower communication."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit, set to 600 seconds if needed (from Google Sheets - Amplify Module Database, row 24). WARNING: Do NOT block this wakelock if you have Android Oreo 8+ or it will bootloop (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_syncloopwakelock",
+            "name": "SyncLoopWakeLock",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "This is the WakeLock used by Android SyncManager to Sync accounts like Google+, Twitter, Linkedin, Gmail etc. The higher the unbouncing, the longer the amount of time until your accounts will get synced again."
+            },
+            "recommendation": {
+                "en": "SAFE to limit, allow each 600+- seconds (from Google Sheets - Amplify Module Database, row 25)"
+            }
+        },
+        {
+            "id": "desc_icing",
+            "name": "ICING",
+            "type": "wakelock",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "ICING is a Google Services WakeLock. Currently looking for more details."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit, if needed set to 900+- seconds (from Google Sheets - Amplify Module Database, row 26)"
+            }
+        },
+        {
+            "id": "desc_startingalertservice",
+            "name": "StartingAlertService",
+            "type": "service",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "This WakeLock can usually be associated with Calendar, although may effect other apps such as messaging. If your Calendar has notifications / alerts it can hold this WakeLock."
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 240+- seconds (from Google Sheets - Amplify Module Database, row 27)"
+            }
+        },
+        {
+            "id": "desc_audiomix",
+            "name": "AudioMix",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "unsafe",
+            "warning": null,
+            "description": {
+                "en": "This WakeLock handles Touch Sounds and Alert Sounds among others. It has plagued some devices even with Touch Sounds turned off."
+            },
+            "recommendation": {
+                "en": "UNSAFE to limit (from Google Sheets - Amplify Module Database, row 28)"
+            }
+        },
+        {
+            "id": "desc_locationmanagerservice",
+            "name": "LocationManagerService",
+            "type": "service",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "As the name implies. This is not typically a high battery drainer for some it might held a big wakelock."
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 420 seconds (from Google Sheets - Amplify Module Database, row 38)"
+            }
+        },
+        {
+            "id": "desc_audioin",
+            "name": "AudioIn",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "This wakelock is used to hold the device awake listening for Google Search/Hotword Detection. Okay, Google"
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 600 seconds (from Google Sheets - Amplify Module Database, row 20)"
+            }
+        },
+        {
+            "id": "desc_nfcservicemroutingwakelock",
+            "name": "NfcServiceMroutingWakeLock",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "Related to NFC service routing detected tags to the appropriate application."
+            },
+            "recommendation": {
+                "en": "SAFE to limit, allow each 240 seconds (from Google Sheets - Amplify Module Database, row 39)"
+            }
+        },
+        {
+            "id": "desc_wakefulintentservicegcoreulrlocationreportingservice",
+            "name": "WakefulIntentServiceGcoreUlrLocationReportingService",
+            "type": "service",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "Used by Google Location Services to report your current location."
+            },
+            "recommendation": {
+                "en": "SAFE to limit, allow each 240+- seconds (from Google Sheets - Amplify Module Database, row 40)"
+            }
+        },
+        {
+            "id": "desc_vzwgpslocationprovider",
+            "name": "VzwGpsLocationProvider",
+            "type": "wakelock",
+            "package": "com.verizon.provider",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "Verizon specific location service used for cell tower statistics."
+            },
+            "recommendation": {
+                "en": "SAFE to limit, allow each 600 seconds (from Google Sheets - Amplify Module Database, row 43)"
+            }
+        },
+        {
+            "id": "desc_hangouts_rtcs",
+            "name": "Hangouts_rtcs",
+            "type": "wakelock",
+            "package": "com.google.android.talk",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Google Hangouts. If you limit this, Hangouts will no longer work."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 21)"
+            }
+        },
+        {
+            "id": "desc_gcm_conn",
+            "name": "GCM_CONN",
+            "type": "wakelock",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "unsafe",
+            "warning": null,
+            "description": {
+                "en": "Google Cloud Messaging. Sends lightweight messages to your apps. Responsible for sending push notifications to your phone, for all apps."
+            },
+            "recommendation": {
+                "en": "UNSAFE to limit (from Google Sheets - Amplify Module Database, row 14), but if needed, allow each 450,000 ms (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_google_c2dm",
+            "name": "GOOGLE_C2DM",
+            "type": "wakelock",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "unsafe",
+            "warning": null,
+            "description": {
+                "en": "Cloud to Device Messaging (C2DM) is a service that helps developers send data to their apps on devices. The service provides a mechanism that servers can use to tell mobile applications to contact the server to fetch updated application or user data. The C2DM service handles all aspects of queueing of messages and delivery to the target application running on target devices. This service was deprecated since 2012 but there are still apps that are using this service instead of the new and improved GCM."
+            },
+            "recommendation": {
+                "en": "UNSAFE to limit (from Google Sheets - Amplify Module Database, row 15), but if needed, allow each 1,800,000 ms (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_timedeventqueue",
+            "name": "TimedEventQueue",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "unsafe",
+            "warning": null,
+            "description": {
+                "en": "This is a core part of Android that is best left alone. It queues up all incoming events."
+            },
+            "recommendation": {
+                "en": "UNSAFE to limit (from Google Sheets - Amplify Module Database, row 13)"
+            }
+        },
+        {
+            "id": "desc_comgoogleandroidgmsnlpalarm_wakeup_locator",
+            "name": "ComGoogleAndroidGmsNlpAlarm_wakeup_locator",
+            "type": "alarm",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "This alarm is safe to limit. It's used by Google Play Services to determine your rough location using a combination of cell towers and WiFi. Once it has your location, it stores it locally so other apps, like Google Now, can access your location without using GPS or getting a new fix. Recommended settings are between 180 and 600 seconds."
+            },
+            "recommendation": {
+                "en": "Safe to limit. Recommended settings are between 180 and 600 seconds."
+            }
+        },
+        {
+            "id": "desc_comgoogleandroidgmsnlpalarm_wakeup_activity_detection",
+            "name": "ComGoogleAndroidGmsNlpAlarm_wakeup_activity_detection",
+            "type": "alarm",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "This alarm is safe to limit. It's used by Google Play Services to determine your rough location using a combination of cell towers and wifi. Once it has your location, it sends it back to Google so they can expand their database of WiFi locations. Recommended settings are between 180 and 600 seconds."
+            },
+            "recommendation": {
+                "en": "Safe to limit. Recommended settings are between 180 and 600 seconds."
+            }
+        },
+        {
+            "id": "desc_comgoogleandroidappshangoutsupdate_notification",
+            "name": "ComGoogleAndroidAppsHangoutsUpdate_notification",
+            "type": "alarm",
+            "package": "com.google.android.talk",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "The listener which updates your Google Hangouts notifications."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_comandroidinternaltelephonydatastall",
+            "name": "ComAndroidInternalTelephonyDatastall",
+            "type": "alarm",
+            "package": "com.android.phone",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Wakelock from com.android.phone (Phone app) when using Data through Cellular towers. Using WiFi will not trigger this alarm. Usually it gets through the roof while using data, especially on a mediocre connection."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_e",
+            "name": "E",
+            "type": "wakelock",
+            "package": "net.dinglisch.android.taskerm",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Belongs to Tasker"
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 22)"
+            }
+        },
+        {
+            "id": "desc_m",
+            "name": "M",
+            "type": "wakelock",
+            "package": "net.dinglisch.android.taskerm",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Belongs to Tasker"
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 23), but if needed, allow each 180,000 ms (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_gcoreflp",
+            "name": "GCoreFlp",
+            "type": "wakelock",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Belongs to the location acquisition framework"
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 240 seconds (from Google Sheets - Amplify Module Database, row 29), or 900,000 ms (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_networkstats",
+            "name": "NetworkStats",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "NetworkStatsService wakelock is held while collecting and recording statistics from the kernel"
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 240 seconds (from Google Sheets - Amplify Module Database, row 31), or 900,000 ms (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_fingerprint_scanner_static",
+            "name": "Fingerprint_scanner_static",
+            "type": "wakelock",
+            "package": "com.google.android.apps.plus",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Related to Google+ - FingerprintScannerIntentService. Piece of code: com.google.android.apps.plus.service.FingerprintScannerIntentService."
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 180 seconds (from Google Sheets - Amplify Module Database, row 33)"
+            }
+        },
+        {
+            "id": "desc_fingerprint_scanner_local",
+            "name": "Fingerprint_scanner_local",
+            "type": "wakelock",
+            "package": "com.google.android.apps.plus",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Related to Google+ - another WakeLock pertaining to location"
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 180 seconds (from Google Sheets - Amplify Module Database, row 34)"
+            }
+        },
+        {
+            "id": "desc_cdmainboundsmshandler",
+            "name": "CDMAInboundSMSHandler",
+            "type": "wakelock",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "This is part of the Telephony Package. it's responsible for broadcasting SMS to various apps that are requesting it."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit, but if needed, allow each 240 seconds (from Google Sheets - Amplify Module Database, row 36)"
+            }
+        },
+        {
+            "id": "desc_wakecomgoogleandroidgmsconfigconfigfetchservice",
+            "name": "WakeComGoogleAndroidGmsConfigConfigFetchService",
+            "type": "service",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "This WakeLock popped up with latest Play Services update."
+            },
+            "recommendation": {
+                "en": "PROBABLY SAFE to limit, allow each 600 seconds (from Google Sheets - Amplify Module Database, row 37)"
+            }
+        },
+        {
+            "id": "desc_synccomgoogleandroidappsbigtopproviderbigtopprovidercomgoogleaccountname",
+            "name": "SyncComGoogleAndroidAppsBigtopProviderBigtopProviderComGoogleAccountName",
+            "type": "wakelock",
+            "package": "com.google.android.apps.inbox",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "Belongs to newly Google app - Inbox (a new form of Gmail). It syncs your mailing account. Best values between 3600 and 7200, depending on how much you want your gmail to be synced."
+            },
+            "recommendation": {
+                "en": "SAFE to limit, allow each 3600 seconds (from Google Sheets - Amplify Module Database, row 46)"
+            }
+        },
+        {
+            "id": "desc_comoasisfenggreenifyclean_now",
+            "name": "ComOasisfengGreenifyClean_now",
+            "type": "alarm",
+            "package": "com.oasisfeng.greenify",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Greenify uses this to greenify after screen timeout."
+            },
+            "recommendation": {
+                "en": "NOT RECOMMENDED to limit (from Google Sheets - Amplify Module Database, row 47), or Disable (from WakeBlock/wakelocks.md)"
+            }
+        },
+        {
+            "id": "desc_androidintentactiontime_tick",
+            "name": "AndroidIntentActionTime_tick",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "This is a listener from android.os.SystemClock. Core timekeeping facilities."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_androidappwidgetactionappwidget_update",
+            "name": "AndroidAppwidgetActionAppwidget_update",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "This is part of android.appwidget.AppWidgetManager - Responsible for updating your widgets. - Gets information about installed AppWidget providers and other AppWidget related state."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_comgoogleandroidappshangoutsUPDATE_NOTIFICATION",
+            "name": "ComGoogleAndroidAppsHangoutsUPDATE_NOTIFICATION",
+            "type": "alarm",
+            "package": "com.google.android.talk",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "The listener which updates your Hangouts notifications"
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_comgoogleandroidintentactionMCS_HEARTBEAT",
+            "name": "ComGoogleAndroidIntentActionMCS_HEARTBEAT",
+            "type": "alarm",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Part of GSF, related to GTalk, Hangouts etc."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_AndroidcontentSyncManagerSYNC_ALARM",
+            "name": "AndroidcontentSyncManagerSYNC_ALARM",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Related to account based automated SYNC (manual sync still works)"
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_comsonymobilestoragecheckerintentactionALARM_EXPIRED",
+            "name": "ComsonymobilestoragecheckerintentactionALARM_EXPIRED",
+            "type": "alarm",
+            "package": "com.sonymobile.storagechecker",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Checking the storage for low space and retrieving a notification for the user (ONLY FOR SONY MOBILES)"
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_comgoogleandroidintentGCM_RECONNECT",
+            "name": "ComgoogleandroidintentGCM_RECONNECT",
+            "type": "alarm",
+            "package": "com.google.android.gms",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "unsafe",
+            "warning": null,
+            "description": {
+                "en": "Part of Google Cloud Messaging. The GCM WakeLock is unsafe but perhaps altering the Alarm itself could be beneficial."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        },
+        {
+            "id": "desc_AndroidappbackupintentRUN",
+            "name": "AndroidappbackupintentRUN",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Part of the Backup Manager Service. This Alarm has your phone back up your data periodically."
+            },
+            "recommendation": {
+                "en": "Probably safe to limit, but may delay or prevent system data backups if blocked too aggressively."
+            }
+        },
+        {
+            "id": "desc_comdevexpertweatheradfreepfxWAKEUP",
+            "name": "ComdevexpertweatheradfreepfxWAKEUP",
+            "type": "alarm",
+            "package": "com.devexpert.weather",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "safe",
+            "warning": null,
+            "description": {
+                "en": "Weather and Clock widget"
+            },
+            "recommendation": {
+                "en": "Safe to limit if you're using this weather widget. Consider limiting to once per hour for updates."
+            }
+        },
+        {
+            "id": "desc_comandroidserverIdleMaintenanceServiceactionUPDATE_IDLE_MAINTENANCE_STATE",
+            "name": "ComandroisserverIdleMaintenanceServiceactionUPDATE_IDLE_MAINTENANCE_STATE",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Androids fstrim service that runs when the phone is idle for 1+ hours and above 20% battery"
+            },
+            "recommendation": {
+                "en": "Probably safe to limit, but not recommended to block completely as it helps maintain system performance."
+            }
+        },
+        {
+            "id": "desc_comandroidserverUPDATE_TWILIGHT_STATE",
+            "name": "ComandroisserverUPDATE_TWILIGHT_STATE",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "probably_safe",
+            "warning": null,
+            "description": {
+                "en": "Related to androids CABL service, changes the brightness based off time of day."
+            },
+            "recommendation": {
+                "en": "Probably safe to limit, but may affect automatic brightness adjustment based on time of day."
+            }
+        },
+        {
+            "id": "desc_comandroidinternalpolicyimplPhoneWindowManagerDELAYED_KEYGUARD",
+            "name": "ComandroisinternalpolicyimplPhoneWindowManagerDELAYED_KEYGUARD",
+            "type": "alarm",
+            "package": "android",
+            "pattern": null,
+            "tags": [],
+            "safe_to_block": "not_recommended",
+            "warning": null,
+            "description": {
+                "en": "Controls the keyguard being enabled after screen timeout."
+            },
+            "recommendation": {
+                "en": "No specific recommendation available for this item"
+            }
+        }
+    ]
+}
