@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "5da8a2980f4655867ea792d0d2ebf0da",
+    "identityHash": "6c4a87114effac444ba060c35204443a",
     "entities": [
       {
         "tableName": "appInfo",
@@ -258,7 +258,7 @@
       },
       {
         "tableName": "info_event",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name_event` TEXT NOT NULL, `type_event` TEXT NOT NULL, `packageName_event` TEXT NOT NULL, `userId_event` INTEGER NOT NULL DEFAULT 0, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `isBlocked` INTEGER NOT NULL, `eventKey` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name_event` TEXT NOT NULL, `type_event` TEXT NOT NULL, `packageName_event` TEXT NOT NULL, `userId_event` INTEGER NOT NULL DEFAULT 0, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `isBlocked` INTEGER NOT NULL, `eventKey` TEXT NOT NULL DEFAULT '')",
         "fields": [
           {
             "fieldPath": "id",
@@ -313,7 +313,8 @@
             "fieldPath": "eventKey",
             "columnName": "eventKey",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -346,6 +347,18 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_info_event_name_type_userId` ON `${TABLE_NAME}` (`name_event`, `type_event`, `userId_event`)"
           },
           {
+            "name": "index_info_event_name_type_userId_time",
+            "unique": false,
+            "columnNames": [
+              "name_event",
+              "type_event",
+              "userId_event",
+              "startTime"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_info_event_name_type_userId_time` ON `${TABLE_NAME}` (`name_event`, `type_event`, `userId_event`, `startTime`)"
+          },
+          {
             "name": "index_info_event_key",
             "unique": true,
             "columnNames": [
@@ -361,7 +374,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5da8a2980f4655867ea792d0d2ebf0da')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6c4a87114effac444ba060c35204443a')"
     ]
   }
 }

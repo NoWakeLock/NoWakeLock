@@ -2,6 +2,7 @@ package com.js.nowakelock.data.db.dao
 
 import androidx.room.*
 import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.data.db.entity.DA
 import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.St
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,7 @@ interface DADao : BaseDao<St> {
 //    @Query("SELECT * FROM info where type_info = :type")
 //    fun loadDAs(type: Type): Flow<List<DA>>
 
+    // for sort
     @Transaction
     @Query(
         "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +

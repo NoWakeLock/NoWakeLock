@@ -1,4 +1,9 @@
 ---
+description: 
+globs: 
+alwaysApply: true
+---
+---
 description: CursorRIPER Direct - Memory Management
 globs: 
 alwaysApply: true

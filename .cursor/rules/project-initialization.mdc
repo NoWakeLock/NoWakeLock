@@ -1,4 +1,9 @@
 ---
+description: 
+globs: 
+alwaysApply: true
+---
+---
 description: CursorRIPER Direct - Project Initialization
 globs: 
 alwaysApply: true

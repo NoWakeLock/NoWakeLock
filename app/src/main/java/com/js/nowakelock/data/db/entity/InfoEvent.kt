@@ -18,6 +18,11 @@ import java.io.Serializable
             value = ["name_event", "type_event", "userId_event"],
             name = "index_info_event_name_type_userId"
         ),
+        // for DADetail
+        Index(
+            value = ["name_event", "type_event", "userId_event", "startTime"],
+            name = "index_info_event_name_type_userId_time"
+        ),
         Index(
             value = ["eventKey"],
             name = "index_info_event_key",
@@ -42,17 +47,24 @@ data class InfoEvent(
     var endTime: Long? = null,
     @ColumnInfo(name = "isBlocked")
     var isBlocked: Boolean = false,
-    @ColumnInfo(name = "eventKey")
+    @ColumnInfo(name = "eventKey", defaultValue = "")
     var eventKey: String = ""
 ) : Serializable {
     companion object {
-        @JvmStatic private val serialVersionUID = 2356751629234196467L
-        
+        @JvmStatic
+        private val serialVersionUID = 2356751629234196467L
+
         /**
          * 生成事件唯一键
          */
         @JvmStatic
-        fun generateEventKey(name: String, packageName: String, type: Type, userId: Int, startTime: Long): String {
+        fun generateEventKey(
+            name: String,
+            packageName: String,
+            type: Type,
+            userId: Int,
+            startTime: Long
+        ): String {
             return "${packageName}_${name}_${type.value}_${userId}_${startTime}"
         }
     }

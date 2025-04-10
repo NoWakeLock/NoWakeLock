@@ -1,5 +1,6 @@
 package com.js.nowakelock.data.repository.daitem
 
+import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
 import kotlinx.coroutines.flow.Flow
@@ -50,5 +51,10 @@ interface DARepository {
      * @param startTime optional start time filter, 0 means no filter
      * @param endTime optional end time filter, 0 means no filter
      */
-    suspend fun syncEvents(packageName: String = "", userId: Int = -1, startTime: Long = 0, endTime: Long = 0)
+    suspend fun syncEvents(
+        packageName: String = "",
+        userId: Int = -1,
+        startTime: Long = 0,
+        endTime: Long = 0
+    )
 }

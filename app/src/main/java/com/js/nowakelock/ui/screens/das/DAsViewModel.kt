@@ -228,6 +228,7 @@ open class DAsViewModel(
                 daRepository.syncDB()
                 // Keep loading source consistent
                 loadDAs(source)
+                daRepository.syncEvents();
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(

@@ -21,8 +21,8 @@ interface AppInfoDao : BaseDao<AppInfo> {
 //    )
 //    fun loadWorkApps(): Flow<Map<AppInfo, AppCount?>>
 
-    @Query("select * from appInfo where userId = :userId")
-    fun loadAppInfosDB(userId: Int): List<AppInfo>
+//    @Query("select * from appInfo where userId = :userId")
+//    fun loadAppInfosDB(userId: Int): List<AppInfo>
 
     @Query("select * from appInfo")
     fun loadAppInfosDBFlow(): Flow<List<AppInfo>>
