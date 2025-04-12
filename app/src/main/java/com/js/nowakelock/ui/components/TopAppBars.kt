@@ -63,6 +63,8 @@ sealed class TopAppBarEvent {
     data class SearchQueryChanged(val query: String) : TopAppBarEvent()
     object SearchDismissed : TopAppBarEvent()
     data class UserChanged(val userId: Int) : TopAppBarEvent()
+    data class SetDetailTitle(val title: String) : TopAppBarEvent()
+    object ClearDetailTitle : TopAppBarEvent()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,13 +76,16 @@ fun NoWakeLockTopAppBar(
     searchQuery: String = "",
     currentRoute: String? = null,
     currentUserId: Int = 0,
-    availableUsers: List<UserInfo> = emptyList()
+    availableUsers: List<UserInfo> = emptyList(),
+    detailTitle: String? = null
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Use passed currentRoute or get it from NavController if not provided
     val route = currentRoute ?: navBackStackEntry?.destination?.route
+    val isDetailScreen = route?.startsWith("da_detail/") == true
 
     val title = when (route) {
+        NavRoutes.DA_DETAIL -> stringResource(id = R.string.WakeLock)
         NavRoutes.APPS -> stringResource(id = R.string.Apps)
         NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
         NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
@@ -179,15 +184,26 @@ fun NoWakeLockTopAppBar(
         // Normal TopAppBar with dynamic actions based on current route
         TopAppBar(
             title = { Text(text = title) },
+            navigationIcon = {
+                if (isDetailScreen) {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.navigate_back),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            },
             actions = {
                 Row {
                     // for all screens, display the search button first, then other operations (user switcher/refresh)
                     // all related screens display the search button, ensure the size is consistent
-                    if (route == NavRoutes.APPS || 
-                        route == NavRoutes.WAKELOCKS || 
-                        route == NavRoutes.ALARMS || 
+                    if (route == NavRoutes.APPS ||
+                        route == NavRoutes.WAKELOCKS ||
+                        route == NavRoutes.ALARMS ||
                         route == NavRoutes.SERVICES) {
-                        
+
                         IconButton(
                             onClick = { onEvent(TopAppBarEvent.SearchClicked) },
                             modifier = Modifier
@@ -202,7 +218,7 @@ fun NoWakeLockTopAppBar(
                             )
                         }
                     }
-                    
+
                     // 根据路由显示不同的额外操作按钮
                     when (route) {
                         NavRoutes.APPS -> {
@@ -235,19 +251,7 @@ fun NoWakeLockTopAppBar(
                         }
                     }
 
-                    // Common menu button (optional, currently disabled)
-//                    IconButton(
-//                        onClick = { onEvent(TopAppBarEvent.MenuClicked) },
-//                        modifier = Modifier
-//                            .padding(horizontal = 4.dp)
-//                            .clip(CircleShape)
-//                    ) {
-//                        Icon(
-//                            Icons.Default.MoreVert,
-//                            contentDescription = "More options",
-//                            tint = MaterialTheme.colorScheme.onSurface
-//                        )
-//                    }
+
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
