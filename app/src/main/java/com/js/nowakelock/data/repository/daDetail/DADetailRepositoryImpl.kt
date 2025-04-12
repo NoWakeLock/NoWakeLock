@@ -57,6 +57,7 @@ class DADetailRepositoryImpl(
                 count = info.count,
                 blockCount = info.blockCount,
                 countTime = info.countTime,
+                blockCountTime = info.blockCountTime,
                 fullBlocked = st?.fullBlock ?: false,
                 screenOffBlock = st?.screenOffBlock ?: false,
                 timeWindowSec = TimeUnit.MILLISECONDS.toSeconds(st?.timeWindowMs ?: 0).toInt()
