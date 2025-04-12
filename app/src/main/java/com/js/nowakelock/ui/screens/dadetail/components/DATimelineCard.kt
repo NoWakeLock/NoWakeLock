@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.model.HourData
-import com.js.nowakelock.ui.components.InfoCard
 
 /**
  * A card displaying a timeline of activity for a device automation item.

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.DAInfoEntry
-import com.js.nowakelock.ui.components.InfoCard
 
 /**
  * A card displaying detailed information about a device automation item.
@@ -78,7 +77,7 @@ fun DAInfoCard(
             if (!info.recommendation.isNullOrBlank()) {
                 Text(
                     text = stringResource(R.string.recommendations),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
@@ -143,7 +142,7 @@ fun DAInfoCardFullPreview() {
         warning = "In rare cases, blocking this may affect instant notifications.",
         tags = listOf("battery", "background")
     )
-    
+
     androidx.compose.material3.Surface {
         DAInfoCard(info = mockInfo, type = Type.Wakelock)
     }
@@ -166,7 +165,7 @@ fun DAInfoCardBasicPreview() {
         warning = null,
         tags = listOf("scheduling")
     )
-    
+
     androidx.compose.material3.Surface {
         DAInfoCard(info = mockInfo, type = Type.Alarm)
     }

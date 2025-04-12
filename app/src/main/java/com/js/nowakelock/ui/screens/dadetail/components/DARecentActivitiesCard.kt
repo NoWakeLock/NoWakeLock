@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.EventItem
-import com.js.nowakelock.ui.components.InfoCard
 
 /**
  * A card displaying recent activities for a device automation item.
