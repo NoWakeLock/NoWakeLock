@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.dadetail
+package com.js.nowakelock.ui.screens.dadetail.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

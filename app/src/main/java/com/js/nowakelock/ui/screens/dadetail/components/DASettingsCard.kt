@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.dadetail
+package com.js.nowakelock.ui.screens.dadetail.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -9,6 +9,7 @@ import com.js.nowakelock.R
 import com.js.nowakelock.ui.components.InfoCard
 import com.js.nowakelock.ui.components.NumberInputItem
 import com.js.nowakelock.ui.components.SwitchItem
+import com.js.nowakelock.ui.screens.dadetail.DASettingsState
 
 /**
  * A card displaying settings for a device automation item.

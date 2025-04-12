@@ -3,16 +3,16 @@ package com.js.nowakelock.ui.screens.dadetail
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.js.nowakelock.data.model.DAInfoEntry
-import com.js.nowakelock.data.model.DAItem
-import com.js.nowakelock.data.model.DAStatistics
-import com.js.nowakelock.data.model.EventItem
-import com.js.nowakelock.data.model.HourData
+import com.js.nowakelock.ui.screens.dadetail.components.DAHeaderSection
+import com.js.nowakelock.ui.screens.dadetail.components.DAInfoCard
+import com.js.nowakelock.ui.screens.dadetail.components.DARecentActivitiesCard
+import com.js.nowakelock.ui.screens.dadetail.components.DASettingsCard
+import com.js.nowakelock.ui.screens.dadetail.components.DAStatisticsCard
+import com.js.nowakelock.ui.screens.dadetail.components.DATimelineCard
 
 /**
  * Main content for the device automation detail screen.

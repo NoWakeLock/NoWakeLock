@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.dadetail
+package com.js.nowakelock.ui.screens.dadetail.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

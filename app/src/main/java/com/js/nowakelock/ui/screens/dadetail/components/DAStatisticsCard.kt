@@ -1,4 +1,4 @@
-package com.js.nowakelock.ui.screens.dadetail
+package com.js.nowakelock.ui.screens.dadetail.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
