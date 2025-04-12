@@ -138,6 +138,9 @@ fun DAsScreen(
                                         viewModel.updateDAFullBlockState(
                                             daItem = daItem, isBlocked = !enable
                                         )
+                                    },
+                                    onItemClick = {
+                                        navigateToDADetail(it.name, it.packageName)
                                     }
                                 )
                                 else -> DAListItem(

@@ -99,4 +99,54 @@
         <item>com.js.nowakelock</item>
     </string-array>
     <string name="title_activity_main2">MainActivity2</string>
+
+    <!-- Add these new string resources to your existing strings.xml file -->
+
+    <!-- Basic navigation and titles -->
+    <string name="da_detail_title">Device Automation Details</string>
+    <string name="navigate_back">Back</string>
+    <string name="more_options">More options</string>
+
+    <!-- Statistics card -->
+    <string name="stat_total_count">Count</string>
+    <string name="stat_blocked_count">Blocked</string>
+    <string name="stat_total_time">Total time</string>
+    <string name="stat_saved_time">Saved time</string>
+
+    <!-- Info card -->
+    <string name="about_this_item">About this item</string>
+    <string name="no_info_wakelock">No additional information available for this wakelock.</string>
+    <string name="no_info_alarm">No additional information available for this alarm.</string>
+    <string name="no_info_service">No additional information available for this service.</string>
+    <string name="no_info_unknown">No related information available.</string>
+    <string name="recommendations">Recommendations</string>
+
+    <!-- Settings card -->
+    <string name="settings_title">Settings</string>
+    <string name="block_this_item">Block this item</string>
+    <string name="block_this_item_desc">Prevent this item from triggering</string>
+    <string name="block_during_sleep">Only block during sleep</string>
+    <string name="block_during_screen_off">Only block when screen is off</string>
+    <string name="allowed_time_interval">Allowed time interval</string>
+    <string name="allowed_time_interval_desc">Time interval to allow this item to run</string>
+    <string name="seconds">seconds</string>
+
+    <!-- Timeline card -->
+    <string name="activity_timeline">Activity Timeline</string>
+    <string name="past_24_hours">Past 24 hours</string>
+    <string name="total">Total</string>
+    <string name="blocked">Blocked</string>
+
+    <!-- Activity list card -->
+    <string name="recent_activities">Recent Activities</string>
+    <string name="no_recent_wakelock_activities">No recent wakelock activities.</string>
+    <string name="no_recent_alarm_activities">No recent alarm activities.</string>
+    <string name="no_recent_service_activities">No recent service activities.</string>
+    <string name="no_recent_activities">No recent activities.</string>
+    <string name="status_allowed">Allowed</string>
+    <string name="status_blocked">Blocked</string>
+    <string name="duration_separator"> • Duration: %s</string>
+
+    <!-- Error handling -->
+    <string name="error_loading_data">Error loading data. Please try again.</string>
 </resources>

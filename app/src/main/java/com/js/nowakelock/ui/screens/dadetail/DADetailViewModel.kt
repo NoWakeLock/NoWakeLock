@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import org.koin.core.qualifier.named
+import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
 
 /**
@@ -27,16 +29,20 @@ import java.util.concurrent.TimeUnit
  * Manages loading data, calculating statistics, and updating settings.
  */
 class DADetailViewModel(
-    private val savedStateHandle: SavedStateHandle,
+    private val name: String, private val type: Type, private val userId: Int,
     private val daDetailRepository: DADetailRepository,
     private val daInfoRepository: DAInfoRepository
 ) : ViewModel() {
 
+    //    private val savedStateHandle: SavedStateHandle,
+//    private val daDetailRepository: DADetailRepository by inject()
+//    private val daInfoRepository: DAInfoRepository by inject()
+
     // Extract navigation parameters
-    private val name: String = checkNotNull(savedStateHandle[NavRoutes.ARG_DA_NAME])
-    private val type: Type = checkNotNull(savedStateHandle[NavRoutes.ARG_DA_TYPE.toString()])
-    private val packageName: String = checkNotNull(savedStateHandle[NavRoutes.ARG_PACKAGE_NAME])
-    private val userId: Int = checkNotNull(savedStateHandle[NavRoutes.ARG_USER_ID])
+//    private val name: String = checkNotNull(savedStateHandle[NavRoutes.ARG_DA_NAME])
+//    private val type: Type = checkNotNull(savedStateHandle[NavRoutes.ARG_DA_TYPE.toString()])
+//    private val packageName: String = checkNotNull(savedStateHandle[NavRoutes.ARG_PACKAGE_NAME])
+//    private val userId: Int = checkNotNull(savedStateHandle[NavRoutes.ARG_USER_ID])
 
     // UI state
     private val _uiState = MutableStateFlow<DADetailState>(DADetailState.Loading)
