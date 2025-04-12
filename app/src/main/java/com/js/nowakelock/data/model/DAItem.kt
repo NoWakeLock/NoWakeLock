@@ -19,7 +19,8 @@ data class DAItem(
     // Statistics
     val count: Int = 0,
     val blockCount: Int = 0,
-    val countTime: Long = 0,
+    val countTime: Long = 0, // milliseconds
+    val blockCountTime: Long = 0, // milliseconds
 
     // Settings
     val fullBlocked: Boolean = false,
@@ -67,6 +68,23 @@ data class DAItem(
         }
     }
 
+    private fun formatTime(timeInMillis: Long): String {
+        val seconds = timeInMillis / 1000
+        return when {
+            seconds < 60 -> "${seconds}s"
+            seconds < 3600 -> "${seconds / 60}m"
+            else -> "${seconds / 3600}h ${(seconds % 3600) / 60}m"
+        }
+    }
+
+    fun getCountTimeFormat(): String {
+        return formatTime(countTime)
+    }
+
+    fun getBlockCountTimeFormat(): String {
+        return formatTime(blockCountTime)
+    }
+
     /**
      * Formats the time saved for display in the UI
      */
@@ -92,6 +110,8 @@ data class DAItem(
          * Creates a DAItem from Info and St entities
          */
         fun fromEntities(info: Info, st: St?): DAItem {
+            if (info.count != 0) // calculate blockCountTime
+                info.blockCountTime = info.blockCount * (info.countTime / info.count)
             return DAItem(
                 name = info.name,
                 packageName = info.packageName,
@@ -100,6 +120,7 @@ data class DAItem(
                 count = info.count,
                 blockCount = info.blockCount,
                 countTime = info.countTime,
+                blockCountTime = info.blockCountTime,
                 fullBlocked = st?.fullBlock ?: false,
                 screenOffBlock = st?.screenOffBlock ?: false,
                 timeWindowSec = st?.timeWindowMs?.let {
