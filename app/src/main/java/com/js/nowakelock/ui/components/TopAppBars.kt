@@ -1,5 +1,6 @@
 package com.js.nowakelock.ui.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.js.nowakelock.R
+import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.ui.navigation.NavRoutes
 
@@ -82,23 +84,26 @@ fun NoWakeLockTopAppBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Use passed currentRoute or get it from NavController if not provided
     val route = currentRoute ?: navBackStackEntry?.destination?.route
-    val isDetailScreen = route?.startsWith("da_detail/") == true
+    // Check for the new type-safe route format as well as the legacy format for backward compatibility
+    val isDetailScreen = route?.contains(NavRoutes.DADETAIL) == true
 
-    val title = when (route) {
-        NavRoutes.DA_DETAIL -> stringResource(id = R.string.WakeLock)
-        NavRoutes.APPS -> stringResource(id = R.string.Apps)
-        NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
-        NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
-        NavRoutes.SERVICES -> stringResource(id = R.string.Service)
-        NavRoutes.SETTINGS -> stringResource(id = R.string.settings)
+    LogUtil.d("NoWakeLockTopAppBar", "Current route: $route, isDetailScreen: $isDetailScreen")
+
+    val title = when {
+        isDetailScreen -> if (detailTitle?.isEmpty() == true) detailTitle else stringResource(id = R.string.WakeLock)
+        route == NavRoutes.APPS -> stringResource(id = R.string.Apps)
+        route == NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
+        route == NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
+        route == NavRoutes.SERVICES -> stringResource(id = R.string.Service)
+        route == NavRoutes.SETTINGS -> stringResource(id = R.string.settings)
         else -> stringResource(id = R.string.app_name)
     }
 
     // Only show search interface in relevant screens
-    val showSearch = isSearchActive && (route == NavRoutes.APPS || 
-                                      route == NavRoutes.WAKELOCKS || 
-                                      route == NavRoutes.ALARMS || 
-                                      route == NavRoutes.SERVICES)
+    val showSearch = isSearchActive && (route == NavRoutes.APPS ||
+            route == NavRoutes.WAKELOCKS ||
+            route == NavRoutes.ALARMS ||
+            route == NavRoutes.SERVICES)
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -131,16 +136,16 @@ fun NoWakeLockTopAppBar(
                 TextField(
                     value = searchQuery,
                     onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
-                    placeholder = { 
+                    placeholder = {
                         Text(
-                            when(route) {
+                            when (route) {
                                 NavRoutes.APPS -> "Search apps"
                                 NavRoutes.WAKELOCKS -> "Search wakelocks"
                                 NavRoutes.ALARMS -> "Search alarms"
                                 NavRoutes.SERVICES -> "Search services"
                                 else -> "Search"
                             }
-                        ) 
+                        )
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.85f) // avoid full width
@@ -202,7 +207,8 @@ fun NoWakeLockTopAppBar(
                     if (route == NavRoutes.APPS ||
                         route == NavRoutes.WAKELOCKS ||
                         route == NavRoutes.ALARMS ||
-                        route == NavRoutes.SERVICES) {
+                        route == NavRoutes.SERVICES
+                    ) {
 
                         IconButton(
                             onClick = { onEvent(TopAppBarEvent.SearchClicked) },
@@ -233,6 +239,7 @@ fun NoWakeLockTopAppBar(
                                 )
                             }
                         }
+
                         NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
                             // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
                             IconButton(

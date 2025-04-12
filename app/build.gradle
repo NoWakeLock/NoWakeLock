@@ -6,6 +6,7 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.devtools.ksp'
     id 'org.jetbrains.kotlin.plugin.compose'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
 }
 
 android {
@@ -97,7 +98,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0'
 
     //ktx
-    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.core:core-ktx:1.16.0'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     // xposed
@@ -110,7 +111,7 @@ dependencies {
     //compose
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.activity:activity-compose:1.10.1'
-    implementation platform('androidx.compose:compose-bom:2025.03.01')
+    implementation platform('androidx.compose:compose-bom:2025.04.00')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
@@ -125,7 +126,7 @@ dependencies {
     implementation 'androidx.compose.material:material-icons-extended' // 更多图标
     // SystemUiController已弃用，已改用官方的enableEdgeToEdge() API
     // implementation "com.google.accompanist:accompanist-systemuicontroller:0.34.0" // 系统 UI 控制
-    implementation("androidx.compose.material:material:1.8.0-rc02") // 下拉刷新
+    implementation("androidx.compose.material:material:1.8.0-rc03") // 下拉刷新
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
@@ -134,7 +135,7 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
 
     //Room
-    def room_version = "2.6.1"
+    def room_version = "2.7.0"
     implementation "androidx.room:room-runtime:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version" // Kotlin Extensions
@@ -167,4 +168,7 @@ dependencies {
     implementation 'io.coil-kt:coil-compose:2.7.0'
 
     implementation "androidx.core:core-splashscreen:1.0.1" // splash screen
+
+    // Kotlin Serialization for type-safe navigation
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1'
 }

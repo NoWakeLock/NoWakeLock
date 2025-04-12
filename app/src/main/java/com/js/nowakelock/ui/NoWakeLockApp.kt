@@ -27,7 +27,6 @@ import org.koin.compose.koinInject
  * Main app composable that sets up the overall UI structure
  * Edge-to-edge display is handled by enableEdgeToEdge() in MainActivity
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoWakeLockApp(
     appDasRepo: AppDasRepo = koinInject(),
