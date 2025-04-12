@@ -87,3 +87,59 @@ private fun getIconForType(type: Type): ImageVector {
         else -> Icons.Default.QuestionMark
     }
 }
+
+/**
+ * Preview for DAHeaderSection
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAHeaderSectionPreview() {
+    val mockDAItem = DAItem(
+        name = "SampleWakelock",
+        packageName = "com.example.app",
+        type = Type.Wakelock,
+        count = 100,
+        blockCount = 30,
+        countTime = 3600000 // 1 hour
+    )
+    
+    androidx.compose.material3.Surface {
+        DAHeaderSection(daItem = mockDAItem)
+    }
+}
+
+/**
+ * Preview for DAHeaderSection with different types
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAHeaderSectionTypesPreview() {
+    androidx.compose.foundation.layout.Column {
+        // Wakelock
+        DAHeaderSection(
+            daItem = DAItem(
+                name = "SampleWakelock",
+                packageName = "com.example.app",
+                type = Type.Wakelock
+            )
+        )
+        
+        // Alarm
+        DAHeaderSection(
+            daItem = DAItem(
+                name = "SampleAlarm",
+                packageName = "com.example.app",
+                type = Type.Alarm
+            )
+        )
+        
+        // Service
+        DAHeaderSection(
+            daItem = DAItem(
+                name = "SampleService",
+                packageName = "com.example.app",
+                type = Type.Service
+            )
+        )
+    }
+}

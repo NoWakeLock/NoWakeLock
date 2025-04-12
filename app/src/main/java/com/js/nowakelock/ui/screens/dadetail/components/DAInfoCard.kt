@@ -125,3 +125,60 @@ fun DAInfoCard(
         }
     }
 }
+
+/**
+ * Preview for DAInfoCard with full info
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAInfoCardFullPreview() {
+    val mockInfo = DAInfoEntry(
+        id = "sample_wakelock",
+        name = "SampleWakelock",
+        type = Type.Wakelock,
+        packageName = "com.example.app",
+        safeToBlock = "safe",
+        description = "This is a sample wakelock for preview purposes. It represents a common system wakelock that might be used by various apps.",
+        recommendation = "Can be safely blocked when screen is off. Blocking this wakelock may improve battery life without affecting functionality.",
+        warning = "In rare cases, blocking this may affect instant notifications.",
+        tags = listOf("battery", "background")
+    )
+    
+    androidx.compose.material3.Surface {
+        DAInfoCard(info = mockInfo, type = Type.Wakelock)
+    }
+}
+
+/**
+ * Preview for DAInfoCard with no recommendation or warning
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAInfoCardBasicPreview() {
+    val mockInfo = DAInfoEntry(
+        id = "sample_alarm",
+        name = "SampleAlarm",
+        type = Type.Alarm,
+        packageName = "com.example.app",
+        safeToBlock = "risky",
+        description = "This is a periodic alarm used by the app to schedule background tasks and updates.",
+        recommendation = null,
+        warning = null,
+        tags = listOf("scheduling")
+    )
+    
+    androidx.compose.material3.Surface {
+        DAInfoCard(info = mockInfo, type = Type.Alarm)
+    }
+}
+
+/**
+ * Preview for DAInfoCard with no info (fallback message)
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAInfoCardNoInfoPreview() {
+    androidx.compose.material3.Surface {
+        DAInfoCard(info = null, type = Type.Service)
+    }
+}

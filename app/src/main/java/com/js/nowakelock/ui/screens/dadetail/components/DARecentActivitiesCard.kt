@@ -64,4 +64,42 @@ fun DARecentActivitiesCard(
             }
         }
     }
+}
+
+/**
+ * Preview for DARecentActivitiesCard with activities
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DARecentActivitiesCardPreview() {
+    val mockActivities = List(5) { index ->
+        EventItem(
+            time = System.currentTimeMillis() - (index * 3600000),
+            duration = (10000..300000).random().toLong(),
+            isBlocked = index % 2 == 0,
+            formattedTime = "1:30 PM",
+            formattedDuration = "${(1..5).random()}m ${(1..59).random()}s"
+        )
+    }
+    
+    androidx.compose.material3.Surface {
+        DARecentActivitiesCard(
+            activities = mockActivities,
+            type = Type.Wakelock
+        )
+    }
+}
+
+/**
+ * Preview for DARecentActivitiesCard with empty activities
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DARecentActivitiesCardEmptyPreview() {
+    androidx.compose.material3.Surface {
+        DARecentActivitiesCard(
+            activities = emptyList(),
+            type = Type.Alarm
+        )
+    }
 } 

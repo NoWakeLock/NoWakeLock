@@ -85,4 +85,35 @@ fun DATimelineCard(
                 .padding(top = 8.dp)
         )
     }
+}
+
+/**
+ * Preview for DATimelineCard
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DATimelineCardPreview() {
+    val mockTimelineData = List(24) { hour ->
+        HourData(
+            hour = hour,
+            label = if (hour == 0) "12AM" else if (hour < 12) "${hour}AM" else if (hour == 12) "12PM" else "${hour-12}PM",
+            total = (5..20).random(),
+            blocked = (0..5).random()
+        )
+    }
+    
+    androidx.compose.material3.Surface {
+        DATimelineCard(timelineData = mockTimelineData)
+    }
+}
+
+/**
+ * Preview for DATimelineCard with empty data
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DATimelineCardEmptyPreview() {
+    androidx.compose.material3.Surface {
+        DATimelineCard(timelineData = emptyList())
+    }
 } 

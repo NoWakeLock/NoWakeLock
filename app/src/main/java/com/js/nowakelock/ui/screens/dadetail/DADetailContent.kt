@@ -7,6 +7,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.data.model.DAInfoEntry
+import com.js.nowakelock.data.model.DAItem
+import com.js.nowakelock.data.model.DAStatistics
+import com.js.nowakelock.data.model.EventItem
+import com.js.nowakelock.data.model.HourData
 import com.js.nowakelock.ui.screens.dadetail.components.DAHeaderSection
 import com.js.nowakelock.ui.screens.dadetail.components.DAInfoCard
 import com.js.nowakelock.ui.screens.dadetail.components.DARecentActivitiesCard
@@ -85,5 +91,84 @@ fun DADetailContent(
                 type = state.daItem.type
             )
         }
+    }
+}
+
+/**
+ * Preview for DADetailContent
+ */
+@Composable
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+fun DADetailContentPreview() {
+    val mockDAItem = DAItem(
+        name = "SampleWakelock",
+        packageName = "com.example.app",
+        type = Type.Wakelock,
+        count = 100,
+        blockCount = 30,
+        countTime = 3600000 // 1 hour
+    )
+    
+    val mockStatistics = DAStatistics(
+        totalCount = 100,
+        blockedCount = 30,
+        totalTime = 3600000,
+        savedTime = 1080000,
+        formattedTotalTime = "1h 0m",
+        formattedSavedTime = "18m saved"
+    )
+    
+    val mockTimelineData = List(24) { hour ->
+        HourData(
+            hour = hour,
+            label = if (hour == 0) "12AM" else if (hour < 12) "${hour}AM" else if (hour == 12) "12PM" else "${hour-12}PM",
+            total = (5..20).random(),
+            blocked = (0..5).random()
+        )
+    }
+    
+    val mockEvents = List(5) { index ->
+        EventItem(
+            time = System.currentTimeMillis() - (index * 3600000),
+            duration = (10000..300000).random().toLong(),
+            isBlocked = index % 2 == 0,
+            formattedTime = "1:30 PM",
+            formattedDuration = "${(1..5).random()}m ${(1..59).random()}s"
+        )
+    }
+    
+    val successState = DADetailState.Success(
+        daItem = mockDAItem,
+        info = DAInfoEntry(
+            id = "sample_wakelock",
+            name = "SampleWakelock",
+            type = Type.Wakelock,
+            packageName = "com.example.app",
+            safeToBlock = "safe",
+            description = "This is a sample wakelock for preview purposes.",
+            recommendation = "Can be safely blocked when screen is off.",
+            warning = null,
+            tags = listOf("battery", "background")
+        ),
+        statistics = mockStatistics,
+        timelineData = mockTimelineData,
+        recentEvents = mockEvents
+    )
+    
+    val settingsState = DASettingsState(
+        isBlocked = true,
+        sleepOnly = true,
+        screenOffOnly = false,
+        timeInterval = 30
+    )
+    
+    androidx.compose.material3.Surface {
+        DADetailContent(
+            state = successState,
+            settingsState = settingsState,
+            onBlockingSettingChanged = {},
+            onConditionSettingsChanged = { _, _ -> },
+            onTimeIntervalChanged = {}
+        )
     }
 } 

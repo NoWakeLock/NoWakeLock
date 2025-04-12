@@ -82,4 +82,42 @@ fun ActivityItem(
             }
         }
     }
+}
+
+/**
+ * Preview for ActivityItem in allowed state
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun ActivityItemAllowedPreview() {
+    val mockEvent = EventItem(
+        time = System.currentTimeMillis(),
+        duration = 120000, // 2 minutes
+        isBlocked = false,
+        formattedTime = "1:30 PM",
+        formattedDuration = "2m 0s"
+    )
+    
+    androidx.compose.material3.Surface {
+        ActivityItem(event = mockEvent)
+    }
+}
+
+/**
+ * Preview for ActivityItem in blocked state
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun ActivityItemBlockedPreview() {
+    val mockEvent = EventItem(
+        time = System.currentTimeMillis(),
+        duration = 180000, // 3 minutes
+        isBlocked = true,
+        formattedTime = "2:45 PM",
+        formattedDuration = "3m 0s"
+    )
+    
+    androidx.compose.material3.Surface {
+        ActivityItem(event = mockEvent)
+    }
 } 
