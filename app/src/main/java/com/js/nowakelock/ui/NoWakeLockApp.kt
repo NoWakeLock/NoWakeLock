@@ -48,6 +48,9 @@ fun NoWakeLockApp(
     var currentUserId by remember { mutableStateOf(0) } // Default to user 0 (primary user)
     var availableUsers by remember { mutableStateOf(listOf(UserInfo.createPrimaryUser())) } // Initialize with primary user
     
+    // State for detail screen title
+    var detailTitle by remember { mutableStateOf<String?>(null) }
+    
     // Load available users on app start
     LaunchedEffect(Unit) {
         try {
@@ -90,6 +93,12 @@ fun NoWakeLockApp(
             is TopAppBarEvent.RefreshClicked -> {
                 // Handle refresh
             }
+            is TopAppBarEvent.SetDetailTitle -> {
+                detailTitle = event.title
+            }
+            is TopAppBarEvent.ClearDetailTitle -> {
+                detailTitle = null
+            }
         }
     }
 
@@ -101,7 +110,8 @@ fun NoWakeLockApp(
                 isSearchActive = isSearchActive,
                 searchQuery = searchQuery,
                 currentUserId = currentUserId,
-                availableUsers = availableUsers
+                availableUsers = availableUsers,
+                detailTitle = detailTitle
             )
         },
         bottomBar = {

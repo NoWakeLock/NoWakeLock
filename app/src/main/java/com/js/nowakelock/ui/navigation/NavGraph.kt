@@ -1,6 +1,7 @@
 package com.js.nowakelock.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,6 +17,7 @@ import com.js.nowakelock.ui.screens.settings.SettingsScreen
 import com.js.nowakelock.ui.screens.das.ServiceScreen
 import com.js.nowakelock.ui.screens.das.WakelockScreen
 import com.js.nowakelock.ui.screens.dadetail.DADetailScreen
+import kotlinx.coroutines.launch
 
 /**
  * Main navigation graph for the NoWakeLock app.
@@ -136,11 +138,20 @@ fun NoWakeLockNavGraph(
             val typeString = backStackEntry.arguments?.getString("type") ?: Type.UnKnow.value
             val type = stringToType(typeString)
 
+            // Set title for TopAppBar
+            LaunchedEffect(daName) {
+                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(daName))
+            }
+
             DADetailScreen(
                 daId = daName,
                 type = type,
                 userId = userId,
-                onNavigateBack = { navController.navigateUp() }
+                onNavigateBack = { 
+                    // Clear detail title when navigating away
+                    onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
+                    navController.navigateUp() 
+                }
             )
         }
     }
