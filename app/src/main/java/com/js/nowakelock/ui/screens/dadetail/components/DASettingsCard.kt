@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
-import com.js.nowakelock.ui.components.InfoCard
 import com.js.nowakelock.ui.components.NumberInputItem
 import com.js.nowakelock.ui.components.SwitchItem
 import com.js.nowakelock.ui.screens.dadetail.DASettingsState

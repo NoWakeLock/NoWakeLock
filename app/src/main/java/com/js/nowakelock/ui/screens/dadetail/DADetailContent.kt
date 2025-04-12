@@ -13,11 +13,10 @@ import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.model.DAStatistics
 import com.js.nowakelock.data.model.EventItem
 import com.js.nowakelock.data.model.HourData
-import com.js.nowakelock.ui.screens.dadetail.components.DAHeaderSection
+import com.js.nowakelock.ui.screens.dadetail.components.DADetailHeaderCard
 import com.js.nowakelock.ui.screens.dadetail.components.DAInfoCard
 import com.js.nowakelock.ui.screens.dadetail.components.DARecentActivitiesCard
 import com.js.nowakelock.ui.screens.dadetail.components.DASettingsCard
-import com.js.nowakelock.ui.screens.dadetail.components.DAStatisticsCard
 import com.js.nowakelock.ui.screens.dadetail.components.DATimelineCard
 
 /**
@@ -45,20 +44,11 @@ fun DADetailContent(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header section
+        val daItem = state.daItem
         item {
-            DAHeaderSection(
-                daItem = state.daItem
-            )
+            DADetailHeaderCard(daItem = daItem)
         }
-        
-        // Statistics card
-        item {
-            DAStatisticsCard(
-                statistics = state.statistics
-            )
-        }
-        
+
         // Info card (only if info is available)
         item {
             DAInfoCard(
