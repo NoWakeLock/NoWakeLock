@@ -7,7 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+//import androidx.navigation.compose.navArgument
+import androidx.navigation.toRoute
 import com.js.nowakelock.base.stringToType
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.ui.components.TopAppBarEvent
@@ -54,11 +55,11 @@ fun NoWakeLockNavGraph(
             WakelockScreen(
                 navigateToDADetail = { name, packageName ->
                     navController.navigate(
-                        NavRoutes.daDetail(
+                        DADetail(
                             daName = name,
                             packageName = packageName,
                             userId = currentUserId,
-                            type = Type.Wakelock
+                            type = Type.Wakelock.value
                         )
                     )
                 },
@@ -73,11 +74,11 @@ fun NoWakeLockNavGraph(
             AlarmScreen(
                 navigateToDADetail = { name, packageName ->
                     navController.navigate(
-                        NavRoutes.daDetail(
+                        DADetail(
                             daName = name,
                             packageName = packageName,
                             userId = currentUserId,
-                            type = Type.Alarm
+                            type = Type.Alarm.value
                         )
                     )
                 },
@@ -92,11 +93,11 @@ fun NoWakeLockNavGraph(
             ServiceScreen(
                 navigateToDADetail = { name, packageName ->
                     navController.navigate(
-                        NavRoutes.daDetail(
+                        DADetail(
                             daName = name,
                             packageName = packageName,
                             userId = currentUserId,
-                            type = Type.Service
+                            type = Type.Service.value
                         )
                     )
                 },
@@ -112,41 +113,19 @@ fun NoWakeLockNavGraph(
         }
 
         // DA Detail Screen
-        composable(
-            route = NavRoutes.DA_DETAIL,
-            arguments = listOf(
-                navArgument("daName") { 
-                    type = NavType.StringType 
-                },
-                navArgument("packageName") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                },
-                navArgument("userId") {
-                    type = NavType.IntType
-                    defaultValue = 0
-                },
-                navArgument("type") {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
-            val daName = backStackEntry.arguments?.getString("daName") ?: ""
-            val packageName = backStackEntry.arguments?.getString("packageName")
-            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
-            val typeString = backStackEntry.arguments?.getString("type") ?: Type.UnKnow.value
-            val type = stringToType(typeString)
-
+        composable<DADetail> { backStackEntry ->
+            val daDetail = backStackEntry.toRoute<DADetail>()
+            val type = stringToType(daDetail.type)
+            
             // Set title for TopAppBar
-            LaunchedEffect(daName) {
-                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(daName))
+            LaunchedEffect(daDetail.daName) {
+                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(daDetail.daName))
             }
 
             DADetailScreen(
-                daId = daName,
+                daId = daDetail.daName,
                 type = type,
-                userId = userId,
+                userId = daDetail.userId,
                 onNavigateBack = { 
                     // Clear detail title when navigating away
                     onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)

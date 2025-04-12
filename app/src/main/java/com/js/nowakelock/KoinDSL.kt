@@ -82,12 +82,9 @@ fun appModule() = module {
     viewModelOf(::SettingsViewModel)
 
 //    viewModelOf(::DADetailViewModel)
-//    viewModel {
-//        DADetailViewModel(get(), get<DADetailRepositoryImpl>(), get<DAInfoRepositoryImpl>())
-//    }
-    viewModel { (name: String, type: Type, userId: Int) ->
+    viewModel {
         DADetailViewModel(
-            name = name, type = type, userId = userId,
+            savedStateHandle = get(),
             daDetailRepository = get<DADetailRepository>(),
             daInfoRepository = get<DAInfoRepository>()
         )

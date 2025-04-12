@@ -3,6 +3,8 @@ package com.js.nowakelock.ui.screens.dadetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.js.nowakelock.base.stringToType
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAInfoEntry
@@ -12,7 +14,7 @@ import com.js.nowakelock.data.model.EventItem
 import com.js.nowakelock.data.model.HourData
 import com.js.nowakelock.data.repository.daDetail.DADetailRepository
 import com.js.nowakelock.data.repository.daDetail.DAInfoRepository
-import com.js.nowakelock.ui.navigation.NavRoutes
+import com.js.nowakelock.ui.navigation.DADetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,8 +22,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import org.koin.core.qualifier.named
-import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
 
 /**
@@ -29,20 +29,16 @@ import java.util.concurrent.TimeUnit
  * Manages loading data, calculating statistics, and updating settings.
  */
 class DADetailViewModel(
-    private val name: String, private val type: Type, private val userId: Int,
+    private val savedStateHandle: SavedStateHandle,
     private val daDetailRepository: DADetailRepository,
     private val daInfoRepository: DAInfoRepository
 ) : ViewModel() {
 
-    //    private val savedStateHandle: SavedStateHandle,
-//    private val daDetailRepository: DADetailRepository by inject()
-//    private val daInfoRepository: DAInfoRepository by inject()
-
-    // Extract navigation parameters
-//    private val name: String = checkNotNull(savedStateHandle[NavRoutes.ARG_DA_NAME])
-//    private val type: Type = checkNotNull(savedStateHandle[NavRoutes.ARG_DA_TYPE.toString()])
-//    private val packageName: String = checkNotNull(savedStateHandle[NavRoutes.ARG_PACKAGE_NAME])
-//    private val userId: Int = checkNotNull(savedStateHandle[NavRoutes.ARG_USER_ID])
+    // Extract navigation parameters from SavedStateHandle
+    private val daDetail = savedStateHandle.toRoute<DADetail>()
+    private val name: String = daDetail.daName ?: ""
+    private val type: Type = stringToType(daDetail.type ?: Type.UnKnow.value)
+    private val userId: Int = daDetail.userId ?: 0
 
     // UI state
     private val _uiState = MutableStateFlow<DADetailState>(DADetailState.Loading)

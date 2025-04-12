@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,16 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 /**
  * Main screen for device automation item details.
  * Now implemented as a pure content component without its own Scaffold.
  * Handles different states (loading, success, error) and provides proper UI for each.
  * 
- * @param daId The ID of the device automation item
- * @param type The type of the device automation item
- * @param userId The user ID
+ * @param daId The ID of the device automation item (required for backward compatibility)
+ * @param type The type of the device automation item (required for backward compatibility)
+ * @param userId The user ID (required for backward compatibility)
  * @param onNavigateBack Callback for navigating back
  * @param viewModel The view model for this screen
  */
@@ -38,7 +36,7 @@ fun DADetailScreen(
     type: Type,
     userId: Int,
     onNavigateBack: () -> Unit,
-    viewModel: DADetailViewModel = koinViewModel { parametersOf(daId, type, userId) }
+    viewModel: DADetailViewModel = koinViewModel()
 ) {
     // Observe states
     val uiState by viewModel.uiState.collectAsState()
