@@ -87,21 +87,19 @@ fun NoWakeLockTopAppBar(
     // Check for the new type-safe route format as well as the legacy format for backward compatibility
     val isDetailScreen = route?.contains(NavRoutes.DADETAIL) == true
 
-    val title = when {
-        isDetailScreen -> if (detailTitle?.isEmpty() == true) detailTitle else stringResource(id = R.string.WakeLock)
-        route == NavRoutes.APPS -> stringResource(id = R.string.Apps)
-        route == NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
-        route == NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
-        route == NavRoutes.SERVICES -> stringResource(id = R.string.Service)
-        route == NavRoutes.SETTINGS -> stringResource(id = R.string.settings)
+
+    val title = if (isDetailScreen) detailTitle ?: "Detail" else when (route) {
+        NavRoutes.APPS -> stringResource(id = R.string.Apps)
+        NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
+        NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
+        NavRoutes.SERVICES -> stringResource(id = R.string.Service)
+        NavRoutes.SETTINGS -> stringResource(id = R.string.settings)
         else -> stringResource(id = R.string.app_name)
     }
 
     // Only show search interface in relevant screens
-    val showSearch = isSearchActive && (route == NavRoutes.APPS ||
-            route == NavRoutes.WAKELOCKS ||
-            route == NavRoutes.ALARMS ||
-            route == NavRoutes.SERVICES)
+    val showSearch =
+        isSearchActive && (route == NavRoutes.APPS || route == NavRoutes.WAKELOCKS || route == NavRoutes.ALARMS || route == NavRoutes.SERVICES)
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -114,155 +112,142 @@ fun NoWakeLockTopAppBar(
 
     if (showSearch) {
         TopAppBar(
-            title = {},
-            navigationIcon = {
-                // return button
-                IconButton(
-                    onClick = {
-                        onEvent(TopAppBarEvent.SearchDismissed)
-                        focusManager.clearFocus()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onSurface
+            title = {}, navigationIcon = {
+            // return button
+            IconButton(
+                onClick = {
+                    onEvent(TopAppBarEvent.SearchDismissed)
+                    focusManager.clearFocus()
+                }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }, actions = {
+            TextField(
+                value = searchQuery,
+                onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
+                placeholder = {
+                    Text(
+                        when (route) {
+                            NavRoutes.APPS -> "Search apps"
+                            NavRoutes.WAKELOCKS -> "Search wakelocks"
+                            NavRoutes.ALARMS -> "Search alarms"
+                            NavRoutes.SERVICES -> "Search services"
+                            else -> "Search"
+                        }
                     )
-                }
-            },
-            actions = {
-                TextField(
-                    value = searchQuery,
-                    onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
-                    placeholder = {
-                        Text(
-                            when (route) {
-                                NavRoutes.APPS -> "Search apps"
-                                NavRoutes.WAKELOCKS -> "Search wakelocks"
-                                NavRoutes.ALARMS -> "Search alarms"
-                                NavRoutes.SERVICES -> "Search services"
-                                else -> "Search"
-                            }
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(0.85f) // avoid full width
-                        .focusRequester(focusRequester),
-                    singleLine = true,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                            alpha = 0.7f
-                        ),
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.85f) // avoid full width
+                    .focusRequester(focusRequester),
+                singleLine = true,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                        alpha = 0.7f
                     ),
-                    shape = RoundedCornerShape(24.dp),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { onEvent(TopAppBarEvent.SearchQueryChanged("")) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Clear search",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                ),
+                shape = RoundedCornerShape(24.dp),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { onEvent(TopAppBarEvent.SearchQueryChanged("")) }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear search",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                })
+        }, colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
         )
     } else {
         // Normal TopAppBar with dynamic actions based on current route
         TopAppBar(
-            title = { Text(text = title) },
-            navigationIcon = {
-                if (isDetailScreen) {
-                    IconButton(onClick = { navController.navigateUp() }) {
+            title = { Text(text = title) }, navigationIcon = {
+            if (isDetailScreen) {
+                IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(id = R.string.navigate_back),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }, actions = {
+            Row {
+                // for all screens, display the search button first, then other operations (user switcher/refresh)
+                // all related screens display the search button, ensure the size is consistent
+                if (route == NavRoutes.APPS || route == NavRoutes.WAKELOCKS || route == NavRoutes.ALARMS || route == NavRoutes.SERVICES) {
+
+                    IconButton(
+                        onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .size(48.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = stringResource(id = R.string.navigate_back),
-                            tint = MaterialTheme.colorScheme.onSurface
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
-            },
-            actions = {
-                Row {
-                    // for all screens, display the search button first, then other operations (user switcher/refresh)
-                    // all related screens display the search button, ensure the size is consistent
-                    if (route == NavRoutes.APPS ||
-                        route == NavRoutes.WAKELOCKS ||
-                        route == NavRoutes.ALARMS ||
-                        route == NavRoutes.SERVICES
-                    ) {
 
+                // 根据路由显示不同的额外操作按钮
+                when (route) {
+                    NavRoutes.APPS -> {
+                        // 用户切换器 - 只在Apps界面显示
+                        if (availableUsers.isNotEmpty()) {
+                            UserSwitcher(
+                                currentUserId = currentUserId,
+                                availableUsers = availableUsers,
+                                onUserChanged = { newUserId ->
+                                    onEvent(TopAppBarEvent.UserChanged(newUserId))
+                                })
+                        }
+                    }
+
+                    NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
+                        // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
                         IconButton(
-                            onClick = { onEvent(TopAppBarEvent.SearchClicked) },
+                            onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
                             modifier = Modifier
                                 .padding(horizontal = 4.dp)
                                 .size(48.dp)
                         ) {
                             Icon(
-                                Icons.Default.Search,
-                                contentDescription = "Search",
+                                Icons.Default.Refresh,
+                                contentDescription = "Refresh",
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
                     }
-
-                    // 根据路由显示不同的额外操作按钮
-                    when (route) {
-                        NavRoutes.APPS -> {
-                            // 用户切换器 - 只在Apps界面显示
-                            if (availableUsers.isNotEmpty()) {
-                                UserSwitcher(
-                                    currentUserId = currentUserId,
-                                    availableUsers = availableUsers,
-                                    onUserChanged = { newUserId ->
-                                        onEvent(TopAppBarEvent.UserChanged(newUserId))
-                                    }
-                                )
-                            }
-                        }
-
-                        NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
-                            // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
-                            IconButton(
-                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .size(48.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.Refresh,
-                                    contentDescription = "Refresh",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    }
-
-
                 }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                titleContentColor = MaterialTheme.colorScheme.onSurface
-            )
+
+
+            }
+        }, colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface
+        )
         )
     }
 } 
