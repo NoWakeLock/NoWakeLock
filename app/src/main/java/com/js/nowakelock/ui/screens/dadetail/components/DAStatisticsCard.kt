@@ -99,3 +99,43 @@ private fun StatisticItem(
         )
     }
 }
+
+/**
+ * Preview for DAStatisticsCard
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAStatisticsCardPreview() {
+    val mockStatistics = DAStatistics(
+        totalCount = 100,
+        blockedCount = 30,
+        totalTime = 3600000,
+        savedTime = 1080000,
+        formattedTotalTime = "1h 0m",
+        formattedSavedTime = "18m saved"
+    )
+    
+    androidx.compose.material3.Surface {
+        DAStatisticsCard(statistics = mockStatistics)
+    }
+}
+
+/**
+ * Preview for DAStatisticsCard with zero values
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DAStatisticsCardZeroPreview() {
+    val mockStatistics = DAStatistics(
+        totalCount = 0,
+        blockedCount = 0,
+        totalTime = 0,
+        savedTime = 0,
+        formattedTotalTime = "0s",
+        formattedSavedTime = "0s saved"
+    )
+    
+    androidx.compose.material3.Surface {
+        DAStatisticsCard(statistics = mockStatistics)
+    }
+}

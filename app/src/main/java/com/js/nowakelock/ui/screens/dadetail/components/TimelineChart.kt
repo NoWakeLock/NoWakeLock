@@ -127,3 +127,34 @@ private fun DrawScope.drawTextCentered(
     
     return Offset(xPos + textWidth, yPos + textHeight)
 }
+
+/**
+ * Preview for TimelineChart
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun TimelineChartPreview() {
+    val mockData = List(24) { hour ->
+        HourData(
+            hour = hour,
+            label = if (hour == 0) "12AM" else if (hour < 12) "${hour}AM" else if (hour == 12) "12PM" else "${hour-12}PM",
+            total = (5..20).random(),
+            blocked = (0..5).random()
+        )
+    }
+    
+    androidx.compose.material3.Surface {
+        TimelineChart(data = mockData)
+    }
+}
+
+/**
+ * Preview for TimelineChart with empty data
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun TimelineChartEmptyPreview() {
+    androidx.compose.material3.Surface {
+        TimelineChart(data = emptyList())
+    }
+}

@@ -74,4 +74,50 @@ fun DASettingsCard(
             )
         }
     }
+}
+
+/**
+ * Preview for DASettingsCard with blocking enabled
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DASettingsCardBlockingEnabledPreview() {
+    val settingsState = DASettingsState(
+        isBlocked = true,
+        sleepOnly = true,
+        screenOffOnly = false,
+        timeInterval = 30
+    )
+    
+    androidx.compose.material3.Surface {
+        DASettingsCard(
+            settingsState = settingsState,
+            onBlockingSettingChanged = {},
+            onConditionSettingsChanged = { _, _ -> },
+            onTimeIntervalChanged = {}
+        )
+    }
+}
+
+/**
+ * Preview for DASettingsCard with blocking disabled
+ */
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun DASettingsCardBlockingDisabledPreview() {
+    val settingsState = DASettingsState(
+        isBlocked = false,
+        sleepOnly = false,
+        screenOffOnly = false,
+        timeInterval = 0
+    )
+    
+    androidx.compose.material3.Surface {
+        DASettingsCard(
+            settingsState = settingsState,
+            onBlockingSettingChanged = {},
+            onConditionSettingsChanged = { _, _ -> },
+            onTimeIntervalChanged = {}
+        )
+    }
 } 
