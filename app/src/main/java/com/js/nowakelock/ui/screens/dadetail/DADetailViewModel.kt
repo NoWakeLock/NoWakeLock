@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
  * Manages loading data, calculating statistics, and updating settings.
  */
 class DADetailViewModel(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val daDetailRepository: DADetailRepository,
     private val daInfoRepository: DAInfoRepository
 ) : ViewModel() {

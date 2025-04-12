@@ -87,8 +87,6 @@ fun NoWakeLockTopAppBar(
     // Check for the new type-safe route format as well as the legacy format for backward compatibility
     val isDetailScreen = route?.contains(NavRoutes.DADETAIL) == true
 
-    LogUtil.d("NoWakeLockTopAppBar", "Current route: $route, isDetailScreen: $isDetailScreen")
-
     val title = when {
         isDetailScreen -> if (detailTitle?.isEmpty() == true) detailTitle else stringResource(id = R.string.WakeLock)
         route == NavRoutes.APPS -> stringResource(id = R.string.Apps)
