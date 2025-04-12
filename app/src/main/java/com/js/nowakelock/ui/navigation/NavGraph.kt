@@ -3,12 +3,14 @@ package com.js.nowakelock.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 //import androidx.navigation.compose.navArgument
 import androidx.navigation.toRoute
+import com.js.nowakelock.R
 import com.js.nowakelock.base.stringToType
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.ui.components.TopAppBarEvent
@@ -116,20 +118,26 @@ fun NoWakeLockNavGraph(
         composable<DADetail> { backStackEntry ->
             val daDetail = backStackEntry.toRoute<DADetail>()
             val type = stringToType(daDetail.type)
-            
-            // Set title for TopAppBar
-            LaunchedEffect(daDetail.daName) {
-                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(daDetail.daName))
+
+            val title = when (type) {
+                Type.Wakelock -> stringResource(id = R.string.WakeLock)
+                Type.Alarm -> stringResource(id = R.string.Alarm)
+                Type.Service -> stringResource(id = R.string.Service)
+                else -> stringResource(id = R.string.app_name)
+            }
+
+            LaunchedEffect(type) {
+                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(title))
             }
 
             DADetailScreen(
                 daId = daDetail.daName,
                 type = type,
                 userId = daDetail.userId,
-                onNavigateBack = { 
+                onNavigateBack = {
                     // Clear detail title when navigating away
                     onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
-                    navController.navigateUp() 
+                    navController.navigateUp()
                 }
             )
         }
