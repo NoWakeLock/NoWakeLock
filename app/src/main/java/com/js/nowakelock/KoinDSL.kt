@@ -1,6 +1,7 @@
 package com.js.nowakelock
 
 import com.js.nowakelock.data.db.AppDatabase
+import com.js.nowakelock.data.db.Type
 //import com.js.nowakelock.data.repository.appda.AppDaR
 //import com.js.nowakelock.data.repository.appda.AppDaRepo
 import com.js.nowakelock.data.repository.appdas.AppDasAR
@@ -57,8 +58,10 @@ fun appModule() = module {
     single { ServiceRepositoryImpl(get(), get()) }
 
     //
-    single { DAInfoRepositoryImpl(get()) }
-    single { DADetailRepositoryImpl(get(), get()) }
+//    single { DAInfoRepositoryImpl(get())}
+//    single { DADetailRepositoryImpl(get(), get()) }
+    singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
+    singleOf(::DADetailRepositoryImpl) { bind<DADetailRepository>() }
 
     // ViewModel
     viewModel(named("WakelockViewModel")) {
@@ -78,5 +81,15 @@ fun appModule() = module {
     viewModelOf(::ServicesViewModel)
     viewModelOf(::SettingsViewModel)
 
-    viewModelOf(::DADetailViewModel)
+//    viewModelOf(::DADetailViewModel)
+//    viewModel {
+//        DADetailViewModel(get(), get<DADetailRepositoryImpl>(), get<DAInfoRepositoryImpl>())
+//    }
+    viewModel { (name: String, type: Type, userId: Int) ->
+        DADetailViewModel(
+            name = name, type = type, userId = userId,
+            daDetailRepository = get<DADetailRepository>(),
+            daInfoRepository = get<DAInfoRepository>()
+        )
+    }
 }
