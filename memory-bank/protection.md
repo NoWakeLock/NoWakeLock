@@ -1,6 +1,6 @@
 # σ₆: Protection Registry
 *v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
-*Π: INITIALIZING | Ω: PLAN*
+*Π: DEVELOPMENT | Ω: PLAN*
 
 ## 🛡️ Protected Regions
 
@@ -41,6 +41,7 @@
 | 2025-04-13 | Initial protection registry created                      | System |
 | 2025-04-13 | Identified critical sections in XposedModule.kt          | System |
 | 2025-04-13 | Identified critical sections in WakelockHook.kt          | System |
+| 2025-04-13 | Transitioned to development phase                        | System |
 
 ## ✅ Approvals
 
@@ -87,4 +88,23 @@ The following components are considered critical to the application's functional
 5. **CRITICAL**: Business-critical logic
    - Core interception mechanisms
    - Security/stability safeguards
-   - Error handling for system interactions 
+   - Error handling for system interactions
+
+## 🔍 Development Guidelines
+
+### Feature Implementation Considerations
+- New features should not interfere with protected core functionality
+- Battery optimization is a primary concern for all new code
+- Compatibility across Android versions must be preserved
+- Statistics feature implementation should be non-invasive to core hooks
+
+### Code Modification Protocol
+1. Always check protection level before modifying code
+2. For PROTECTED code: propose alternatives that don't modify the core logic
+3. For GUARDED code: document changes thoroughly and seek approval
+4. For CRITICAL code: implement thorough tests before and after changes
+
+### Testing Requirements
+- All modifications to protected code must include regression tests
+- Battery impact should be measured before and after changes
+- Core functionality must be validated across supported Android versions 
