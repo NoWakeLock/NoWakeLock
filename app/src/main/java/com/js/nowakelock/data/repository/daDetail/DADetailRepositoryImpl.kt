@@ -3,6 +3,7 @@ package com.js.nowakelock.data.repository.daDetail
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.dao.InfoEventDao
+import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
@@ -10,9 +11,10 @@ import com.js.nowakelock.data.model.EventItem
 import com.js.nowakelock.data.model.HourData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -24,8 +26,7 @@ import java.util.concurrent.TimeUnit
  * from the database and provides data transformations for UI consumption.
  */
 class DADetailRepositoryImpl(
-    private val daDao: DADao,
-    private val infoEventDao: InfoEventDao
+    private val daDao: DADao, private val infoEventDao: InfoEventDao
 ) : DADetailRepository {
 
     companion object {
@@ -40,28 +41,11 @@ class DADetailRepositoryImpl(
      * @return Flow of DAItem
      */
     override fun getDAItem(name: String, type: Type, userId: Int): Flow<DAItem> {
-
-        val info = daDao.loadInfo(name, type, userId)
-        val st = daDao.loadSt(name, type, userId)
-
-        return info.zip(st) { infoItem, stItem -> //merge info and st
-            if (infoItem.count != 0) // calculate blockCountTime
-                infoItem.blockCountTime = infoItem.blockCount * (infoItem.countTime / infoItem.count)
-
-            DAItem(
-                name = infoItem.name,
-                packageName = infoItem.packageName,
-                userId = infoItem.userId,
-                type = infoItem.type,
-                count = infoItem.count,
-                blockCount = infoItem.blockCount,
-                countTime = infoItem.countTime,
-                blockCountTime = infoItem.blockCountTime,
-                fullBlocked = stItem?.fullBlock ?: false,
-                screenOffBlock = stItem?.screenOffBlock ?: false,
-                timeWindowSec = TimeUnit.MILLISECONDS.toSeconds(stItem?.timeWindowMs ?: 0).toInt()
-            )
-        }.flowOn(Dispatchers.IO)
+        val infoFlow = daDao.loadInfo(name, type, userId)
+        val stFlow = daDao.loadSt(name, type, userId)
+        return infoFlow.combine(stFlow) { info, st ->
+            DAItem.fromEntities(info, st)
+        }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 
     /**
@@ -90,16 +74,12 @@ class DADetailRepositoryImpl(
      * @return Flow of HourData list
      */
     override fun getTimelineData(
-        name: String,
-        type: Type,
-        userId: Int,
-        hours: Int
+        name: String, type: Type, userId: Int, hours: Int
     ): Flow<List<HourData>> {
         // Get events from the last 24 hours
         val timeStart = System.currentTimeMillis() - TimeUnit.HOURS.toMillis(hours.toLong())
 
-        return infoEventDao.getEventsInTimeRange(name, type, userId, timeStart)
-            .map { events ->
+        return infoEventDao.getEventsInTimeRange(name, type, userId, timeStart).map { events ->
                 aggregateEventsByHour(events, hours)
             }.flowOn(Dispatchers.IO)
     }
@@ -174,10 +154,7 @@ class DADetailRepositoryImpl(
             }
 
             hourlyData[hour] = HourData(
-                hour = hour,
-                label = label,
-                total = 0,
-                blocked = 0
+                hour = hour, label = label, total = 0, blocked = 0
             )
         }
 

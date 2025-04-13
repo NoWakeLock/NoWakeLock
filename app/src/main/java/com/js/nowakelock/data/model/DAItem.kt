@@ -133,6 +133,7 @@ data class DAItem(
             return St(
                 name = daItem.name,
                 packageName = daItem.packageName,
+                type = daItem.type,
                 userId = daItem.userId,
                 fullBlock = daItem.fullBlocked,
                 screenOffBlock = daItem.screenOffBlock,
