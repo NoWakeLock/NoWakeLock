@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.model.HourData
+import androidx.compose.foundation.layout.Arrangement
 
 /**
  * A card displaying a timeline of activity for a device automation item.
@@ -30,58 +31,66 @@ fun DATimelineCard(
         title = stringResource(R.string.activity_timeline),
         modifier = modifier
     ) {
-        Text(
-            text = stringResource(R.string.past_24_hours),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        
-        // Display legend
+        // Top row with "Past 24 hours" and legend
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Total legend item
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = 16.dp)
-            ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    modifier = Modifier.size(12.dp)
-                ) {}
-                Text(
-                    text = stringResource(R.string.total),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
+            // Left side: Past 24 hours text
+            Text(
+                text = stringResource(R.string.past_24_hours),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             
-            // Blocked legend item
+            // Right side: Legend (total and blocked)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(12.dp)
-                ) {}
-                Text(
-                    text = stringResource(R.string.blocked),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
+                // Total legend item
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.size(12.dp)
+                    ) {}
+                    Text(
+                        text = stringResource(R.string.total),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+                
+                // Blocked legend item
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(12.dp)
+                    ) {}
+                    Text(
+                        text = stringResource(R.string.blocked),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
             }
         }
         
-        // Timeline chart
+        // Timeline chart with horizontal padding to align with card content
         TimelineChart(
             data = timelineData,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .padding(top = 8.dp, bottom = 8.dp)
         )
     }
 }
