@@ -3,12 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
----
-description: Code protection rules and behaviors
-globs: **/*.*
-alwaysApply: true
----
-
 # CursorRIPER♦Ψ 1.0.0
 
 ## 🛡️ Protection Syntax
