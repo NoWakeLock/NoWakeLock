@@ -43,9 +43,8 @@ fun DADetailScreen(
     onNavigateBack: () -> Unit,
     viewModel: DADetailViewModel = koinViewModel()
 ) {
-    // Observe states
+    // Observe states 
     val uiState by viewModel.uiState.collectAsState()
-    val settingsState by viewModel.settingsState.collectAsState()
     
     // Handle error states with LaunchedEffect to show in parent's snackbar
     if (uiState is DADetailState.Error) {
@@ -70,7 +69,6 @@ fun DADetailScreen(
                 // Success state - show content
                 DADetailContent(
                     state = state,
-                    settingsState = settingsState,
                     onBlockingSettingChanged = viewModel::updateBlockingSetting,
                     onConditionSettingsChanged = viewModel::updateConditionSettings,
                     onTimeIntervalChanged = viewModel::updateTimeInterval,

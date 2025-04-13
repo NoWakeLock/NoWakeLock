@@ -123,13 +123,13 @@
 
     <!-- Settings card -->
     <string name="settings_title">Settings</string>
-    <string name="block_this_item">Block this item</string>
-    <string name="block_this_item_desc">Prevent this item from triggering</string>
+    <string name="allow_this_item">Allow this </string>
+    <string name="allow_this_item_desc">Prevent this item from triggering</string>
     <string name="block_during_sleep">Only block during sleep</string>
     <string name="block_during_screen_off">Only block when screen is off</string>
     <string name="allowed_time_interval">Allowed time interval</string>
     <string name="allowed_time_interval_desc">Time interval to allow this item to run</string>
-    <string name="seconds">seconds</string>
+    <string name="seconds">s</string>
 
     <!-- Timeline card -->
     <string name="activity_timeline">Activity Timeline</string>
@@ -149,4 +149,17 @@
 
     <!-- Error handling -->
     <string name="error_loading_data">Error loading data. Please try again.</string>
+    <string name="allow_wakelock">Allow Wakelock</string>
+    <string name="allow_wakelock_desc">Allow this wakelock form trigger</string>
+    <string name="allow_alarm">Allow Alarm</string>
+    <string name="allow_alarm_desc">Allow this alarm form trigger</string>
+    <string name="allow_service">Allow Service</string>
+    <string name="allow_service_desc">Allow this service start</string>
+
+    <string name="allow_screenOff_wakelock">Allow Wakelock Screen Off</string>
+    <string name="allow_screenOff_wakelock_desc">Allow this wakelock trigger when the screen is off</string>
+    <string name="allow_screenOff_alarm">Allow Alarm Screen Off</string>
+    <string name="allow_screenOff_alarm_desc">Allow this alarm trigger when the screen is off</string>
+    <string name="allow_screenOff_service">Allow Service Screen Off</string>
+    <string name="allow_screenOff_service_desc">Allow this service start when the screen is off</string>
 </resources>

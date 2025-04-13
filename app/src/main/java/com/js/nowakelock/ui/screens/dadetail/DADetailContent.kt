@@ -22,9 +22,8 @@ import com.js.nowakelock.ui.screens.dadetail.components.DATimelineCard
 /**
  * Main content for the device automation detail screen.
  * Displays all information about a device automation item.
- * 
+ *
  * @param state The success state containing all data
- * @param settingsState The current settings state
  * @param onBlockingSettingChanged Callback for when the blocking setting changes
  * @param onConditionSettingsChanged Callback for when condition settings change
  * @param onTimeIntervalChanged Callback for when the time interval changes
@@ -33,9 +32,8 @@ import com.js.nowakelock.ui.screens.dadetail.components.DATimelineCard
 @Composable
 fun DADetailContent(
     state: DADetailState.Success,
-    settingsState: DASettingsState,
     onBlockingSettingChanged: (Boolean) -> Unit,
-    onConditionSettingsChanged: (Boolean, Boolean) -> Unit,
+    onConditionSettingsChanged: (Boolean) -> Unit,
     onTimeIntervalChanged: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -56,9 +54,17 @@ fun DADetailContent(
                 type = state.daItem.type
             )
         }
-        
-        // Settings card
+
+        // Settings card - 从daItem创建settingsState
         item {
+            // 从DAItem提取设置信息创建DASettingsState
+            val settingsState = DASettingsState(
+                fullBlocked = daItem.fullBlocked,
+                screenOffBlock = daItem.screenOffBlock,
+                timeInterval = daItem.timeWindowSec,
+                type = daItem.type
+            )
+            
             DASettingsCard(
                 settingsState = settingsState,
                 onBlockingSettingChanged = onBlockingSettingChanged,
@@ -66,14 +72,14 @@ fun DADetailContent(
                 onTimeIntervalChanged = onTimeIntervalChanged
             )
         }
-        
+
         // Timeline card
         item {
             DATimelineCard(
                 timelineData = state.timelineData
             )
         }
-        
+
         // Recent activities card
         item {
             DARecentActivitiesCard(
@@ -98,7 +104,7 @@ fun DADetailContentPreview() {
         blockCount = 30,
         countTime = 3600000 // 1 hour
     )
-    
+
     val mockStatistics = DAStatistics(
         totalCount = 100,
         blockedCount = 30,
@@ -107,16 +113,16 @@ fun DADetailContentPreview() {
         formattedTotalTime = "1h 0m",
         formattedSavedTime = "18m saved"
     )
-    
+
     val mockTimelineData = List(24) { hour ->
         HourData(
             hour = hour,
-            label = if (hour == 0) "12AM" else if (hour < 12) "${hour}AM" else if (hour == 12) "12PM" else "${hour-12}PM",
+            label = if (hour == 0) "12AM" else if (hour < 12) "${hour}AM" else if (hour == 12) "12PM" else "${hour - 12}PM",
             total = (5..20).random(),
             blocked = (0..5).random()
         )
     }
-    
+
     val mockEvents = List(5) { index ->
         EventItem(
             time = System.currentTimeMillis() - (index * 3600000),
@@ -126,7 +132,7 @@ fun DADetailContentPreview() {
             formattedDuration = "${(1..5).random()}m ${(1..59).random()}s"
         )
     }
-    
+
     val successState = DADetailState.Success(
         daItem = mockDAItem,
         info = DAInfoEntry(
@@ -144,20 +150,12 @@ fun DADetailContentPreview() {
         timelineData = mockTimelineData,
         recentEvents = mockEvents
     )
-    
-    val settingsState = DASettingsState(
-        isBlocked = true,
-        sleepOnly = true,
-        screenOffOnly = false,
-        timeInterval = 30
-    )
-    
+
     androidx.compose.material3.Surface {
         DADetailContent(
             state = successState,
-            settingsState = settingsState,
             onBlockingSettingChanged = {},
-            onConditionSettingsChanged = { _, _ -> },
+            onConditionSettingsChanged = { _ -> },
             onTimeIntervalChanged = {}
         )
     }
