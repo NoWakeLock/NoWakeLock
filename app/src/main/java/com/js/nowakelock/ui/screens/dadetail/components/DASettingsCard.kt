@@ -95,7 +95,8 @@ fun DASettingsCard(
             onCheckedChange = { checked ->
                 onConditionSettingsChanged(!checked)
             },
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp),
+            enabled = !settingsState.fullBlocked
         )
 
         // Time interval setting with BasicTextField
@@ -103,7 +104,8 @@ fun DASettingsCard(
             title = stringResource(R.string.allowed_time_interval),
             subtitle = stringResource(R.string.allowed_time_interval_desc),
             value = settingsState.timeInterval,
-            onValueChange = onTimeIntervalChanged
+            onValueChange = onTimeIntervalChanged,
+            enabled = !settingsState.fullBlocked
         )
     }
 }
@@ -248,7 +250,10 @@ fun TimeIntervalItem(
                     Text(
                         text = "s",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (enabled)
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
                     )
                 }
             }
