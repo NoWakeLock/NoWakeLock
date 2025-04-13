@@ -1,47 +1,99 @@
 # σ₃: Technical Context
-*v1.1 | Created: 2025-04-09 | Updated: 2025-04-11*
-*Π: INITIALIZING | Ω: RESEARCH*
+*v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
+*Π: INITIALIZING | Ω: PLAN*
 
 ## 🛠️ Technology Stack
-- 🖥️ Frontend: Material Design 3, Jetpack Compose UI
-- 🔧 Backend: Xposed Framework API, Android Framework
-- 💾 Database: Room Persistence Library
-- ☁️ Infrastructure: Android Application (APK)
 
-## 🚀 Development Environment
-```bash
-# Android Studio setup
-# Ensure you have Android Studio Iguana (2023.2.1) or higher
-# Java 17 is required for the project
-# SDK 35 (Android 15) is the target
-```
+### 🖥️ Core
+- **Language**: Kotlin
+- **Android SDK**: API 24+ (Android 7.0 Nougat and above)
+- **JVM Target**: Java 8
 
-## 📦 Dependencies
-- [D₁] Jetpack Compose: 2025.03.01 BOM - Modern UI toolkit
-- [D₂] Room: 2.6.1 - Database persistence
-- [D₃] Kotlin: 2.1.0 - Programming language
-- [D₄] Koin: 4.0.4 - Dependency injection
-- [D₅] Navigation Compose: 2.8.9 - Navigation components
-- [D₆] Lifecycle: 2.8.7 - Lifecycle-aware components
-- [D₇] Xposed Framework: API 82+ - System modification
-- [D₈] Coil: 2.7.0 - Image loading library
-- [D₉] Kotlinx Collections Immutable: 0.3.7 - Immutable collections
+### 📱 Application Framework
+- **Xposed Framework**: For system-level hooking
+- **LSPosed/EdXposed**: Modern Xposed framework implementations
 
-## 🚧 Technical Constraints
-- [C₁] Minimum SDK: 24 (Android 7.0 / N)
-- [C₂] Target SDK: 35 (Android 15)
-- [C₃] Requires Xposed Framework (EdXposed/LSPosed) 
-- [C₄] Java compatibility level: 17
+### 🏗️ Architecture Components
+- **MVVM Pattern**: For UI and business logic separation
+- **Repository Pattern**: For data abstraction
+- **Android Architecture Components**: LiveData, ViewModel
 
-## 🔄 Build & Deployment
-- 🏗️ Build: Gradle with Kotlin DSL
-- 🚀 Deploy: F-Droid, GitHub Releases, IzzyOnDroid
-- 🔄 CI/CD: GitHub Actions workflow for automated builds
+### 💾 Data Management
+- **Room Database**: For persistent storage of events and settings
+- **SharedPreferences**: For light configuration storage
+- **JSON Serialization**: Using Gson for complex data structures
 
-## 🧪 Testing Approach
-- 🔬 Unit: JUnit for business logic
-- 🔌 Integration: Android Instrumentation Tests
-- 🖥️ E2E: Manual testing on various Android versions
+### 🧩 Dependency Injection
+- **Koin**: Lightweight DI framework for Kotlin
 
----
-σ₃ describes technologies and configuration
+### 📊 UI Components
+- **AndroidX**: Modern Android UI components
+- **ViewBinding**: For type-safe view access
+- **Fragment Navigation**: For app navigation
+
+## 🔌 Integrations
+
+### 📋 Android System Hooks
+- **PowerManagerService**: For wakelock interception
+- **AlarmManagerService**: For alarm scheduling interception
+- **ActivityManagerService**: For service operations interception
+- **SettingsProvider**: For settings monitoring
+
+### 🛡️ Security Considerations
+- **Root Access**: Required for Xposed framework functionality
+- **Module Verification**: Ensures module is active in Xposed
+- **Isolation**: Each hook operates independently for stability
+
+## 🧰 Development Environment
+
+### 🔧 Build Tools
+- **Gradle**: For build automation
+- **Android Gradle Plugin**: For Android-specific build tasks
+- **ProGuard**: For code optimization and obfuscation
+
+### 🧪 Testing Framework
+- **JUnit**: For unit testing
+- **Android Instrumentation Tests**: For UI and integration testing
+
+### 📦 Libraries
+- **Kotlin Standard Library**: Core language utilities
+- **Kotlin Coroutines**: For asynchronous programming
+- **Android KTX**: Kotlin extensions for Android
+
+## 🚀 Deployment
+
+### 📲 Distribution Channels
+- **GitHub Releases**: Primary distribution channel
+- **IzzyOnDroid F-Droid Repository**: Alternative distribution
+
+### 🏗️ CI/CD
+- **GitHub Actions**: For automated builds and tests
+- **Fastlane**: For streamlined deployment
+
+## 🔄 Upgrade Considerations
+
+### 🔄 Version Compatibility
+- Version 2.0 not compatible with previous configurations
+- Users must clear application data when upgrading
+
+### 📚 API Level Targeting
+- Different handling for:
+  - API 24-30 (Android 7.0-11.0)
+  - API 31+ (Android 12.0+)
+
+## 📝 Coding Conventions
+
+### 🧩 Project Structure
+- **Package by Feature**: Organization structure
+- **Clean Architecture Principles**: Separation of concerns
+
+### 🔍 Code Quality
+- **Modern Kotlin Practices**: Use of extension functions, higher-order functions
+- **Error Handling**: Try-catch blocks around system interactions
+- **Logging**: Xposed logging for debugging and diagnostics
+
+## 🔍 Technical Debts & Considerations
+- Implement application statistics feature
+- Improve data backup and recovery
+- Ensure compatibility with newer Android versions
+- Optimize battery usage of the module itself 
