@@ -13,6 +13,7 @@ import de.robv.android.xposed.IXposedHookZygoteInit.StartupParam
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
 
+// GUARDED - ASK BEFORE MODIFYING
 open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
     private var booted = false
 
@@ -20,6 +21,7 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
         XpUtil.log(": initZygote")
     }
 
+    // CRITICAL - BUSINESS LOGIC
     override fun handleLoadPackage(lpparam: LoadPackageParam) {
 //        val pN = lpparam.packageName
 //        XposedBridge.log("$TAG $pN: handleLoadPackage ,mypid ${Process.myUid()}")
@@ -29,6 +31,7 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 try {
                     XposedBridge.log("handleLoadPackage ${AndroidAppHelper.currentApplication()}")
 
+                    // PROTECTED - DO NOT MODIFY
                     XposedHelpers.findAndHookMethod("com.android.server.policy.keyguard.KeyguardServiceDelegate",
                         lpparam.classLoader,
                         "onBootCompleted",

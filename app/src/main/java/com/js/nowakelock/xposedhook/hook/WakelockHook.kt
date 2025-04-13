@@ -20,6 +20,7 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
+// GUARDED - ASK BEFORE MODIFYING
 class WakelockHook {
     companion object {
 
@@ -32,6 +33,7 @@ class WakelockHook {
         @Volatile
         private var lastAllowTime = HashMap<String, Long>()//wakelock last allow time
 
+        // CRITICAL - BUSINESS LOGIC
         fun hookWakeLocks(lpparam: XC_LoadPackage.LoadPackageParam) {
             //for test
 //            wakelockTest(lpparam)
@@ -222,6 +224,7 @@ class WakelockHook {
                 })
         }
 
+        // PROTECTED - DO NOT MODIFY
         // handle wakelock acquire
         private fun handleWakeLockAcquire(
             param: XC_MethodHook.MethodHookParam,
@@ -256,6 +259,7 @@ class WakelockHook {
             }
         }
 
+        // PROTECTED - DO NOT MODIFY
         //handle wakelock release
         private fun handleWakeLockRelease(lock: IBinder, context: Context) {
             val now = SystemClock.elapsedRealtime() //current time
@@ -278,6 +282,7 @@ class WakelockHook {
             wlTs.remove(lock)
         }
 
+        // PROTECTED - DO NOT MODIFY
         // get wakelock should block or not
         private fun block(
             wN: String, packageName: String, userId: Int,
