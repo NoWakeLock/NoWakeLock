@@ -36,7 +36,6 @@ class DADetailRepositoryImpl(
     /**
      * Get device automation item data
      * @param name Name of the item
-     * @param packageName Package name
      * @param userId User ID
      * @return Flow of DAItem
      */
@@ -45,22 +44,22 @@ class DADetailRepositoryImpl(
         val info = daDao.loadInfo(name, type, userId)
         val st = daDao.loadSt(name, type, userId)
 
-        return info.zip(st) { info, st -> //merge info and st
-            if (info.count != 0) // calculate blockCountTime
-                info.blockCountTime = info.blockCount * (info.countTime / info.count)
+        return info.zip(st) { infoItem, stItem -> //merge info and st
+            if (infoItem.count != 0) // calculate blockCountTime
+                infoItem.blockCountTime = infoItem.blockCount * (infoItem.countTime / infoItem.count)
 
             DAItem(
-                name = info.name,
-                packageName = info.packageName,
-                userId = info.userId,
-                type = info.type,
-                count = info.count,
-                blockCount = info.blockCount,
-                countTime = info.countTime,
-                blockCountTime = info.blockCountTime,
-                fullBlocked = st?.fullBlock ?: false,
-                screenOffBlock = st?.screenOffBlock ?: false,
-                timeWindowSec = TimeUnit.MILLISECONDS.toSeconds(st?.timeWindowMs ?: 0).toInt()
+                name = infoItem.name,
+                packageName = infoItem.packageName,
+                userId = infoItem.userId,
+                type = infoItem.type,
+                count = infoItem.count,
+                blockCount = infoItem.blockCount,
+                countTime = infoItem.countTime,
+                blockCountTime = infoItem.blockCountTime,
+                fullBlocked = stItem?.fullBlock ?: false,
+                screenOffBlock = stItem?.screenOffBlock ?: false,
+                timeWindowSec = TimeUnit.MILLISECONDS.toSeconds(stItem?.timeWindowMs ?: 0).toInt()
             )
         }.flowOn(Dispatchers.IO)
     }
@@ -68,7 +67,6 @@ class DADetailRepositoryImpl(
     /**
      * Get recent events for a device automation item
      * @param name Name of the item
-     * @param packageName Package name
      * @param userId User ID
      * @param limit Maximum number of events to return
      * @return Flow of EventItem list
@@ -87,7 +85,6 @@ class DADetailRepositoryImpl(
     /**
      * Get timeline data for a device automation item
      * @param name Name of the item
-     * @param packageName Package name
      * @param userId User ID
      * @param hours Number of hours to include in timeline
      * @return Flow of HourData list
@@ -110,10 +107,11 @@ class DADetailRepositoryImpl(
     /**
      * Update settings for a device automation item
      * @param setting The settings to update
-     * @return True if update was successful, false otherwise
      */
-    override suspend fun updateDAItemSettings(setting: St) = withContext(Dispatchers.IO) {
-        daDao.insert(setting)
+    override suspend fun updateDAItemSettings(setting: St) {
+        withContext(Dispatchers.IO) {
+            daDao.insert(setting)
+        }
     }
 
     /**

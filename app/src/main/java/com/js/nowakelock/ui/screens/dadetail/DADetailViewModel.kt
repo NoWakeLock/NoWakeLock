@@ -6,12 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.js.nowakelock.base.stringToType
 import com.js.nowakelock.data.db.Type
-import com.js.nowakelock.data.db.entity.St
-import com.js.nowakelock.data.model.DAInfoEntry
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.model.DAStatistics
-import com.js.nowakelock.data.model.EventItem
-import com.js.nowakelock.data.model.HourData
 import com.js.nowakelock.data.repository.daDetail.DADetailRepository
 import com.js.nowakelock.data.repository.daDetail.DAInfoRepository
 import com.js.nowakelock.ui.navigation.DADetail
@@ -21,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -36,17 +34,13 @@ class DADetailViewModel(
 
     // Extract navigation parameters from SavedStateHandle
     private val daDetail = savedStateHandle.toRoute<DADetail>()
-    private val name: String = daDetail.daName ?: ""
-    private val type: Type = stringToType(daDetail.type ?: Type.UnKnow.value)
-    private val userId: Int = daDetail.userId ?: 0
+    private val name: String = daDetail.daName
+    private val type: Type = stringToType(daDetail.type)
+    private val userId: Int = daDetail.userId
 
-    // UI state
+    // UI state - single source of truth
     private val _uiState = MutableStateFlow<DADetailState>(DADetailState.Loading)
     val uiState: StateFlow<DADetailState> = _uiState.asStateFlow()
-
-    // Settings state
-    private val _settingsState = MutableStateFlow(DASettingsState())
-    val settingsState: StateFlow<DASettingsState> = _settingsState.asStateFlow()
 
     // Initialize data loading
     init {
@@ -59,27 +53,22 @@ class DADetailViewModel(
     private fun loadData() {
         viewModelScope.launch {
             try {
-                // Load device automation item data
+                // Load device automation item data - this already includes settings
                 val daItemFlow = daDetailRepository.getDAItem(name, type, userId)
+                    .distinctUntilChanged()
 
                 // Load recent events
                 val recentEventsFlow = daDetailRepository.getRecentEvents(name, type, userId, 10)
+                    .distinctUntilChanged()
 
                 // Load timeline data
                 val timelineDataFlow = daDetailRepository.getTimelineData(name, type, userId, 24)
+                    .distinctUntilChanged()
 
                 // Combine all data flows
                 combine(
                     daItemFlow, recentEventsFlow, timelineDataFlow
                 ) { daItem, recentEvents, timelineData ->
-                    // Update settings state
-                    _settingsState.value = DASettingsState(
-                        isBlocked = daItem.fullBlocked,
-                        sleepOnly = false, // This needs to be determined from actual settings
-                        screenOffOnly = daItem.screenOffBlock,
-                        timeInterval = daItem.timeWindowSec
-                    )
-
                     // Load DA info entry asynchronously
                     val infoEntry = daInfoRepository.getInfo(daItem.name, daItem.packageName)
 
@@ -151,7 +140,19 @@ class DADetailViewModel(
             if (currentState is DADetailState.Success) {
                 val st = DAItem.toSt(currentState.daItem.copy(fullBlocked = isBlocked))
                 try {
+                    // 更新数据库 - 这会自动触发getDAItem流的更新
                     daDetailRepository.updateDAItemSettings(st)
+                    
+                    // 同时立即更新UI状态，提供更快的用户反馈
+                    _uiState.update { state ->
+                        if (state is DADetailState.Success) {
+                            state.copy(
+                                daItem = state.daItem.copy(fullBlocked = isBlocked)
+                            )
+                        } else {
+                            state
+                        }
+                    }
                 } catch (e: Exception) {
                     _uiState.value = DADetailState.Error(e.message ?: "Unknown error")
                 }
@@ -162,7 +163,7 @@ class DADetailViewModel(
     /**
      * Update condition settings
      */
-    fun updateConditionSettings(sleepOnly: Boolean, screenOffOnly: Boolean) {
+    fun updateConditionSettings(screenOffOnly: Boolean) {
         viewModelScope.launch {
             val currentState = uiState.value
             if (currentState is DADetailState.Success) {
@@ -170,7 +171,19 @@ class DADetailViewModel(
                 val setting = DAItem.toSt(daItem.copy(screenOffBlock = screenOffOnly))
 
                 try {
+                    // 更新数据库 - 这会自动触发getDAItem流的更新
                     daDetailRepository.updateDAItemSettings(setting)
+                    
+                    // 同时立即更新UI状态，提供更快的用户反馈
+                    _uiState.update { state ->
+                        if (state is DADetailState.Success) {
+                            state.copy(
+                                daItem = state.daItem.copy(screenOffBlock = screenOffOnly)
+                            )
+                        } else {
+                            state
+                        }
+                    }
                 } catch (e: Exception) {
                     _uiState.value = DADetailState.Error(e.message ?: "Unknown error")
                 }
@@ -189,7 +202,19 @@ class DADetailViewModel(
                 val setting = DAItem.toSt(daItem.copy(timeWindowSec = seconds))
 
                 try {
+                    // 更新数据库 - 这会自动触发getDAItem流的更新
                     daDetailRepository.updateDAItemSettings(setting)
+                    
+                    // 同时立即更新UI状态，提供更快的用户反馈
+                    _uiState.update { state ->
+                        if (state is DADetailState.Success) {
+                            state.copy(
+                                daItem = state.daItem.copy(timeWindowSec = seconds)
+                            )
+                        } else {
+                            state
+                        }
+                    }
                 } catch (e: Exception) {
                     _uiState.value = DADetailState.Error(e.message ?: "Unknown error")
                 }

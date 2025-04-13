@@ -103,12 +103,12 @@
     <string name="no_info_unknown">没有相关信息</string>
     <string name="recommendations">推荐设置</string>
     <string name="settings_title">唤醒锁设置</string>
-    <string name="block_this_item">阻止唤醒锁</string>
-    <string name="block_this_item_desc">阻止此唤醒锁的触发</string>
+    <string name="allow_this_item">阻止唤醒锁</string>
+    <string name="allow_this_item_desc">阻止此唤醒锁的触发</string>
     <string name="block_during_sleep">仅在休眠时阻止</string>
     <string name="block_during_screen_off">仅在屏幕关闭时阻止</string>
-    <string name="allowed_time_interval">免许时间间隔</string>
-    <string name="allowed_time_interval_desc">免除唤醒锁触发的时间间隔</string>
+    <string name="allowed_time_interval">允许的时间间隔</string>
+    <string name="allowed_time_interval_desc">允许唤醒锁触发的时间间隔</string>
     <string name="seconds">秒</string>
     <string name="activity_timeline">活动时间线</string>
     <string name="past_24_hours">过去 24 小时</string>
