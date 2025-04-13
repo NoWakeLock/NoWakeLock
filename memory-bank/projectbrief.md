@@ -1,45 +1,47 @@
 # σ₁: Project Brief
-*v1.1 | Created: 2025-04-09 | Updated: 2025-04-11*
-*Π: INITIALIZING | Ω: RESEARCH*
+*v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
+*Π: INITIALIZING | Ω: PLAN*
 
 ## 🏆 Overview
-NoWakeLock is an Android application that allows users to control the frequency and duration of waking up their Android devices to save power consumption. The app provides full control over Wakelock/Alarm/Service components, allowing users to intercept and manage these system operations at the application level.
+NoWakeLock is an Android application that allows users to control the frequency and duration of waking up their Android device to save power consumption. It functions as an Xposed module to intercept and manage wakelock, alarm, and service operations on Android devices.
 
 ## 📋 Requirements
 - [R₁] Control Wakelock/Alarm/Service by application
 - [R₂] Support for application-level regular expression interception
 - [R₃] Limited multi-user support
-- [R₄] Modern UI with Material Design 3 and Jetpack Compose
-- [R₅] Support for Android 7 (N) and above
-- [R₆] Fully open source with no private data collection
+- [R₄] Compatible with Android N (7.0) and above
+- [R₅] Open source with no private data collection
+- [R₆] Support for monitoring and blocking wakelock operations
+- [R₇] Support for monitoring and blocking alarm operations
+- [R₸] Support for monitoring and blocking service operations
 
-## ✅ Success Criteria
-- [C₁] Successfully monitor and block wakelocks, alarms, and services
-- [C₂] Improve battery life for Android devices
-- [C₃] Provide a modern, intuitive user interface
-- [C₄] Complete migration to Jetpack Compose from previous UI
+## 🎯 Target Audience
+- Power users wanting granular control over device wake patterns
+- Users with battery life concerns
+- Xposed/LSPosed framework users
+- Android developers testing wake behavior
 
-## 🔍 Scope
-### ✓ In Scope
-- [S₁] UI redesign using Material 3 and Jetpack Compose
-- [S₂] Record and block alarms, wakelocks, and services
-- [S₃] Regular expression support for filtering
-- [S₄] Data backup and recovery features
-- [S₅] Application statistics
+## 🔑 Key Features
+- Block specific wakelocks by application
+- Set time intervals between wakelocks
+- Regular expression support for pattern-based blocking
+- Monitor wakelock, alarm and service activity
+- Custom rules for different apps
 
-### ❌ Out of Scope
-- [O₁] Support for Android versions below 7.0
-- [O₂] Root-only features (relies on Xposed framework)
-- [O₃] Automatic optimization without user input
+## 📊 Success Metrics
+- Reduced device wake-ups
+- Extended battery life
+- Detailed logging of system activity
+- User control over battery consumption
 
-## ⏱️ Timeline
-- [T₁] Compose UI Migration: Ongoing
-- [T₂] Feature Parity with Legacy Version: Q2 2025
-- [T₃] Release-ready Version: Q3 2025
+## 🧰 Technical Stack
+- Kotlin
+- Xposed Framework
+- Android SDK
+- Room Database (inferred)
+- Koin for dependency injection
 
-## 👥 Stakeholders
-- [STK₁] NoWakeLock Users: End users seeking battery optimization
-- [STK₂] App Developers: Contributors to the open source project
-
----
-*σ₁ foundation document informing all other memory files*
+## 📝 Notes
+- Currently in Beta testing stage
+- Version 2.0 is not compatible with previous configurations
+- Tested with EdXposed / LSPosed 
