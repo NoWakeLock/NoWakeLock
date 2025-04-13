@@ -123,4 +123,5 @@
     <string name="status_blocked">已阻止</string>
     <string name="duration_separator"> • 持续时间: %s</string>
     <string name="error_loading_data">加载数据时出错，请重试</string>
+    <string name="now">现在</string>
 </resources>

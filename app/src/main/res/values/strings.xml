@@ -162,4 +162,5 @@
     <string name="allow_screenOff_alarm_desc">Allow this alarm trigger when the screen is off</string>
     <string name="allow_screenOff_service">Allow Service Screen Off</string>
     <string name="allow_screenOff_service_desc">Allow this service start when the screen is off</string>
+    <string name="now">Now</string>
 </resources>

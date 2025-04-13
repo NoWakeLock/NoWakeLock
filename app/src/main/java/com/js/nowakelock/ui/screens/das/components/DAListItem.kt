@@ -324,7 +324,7 @@ private fun ControlSection(
         // Full block label and switch
         Text(
             text = "Allow",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(blockLabel) {
                 start.linkTo(parent.start, 16.dp)
@@ -356,7 +356,7 @@ private fun ControlSection(
         // Screen off label and switch
         Text(
             text = "Screen Off",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(screenOffLabel) {
                 start.linkTo(block.end, 8.dp)
@@ -379,7 +379,7 @@ private fun ControlSection(
         // Timeout section
         Text(
             text = "Time",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(timeLabel) {
                 start.linkTo(screenOffBlock.end, 8.dp)
