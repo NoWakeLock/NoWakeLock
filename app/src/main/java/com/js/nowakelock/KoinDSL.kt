@@ -1,19 +1,9 @@
 package com.js.nowakelock
 
 import com.js.nowakelock.data.db.AppDatabase
-import com.js.nowakelock.data.db.Type
-//import com.js.nowakelock.data.repository.appda.AppDaR
-//import com.js.nowakelock.data.repository.appda.AppDaRepo
 import com.js.nowakelock.data.repository.appdas.AppDasAR
 import com.js.nowakelock.data.repository.appdas.AppDasRepo
 import com.js.nowakelock.data.repository.backup.BackupRepo
-//import com.js.nowakelock.data.repository.da.DaR
-//import com.js.nowakelock.data.repository.da.DaRepo
-//import com.js.nowakelock.data.repository.daitem.DARepository
-//import com.js.nowakelock.data.repository.das.FR
-//import com.js.nowakelock.data.repository.das.IAlarmR
-//import com.js.nowakelock.data.repository.das.IServiceR
-//import com.js.nowakelock.data.repository.das.IWakelockR
 import com.js.nowakelock.data.repository.daitem.WakelockRepositoryImpl
 import com.js.nowakelock.data.repository.daitem.AlarmRepositoryImpl
 import com.js.nowakelock.data.repository.daitem.ServiceRepositoryImpl
