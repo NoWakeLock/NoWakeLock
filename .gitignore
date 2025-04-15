@@ -95,3 +95,10 @@ app/release/output.json
 /release
 /certs
 .idea/misc.xml
+.specstory/.what-is-this.md
+.specstory/history/2025-04-12_14-36-加载上下文的规则与内存库.md
+.specstory/history/2025-04-13_03-14-系统初始化与功能介绍.md
+.specstory/history/2025-04-13_03-57-json-parsing-error-in-dainforepositoryimpl.md
+.specstory/history/2025-04-13_11-59-分析时间线实现与原型差距.md
+.specstory/history/2025-04-14_14-52-逐章节逐行解析光标规则.md
+.cursorindexingignore
