@@ -125,6 +125,7 @@ fun DADetailContentPreview() {
 
     val mockEvents = List(5) { index ->
         EventItem(
+            type = Type.Wakelock,
             time = System.currentTimeMillis() - (index * 3600000),
             duration = (10000..300000).random().toLong(),
             isBlocked = index % 2 == 0,

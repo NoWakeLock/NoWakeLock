@@ -37,7 +37,7 @@ fun InfoCard(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 12.dp)
             )
             
             content()

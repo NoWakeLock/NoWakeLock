@@ -80,8 +80,8 @@ class DADetailRepositoryImpl(
         val timeStart = System.currentTimeMillis() - TimeUnit.HOURS.toMillis(hours.toLong())
 
         return infoEventDao.getEventsInTimeRange(name, type, userId, timeStart).map { events ->
-                aggregateEventsByHour(events, hours)
-            }.flowOn(Dispatchers.IO)
+            aggregateEventsByHour(events, hours)
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
@@ -102,6 +102,7 @@ class DADetailRepositoryImpl(
         val duration = (event.endTime ?: System.currentTimeMillis()) - event.startTime
 
         return EventItem(
+            type = event.type,
             time = event.startTime,
             duration = duration,
             isBlocked = event.isBlocked,
