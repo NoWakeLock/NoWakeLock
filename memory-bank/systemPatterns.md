@@ -1,84 +1,66 @@
 # σ₂: System Patterns
-*v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
-*Π: INITIALIZING | Ω: PLAN*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-16*
+*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🏛️ Architecture Overview
-NoWakeLock follows a modular architecture with clear separation between the Xposed module functionality and the user-facing application. The application uses an MVVM pattern with Repository pattern for data management.
+NoWakeLock follows an MVVM architecture pattern with clean separation between data collection, processing, and presentation. The app consists of two main parts: a UI component built with Jetpack Compose, and a system integration component using Xposed hooks for monitoring system activities. The application is being reconstructed with Material Design 3 while maintaining the core functionality.
 
-## 🧩 Core Components
+## 🧱 Component Structure
+- [C₁] UI Layer ⟶ Compose-based screens, navigation, and components with MD3 styling
+- [C₂] ViewModel Layer ⟶ Screen-specific ViewModels for data transformation and business logic
+- [C₃] Repository Layer ⟶ Data access abstraction for wakelocks, alarms, and services
+- [C₄] Database Layer ⟶ Room entities, DAOs, and converters for local storage
+- [C₅] Xposed Layer ⟶ System-level hooks to monitor wakelocks, alarms, and services
+- [C₆] Model Layer ⟶ Data classes representing wakelocks, alarms, and application information
+- [C₇] Utility Layer ⟶ Helper functions, extensions, and shared tools
 
-### 1. Xposed Module Layer
-- **XposedModule**: Entry point for the Xposed framework integration
-- **Hook Implementations**:
-  - WakelockHook: Intercepts and manages Android wakelock operations
-  - AlarmHook: Intercepts and manages Android alarm operations
-  - ServiceHook: Intercepts and manages Android service operations
-  - SettingsProviderHook: Manages settings communication
+## 🔄 Design Patterns
+- [P₁] MVVM ⟶ For separation of UI and business logic
+- [P₂] Repository Pattern ⟶ For data access abstraction
+- [P₃] Dependency Injection ⟶ Using Koin for service locator pattern
+- [P₄] Observer Pattern ⟶ State management with Compose state and Flow
+- [P₅] Factory Pattern ⟶ For creating instances of repositories and databases
+- [P₆] Adapter Pattern ⟶ For transforming data between layers
+- [P₇] Strategy Pattern ⟶ Different hooking strategies for different Android versions
 
-### 2. Data Layer
-- **Repository Pattern**: Abstracts data sources from the rest of the application
-- **Room Database**: Manages persistent storage for settings and event logs
-- **Shared Preferences**: Handles lightweight configuration settings via XpNSP model
+## 🔌 Key Interfaces
+- [I₁] XposedModule ⟶ Entry point for Xposed framework integration
+- [I₂] Hook Implementations ⟶ Classes for monitoring specific system components
+- [I₃] Repository Interfaces ⟶ Data access contracts
+- [I₄] ViewModel Factories ⟶ For creating ViewModels with dependencies
+- [I₅] Navigation Routes ⟶ For screen navigation
+- [I₆] DAOs ⟶ Data Access Objects for database operations
+- [I₇] UI Components ⟶ Reusable UI elements for consistency
 
-### 3. UI Layer
-- **MVVM Architecture**: ViewModels mediate between UI and data layers
-- **Fragment-Based UI**: Modular UI components organized in fragments
-- **Dependency Injection**: Koin is used for dependency management
+## 🔐 Critical Implementation Paths
+- [Path₁] Wakelock Detection ⟶ WakelockHook → Record → Repository → Database
+- [Path₂] Wakelock Display ⟶ Database → Repository → ViewModel → UI
+- [Path₃] Wakelock Control ⟶ UI → ViewModel → Repository → XpNSP → System
+- [Path₄] Alarm Detection ⟶ AlarmHook → Record → Repository → Database
+- [Path₅] Service Detection ⟶ ServiceHook → Record → Repository → Database
+- [Path₆] User Switching ⟶ UI → ViewModel → Repositories → Database Queries
+- [Path₇] Data Backup ⟶ UI → ViewModel → Repository → Serialization → Storage
 
-## 📱 Module Interactions
+## 🧩 Architectural Insights
+- [Insight₁] The application uses different hook implementations based on Android version to maintain compatibility across devices
+- [Insight₂] The UI is being reconstructed with Material Design 3 while preserving core functionality
+- [Insight₃] Multi-user support is implemented through userId parameters in database queries
+- [Insight₄] The app uses Koin for dependency injection with modular organization
+- [Insight₅] Edge-to-edge UI implementation uses the new enableEdgeToEdge() API instead of deprecated SystemUiController
+- [Insight₆] The architecture follows modern Android development patterns with Compose and viewModels
 
-```
-┌─────────────────┐       ┌────────────────┐       ┌───────────────┐
-│                 │       │                │       │               │
-│  User Interface │◄─────►│  View Models   │◄─────►│  Repositories │
-│                 │       │                │       │               │
-└─────────────────┘       └────────────────┘       └───────┬───────┘
-                                                           │
-                                                           ▼
-┌─────────────────┐       ┌────────────────┐       ┌───────────────┐
-│                 │       │                │       │               │
-│  Android System │◄─────►│ Xposed Hooks   │◄─────►│  Databases    │
-│                 │       │                │       │               │
-└─────────────────┘       └────────────────┘       └───────────────┘
-```
+## 🖼️ UI Architecture
+- [UI₁] Screen Organization ⟶ UI is organized by feature in separate screen packages (apps, wakelocks, alarms, services, settings)
+- [UI₂] Component Library ⟶ Reusable components in dedicated components package (UserSwitcher, BottomNavBar, EmptyView, etc.)
+- [UI₃] Type-Safe Navigation ⟶ Uses Kotlin serialization for passing complex data between screens
+- [UI₄] Nested Components ⟶ Complex screens are built from smaller composable components in screen-specific packages
+- [UI₅] Material 3 Integration ⟶ Uses Material 3 components with system theming
+- [UI₆] Screen State Management ⟶ Uses collectAsState with Flow for reactive UI updates
 
-## 🔄 Data Flow
-
-1. **System Event Flow**:
-   - Android system generates wakelock/alarm/service events
-   - Xposed hooks intercept these events
-   - Events are processed based on user settings
-   - Events either proceed or are blocked
-   - Event data is recorded in the database
-
-2. **User Interaction Flow**:
-   - User configures settings via UI
-   - ViewModels process and validate settings
-   - Repositories store settings in database
-   - Xposed hooks query settings during runtime
-   - User views event logs and statistics
-
-## 🧠 Design Decisions
-
-### Multi-layered Blocking Strategy
-- Flag-based blocking (complete block)
-- Lock screen detection (block during screen off)
-- Time interval-based blocking (regulate frequency)
-- Regular expression pattern matching (flexible targeting)
-
-### Version-specific Implementation
-- Different hook strategies for Android versions 7-11 vs Android 12+
-- Conditional code paths based on API level detection
-
-### Error Handling Strategy
-- Try-catch blocks around hook functions
-- Logging mechanism for debugging
-- Fallback mechanisms when expected methods aren't found
-
-## 🔌 Integration Points
-
-- **Xposed Framework**: Hooks into Android system processes
-- **Android Power Management**: Controls wakelock operations
-- **AlarmManager**: Controls system alarm scheduling
-- **ActivityManager**: Controls service operations
-- **Settings Provider**: Monitors system settings changes 
+## 🧭 Navigation System
+- [Nav₁] Bottom Navigation ⟶ Main app navigation with tab-based structure
+- [Nav₂] Central NavHost ⟶ Single NavHost in main app composable manages all navigation
+- [Nav₃] Type-Safe Parameters ⟶ Serializable data classes for passing complex data between screens
+- [Nav₄] Detail Navigation ⟶ Detail screens with back navigation and shared data
+- [Nav₅] State Preservation ⟶ Navigation preserves state during tab switching
+- [Nav₆] Multi-level Navigation ⟶ Supports navigation to detail screens while maintaining tab structure 

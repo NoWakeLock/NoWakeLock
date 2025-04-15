@@ -1,99 +1,51 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
-*Π: INITIALIZING | Ω: PLAN*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-15*
+*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
+- 🖥️ Frontend: Jetpack Compose, Material 3, Compose Navigation
+- 🗄️ Backend: Kotlin, Android SDK, Xposed Framework
+- 📊 Database: Room Persistence Library
+- 🧪 Testing: JUnit, Espresso
+- 🚀 Deployment: Google Play Store, F-Droid
 
-### 🖥️ Core
-- **Language**: Kotlin
-- **Android SDK**: API 24+ (Android 7.0 Nougat and above)
-- **JVM Target**: Java 8
+## ⚙️ Development Environment
+- [E₁] Android Studio ⟶ Latest version
+- [E₂] Gradle 8.x ⟶ For build automation with Kotlin DSL
+- [E₃] Git ⟶ For version control
+- [E₄] GitHub Actions ⟶ For CI/CD
+- [E₅] Rooted Android device/emulator ⟶ For testing Xposed functionality
+- [E₆] Android SDK 35 ⟶ Latest target SDK
 
-### 📱 Application Framework
-- **Xposed Framework**: For system-level hooking
-- **LSPosed/EdXposed**: Modern Xposed framework implementations
+## 📦 Dependencies
+- [D₁] Kotlin Coroutines ⟶ Version latest, For asynchronous programming
+- [D₂] Jetpack Compose ⟶ Version 2025.x.x, For modern UI development
+- [D₃] Room ⟶ Version 2.7.0, For local database operations
+- [D₄] Koin ⟶ Version 4.0.4, For dependency injection
+- [D₅] Xposed Framework ⟶ Version 93+, For system-level hooks
+- [D₆] Coil ⟶ Version 2.7.0, For app icon loading
+- [D₇] Kotlinx Serialization ⟶ Version 1.7.1, For type-safe navigation
+- [D₈] Kotlinx Collections Immutable ⟶ Version 0.3.7, For immutable collections
+- [D₉] DataStore Preferences ⟶ Version 1.1.4, For preferences storage
+- [D₁₀] Navigation Compose ⟶ Version 2.8.9, For navigation
+- [D₁₁] Core Splashscreen ⟶ Version 1.0.1, For splash screen
+- [D₁₂] Material 3 ⟶ Latest version, For modern UI components
+- [D₁₃] ConstraintLayout Compose ⟶ Version 1.1.1, For complex layouts
 
-### 🏗️ Architecture Components
-- **MVVM Pattern**: For UI and business logic separation
-- **Repository Pattern**: For data abstraction
-- **Android Architecture Components**: LiveData, ViewModel
+## 🚧 Technical Constraints
+- [T₁] Root Access ⟶ Required for complete functionality with Xposed
+- [T₂] Android Version Compatibility ⟶ Minimum SDK 24 (Android 7.0), Target SDK 35
+- [T₃] Battery Usage ⟶ Monitoring must have minimal impact on battery
+- [T₄] Permission Model ⟶ Requires QUERY_ALL_PACKAGES permission
+- [T₅] Xposed Module Scope ⟶ Limited to specific packages defined in scopes array
+- [T₆] Multi-user Support ⟶ Must handle data for different Android user profiles
+- [T₇] Edge-to-edge UI ⟶ Modern UI requires proper edge-to-edge handling
 
-### 💾 Data Management
-- **Room Database**: For persistent storage of events and settings
-- **SharedPreferences**: For light configuration storage
-- **JSON Serialization**: Using Gson for complex data structures
-
-### 🧩 Dependency Injection
-- **Koin**: Lightweight DI framework for Kotlin
-
-### 📊 UI Components
-- **AndroidX**: Modern Android UI components
-- **ViewBinding**: For type-safe view access
-- **Fragment Navigation**: For app navigation
-
-## 🔌 Integrations
-
-### 📋 Android System Hooks
-- **PowerManagerService**: For wakelock interception
-- **AlarmManagerService**: For alarm scheduling interception
-- **ActivityManagerService**: For service operations interception
-- **SettingsProvider**: For settings monitoring
-
-### 🛡️ Security Considerations
-- **Root Access**: Required for Xposed framework functionality
-- **Module Verification**: Ensures module is active in Xposed
-- **Isolation**: Each hook operates independently for stability
-
-## 🧰 Development Environment
-
-### 🔧 Build Tools
-- **Gradle**: For build automation
-- **Android Gradle Plugin**: For Android-specific build tasks
-- **ProGuard**: For code optimization and obfuscation
-
-### 🧪 Testing Framework
-- **JUnit**: For unit testing
-- **Android Instrumentation Tests**: For UI and integration testing
-
-### 📦 Libraries
-- **Kotlin Standard Library**: Core language utilities
-- **Kotlin Coroutines**: For asynchronous programming
-- **Android KTX**: Kotlin extensions for Android
-
-## 🚀 Deployment
-
-### 📲 Distribution Channels
-- **GitHub Releases**: Primary distribution channel
-- **IzzyOnDroid F-Droid Repository**: Alternative distribution
-
-### 🏗️ CI/CD
-- **GitHub Actions**: For automated builds and tests
-- **Fastlane**: For streamlined deployment
-
-## 🔄 Upgrade Considerations
-
-### 🔄 Version Compatibility
-- Version 2.0 not compatible with previous configurations
-- Users must clear application data when upgrading
-
-### 📚 API Level Targeting
-- Different handling for:
-  - API 24-30 (Android 7.0-11.0)
-  - API 31+ (Android 12.0+)
-
-## 📝 Coding Conventions
-
-### 🧩 Project Structure
-- **Package by Feature**: Organization structure
-- **Clean Architecture Principles**: Separation of concerns
-
-### 🔍 Code Quality
-- **Modern Kotlin Practices**: Use of extension functions, higher-order functions
-- **Error Handling**: Try-catch blocks around system interactions
-- **Logging**: Xposed logging for debugging and diagnostics
-
-## 🔍 Technical Debts & Considerations
-- Implement application statistics feature
-- Improve data backup and recovery
-- Ensure compatibility with newer Android versions
-- Optimize battery usage of the module itself 
+## 🔧 Tool Usage Patterns
+- [Tool₁] Xposed Framework ⟶ For monitoring system wakelocks, alarms, and services
+- [Tool₂] Android Debug Bridge ⟶ For development and testing
+- [Tool₃] Battery Stats ⟶ For measuring app impact
+- [Tool₄] System API Hooks ⟶ For intercepting wakelock, alarm, and service calls
+- [Tool₅] Compose Tooling ⟶ UI previews and testing
+- [Tool₆] Material 3 Components ⟶ For consistent, modern UI
+- [Tool₇] Data Serialization ⟶ For backup/restore functionality 
