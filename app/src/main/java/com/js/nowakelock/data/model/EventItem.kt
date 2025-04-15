@@ -1,5 +1,7 @@
 package com.js.nowakelock.data.model
 
+import com.js.nowakelock.data.db.Type
+
 /**
  * Data class representing a device automation event for UI display.
  * @param time The start time of the event in milliseconds
@@ -9,6 +11,7 @@ package com.js.nowakelock.data.model
  * @param formattedDuration Formatted duration string for display
  */
 data class EventItem(
+    val type: Type,
     val time: Long,
     val duration: Long,
     val isBlocked: Boolean,
