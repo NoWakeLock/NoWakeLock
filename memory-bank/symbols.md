@@ -1,94 +1,65 @@
 # 🔣 Symbol Reference Guide
-*v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-15*
 
 ## 📁 File Symbols
 - 📂 = /memory-bank/
 - 📦 = /memory-bank/backups/
-- 📄 = Active file reference
-- 📚 = Documentation reference
-- 💻 = Code reference
-- 📁 = Folder reference
-- 🔄 = Git reference
-- 📏 = Cursor rule reference
-- 📝 = Notepad reference
-- 📌 = Pinned file reference
+- 📜 = /.specstory/history/
 
-## 🧪 Mode Symbols
-- 🔍R = Research mode (Ω₁)
-- 💡I = Innovate mode (Ω₂)
-- 📝P = Plan mode (Ω₃)
-- ⚙️E = Execute mode (Ω₄)
-- 🔎RV = Review mode (Ω₅)
+## 🔠 Mode Symbols
+- Ω₁ = 🔍R = Research
+- Ω₂ = 💡I = Innovate
+- Ω₃ = 📝P = Plan
+- Ω₄ = ⚙️E = Execute
+- Ω₅ = 🔎RV = Review
+- 💾U = Update (Memory Update)
+- 📖L = Load (Memory Context Load)
+- 🔄O = Organize (Information Organization)
+- 🔄R = Reset (Project Reset)
+- 🚀S = Start (Framework Initialization)
 
-## 🛡️ Protection Symbols
-- 🔒 = PROTECTED - DO NOT MODIFY
-- 🛡️ = GUARDED - ASK BEFORE MODIFYING
-- ℹ️ = INFO - CONTEXT NOTE
-- 🐞 = DEBUG - DEBUGGING CODE
-- 🧪 = TEST - TESTING CODE
-- ⚠️ = CRITICAL - BUSINESS LOGIC
-
-## 📊 Status Symbols
-- 🟢 = Active
-- 🟡 = Partially Relevant
-- 🟣 = Essential
-- 🔴 = Deprecated
-
-## 📋 Memory Bank Files
-- σ₁ = Project Brief
-- σ₂ = System Patterns
-- σ₃ = Technical Context
-- σ₄ = Active Context
-- σ₅ = Progress Tracker
-- σ₆ = Protection Registry
-
-## 🔧 Permission Symbols
-- ✓ = Allowed
-- ~ = Limited/Conditional
-- ✗ = Disallowed
-
-## 📦 Operation Categories
-- 𝕆ᵣₑₐₗ = Real operations (modify_files, write_code, etc.)
-- 𝕆ᵥᵢᵣₜᵤₐₗ = Virtual operations (suggest_ideas, explore_concepts, etc.)
-- 𝕆ₒᵦₛₑᵣᵥₑ = Observe operations (read_files, analyze_content, etc.)
-
-## 🔄 Framework Commands
-- !cp = Apply PROTECTED comment
-- !cg = Apply GUARDED comment
-- !ci = Apply INFO comment
-- !cd = Apply DEBUG comment
-- !ct = Apply TEST comment
-- !cc = Apply CRITICAL comment
-
-## 📌 Context Commands
-- !af = Add file reference
-- !ad = Add folder reference
-- !ac = Add code reference
-- !adoc = Add documentation reference
-- !ar = Add rule reference
-- !ag = Add git reference
-- !an = Add notepad reference
-- !pf = Pin file to context
-- !cs = Set context status
-- !cr = Remove context reference
-- !cc = Clear all context references
-- !cm = Set context for current mode
-
-## 🔐 Permission Commands
-- !ckp = Check permissions for current mode
-- !pm = Check if operation is permitted
-- !sp = Show permissions for specified mode
-- !vm = Verify mode appropriate for operation
-
-## 📊 Project Phases
+## 📈 Phase Symbols
 - Π₁ = 🌱UNINITIATED
 - Π₂ = 🚧INITIALIZING
 - Π₃ = 🏗️DEVELOPMENT
 - Π₄ = 🔧MAINTENANCE
 
-## 🔄 Mode Transition Commands
-- /research, /r = Switch to Research mode
-- /innovate, /i = Switch to Innovate mode
-- /plan, /p = Switch to Plan mode
-- /execute, /e = Switch to Execute mode
-- /review, /rev = Switch to Review mode 
+## 🧠 Memory File Symbols
+- σ₁ = 📋 Project Brief
+- σ₂ = 🏛️ System Patterns
+- σ₃ = 💻 Technical Context
+- σ₄ = 🔮 Active Context
+- σ₅ = 📊 Progress Tracker
+- σ₆ = 🎯 Product Context
+- σ₇ = 💬 Conversation History
+
+## ⚙️ Command Shortcuts
+- /r = Research mode
+- /i = Innovate mode
+- /p = Plan mode
+- /e = Execute mode
+- /rev = Review mode
+- /u = Update memory files
+- /l = Load memory context
+- /o = Organize information
+- /rs = Reset project direction
+- /start = Initialize framework
+
+## 📑 Decision Status Symbols
+- 🔄 = Proposed
+- ✅ = Accepted
+- ⚙️ = Implemented
+- ↪️ = Superseded
+- ❌ = Abandoned
+
+## 🏷️ Information Importance
+- 🔴 = Critical (crucial for project success)
+- 🟠 = Important (significant impact)
+- 🟢 = Contextual (background information)
+
+## 📂 Memory File Hierarchy
+- σ₁ (Project Brief) forms the foundation
+- σ₆ (Product Context), σ₂ (System Patterns), σ₃ (Technical Context) build on σ₁
+- σ₄ (Active Context) integrates σ₂, σ₃, and σ₆
+- σ₅ (Progress Tracker) builds on σ₄
+- σ₇ (Conversation History) spans across all layers 

@@ -1,47 +1,32 @@
 # σ₁: Project Brief
-*v1.0 | Created: 2025-04-13 | Updated: 2025-04-13*
-*Π: INITIALIZING | Ω: PLAN*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-15*
+*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🏆 Overview
-NoWakeLock is an Android application that allows users to control the frequency and duration of waking up their Android device to save power consumption. It functions as an Xposed module to intercept and manage wakelock, alarm, and service operations on Android devices.
+NoWakeLock is an Android application that helps users monitor and control wakelocks and alarms in their devices, optimizing battery life and system performance.
+
+目前正在使用 md3 重构 UI;
 
 ## 📋 Requirements
-- [R₁] Control Wakelock/Alarm/Service by application
-- [R₂] Support for application-level regular expression interception
-- [R₃] Limited multi-user support
-- [R₄] Compatible with Android N (7.0) and above
-- [R₅] Open source with no private data collection
-- [R₆] Support for monitoring and blocking wakelock operations
-- [R₇] Support for monitoring and blocking alarm operations
-- [R₸] Support for monitoring and blocking service operations
+- [R₁] Monitor system wakelocks and alarms
+- [R₂] Provide detailed information about each wakelock/alarm
+- [R₃] Allow users to manage and control wakelocks
+- [R₄] Optimize battery consumption
+- [R₅] User-friendly interface with clear visualizations
 
-## 🎯 Target Audience
-- Power users wanting granular control over device wake patterns
-- Users with battery life concerns
-- Xposed/LSPosed framework users
-- Android developers testing wake behavior
+## 🎯 Goals
+- [G₁] 使用 md3 重构 UI;
+- [G₂] Wakelock alarm service 完整支持
+- [G₃] 其他的: 多用户 备份 Wakelock/alarm/service 说明
 
-## 🔑 Key Features
-- Block specific wakelocks by application
-- Set time intervals between wakelocks
-- Regular expression support for pattern-based blocking
-- Monitor wakelock, alarm and service activity
-- Custom rules for different apps
+## 🔍 Success Criteria
+- [S₁] 正常控制 wakelock/alarm/service
+- [S₂] MD3 UI 正常工作
+- [S₃] 多用户 备份 Wakelock/alarm/service 说明等正常
 
-## 📊 Success Metrics
-- Reduced device wake-ups
-- Extended battery life
-- Detailed logging of system activity
-- User control over battery consumption
-
-## 🧰 Technical Stack
-- Kotlin
-- Xposed Framework
-- Android SDK
-- Room Database (inferred)
-- Koin for dependency injection
-
-## 📝 Notes
-- Currently in Beta testing stage
-- Version 2.0 is not compatible with previous configurations
-- Tested with EdXposed / LSPosed 
+## 🧩 Project Scope
+- [In-scope] 正常控制 wakelock/alarm/service
+- [In-scope] MD3 UI 正常工作
+- [In-scope] 多用户; 备份; Wakelock/alarm/service 说明
+- [Out-of-scope] 系统级修改 需要 自定义 ROM
+- [Out-of-scope] 自动 wakelock 优化 
