@@ -1,0 +1,468 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# CursorRIPER♦Σ Custom Core
+
+## 📚 Path & Index Definitions
+📂 = "/memory-bank/"
+📦 = "/memory-bank/backups/"
+📜 = "/.specstory/history/"
+
+𝕋 = [read_files, ask_questions, observe_code, document_findings,
+     suggest_ideas, explore_options, evaluate_approaches,
+     create_plan, detail_specifications, sequence_steps,
+     implement_code, follow_plan, test_implementation,
+     validate_output, verify_against_plan, report_deviations]
+     
+𝕄 = [📂projectbrief.md, 📂systemPatterns.md, 
+     📂techContext.md, 📂activeContext.md, 
+     📂progress.md, 📂productContext.md,
+     📂conversation_history.md]
+
+## Ω RIPER Modes
+
+Ω₁ = 🔍R ⟶ +𝕋[0:3] -𝕋[4:15] ⟶ [MODE: RESEARCH]+findings
+  ↪ 🔄(/research, /r)
+
+Ω₂ = 💡I ⟶ +𝕋[4:6] -𝕋[8:15] ⟶ [MODE: INNOVATE]+possibilities
+  ↪ 🔄(/innovate, /i)
+
+Ω₃ = 📝P ⟶ +𝕋[7:9] -𝕋[10:15] ⟶ [MODE: PLAN]+checklist₁₋ₙ
+  ↪ 🔄(/plan, /p)
+
+Ω₄ = ⚙️E ⟶ +𝕋[10:12] -[improve,create,deviate] ⟶ [MODE: EXECUTE]+progress
+  ↪ 🔄(/execute, /e)
+
+Ω₅ = 🔎RV ⟶ +𝕋[13:15] -[modify,improve] ⟶ [MODE: REVIEW]+{✅|⚠️}
+  ↪ 🔄(/review, /rev)
+
+## Ε Information Extraction Mappings
+
+Ε₁ = Ω₁(🔍R) ⟶ problem_definition ∧ requirement_analysis ∧ technical_findings ∧ constraint_identification
+  ↪ update(σ₁, σ₃, σ₇)
+
+Ε₂ = Ω₂(💡I) ⟶ solution_concepts ∧ option_comparison ∧ innovation_value ∧ feasibility_assessment
+  ↪ update(σ₂, σ₄, σ₇)
+
+Ε₃ = Ω₃(📝P) ⟶ task_breakdown ∧ technical_specifications ∧ acceptance_criteria ∧ resource_allocation
+  ↪ update(σ₂, σ₄, σ₅, σ₇)
+
+Ε₄ = Ω₄(⚙️E) ⟶ implementation_details ∧ technical_challenges ∧ test_results ∧ code_documentation
+  ↪ update(σ₃, σ₄, σ₅, σ₇)
+
+Ε₅ = Ω₅(🔎RV) ⟶ quality_assessment ∧ issue_analysis ∧ improvement_recommendations ∧ validation_outcomes
+  ↪ update(σ₄, σ₅, σ₇)
+
+## Π Project Phases
+
+Π₁ = 🌱UNINITIATED ⟶ framework_installed ∧ ¬project_started
+Π₂ = 🚧INITIALIZING ⟶ START_active ∧ setup_ongoing  
+Π₃ = 🏗️DEVELOPMENT ⟶ main_development ∧ RIPER_active
+Π₄ = 🔧MAINTENANCE ⟶ long_term_support ∧ RIPER_active
+
+Π_transitions = {
+  Π₁→Π₂: 🔄"/start",
+  Π₂→Π₃: ✅completion(START_phase),
+  Π₃↔Π₄: 🔄user_request
+}
+
+## 🏁 START Phase (Π₂)
+
+S₁₋₆ = [requirements, technology, architecture, scaffolding, environment, memory]
+
+START_process = {
+  S₀: create_directory(📂),
+  S₁: gather(requirements) ⟶ create(𝕄[0]),
+  S₂: select(technologies) ⟶ update(𝕄[2]),
+  S₃: define(architecture) ⟶ create(𝕄[1]),
+  S₄: scaffold(project) ⟶ create(directories),
+  S₅: setup(environment) ⟶ update(𝕄[2]),
+  S₆: initialize(memory) ⟶ create(𝕄[0:6])
+}
+
+## 🧠 Σ₀ Memory Continuity Framework
+
+Σ₀(Ω₁₋₅) = {session₁ → 📦 → session₂} ⟶ continuous_workflow
+τ(context) = {t₁: capture, t₂: preserve, t₃: restore} ⟶ cross_session_awareness
+
+## 🔄 Memory Operations
+
+### 📥 Memory Loading
+
+Λ = 📖L ⟶ retrieve(𝕄) ⊢ process(σ) ⊢ sync ⟶ [LOAD]+state
+  ↪ 🔄(/load, /l)
+
+Σ_load = {
+  retrieve: {
+    check_files(𝕄) ⟶ {exists, missing},
+    read_files(𝕄) ⟶ {σ₁...σ₇}
+  },
+  extract: {
+    σ₄.refs → ctx.refs,
+    σ₄.status → ctx.status,
+    σ₄.focus → current_focus
+  },
+  rebuild: {
+    set(mode ← σ₄.mode),
+    set(phase ← σ₄.phase),
+    set(progress ← σ₅.status)
+  },
+  handle_errors: {
+    ¬∃𝕄 → initialize() → retrieve,
+    corrupt(σᵢ) → restore() → read_files,
+    conflict(σ₄,σ₅) → reconcile() → rebuild
+  }
+}
+
+### 📤 Memory Updating
+
+Υ = 💾U ⟶ backup ⊢ collect ⊢ save ⟶ [UPDATE]+files
+  ↪ 🔄(/update, /u)
+
+Σ_update = {
+  prepare: create_backup(𝕄 → 📦),
+  collect: {
+    extract(decisions) → changes,
+    extract(context) → ctx_changes,
+    extract(progress) → progress_updates
+  },
+  apply: {
+    ctx_changes → σ₄,
+    progress_updates → σ₅,
+    mode_specific(current_mode) → relevant_σᵢ,
+    dialogue_extract() → σ₇
+  },
+  save: {
+    ∀σᵢ∈{σ₁...σ₇}: write(σᵢ → 𝕄[i]),
+    log(timestamp, mode, changes)
+  },
+  handle_errors: {
+    fail(backup) → retry() → prepare,
+    fail(write) → temp_store() → retry()
+  }
+}
+
+### 🔄 Information Organization
+
+Ο = 🔄O ⟶ analyze ⊢ consolidate ⊢ restructure ⟶ [ORGANIZE]+clarity
+  ↪ 🔄(/organize, /o)
+
+Σ_organize = {
+  analyze: {
+    scan_all_files(𝕄) ⟶ extract_topics ⟶ identify_duplicates ⟶ track_references
+  },
+  consolidate: {
+    group_by_topic() ⟶ merge_related_content() ⟶ resolve_conflicts() ⟶ abstract_repeated_concepts()
+  },
+  restructure: {
+    update_file_structure() ⟶ maintain_references() ⟶ update_indices() ⟶ optimize_flow()
+  },
+  mark_importance: {
+    apply(🔴, critical_elements) ∧ apply(🟠, significant_elements) ∧ apply(🟢, contextual_elements)
+  }
+}
+
+### 🔄 Project Reset
+
+Ρ = 🔄R ⟶ backup ⊢ pivot ⊢ reinitialize ⟶ [RESET]+direction
+  ↪ 🔄(/reset, /rs)
+
+Σ_reset = {
+  backup: {
+    timestamp = generate_timestamp() ⟶ 
+    create_directory(📦 + timestamp) ⟶
+    ∀file ∈ 𝕄: copy(file, 📦 + timestamp + "/" + file)
+  },
+  pivot: {
+    create_pivot_record() ⟶ update_core_files() ⟶ mark_obsolete_content() ⟶ clear_active_context()
+  },
+  reinitialize: {
+    update_project_phase() ⟶ reset_progress() ⟶ initialize_new_direction()
+  }
+}
+
+## 📝 Ι Memory Initialization
+
+Ι = {
+  κ(template, params) ⟶ template ⊕ params,
+  
+  ι() ⟶ {
+    ensure(📂) ∧ ensure(📦) ∧
+    ∀file ∈ 𝕄 : create(file, κ(Σ_templates[index(file)], {DATE: now(), PHASE: current_phase, MODE: current_mode})) ∧
+    create(📂symbols.md, κ(Σ_templates.symbols, {DATE: now()}))
+  }
+}
+
+## 📜 Δ Dialogue History
+
+Δ_history = {
+  file_pattern: "\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-.+\\.md",
+  create_dialogue_id(filename) = {
+    match = extract_date_time(filename),
+    return match ? "D" + match[0].replace(/[-_:]/g, "") : null
+  },
+  parse_dialogue_file(file_path, start_line = 0) = {
+    content = read_file(file_path),
+    lines = content.split("\n"),
+    
+    title = extract_title(lines[2]),
+    date = extract_date(lines[2]),
+    
+    dialogue_parts = [],
+    current_part = null,
+    
+    for (i = Math.max(4, start_line); i < lines.length; i++) {
+      line = lines[i],
+      
+      if (line.includes("_**User**_")) {
+        if (current_part) dialogue_parts.push(current_part),
+        current_part = {speaker: "user", content: []}
+      } else if (line.includes("_**Assistant**_")) {
+        if (current_part) dialogue_parts.push(current_part),
+        current_part = {speaker: "assistant", content: []}
+      } else if (current_part && line !== "---") {
+        current_part.content.push(line)
+      }
+    }
+    
+    if (current_part) dialogue_parts.push(current_part),
+    
+    return {
+      title: title,
+      date: date,
+      parts: dialogue_parts,
+      last_line: lines.length
+    }
+  },
+  extract_riper_modes(dialogue) = {
+    modes = [],
+    
+    ∀part ∈ dialogue.parts : {
+      if (part.speaker === "user") {
+        content = part.content.join("\n"),
+        matches = content.match(/\/(research|r|innovate|i|plan|p|execute|e|review|rev)/g),
+        if (matches) modes = modes.concat(matches)
+      }
+    },
+    
+    return unique(modes)
+  },
+  identify_extraction_mappings(modes) = {
+    mappings = [],
+    
+    for (mode of modes) {
+      if (mode === "/research" || mode === "/r") mappings.push("Ε₁"),
+      else if (mode === "/innovate" || mode === "/i") mappings.push("Ε₂"),
+      else if (mode === "/plan" || mode === "/p") mappings.push("Ε₃"),
+      else if (mode === "/execute" || mode === "/e") mappings.push("Ε₄"),
+      else if (mode === "/review" || mode === "/rev") mappings.push("Ε₅")
+    },
+    
+    return mappings
+  }
+}
+
+## 📑 Memory Templates
+
+Σ_templates = {
+  σ₁: """# σ₁: Project Brief\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 🏆 Overview\n[Project description]\n\n## 📋 Requirements\n- [R₁] [Requirement 1]\n- [R₂] [Requirement 2]\n...\n\n## 🎯 Goals\n- [G₁] [Goal 1]\n- [G₂] [Goal 2]\n...\n\n## 🔍 Success Criteria\n- [S₁] [Success Criterion 1]\n- [S₂] [Success Criterion 2]\n...\n\n## 🧩 Project Scope\n- [In-scope] [Feature/Component 1]\n- [Out-of-scope] [Feature/Component 2]\n...""",
+  
+  σ₂: """# σ₂: System Patterns\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 🏛️ Architecture Overview\n[Architecture description]\n\n## 🧱 Component Structure\n- [C₁] [Component 1] ⟶ [Purpose and responsibility]\n- [C₂] [Component 2] ⟶ [Purpose and responsibility]\n...\n\n## 🔄 Design Patterns\n- [P₁] [Pattern 1] ⟶ [Where/how used]\n- [P₂] [Pattern 2] ⟶ [Where/how used]\n...\n\n## 🔌 Key Interfaces\n- [I₁] [Interface 1] ⟶ [Purpose and components connected]\n- [I₂] [Interface 2] ⟶ [Purpose and components connected]\n...\n\n## 🔐 Critical Implementation Paths\n- [Path₁] [Critical Path 1] ⟶ [Components involved, sequence]\n- [Path₂] [Critical Path 2] ⟶ [Components involved, sequence]\n...""",
+  
+  σ₃: """# σ₃: Technical Context\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 🛠️ Technology Stack\n- 🖥️ Frontend: [Technologies]\n- 🗄️ Backend: [Technologies]\n- 📊 Database: [Technologies]\n- 🧪 Testing: [Technologies]\n- 🚀 Deployment: [Technologies]\n\n## ⚙️ Development Environment\n- [E₁] [Environment Component 1] ⟶ [Version/Configuration]\n- [E₂] [Environment Component 2] ⟶ [Version/Configuration]\n...\n\n## 📦 Dependencies\n- [D₁] [Dependency 1] ⟶ [Version, Purpose]\n- [D₂] [Dependency 2] ⟶ [Version, Purpose]\n...\n\n## 🚧 Technical Constraints\n- [T₁] [Constraint 1] ⟶ [Impact, Mitigation]\n- [T₂] [Constraint 2] ⟶ [Impact, Mitigation]\n...\n\n## 🔧 Tool Usage Patterns\n- [Tool₁] [Tool 1] ⟶ [How/where used]\n- [Tool₂] [Tool 2] ⟶ [How/where used]\n...""",
+  
+  σ₄: """# σ₄: Active Context\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 🔮 Current Focus\n[Current development focus]\n\n## 🔄 Recent Changes\n- [Change₁] [Date] ⟶ [Description]\n- [Change₂] [Date] ⟶ [Description]\n...\n\n## 🚶 Next Steps\n- [Step₁] [Description, Priority]\n- [Step₂] [Description, Priority]\n...\n\n## 🤔 Active Decisions\n- [Decision₁] [Status] ⟶ [Description, Rationale]\n- [Decision₂] [Status] ⟶ [Description, Rationale]\n...\n\n## 📎 Context References\n- 📄 Active Files:\n  - [File₁] ⟶ [Purpose/Relevance]\n  - [File₂] ⟶ [Purpose/Relevance]\n- 💻 Active Code:\n  - [Code₁] ⟶ [Purpose/Relevance]\n  - [Code₂] ⟶ [Purpose/Relevance]\n- 📚 Active Docs:\n  - [Doc₁] ⟶ [Purpose/Relevance]\n  - [Doc₂] ⟶ [Purpose/Relevance]\n- 📁 Active Folders:\n  - [Folder₁] ⟶ [Purpose/Relevance]\n  - [Folder₂] ⟶ [Purpose/Relevance]\n\n## 📡 Context Status\n- 🟢 Active: [Item₁, Item₂, ...]\n- 🟡 Partially Relevant: [Item₁, Item₂, ...]\n- 🟣 Essential: [Item₁, Item₂, ...]\n- 🔴 Deprecated: [Item₁, Item₂, ...]\n\n## 💡 Project Patterns & Preferences\n- [Pattern₁] [Description, Usage]\n- [Pattern₂] [Description, Usage]\n...\n\n## 📚 Learnings & Insights\n- [Learning₁] [Date] ⟶ [Description, Impact]\n- [Learning₂] [Date] ⟶ [Description, Impact]\n...""",
+  
+  σ₅: """# σ₅: Progress Tracker\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 📈 Project Status\nCompletion: 0%\n\n## ✅ Completed Features\n- [Feature₁] [Date] ⟶ [Description, Notes]\n- [Feature₂] [Date] ⟶ [Description, Notes]\n...\n\n## 🚧 In Progress\n- [WIP₁] [Status %] ⟶ [Description, Current Blocker/Task]\n- [WIP₂] [Status %] ⟶ [Description, Current Blocker/Task]\n...\n\n## 📝 To Do\n- [Todo₁] [Priority] ⟶ [Description]\n- [Todo₂] [Priority] ⟶ [Description]\n...\n\n## ⚠️ Known Issues\n- [Issue₁] [Severity] ⟶ [Description, Workaround]\n- [Issue₂] [Severity] ⟶ [Description, Workaround]\n...\n\n## 🔄 Decision Evolution\n- [Decision₁] [Initial Date → Change Date] ⟶ [How/Why Changed]\n- [Decision₂] [Initial Date → Change Date] ⟶ [How/Why Changed]\n...""",
+  
+  σ₆: """# σ₆: Product Context\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 🎯 Product Purpose\n[Why this project exists]\n\n## 🔍 Problem Statement\n- [Problem₁] [Description, Impact]\n- [Problem₂] [Description, Impact]\n...\n\n## 👥 Target Users\n- [User₁] [Description, Needs]\n- [User₂] [Description, Needs]\n...\n\n## ✨ How It Should Work\n- [Workflow₁] [Description]\n- [Workflow₂] [Description]\n...\n\n## 🌟 User Experience Goals\n- [UX₁] [Description, Measure of Success]\n- [UX₂] [Description, Measure of Success]\n...\n\n## 📱 Product Features\n- [Feature₁] [Description, Priority]\n- [Feature₂] [Description, Priority]\n...\n\n## 🔄 Business Value\n[How this project provides value to the business/stakeholders]""",
+  
+  σ₇: """# σ₇: Conversation History\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n*Π: {PHASE} | Ω: {MODE}*\n\n## 🔍 Dialogue Processing Status\n- [D20250413-1959] ⟶ {file: "2025-04-13_11-59-分析时间线实现与原型差距.md", line: 0, status: "pending"}\n\n## 🔄 Recent Dialogues\n- [D₁] [DATE] ⟶ [TOPIC]\n  [FULL DIALOGUE CONTENT]\n\n- [D₂] [DATE] ⟶ [TOPIC]\n  [FULL DIALOGUE CONTENT]\n...\n\n## 📑 Decision Archive\n### [DATE] [TITLE] (#D1)\n\n**𝕊**: [STATUS_SYMBOL]\n**𝕆**: [PROBLEM_BACKGROUND]\n**𝔸**: {\n  A₁: [OPTION_A],\n    +: [ADVANTAGES],\n    -: [DISADVANTAGES]\n  A₂: [OPTION_B],\n    +: [ADVANTAGES],\n    -: [DISADVANTAGES]\n  ...\n}\n**𝔻**: [FINAL_DECISION]\n**ℝ**: [RATIONALE]\n**𝕀**: [IMPLEMENTATION_PLAN]\n**Ω**: [RELEVANT_RIPER_MODES]\n\n## 📚 Dialogue Summaries\n- [S₁] [DATE_RANGE] ⟶ [TOPIC]\n  - **Key Points**: [SUMMARY_OF_KEY_POINTS]\n  - **Decisions**: [RELATED_DECISION_IDS]\n  - **RIPER Sequence**: [SEQUENCE_OF_MODES_USED]\n...""",
+  
+  symbols: """# 🔣 Symbol Reference Guide\n*v1.0 | Created: {DATE} | Updated: {DATE}*\n\n## 📁 File Symbols\n- 📂 = /memory-bank/\n- 📦 = /memory-bank/backups/\n- 📜 = /.specstory/history/\n\n## 🔠 Mode Symbols\n- Ω₁ = 🔍R = Research\n- Ω₂ = 💡I = Innovate\n- Ω₃ = 📝P = Plan\n- Ω₄ = ⚙️E = Execute\n- Ω₅ = 🔎RV = Review\n- 💾U = Update (Memory Update)\n- 📖L = Load (Memory Context Load)\n- 🔄O = Organize (Information Organization)\n- 🔄R = Reset (Project Reset)\n- 🚀S = Start (Framework Initialization)\n\n## 📈 Phase Symbols\n- Π₁ = 🌱UNINITIATED\n- Π₂ = 🚧INITIALIZING\n- Π₃ = 🏗️DEVELOPMENT\n- Π₄ = 🔧MAINTENANCE\n\n## 🧠 Memory File Symbols\n- σ₁ = 📋 Project Brief\n- σ₂ = 🏛️ System Patterns\n- σ₃ = 💻 Technical Context\n- σ₄ = 🔮 Active Context\n- σ₅ = 📊 Progress Tracker\n- σ₆ = 🎯 Product Context\n- σ₇ = 💬 Conversation History\n\n## ⚙️ Command Shortcuts\n- /r = Research mode\n- /i = Innovate mode\n- /p = Plan mode\n- /e = Execute mode\n- /rev = Review mode\n- /u = Update memory files\n- /l = Load memory context\n- /o = Organize information\n- /rs = Reset project direction\n- /start = Initialize framework\n\n## 📑 Decision Status Symbols\n- 🔄 = Proposed\n- ✅ = Accepted\n- ⚙️ = Implemented\n- ↪️ = Superseded\n- ❌ = Abandoned\n\n## 🏷️ Information Importance\n- 🔴 = Critical (crucial for project success)\n- 🟠 = Important (significant impact)\n- 🟢 = Contextual (background information)\n\n## 📂 Memory File Hierarchy\n- σ₁ (Project Brief) forms the foundation\n- σ₆ (Product Context), σ₂ (System Patterns), σ₃ (Technical Context) build on σ₁\n- σ₄ (Active Context) integrates σ₂, σ₃, and σ₆\n- σ₅ (Progress Tracker) builds on σ₄\n- σ₇ (Conversation History) spans across all layers"""
+}
+
+## 🧰 Memory System
+
+Σ_memory = {
+  σ₁ = 📋𝕄[0] ⟶ requirements ∧ scope ∧ criteria ∧ goals,
+  σ₂ = 🏛️𝕄[1] ⟶ architecture ∧ components ∧ decisions ∧ patterns ∧ critical_paths,
+  σ₃ = 💻𝕄[2] ⟶ stack ∧ environment ∧ dependencies ∧ constraints ∧ tools,
+  σ₄ = 🔮𝕄[3] ⟶ focus ∧ changes ∧ next_steps ∧ references ∧ patterns ∧ insights,
+  σ₅ = 📊𝕄[4] ⟶ status ∧ completed ∧ in_progress ∧ todo ∧ issues ∧ evolution,
+  σ₆ = 🎯𝕄[5] ⟶ purpose ∧ problems ∧ users ∧ workflows ∧ ux_goals ∧ features ∧ value,
+  σ₇ = 💬𝕄[6] ⟶ dialogue_status ∧ recent_dialogue ∧ decision_archive ∧ dialogue_summary
+}
+
+Σ_update(mode) = {
+  Ω₁: σ₃ += technical_details, σ₄ = current_focus, σ₇ += dialogue_record,
+  Ω₂: σ₄ += potential_approaches, σ₂ += design_decisions, σ₇ += dialogue_record,
+  Ω₃: σ₄ += planned_changes, σ₅ += expected_outcomes, σ₇ += dialogue_record,
+  Ω₄: σ₅ += implementation_progress, σ₄ += step_completion, σ₇ += dialogue_record,
+  Ω₅: σ₅ += review_findings, σ₄ += review_status, σ₇ += dialogue_record
+}
+
+## Δ Decision System
+
+Δ_system = {
+  decision_counter: 1,
+  status_symbols: {
+    proposed: "🔄",
+    accepted: "✅",
+    implemented: "⚙️",
+    superseded: "↪️",
+    abandoned: "❌"
+  },
+  create_decision(title, problem, options, decision, rationale, implementation, modes) = {
+    id = decision_counter++,
+    status = "proposed",
+    date = now(),
+    format_decision_record(id, title, date, status, problem, options, decision, rationale, implementation, modes) ⟶ append_to_archive(σ₇)
+  },
+  update_decision_status(id, new_status) = {
+    find_decision(id) ⟶ update_status_field(status_symbols[new_status]) ⟶ update_file(σ₇),
+    log_status_change(id, new_status)
+  },
+  format_decision_record(id, title, date, status, problem, options, decision, rationale, implementation, modes) = """### [${date}] ${title} (#D${id})
+
+**𝕊**: ${status_symbols[status]}
+**𝕆**: ${problem}
+**𝔸**: {
+${format_options(options)}
+}
+**𝔻**: ${decision}
+**ℝ**: ${rationale}
+**𝕀**: ${implementation}
+**Ω**: ${modes}"""
+}
+
+## Σ_dialogue System
+
+Σ_dialogue = {
+  recent_dialogue_limit: 7,
+  
+  get_dialogue_status(id) = {
+    status_section = extract_section(σ₇, "🔍 Dialogue Processing Status"),
+    status_entry = find_entry(status_section, id),
+    return status_entry ? parse_status_entry(status_entry) : null
+  },
+  
+  update_dialogue_status(id, file, line, status) = {
+    status_section = extract_section(σ₇, "🔍 Dialogue Processing Status"),
+    updated_section = update_status_entry(status_section, id, file, line, status),
+    update_section(σ₇, "🔍 Dialogue Processing Status", updated_section)
+  },
+  
+  add_dialogue(id, content, topic, date) = {
+    existing_entry = find_dialogue_entry(σ₇, id),
+    
+    if (existing_entry) {
+      update_dialogue_entry(σ₇, id, content)
+    } else {
+      prepend_to_recent(σ₇, format_dialogue_entry(id, date, topic, content))
+    },
+    
+    check_dialogue_limit() ⟶ process_old_dialogues()
+  },
+  
+  dialogue_extract() = {
+    dialogue_files = list_files(📜, Δ_history.file_pattern),
+    
+    for (file of dialogue_files) {
+      id = Δ_history.create_dialogue_id(file),
+      status = get_dialogue_status(id),
+      
+      if (!status) {
+        // New dialogue
+        status = {file: file, line: 0, status: "pending"},
+        update_dialogue_status(id, file, 0, "pending")
+      }
+      
+      if (status.status !== "complete") {
+        dialogue = Δ_history.parse_dialogue_file(📜 + file, status.line),
+        modes = Δ_history.extract_riper_modes(dialogue),
+        mappings = Δ_history.identify_extraction_mappings(modes),
+        
+        formatted_content = format_full_dialogue(dialogue.parts),
+        add_dialogue(id, formatted_content, dialogue.title, dialogue.date),
+        
+        // Apply appropriate extraction mappings
+        for (mapping of mappings) {
+          apply_extraction_mapping(mapping, dialogue)
+        },
+        
+        update_dialogue_status(id, file, dialogue.last_line, 
+                              dialogue.last_line === status.line ? "complete" : "partial")
+      }
+    }
+  },
+  
+  check_dialogue_limit() = count_recent_dialogues(σ₇) > recent_dialogue_limit,
+  
+  process_old_dialogues() = {
+    oldest = get_oldest_dialogue(σ₇),
+    extract_decisions(oldest) ⟶ Δ_system.create_decision(),
+    extract_key_points(oldest) ⟶ create_summary(oldest) ⟶ add_to_summaries(σ₇),
+    remove_oldest_dialogue(σ₇)
+  },
+  
+  format_dialogue_entry(id, date, topic, content) = """- [${id}] [${date}] ⟶ ${topic}
+  ${content}"""
+}
+
+## Σ_context System
+
+Σ_context = {
+  active_references: [],
+  status_map: {},
+  add_reference(type, name, status = "active") = {
+    active_references.push({type, name, added: now()}),
+    status_map[name] = status,
+    update_file(𝕄[3], format_context_section())
+  },
+  remove_reference(name) = {
+    active_references = active_references.filter(ref => ref.name !== name),
+    delete status_map[name],
+    update_file(𝕄[3], format_context_section())
+  },
+  clear_references() = {
+    backup_context_refs(),
+    active_references = [],
+    status_map = {},
+    update_file(𝕄[3], format_empty_context())
+  },
+  set_status(name, status) = {
+    status_map[name] = status,
+    update_file(𝕄[3], format_context_section())
+  },
+  context_for_mode(mode) = {
+    backup_context_refs(),
+    clear_references(),
+    for context_type in MΓ[mode] {
+      add_reference(context_type, "auto:" + mode, "essential")
+    }
+  },
+  format_context_section() = generate_context_markdown()
+}
+
+## Σ_backup System
+
+Σ_backup = {
+  backup_format = "YYYY-MM-DD_HH-MM-SS",
+  create_backup() = copy_files(𝕄, 📦 + timestamp(backup_format)),
+  backup_context() = {
+    ctx_backup = {refs: Σ_context.active_references, status: Σ_context.status_map}
+    write_json(📦 + "context_" + timestamp(backup_format) + ".json", ctx_backup)
+  }
+}
+
+## ⚠️ Safety Protocols
+
+Δ₁ = destructive_op(x) ⟶ warn ∧ confirm ∧ Σ_backup.create_backup()
+Δ₂ = phase_transition(Πₐ→Πᵦ) ⟶ verify ∧ Σ_backup.create_backup() ∧ update
+Δ₃ = reinit_attempt ∧ ¬Π₁ ⟶ warn ∧ confirm("CONFIRM RE-INITIALIZATION") ∧ Σ_backup.create_backup()
+Δ₄ = error(x) ⟶ report("Framework issue: " + x) ∧ suggest_recovery(x)
+Δ₅ = context_change() ⟶ Σ_backup.backup_context() ∧ update_context_references()
+Δ₆ = reset_attempt ⟶ warn ∧ confirm("CONFIRM PROJECT RESET") ∧ Σ_backup.create_backup()
