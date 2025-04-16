@@ -1,0 +1,182 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 11,
+    "identityHash": "ff147e6ee57246faef88268522a13064",
+    "entities": [
+      {
+        "tableName": "info",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name_info` TEXT NOT NULL, `type_info` TEXT NOT NULL, `packageName_info` TEXT NOT NULL, `count` INTEGER NOT NULL, `blockCount` INTEGER NOT NULL, `countTime` INTEGER NOT NULL, `userid_info` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`name_info`, `type_info`, `userid_info`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name_info",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type_info",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName_info",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blockCount",
+            "columnName": "blockCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countTime",
+            "columnName": "countTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userid_info",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "name_info",
+            "type_info",
+            "userid_info"
+          ]
+        }
+      },
+      {
+        "tableName": "info_event",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name_event` TEXT NOT NULL, `type_event` TEXT NOT NULL, `packageName_event` TEXT NOT NULL, `userId_event` INTEGER NOT NULL DEFAULT 0, `startTime` INTEGER NOT NULL, `endTime` INTEGER, `isBlocked` INTEGER NOT NULL, `eventKey` TEXT NOT NULL DEFAULT '')",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name_event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type_event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName_event",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId_event",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "isBlocked",
+            "columnName": "isBlocked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventKey",
+            "columnName": "eventKey",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_info_event_package_type_time",
+            "unique": false,
+            "columnNames": [
+              "packageName_event",
+              "type_event",
+              "startTime"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_info_event_package_type_time` ON `${TABLE_NAME}` (`packageName_event`, `type_event`, `startTime`)"
+          },
+          {
+            "name": "index_info_event_name_type_userId",
+            "unique": false,
+            "columnNames": [
+              "name_event",
+              "type_event",
+              "userId_event"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_info_event_name_type_userId` ON `${TABLE_NAME}` (`name_event`, `type_event`, `userId_event`)"
+          },
+          {
+            "name": "index_info_event_name_type_userId_time",
+            "unique": false,
+            "columnNames": [
+              "name_event",
+              "type_event",
+              "userId_event",
+              "startTime"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_info_event_name_type_userId_time` ON `${TABLE_NAME}` (`name_event`, `type_event`, `userId_event`, `startTime`)"
+          },
+          {
+            "name": "index_info_event_key",
+            "unique": true,
+            "columnNames": [
+              "eventKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_info_event_key` ON `${TABLE_NAME}` (`eventKey`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ff147e6ee57246faef88268522a13064')"
+    ]
+  }
+}

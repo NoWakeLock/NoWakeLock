@@ -3,6 +3,7 @@ package com.js.nowakelock.data.provider
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.Settings
 import com.js.nowakelock.BuildConfig
 import com.js.nowakelock.base.infoToBundle
@@ -30,11 +31,11 @@ enum class ProviderMethod(var value: String) {
     // Event-related methods
     RecordEvent("RecordEvent"),     // Record event start/block with statistics update
     EndEvent("EndEvent"),           // Record end time for events (primarily for wakelock)
-    
+
     // Data access methods
     LoadInfos("LoadInfos"),         // Load statistics summaries
     LoadEvents("LoadEvents"),       // Load detailed event records
-    
+
     // Management methods
     ClearData("ClearData"),         // Clear statistics and events
     CheckHookActive("CheckHookActive") // Verify hook is active
@@ -50,6 +51,7 @@ class XProvider(
     private var db: InfoDatabase = InfoDatabase.getInstance(context)
     private var dao: InfoDao = db.infoDao()
     private var eventDao: InfoEventDao = db.infoEventDao()
+   private var unixTimeBoot = System.currentTimeMillis() - SystemClock.elapsedRealtime()
 
     companion object {
         @Volatile
@@ -81,7 +83,7 @@ class XProvider(
     /**
      * Record event start or block with statistics update
      * Handles both normal and blocked events in a unified method
-     * 
+     *
      * @param bundle Parameters including:
      *   - name: Event name
      *   - type: Event type
@@ -96,12 +98,18 @@ class XProvider(
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
-        val startTime = bundle.getLong("startTime", System.currentTimeMillis())
+        var startTime = bundle.getLong("startTime", System.currentTimeMillis())
         val isBlocked = bundle.getBoolean("isBlocked", false)
-        
+
+        // Ignore events before 2000-01-01
+        // no idea why..
+       if (startTime < 946684800000) {
+           startTime = unixTimeBoot + startTime
+       }
+
         // Generate unique event key
         val eventKey = InfoEvent.generateEventKey(name, packageName, type, userId, startTime)
-        
+
         runBlocking(Dispatchers.IO) {
             val infoEvent = InfoEvent(
                 name = name,
@@ -113,7 +121,7 @@ class XProvider(
                 eventKey = eventKey
             )
             eventDao.insert(infoEvent)
-            
+
             // Update statistics
             val info = dao.loadInfo(name, type, userId)
             if (info != null) {
@@ -125,9 +133,9 @@ class XProvider(
             } else {
                 dao.insert(
                     Info(
-                        name = name, 
+                        name = name,
                         type = type,
-                        packageName = packageName, 
+                        packageName = packageName,
                         userId = userId,
                         count = if (!isBlocked) 1 else 0,
                         blockCount = if (isBlocked) 1 else 0
@@ -135,7 +143,7 @@ class XProvider(
                 )
             }
         }
-        
+
         // Return event key for later reference
         return Bundle().apply {
             if (!isBlocked) {
@@ -143,11 +151,11 @@ class XProvider(
             }
         }
     }
-    
+
     /**
      * Record event end time (primarily for wakelock events)
      * Updates event record and duration statistics
-     * 
+     *
      * @param bundle Parameters including:
      *   - name: Event name
      *   - type: Event type (must be Wakelock)
@@ -163,40 +171,51 @@ class XProvider(
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
-        val endTime = bundle.getLong("endTime", System.currentTimeMillis())
+        var endTime = bundle.getLong("endTime", System.currentTimeMillis())
         val startTime = bundle.getLong("startTime", 0)  // For rebuilding eventKey
-        
+
         if (type != Type.Wakelock) {
             return Bundle()
         }
-        
+
+        // Ignore events before 2000-01-01
+        // no idea why..
+       if (endTime < 946684800000) {
+           endTime = unixTimeBoot + endTime
+       }
+
         // Get event key from parameters or rebuild it
-        val eventKey = bundle.getString("eventKey") ?: 
-                      InfoEvent.generateEventKey(name, packageName, type, userId, startTime)
-        
+        val eventKey = bundle.getString("eventKey") ?: InfoEvent.generateEventKey(
+            name,
+            packageName,
+            type,
+            userId,
+            startTime
+        )
+
         runBlocking(Dispatchers.IO) {
             // Find event by key for efficient lookup
             val targetEvent = eventDao.loadEventByKey(eventKey)
-            
+
             if (targetEvent != null && targetEvent.endTime == null && !targetEvent.isBlocked) {
                 // Calculate duration
                 val duration = endTime - targetEvent.startTime
-                
+
                 // Update event end time
                 targetEvent.endTime = endTime
                 eventDao.insert(targetEvent)
-                
+
                 // Update duration statistics
                 dao.upCountTime(duration, name, type, userId)
             }
         }
-        
+
         return Bundle()
     }
-    
+
     /**
      * Load event records with optional filtering
-     * 
+     *
      * @param bundle Parameters including:
      *   - type: Optional event type filter
      *   - packageName: Optional package name filter
@@ -211,7 +230,7 @@ class XProvider(
         val userId: Int = bundle.getInt("userId", 0)
         val startTime = bundle.getLong("startTime", 0)
         val endTime = bundle.getLong("endTime", System.currentTimeMillis())
-        
+
         val events: Array<InfoEvent> = runBlocking(Dispatchers.IO) {
             if (packageName.isEmpty() && type == Type.UnKnow) {
                 eventDao.loadAllEvents().toTypedArray()
@@ -219,19 +238,21 @@ class XProvider(
                 eventDao.loadEvents(type).toTypedArray()
             } else if (packageName.isNotEmpty() && type == Type.UnKnow) {
                 if (startTime > 0) {
-                    eventDao.loadEventsInTimeRange(packageName, startTime, endTime, userId).toTypedArray()
+                    eventDao.loadEventsInTimeRange(packageName, startTime, endTime, userId)
+                        .toTypedArray()
                 } else {
                     eventDao.loadEvents(packageName, userId).toTypedArray()
                 }
             } else {
                 if (startTime > 0) {
-                    eventDao.loadEventsInTimeRange(packageName, type, startTime, endTime, userId).toTypedArray()
+                    eventDao.loadEventsInTimeRange(packageName, type, startTime, endTime, userId)
+                        .toTypedArray()
                 } else {
                     eventDao.loadEvents(packageName, type, userId).toTypedArray()
                 }
             }
         }
-        
+
         return Bundle().apply {
             putSerializable("events", events)
         }
@@ -239,7 +260,7 @@ class XProvider(
 
     /**
      * Load statistics summaries with optional filtering
-     * 
+     *
      * @param bundle Parameters including:
      *   - type: Optional event type filter
      *   - packageName: Optional package name filter
@@ -269,14 +290,14 @@ class XProvider(
 
     /**
      * Clear statistics and events data
-     * 
+     *
      * @param bundle Parameters:
      *   - clearAll: Whether to clear all data (true) or just counts (false)
      * @return Empty bundle
      */
     private fun clearData(bundle: Bundle): Bundle {
         val clearAll = bundle.getBoolean("clearAll", false)
-        
+
         runBlocking {
             if (clearAll) {
                 dao.clearAll()
@@ -292,7 +313,7 @@ class XProvider(
 
     /**
      * Check if hook is active and get version information
-     * 
+     *
      * @return Bundle with active status and version
      */
     private fun checkHookActive(bundle: Bundle): Bundle {

@@ -32,7 +32,8 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     XposedBridge.log("handleLoadPackage ${AndroidAppHelper.currentApplication()}")
 
                     // PROTECTED - DO NOT MODIFY
-                    XposedHelpers.findAndHookMethod("com.android.server.policy.keyguard.KeyguardServiceDelegate",
+                    XposedHelpers.findAndHookMethod(
+                        "com.android.server.policy.keyguard.KeyguardServiceDelegate",
                         lpparam.classLoader,
                         "onBootCompleted",
                         object : XC_MethodHook() {
@@ -42,7 +43,7 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                                 ServiceHook.booted = true
                                 AlarmHook.booted = true
                             }
-                    })
+                        })
                 } catch (e: Exception) {
                     XpUtil.log("${e.message}")
                     XpUtil.log("${e.stackTrace}")
@@ -66,17 +67,10 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     XpUtil.log("${e.stackTrace}")
                 }
             }
+
             "com.android.providers.settings" -> {//hook SettingsProvider
                 SettingsProviderHook.hook(lpparam)
             }
-//             BuildConfig.APPLICATION_ID -> {// hook myself
-//                 XposedHelpers.findAndHookMethod(
-//                     "${BuildConfig.APPLICATION_ID}.ui.mainActivity.MainActivity",
-//                     lpparam.classLoader,
-//                     "isModuleActive",
-//                     XC_MethodReplacement.returnConstant(true)
-//                 )
-//            }
         }
     }
 }

@@ -15,12 +15,12 @@ import com.js.nowakelock.data.db.entity.InfoEvent
         Info::class,
         InfoEvent::class
     ],
-    version = 10,
+    version = 11,
     autoMigrations = [
-        androidx.room.AutoMigration(from = 1, to = 2),
-        androidx.room.AutoMigration(from = 2, to = 3),
-        androidx.room.AutoMigration(from = 3, to = 4),
-        androidx.room.AutoMigration(from = 4, to = 5, spec = InfoDatabase.C4To5::class)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5, spec = InfoDatabase.C4To5::class)
     ]
 )
 @TypeConverters(SetConvert::class, TypeConvert::class)
@@ -45,7 +45,7 @@ abstract class InfoDatabase : RoomDatabase() {
             context, InfoDatabase::class.java,
             DATABASE_NAME
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 

@@ -53,7 +53,7 @@ abstract class AppDatabase : RoomDatabase() {
             DATABASE_NAME
         )
 //            .addMigrations()
-            .fallbackToDestructiveMigration() //if version change, it will delete all data.
+            .fallbackToDestructiveMigration(true) //if version change, it will delete all data.
             .build()
     }
 
