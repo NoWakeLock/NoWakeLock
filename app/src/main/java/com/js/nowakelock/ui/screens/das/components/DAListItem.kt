@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.js.nowakelock.data.db.Type
@@ -76,7 +77,13 @@ fun DAListItem(
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
                     // Info section - static part that rarely changes
-                    key(daItem.name, daItem.packageName, daItem.count, daItem.countTime, daItem.type) {
+                    key(
+                        daItem.name,
+                        daItem.packageName,
+                        daItem.count,
+                        daItem.countTime,
+                        daItem.type
+                    ) {
                         InfoSection(daItem)
                     }
 
@@ -187,7 +194,7 @@ private fun InfoSection(daItem: DAItem) {
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        val (icon, name, packageName, count, countTime) = createRefs()
+        val (icon, name, packageName, userId, count, countTime) = createRefs()
 
         // Icon
         Box(
@@ -228,17 +235,67 @@ private fun InfoSection(daItem: DAItem) {
             })
 
 
-        // Package name
-        Text(
-            text = daItem.packageName,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        // Package name with highly optimized user badge
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.constrainAs(packageName) {
                 start.linkTo(icon.end, 12.dp)
                 top.linkTo(name.bottom, 4.dp)
-            })
+            }
+        ) {
+            Text(
+                text = daItem.packageName,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)  // 允许伸缩但不填充
+            )
+
+            // User badge - only if userId is not 0
+            if (daItem.userId != 0) {
+                Spacer(Modifier.width(4.dp))
+
+                // COLOR
+                val badgeColor = when (daItem.userId) {
+                    10 -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.7f)  // 工作配置文件
+                    in 1..9 -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)  // 常规用户
+                    else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)  // 其他用户
+                }
+
+                val textColor = when (daItem.userId) {
+                    10 -> MaterialTheme.colorScheme.onTertiaryContainer
+                    in 1..9 -> MaterialTheme.colorScheme.onSecondaryContainer
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+
+                val displayUserId = when {
+                    daItem.userId > 99 -> "99+"
+                    else -> "${daItem.userId}"
+                }
+
+                // 字体大小逻辑
+                val fontSize = when {
+                    daItem.userId > 9 -> 8.sp
+                    else -> 10.sp
+                }
+
+                Surface(
+                    color = badgeColor,
+                    shape = RoundedCornerShape(4.dp),
+                    modifier = Modifier.size(16.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = displayUserId,
+                            fontSize = fontSize,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = textColor,
+                        )
+                    }
+                }
+            }
+        }
 
         // Count chip - more compact
         Surface(
@@ -504,7 +561,8 @@ fun Preview2() {
         fullBlocked = false,
         timeWindowSec = 1,
         screenOffBlock = true,
-        type = Type.Wakelock
+        type = Type.Wakelock,
+        userId = 50
     )
 
     DAListItem(
