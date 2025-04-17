@@ -24,10 +24,6 @@ open class DARepositoryImpl(
 ) : DARepository {
     open val type: Type = Type.UnKnow
 
-    init {
-        LogUtil.e("DARepositoryImpl", "type: $type")
-    }
-
     /**
      * Maps the database entities to DAItem domain model
      */
