@@ -1,12 +1,20 @@
 package com.js.nowakelock
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
 import com.js.nowakelock.base.isModuleActive
+import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import com.js.nowakelock.ui.NoWakeLockApp
+import com.js.nowakelock.ui.utils.LanguageUtils
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.inject
 
 /**
  * Main activity that hosts the entire app UI
@@ -14,11 +22,25 @@ import com.js.nowakelock.ui.NoWakeLockApp
  */
 class MainActivity : ComponentActivity() {
 
-//    private lateinit var toolbar: Toolbar
-//    private lateinit var drawerLayout: DrawerLayout
+    private val userPreferencesRepository: UserPreferencesRepository by inject()
+    private var currentLanguageMode: UserPreferencesRepository.LanguageMode? = null
 
-//    private val mainViewModel: MainViewModel by viewModel(named("MainVm"))
+    override fun attachBaseContext(newBase: Context) {
+        // Initialize Koin to access repositories before super.attachBaseContext is called
+        // This is a custom solution for this app, that assumes Koin has been initialized in Application class
+        val appContext = newBase.applicationContext
+        val repo = UserPreferencesRepository(appContext)
+        
+        // Get the language preference synchronously
+        val languageMode = runBlocking { 
+            repo.languageMode.first() 
+        }
+        currentLanguageMode = languageMode
 
+        // Apply the language setting
+        val context = LanguageUtils.setAppLanguage(newBase, languageMode)
+        super.attachBaseContext(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +53,16 @@ class MainActivity : ComponentActivity() {
         // Enable edge-to-edge display (must be called before setContent)
         // This replaces the SystemUiController functionality with official API
         enableEdgeToEdge()
+        
+        // Monitor language changes and recreate activity if needed
+        lifecycleScope.launch {
+            userPreferencesRepository.languageMode.collect { languageMode ->
+                if (currentLanguageMode != languageMode) {
+                    currentLanguageMode = languageMode
+                    recreate() // Recreate the activity to apply new language
+                }
+            }
+        }
         
         setContent {
             NoWakeLockApp()

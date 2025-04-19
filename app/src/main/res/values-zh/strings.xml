@@ -124,4 +124,15 @@
     <string name="duration_separator"> • 持续时间: %s</string>
     <string name="error_loading_data">加载数据时出错，请重试</string>
     <string name="now">现在</string>
+    
+    <!-- 设置页面 -->
+    <string name="settings_interface">界面</string>
+    <string name="language">语言</string>
+    <string name="cancel">取消</string>
+    
+    <!-- 语言设置 -->
+    <string name="english_language_name">英语</string>
+    <string name="chinese_language_name">中文</string>
+    <string name="french_language_name">法语</string>
+    <string name="system_language_name">跟随系统</string>
 </resources>

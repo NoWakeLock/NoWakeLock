@@ -163,4 +163,15 @@
     <string name="allow_screenOff_service">Allow Service Screen Off</string>
     <string name="allow_screenOff_service_desc">Allow this service start when the screen is off</string>
     <string name="now">Now</string>
+
+    <!-- Settings strings -->
+    <string name="settings_interface">Interface</string>
+    <string name="language">Language</string>
+    <string name="cancel">Cancel</string>
+    
+    <!-- Language settings -->
+    <string name="english_language_name">English</string>
+    <string name="chinese_language_name">中文</string>
+    <string name="french_language_name">Français</string>
+    <string name="system_language_name">Follow System</string>
 </resources>

@@ -17,6 +17,7 @@ import com.js.nowakelock.data.repository.daDetail.DAInfoRepositoryImpl
 import com.js.nowakelock.data.repository.daDetail.DADetailRepository
 import com.js.nowakelock.data.repository.daDetail.DADetailRepositoryImpl
 import com.js.nowakelock.ui.screens.dadetail.DADetailViewModel
+import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.core.module.dsl.viewModelOf
@@ -37,6 +38,7 @@ fun appModule() = module {
     // Repository
     singleOf(::AppDasAR) { bind<AppDasRepo>() }
     singleOf(::BackupRepo)
+    single { UserPreferencesRepository(get()) }
 
     single { WakelockRepositoryImpl(get(), get()) }
     single { AlarmRepositoryImpl(get(), get()) }
@@ -71,4 +73,6 @@ fun appModule() = module {
             daInfoRepository = get<DAInfoRepository>()
         )
     }
+
+    viewModel { SettingsViewModel(get()) }
 }

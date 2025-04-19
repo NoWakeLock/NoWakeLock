@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 
 // 应用扩展颜色
 data class ExtendedColors(
@@ -163,4 +164,27 @@ fun NoWakeLockTheme(
             content = content
         )
     }
+}
+
+/**
+ * NoWakeLock theme that applies Material 3 styling with dynamic theming
+ * based on user preferences
+ */
+@Composable
+fun NoWakeLockTheme(
+    themeMode: UserPreferencesRepository.ThemeMode = UserPreferencesRepository.ThemeMode.SYSTEM,
+    content: @Composable () -> Unit
+) {
+    val darkTheme = when (themeMode) {
+        UserPreferencesRepository.ThemeMode.LIGHT -> false
+        UserPreferencesRepository.ThemeMode.DARK -> true
+        UserPreferencesRepository.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+    }
+    
+    // 调用现有的 NoWakeLockTheme 实现
+    NoWakeLockTheme(
+        darkTheme = darkTheme,
+        dynamicColor = true,
+        content = content
+    )
 }
