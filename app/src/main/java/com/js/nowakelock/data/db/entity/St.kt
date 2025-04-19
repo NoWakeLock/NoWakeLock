@@ -3,7 +3,9 @@ package com.js.nowakelock.data.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import com.js.nowakelock.data.db.Type
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "st", primaryKeys = ["name_st", "type_st", "userId_st"])
 data class St(
     @ColumnInfo(name = "name_st")

@@ -167,6 +167,7 @@
     <!-- Settings strings -->
     <string name="settings_interface">Interface</string>
     <string name="settings_data_management">Data Management</string>
+    <string name="settings_backup">Backup &amp; Restore</string>
     <string name="language">Language</string>
     <string name="cancel">Cancel</string>
     
@@ -175,6 +176,16 @@
     <string name="power_connection_detection_desc">Reset counters when power is connected or disconnected</string>
     <string name="clear_inactive_data">Clear Inactive Data</string>
     <string name="clear_inactive_data_desc">Remove data for uninstalled apps when resetting counters</string>
+    
+    <!-- Backup settings -->
+    <string name="create_backup">Create Backup</string>
+    <string name="create_backup_desc">Save your settings and data to a file</string>
+    <string name="restore_backup">Restore Backup</string>
+    <string name="restore_backup_desc">Load settings and data from a backup file</string>
+    <string name="backup_success">Backup created successfully</string>
+    <string name="backup_failed">Failed to create backup</string>
+    <string name="restore_success">Backup restored successfully</string>
+    <string name="restore_failed">Failed to restore backup</string>
     
     <!-- Language settings -->
     <string name="english_language_name">English</string>

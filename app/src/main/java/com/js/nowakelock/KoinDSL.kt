@@ -4,6 +4,7 @@ import com.js.nowakelock.data.db.AppDatabase
 import com.js.nowakelock.data.repository.appdas.AppDasAR
 import com.js.nowakelock.data.repository.appdas.AppDasRepo
 import com.js.nowakelock.data.repository.backup.BackupRepo
+import com.js.nowakelock.data.repository.backup.BackupManager
 import com.js.nowakelock.data.repository.daitem.WakelockRepositoryImpl
 import com.js.nowakelock.data.repository.daitem.AlarmRepositoryImpl
 import com.js.nowakelock.data.repository.daitem.ServiceRepositoryImpl
@@ -39,6 +40,7 @@ fun appModule() = module {
     singleOf(::AppDasAR) { bind<AppDasRepo>() }
     singleOf(::BackupRepo)
     single { UserPreferencesRepository(get()) }
+    single { BackupManager(get(), get()) }
 
     single { WakelockRepositoryImpl(get(), get()) }
     single { AlarmRepositoryImpl(get(), get()) }
@@ -74,5 +76,5 @@ fun appModule() = module {
         )
     }
 
-    viewModel { SettingsViewModel(get()) }
+    viewModel { SettingsViewModel(get<UserPreferencesRepository>(), get<BackupManager>()) }
 }
