@@ -3,6 +3,7 @@ package com.js.nowakelock.ui.screens.settings
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.js.nowakelock.base.SPTools
 import com.js.nowakelock.data.repository.backup.BackupManager
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.LanguageMode
@@ -26,7 +27,8 @@ data class SettingsUiState(
     val powerFlag: Boolean = false,
     val clearFlag: Boolean = false,
     val backupInProgress: Boolean = false,
-    val restoreInProgress: Boolean = false
+    val restoreInProgress: Boolean = false,
+    val debugMode: Boolean = false
 )
 
 /**
@@ -71,6 +73,10 @@ open class SettingsViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
+        
+    // Debug mode from SPTools
+    private val _debugMode = MutableStateFlow(SPTools.getBoolean("debug", false))
+    val debugMode: StateFlow<Boolean> = _debugMode
 
     init {
         // Initialize UI state with current preferences
@@ -97,6 +103,9 @@ open class SettingsViewModel(
                 _uiState.value = _uiState.value.copy(clearFlag = clearFlag)
             }
         }
+        
+        // Set initial debug mode state
+        _uiState.value = _uiState.value.copy(debugMode = _debugMode.value)
     }
 
     /**
@@ -171,6 +180,14 @@ open class SettingsViewModel(
                 )
             }
         }
+    }
+    
+    /**
+     * Update debug mode using SPTools
+     */
+    fun updateDebugMode(enabled: Boolean) {
+        SPTools.setBoolean("debug", enabled)
+        _debugMode.value = enabled
     }
     
     /**
