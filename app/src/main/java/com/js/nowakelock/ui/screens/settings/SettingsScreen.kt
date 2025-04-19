@@ -1,5 +1,7 @@
 package com.js.nowakelock.ui.screens.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -8,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,6 +29,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -72,6 +78,19 @@ fun SettingsScreen(
     // Snackbar state
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // 文件选择结果处理器
+    val createDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let { viewModel.createBackup(it) }
+    }
+    
+    val openDocumentLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { viewModel.restoreBackup(it) }
+    }
+
     // Show error message in snackbar if needed
     LaunchedEffect(uiState.message) {
         if (uiState.message.isNotEmpty()) {
@@ -113,6 +132,18 @@ fun SettingsScreen(
                     clearFlag = clearFlag,
                     onPowerFlagChanged = { viewModel.updatePowerFlag(it) },
                     onClearFlagChanged = { viewModel.updateClearFlag(it) }
+                )
+                
+                // 备份和恢复功能
+                BackupSettings(
+                    isBackupInProgress = uiState.backupInProgress,
+                    isRestoreInProgress = uiState.restoreInProgress,
+                    onCreateBackup = {
+                        createDocumentLauncher.launch("NoWakeLock-Backup-${viewModel.getFormattedDate()}.json")
+                    },
+                    onRestoreBackup = {
+                        openDocumentLauncher.launch(arrayOf("application/json"))
+                    }
                 )
             }
         }
@@ -193,6 +224,90 @@ private fun DataManagementSettings(
             checked = clearFlag,
             onCheckedChange = onClearFlagChanged
         )
+    }
+}
+
+// 备份设置组件
+@Composable
+private fun BackupSettings(
+    isBackupInProgress: Boolean,
+    isRestoreInProgress: Boolean,
+    onCreateBackup: () -> Unit,
+    onRestoreBackup: () -> Unit
+) {
+    Spacer(modifier = Modifier.height(16.dp))
+    SettingsCategoryTitle(title = stringResource(id = R.string.settings_backup))
+    
+    SettingsCard {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.create_backup),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Text(
+                text = stringResource(id = R.string.create_backup_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+            
+            Button(
+                onClick = onCreateBackup,
+                enabled = !isBackupInProgress && !isRestoreInProgress,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (isBackupInProgress) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(text = stringResource(id = R.string.create_backup))
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.restore_backup),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Text(
+                text = stringResource(id = R.string.restore_backup_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+            
+            OutlinedButton(
+                onClick = onRestoreBackup,
+                enabled = !isBackupInProgress && !isRestoreInProgress,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (isRestoreInProgress) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(text = stringResource(id = R.string.restore_backup))
+            }
+        }
     }
 }
 

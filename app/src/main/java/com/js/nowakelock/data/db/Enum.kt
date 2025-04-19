@@ -1,5 +1,8 @@
 package com.js.nowakelock.data.db
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class Type(var value: String) {
     Wakelock("Wakelock"), Alarm("Alarm"), Service("Service"), UnKnow("UnKnow");
 
