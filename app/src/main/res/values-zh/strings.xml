@@ -135,4 +135,10 @@
     <string name="chinese_language_name">中文</string>
     <string name="french_language_name">法语</string>
     <string name="system_language_name">跟随系统</string>
+
+    <!-- 数据管理设置 -->
+    <string name="power_connection_detection">电源连接检测</string>
+    <string name="power_connection_detection_desc">电源连接时重置计数</string>
+    <string name="clear_inactive_data">清除不活跃数据</string>
+    <string name="clear_inactive_data_desc">清除不活跃数据时,一同清理不活跃记录</string>
 </resources>

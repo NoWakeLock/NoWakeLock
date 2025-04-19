@@ -166,8 +166,15 @@
 
     <!-- Settings strings -->
     <string name="settings_interface">Interface</string>
+    <string name="settings_data_management">Data Management</string>
     <string name="language">Language</string>
     <string name="cancel">Cancel</string>
+    
+    <!-- Power Connection and Clear Data settings -->
+    <string name="power_connection_detection">Power Connection Detection</string>
+    <string name="power_connection_detection_desc">Reset counters when power is connected or disconnected</string>
+    <string name="clear_inactive_data">Clear Inactive Data</string>
+    <string name="clear_inactive_data_desc">Remove data for uninstalled apps when resetting counters</string>
     
     <!-- Language settings -->
     <string name="english_language_name">English</string>

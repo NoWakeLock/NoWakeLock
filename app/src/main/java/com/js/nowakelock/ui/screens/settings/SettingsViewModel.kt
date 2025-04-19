@@ -19,7 +19,9 @@ data class SettingsUiState(
     val isLoading: Boolean = false,
     val message: String = "",
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
-    val languageMode: LanguageMode = LanguageMode.SYSTEM
+    val languageMode: LanguageMode = LanguageMode.SYSTEM,
+    val powerFlag: Boolean = false,
+    val clearFlag: Boolean = false
 )
 
 /**
@@ -46,6 +48,22 @@ open class SettingsViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = LanguageMode.SYSTEM
         )
+        
+    // Power flag preference from repository
+    val powerFlag = userPreferencesRepository.powerFlag
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+    
+    // Clear flag preference from repository
+    val clearFlag = userPreferencesRepository.clearFlag
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
 
     init {
         // Initialize UI state with current preferences
@@ -58,6 +76,18 @@ open class SettingsViewModel(
         viewModelScope.launch {
             userPreferencesRepository.languageMode.collect { language ->
                 _uiState.value = _uiState.value.copy(languageMode = language)
+            }
+        }
+        
+        viewModelScope.launch {
+            userPreferencesRepository.powerFlag.collect { powerFlag ->
+                _uiState.value = _uiState.value.copy(powerFlag = powerFlag)
+            }
+        }
+        
+        viewModelScope.launch {
+            userPreferencesRepository.clearFlag.collect { clearFlag ->
+                _uiState.value = _uiState.value.copy(clearFlag = clearFlag)
             }
         }
     }
@@ -99,6 +129,36 @@ open class SettingsViewModel(
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     message = e.message ?: "Error updating language"
+                )
+            }
+        }
+    }
+    
+    /**
+     * Update power flag preference
+     */
+    fun updatePowerFlag(enabled: Boolean) {
+        viewModelScope.launch {
+            try {
+                userPreferencesRepository.setPowerFlag(enabled)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    message = e.message ?: "Error updating power flag"
+                )
+            }
+        }
+    }
+    
+    /**
+     * Update clear flag preference
+     */
+    fun updateClearFlag(enabled: Boolean) {
+        viewModelScope.launch {
+            try {
+                userPreferencesRepository.setClearFlag(enabled)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    message = e.message ?: "Error updating clear flag"
                 )
             }
         }
