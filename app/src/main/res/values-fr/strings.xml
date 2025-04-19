@@ -109,6 +109,18 @@
     <string name="power_connection_detection_desc">Réinitialiser les compteurs lorsque la puissance est connectée ou déconnectée</string>
     <string name="clear_inactive_data">Effacer les données inactives</string>
     <string name="clear_inactive_data_desc">Effacer les données des applications non actives lorsque les compteurs sont réinitialisés</string>
+
+    <!-- Backup and Restore settings -->
+    <string name="create_backup">Créer un nouveau fichier de sauvegarde</string>
+    <string name="create_backup_desc">Enregistrer les réglages des applications installés dans un fichier</string>
+    <string name="restore_backup">Restaurer depuis un fichier de sauvegarde</string>
+    <string name="restore_backup_desc">Restaurer depuis un fichier de sauvegarde outrepassera les réglages actuels</string>
+    <string name="backup_success">Sauvegarde terminée</string>
+    <string name="backup_failed">Sauvegarde échouée</string>
+
+    <!-- Experimental features -->
+    <string name="debug_mode">Mode de débogage</string>
+    <string name="debug_mode_desc">Activer le mode de débogage pour les problèmes de réveil/alarme/service non listés, exporter le journal complet dans Xposed et vous pourrez me l\'envoyer dans mon canal pour investiguer le problème.</string>
     
     <string-array name="scopes" translatable="false">
         <item>android</item>

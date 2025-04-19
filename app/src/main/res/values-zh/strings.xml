@@ -141,4 +141,18 @@
     <string name="power_connection_detection_desc">电源连接时重置计数</string>
     <string name="clear_inactive_data">清除不活跃数据</string>
     <string name="clear_inactive_data_desc">清除不活跃数据时,一同清理不活跃记录</string>
+
+    <!-- 备份与恢复设置 -->
+    <string name="create_backup">创建备份文件</string>
+    <string name="create_backup_desc">保存当前所有应用设置到文件</string>
+    <string name="restore_backup">从备份文件恢复</string>
+    <string name="restore_backup_desc">从备份文件恢复会覆盖当前设置</string>
+    <string name="backup_success">备份成功</string>
+    <string name="backup_failed">备份失败</string>
+    <string name="restore_success">恢复成功</string>
+    <string name="restore_failed">恢复失败</string>
+
+    <!-- 实验功能设置 -->
+    <string name="debug_mode">调试模式</string>
+    <string name="debug_mode_desc">启用详细日志,用于排查问题</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,9 +22,11 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -74,6 +77,7 @@ fun SettingsScreen(
     val languageMode by viewModel.languageMode.collectAsState()
     val powerFlag by viewModel.powerFlag.collectAsState()
     val clearFlag by viewModel.clearFlag.collectAsState()
+    val debugMode by viewModel.debugMode.collectAsState()
 
     // Dialog states
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -148,6 +152,12 @@ fun SettingsScreen(
                     onRestoreBackup = {
                         openDocumentLauncher.launch(arrayOf("application/json"))
                     }
+                )
+                
+                // 实验性功能设置
+                ExperimentalSettings(
+                    debugMode = debugMode,
+                    onDebugModeChanged = { viewModel.updateDebugMode(it) }
                 )
             }
         }
@@ -264,6 +274,45 @@ private fun BackupSettings(
             isLoading = isRestoreInProgress,
             enabled = !isBackupInProgress && !isRestoreInProgress,
             onClick = onRestoreBackup
+        )
+    }
+}
+
+// 实验性功能设置组件
+@Composable
+private fun ExperimentalSettings(
+    debugMode: Boolean,
+    onDebugModeChanged: (Boolean) -> Unit
+) {
+    Spacer(modifier = Modifier.height(16.dp))
+    SettingsCategoryTitle(title = stringResource(id = R.string.settings_experimental))
+    
+    SettingsCard {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .size(20.dp)
+            )
+            Text(
+                text = stringResource(id = R.string.experimental),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+        
+        // Debug Mode Toggle
+        SettingsSwitchItem(
+            title = stringResource(id = R.string.debug_mode),
+            subtitle = stringResource(id = R.string.debug_mode_desc),
+            checked = debugMode,
+            onCheckedChange = onDebugModeChanged
         )
     }
 }
@@ -477,5 +526,17 @@ fun LanguageSelectionDialogPreview() {
 fun BackupSettingsPreview() {
     NoWakeLockTheme {
         BackupSettings(isBackupInProgress = false, isRestoreInProgress = false, onCreateBackup = {}, onRestoreBackup = {})
+    }
+}
+
+// ExperimentalSettings preview
+@Composable
+@Preview
+fun ExperimentalSettingsPreview() {
+    NoWakeLockTheme {
+        ExperimentalSettings(
+            debugMode = false,
+            onDebugModeChanged = {}
+        )
     }
 }

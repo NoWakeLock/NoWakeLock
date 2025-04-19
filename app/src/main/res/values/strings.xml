@@ -90,7 +90,7 @@
     <string name="user_work">Work profile</string>
     <string name="user_name">User</string>
     <string name="user">User</string>
-    <string name="experimental">Experimental function</string>
+    <string name="experimental">Experimental Features - Use with caution</string>
     <string name="Debug">Debug mode</string>
     <string name="Debug_summary">Enable this when you encounter a wakelock/alarm/service that is not logged, export the full log in Xposed and you can send it to me in any channel to troubleshoot the problem."</string>
     <string-array name="scopes" translatable="false">
@@ -168,6 +168,7 @@
     <string name="settings_interface">Interface</string>
     <string name="settings_data_management">Data Management</string>
     <string name="settings_backup">Backup &amp; Restore</string>
+    <string name="settings_experimental">Experimental Features</string>
     <string name="language">Language</string>
     <string name="cancel">Cancel</string>
     
@@ -176,6 +177,10 @@
     <string name="power_connection_detection_desc">Reset counters when power is connected or disconnected</string>
     <string name="clear_inactive_data">Clear Inactive Data</string>
     <string name="clear_inactive_data_desc">Remove data for uninstalled apps when resetting counters</string>
+    
+    <!-- Experimental features -->
+    <string name="debug_mode">Debug Mode</string>
+    <string name="debug_mode_desc">Enable detailed logging for troubleshooting. Enable only when needed for diagnosing issues.</string>
     
     <!-- Backup settings -->
     <string name="create_backup">Create Backup</string>
