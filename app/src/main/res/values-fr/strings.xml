@@ -92,6 +92,18 @@
     <string name="experimental">Fonction expérimentale</string>
     <string name="Debug">Mode débuggage</string>
     <string name="Debug_summary">Activer celà quand vous rencontrez un réveil/alarme/service qui n\'est pas listé, exportez le journal complet dans Xposed et vous pourrez me l\'envoyer dans mon canal pour investiguer le problème."</string>
+    
+    <!-- Paramètres d'interface -->
+    <string name="settings_interface">Interface</string>
+    <string name="language">Langue</string>
+    <string name="cancel">Annuler</string>
+    
+    <!-- Paramètres de langue -->
+    <string name="english_language_name">Anglais</string>
+    <string name="chinese_language_name">Chinois</string>
+    <string name="french_language_name">Français</string>
+    <string name="system_language_name">Identique au système</string>
+    
     <string-array name="scopes" translatable="false">
         <item>android</item>
         <item>com.android.providers.settings</item>
