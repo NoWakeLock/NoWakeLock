@@ -2,8 +2,10 @@ package com.js.nowakelock.ui.screens.settings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +18,11 @@ import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.LanguageMode
@@ -70,7 +75,8 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         if (uiState.isLoading) {
             Box(
@@ -83,139 +89,203 @@ fun SettingsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(top = paddingValues.calculateTopPadding())
                     .verticalScroll(rememberScrollState())
             ) {
-                // Interface settings section
+                Spacer(modifier = Modifier.height(4.dp))
+
                 SettingsCategoryTitle(title = stringResource(id = R.string.settings_interface))
 
-                // Theme settings
                 SettingsCard {
-                    Column {
-                        // Theme selector
-                        SettingsSelectableItem(
-                            title = stringResource(id = R.string.theme),
-                            subtitle = getThemeSubtitle(themeMode),
-                            selected = false,
-                            onClick = { showThemeDialog = true }
-                        )
+                    // Theme selector
+                    SettingsSelectableItem(
+                        title = stringResource(id = R.string.theme),
+                        subtitle = getThemeSubtitle(themeMode),
+                        selected = false,
+                        onClick = { showThemeDialog = true }
+                    )
 
-                        // Language selector
-                        SettingsSelectableItem(
-                            title = stringResource(id = R.string.language),
-                            subtitle = getLanguageSubtitle(languageMode),
-                            selected = false,
-                            onClick = { showLanguageDialog = true }
-                        )
-                    }
+                    // Language selector
+                    SettingsSelectableItem(
+                        title = stringResource(id = R.string.language),
+                        subtitle = getLanguageSubtitle(languageMode),
+                        selected = false,
+                        onClick = { showLanguageDialog = true }
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
 
     // Theme selection dialog
     if (showThemeDialog) {
-        AlertDialog(
-            onDismissRequest = { showThemeDialog = false },
-            title = { SettingsDialogTitle(title = stringResource(id = R.string.theme)) },
-            text = {
-                Column {
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.light_theme_name),
-                        selected = themeMode == ThemeMode.LIGHT,
-                        onClick = {
-                            viewModel.updateTheme(ThemeMode.LIGHT)
-                            showThemeDialog = false
-                        },
-                        icon = Icons.Default.LightMode
-                    )
-
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.dark_theme_name),
-                        selected = themeMode == ThemeMode.DARK,
-                        onClick = {
-                            viewModel.updateTheme(ThemeMode.DARK)
-                            showThemeDialog = false
-                        },
-                        icon = Icons.Default.DarkMode
-                    )
-
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.system_theme_name),
-                        selected = themeMode == ThemeMode.SYSTEM,
-                        onClick = {
-                            viewModel.updateTheme(ThemeMode.SYSTEM)
-                            showThemeDialog = false
-                        },
-                        icon = Icons.Default.PhoneAndroid
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showThemeDialog = false }) {
-                    Text(stringResource(id = R.string.cancel))
-                }
-            }
+        ThemeSelectionDialog(
+            currentTheme = themeMode,
+            onThemeSelected = { viewModel.updateTheme(it) },
+            onDismiss = { showThemeDialog = false }
         )
     }
 
     // Language selection dialog
     if (showLanguageDialog) {
-        AlertDialog(
-            onDismissRequest = { showLanguageDialog = false },
-            title = { SettingsDialogTitle(title = stringResource(id = R.string.language)) },
-            text = {
-                Column {
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.english_language_name),
-                        selected = languageMode == LanguageMode.ENGLISH,
-                        onClick = {
-                            viewModel.updateLanguage(LanguageMode.ENGLISH)
-                            showLanguageDialog = false
-                        },
-                        icon = Icons.Default.Language
-                    )
-
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.chinese_language_name),
-                        selected = languageMode == LanguageMode.CHINESE,
-                        onClick = {
-                            viewModel.updateLanguage(LanguageMode.CHINESE)
-                            showLanguageDialog = false
-                        },
-                        icon = Icons.Default.Language
-                    )
-
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.french_language_name),
-                        selected = languageMode == LanguageMode.FRENCH,
-                        onClick = {
-                            viewModel.updateLanguage(LanguageMode.FRENCH)
-                            showLanguageDialog = false
-                        },
-                        icon = Icons.Default.Language
-                    )
-
-                    SettingsSelectableItem(
-                        title = stringResource(id = R.string.system_language_name),
-                        selected = languageMode == LanguageMode.SYSTEM,
-                        onClick = {
-                            viewModel.updateLanguage(LanguageMode.SYSTEM)
-                            showLanguageDialog = false
-                        },
-                        icon = Icons.Default.PhoneAndroid
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showLanguageDialog = false }) {
-                    Text(stringResource(id = R.string.cancel))
-                }
-            }
+        LanguageSelectionDialog(
+            currentLanguage = languageMode,
+            onLanguageSelected = { viewModel.updateLanguage(it) },
+            onDismiss = { showLanguageDialog = false }
         )
     }
+}
+
+@Composable
+private fun ThemeSelectionDialog(
+    currentTheme: ThemeMode,
+    onThemeSelected: (ThemeMode) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(id = R.string.theme),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier
+            .fillMaxWidth(0.9f)  // 限制对话框宽度
+            .padding(horizontal = 0.dp),
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 0.dp, bottom = 0.dp)
+            ) {
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.light_theme_name),
+                    selected = currentTheme == ThemeMode.LIGHT,
+                    onClick = {
+                        onThemeSelected(ThemeMode.LIGHT)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.LightMode
+                )
+
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.dark_theme_name),
+                    selected = currentTheme == ThemeMode.DARK,
+                    onClick = {
+                        onThemeSelected(ThemeMode.DARK)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.DarkMode
+                )
+
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.system_theme_name),
+                    selected = currentTheme == ThemeMode.SYSTEM,
+                    onClick = {
+                        onThemeSelected(ThemeMode.SYSTEM)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.PhoneAndroid
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.padding(bottom = 0.dp, end = 0.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.cancel),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun LanguageSelectionDialog(
+    currentLanguage: LanguageMode,
+    onLanguageSelected: (LanguageMode) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(id = R.string.language),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier
+            .fillMaxWidth(0.9f)  // 限制对话框宽度
+            .padding(horizontal = 0.dp),
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 0.dp, bottom = 0.dp)
+            ) {
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.english_language_name),
+                    selected = currentLanguage == LanguageMode.ENGLISH,
+                    onClick = {
+                        onLanguageSelected(LanguageMode.ENGLISH)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.Language
+                )
+
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.chinese_language_name),
+                    selected = currentLanguage == LanguageMode.CHINESE,
+                    onClick = {
+                        onLanguageSelected(LanguageMode.CHINESE)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.Language
+                )
+
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.french_language_name),
+                    selected = currentLanguage == LanguageMode.FRENCH,
+                    onClick = {
+                        onLanguageSelected(LanguageMode.FRENCH)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.Language
+                )
+
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.system_language_name),
+                    selected = currentLanguage == LanguageMode.SYSTEM,
+                    onClick = {
+                        onLanguageSelected(LanguageMode.SYSTEM)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.PhoneAndroid
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.padding(bottom = 0.dp, end = 0.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.cancel),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    )
 }
 
 /**
@@ -240,5 +310,31 @@ private fun getLanguageSubtitle(languageMode: LanguageMode): String {
         LanguageMode.CHINESE -> stringResource(id = R.string.chinese_language_name)
         LanguageMode.FRENCH -> stringResource(id = R.string.french_language_name)
         LanguageMode.SYSTEM -> stringResource(id = R.string.system_language_name)
+    }
+}
+
+// ThemeSelectionDialog preview
+@Composable
+@Preview
+fun ThemeSelectionDialogPreview() {
+    NoWakeLockTheme {
+        ThemeSelectionDialog(
+            currentTheme = ThemeMode.LIGHT,
+            onThemeSelected = {},
+            onDismiss = {}
+        )
+    }
+}
+
+// LanguageSelectionDialog preview
+@Composable
+@Preview
+fun LanguageSelectionDialogPreview() {
+    NoWakeLockTheme {
+        LanguageSelectionDialog(
+            currentLanguage = LanguageMode.ENGLISH,
+            onLanguageSelected = {},
+            onDismiss = {}
+        )
     }
 }
