@@ -20,6 +20,9 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +61,158 @@ fun SettingsCard(content: @Composable () -> Unit) {
             content()
         }
     }
+}
+
+/**
+ * 统一的设置项组件，支持不同类型的交互元素
+ */
+@Composable
+fun SettingsItem(
+    title: String,
+    subtitle: String? = null,
+    onClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    trailing: @Composable (() -> Unit)? = null
+) {
+    val isClickable = onClick != null
+    
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                enabled = enabled && isClickable,
+                onClick = { onClick?.invoke() }
+            )
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (enabled) MaterialTheme.colorScheme.onSurface 
+                       else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
+            
+            if (subtitle != null) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant 
+                           else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
+        }
+        
+        trailing?.invoke()
+    }
+}
+
+/**
+ * 带有开关的设置项
+ */
+@Composable
+fun SettingsSwitchItem(
+    title: String,
+    subtitle: String? = null,
+    checked: Boolean,
+    enabled: Boolean = true,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    SettingsItem(
+        title = title,
+        subtitle = subtitle,
+        enabled = enabled,
+        onClick = { onCheckedChange(!checked) },
+        trailing = {
+            Switch(
+                checked = checked,
+                enabled = enabled,
+                onCheckedChange = onCheckedChange
+            )
+        }
+    )
+}
+
+/**
+ * 带有文本值的设置项（用于显示当前选择的选项）
+ */
+@Composable
+fun SettingsValueItem(
+    title: String,
+    subtitle: String? = null,
+    value: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    SettingsItem(
+        title = title,
+        subtitle = subtitle,
+        enabled = enabled,
+        onClick = onClick,
+        trailing = {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    )
+}
+
+/**
+ * 带有操作按钮的设置项
+ */
+@Composable
+fun SettingsActionItem(
+    title: String,
+    subtitle: String? = null,
+    enabled: Boolean = true,
+    actionText: String,
+    actionIcon: ImageVector? = null,
+    isLoading: Boolean = false,
+    onClick: () -> Unit
+) {
+    SettingsItem(
+        title = title,
+        subtitle = subtitle,
+        enabled = enabled && !isLoading,
+        onClick = onClick,  // 整行不可点击，只有按钮可点击
+        trailing = {
+            OutlinedIconButton(
+                onClick = onClick,
+                enabled = enabled && !isLoading,
+                modifier = Modifier.size(width = if (actionIcon != null) 40.dp else 80.dp, height = 36.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        if (actionIcon != null) {
+                            Icon(
+                                imageVector = actionIcon,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        } else {
+                            Text(
+                                text = actionText,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
 }
 
 /**
@@ -141,55 +296,4 @@ fun SettingsDialogTitle(title: String) {
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 8.dp)
     )
-}
-
-/**
- * A switch item for toggling settings like power connection detection and clear data
- */
-@Composable
-fun SettingsSwitchItem(
-    title: String,
-    subtitle: String? = null,
-    checked: Boolean,
-    enabled: Boolean = true,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                enabled = enabled,
-                onClick = { onCheckedChange(!checked) }
-            )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (enabled) MaterialTheme.colorScheme.onSurface 
-                           else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-                
-                if (subtitle != null) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant 
-                               else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
-            Switch(
-                checked = checked,
-                enabled = enabled,
-                onCheckedChange = onCheckedChange
-            )
-        }
-    }
 } 

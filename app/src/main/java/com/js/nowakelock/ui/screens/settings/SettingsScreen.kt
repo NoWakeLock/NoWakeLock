@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +53,8 @@ import com.js.nowakelock.ui.screens.settings.components.SettingsCategoryTitle
 import com.js.nowakelock.ui.screens.settings.components.SettingsDialogTitle
 import com.js.nowakelock.ui.screens.settings.components.SettingsSelectableItem
 import com.js.nowakelock.ui.screens.settings.components.SettingsSwitchItem
+import com.js.nowakelock.ui.screens.settings.components.SettingsValueItem
+import com.js.nowakelock.ui.screens.settings.components.SettingsActionItem
 import com.js.nowakelock.ui.theme.NoWakeLockTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
@@ -103,10 +107,10 @@ fun SettingsScreen(
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
                 CircularProgressIndicator()
             }
         } else {
@@ -168,7 +172,7 @@ fun SettingsScreen(
     }
 }
 
-// 界面设置组件 - 单独封装
+// 界面设置组件 - 使用 SettingsValueItem
 @Composable
 private fun InterfaceSettings(
     themeMode: ThemeMode,
@@ -179,25 +183,25 @@ private fun InterfaceSettings(
     SettingsCategoryTitle(title = stringResource(id = R.string.settings_interface))
     
     SettingsCard {
-        // Theme selector
-        SettingsSelectableItem(
+        // 主题选择项
+        SettingsValueItem(
             title = stringResource(id = R.string.theme),
-            subtitle = getThemeSubtitle(themeMode),
-            selected = false,
+            subtitle = stringResource(id = R.string.theme_list),
+            value = getThemeSubtitle(themeMode),
             onClick = onShowThemeDialog
         )
 
-        // Language selector
-        SettingsSelectableItem(
+        // 语言选择项
+        SettingsValueItem(
             title = stringResource(id = R.string.language),
-            subtitle = getLanguageSubtitle(languageMode),
-            selected = false,
+            subtitle = null,  // 可以添加语言选择的描述
+            value = getLanguageSubtitle(languageMode),
             onClick = onShowLanguageDialog
         )
     }
 }
 
-// 数据管理设置组件 - 单独封装
+// 数据管理设置组件 - 保持 SettingsSwitchItem 但使用新实现
 @Composable
 private fun DataManagementSettings(
     powerFlag: Boolean,
@@ -217,17 +221,18 @@ private fun DataManagementSettings(
             onCheckedChange = onPowerFlagChanged
         )
         
-        // Clear Data Toggle
+        // Clear Data Toggle - 只有当 powerFlag 启用时才可用
         SettingsSwitchItem(
             title = stringResource(id = R.string.clear_inactive_data),
             subtitle = stringResource(id = R.string.clear_inactive_data_desc),
             checked = clearFlag,
+            enabled = powerFlag,
             onCheckedChange = onClearFlagChanged
         )
     }
 }
 
-// 备份设置组件
+// 备份设置组件 - 使用 SettingsActionItem
 @Composable
 private fun BackupSettings(
     isBackupInProgress: Boolean,
@@ -239,75 +244,27 @@ private fun BackupSettings(
     SettingsCategoryTitle(title = stringResource(id = R.string.settings_backup))
     
     SettingsCard {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.create_backup),
-                style = MaterialTheme.typography.bodyMedium
-            )
-            
-            Text(
-                text = stringResource(id = R.string.create_backup_desc),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-            
-            Button(
-                onClick = onCreateBackup,
-                enabled = !isBackupInProgress && !isRestoreInProgress,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (isBackupInProgress) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-                Text(text = stringResource(id = R.string.create_backup))
-            }
-        }
+        // 创建备份操作
+        SettingsActionItem(
+            title = stringResource(id = R.string.create_backup),
+            subtitle = stringResource(id = R.string.create_backup_desc),
+            actionText = stringResource(id = R.string.create_backup),
+            actionIcon = Icons.Default.Backup,
+            isLoading = isBackupInProgress,
+            enabled = !isBackupInProgress && !isRestoreInProgress,
+            onClick = onCreateBackup
+        )
         
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.restore_backup),
-                style = MaterialTheme.typography.bodyMedium
-            )
-            
-            Text(
-                text = stringResource(id = R.string.restore_backup_desc),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-            
-            OutlinedButton(
-                onClick = onRestoreBackup,
-                enabled = !isBackupInProgress && !isRestoreInProgress,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (isRestoreInProgress) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-                Text(text = stringResource(id = R.string.restore_backup))
-            }
-        }
+        // 恢复备份操作
+        SettingsActionItem(
+            title = stringResource(id = R.string.restore_backup),
+            subtitle = stringResource(id = R.string.restore_backup_desc),
+            actionText = stringResource(id = R.string.restore_backup),
+            actionIcon = Icons.Default.Restore,
+            isLoading = isRestoreInProgress,
+            enabled = !isBackupInProgress && !isRestoreInProgress,
+            onClick = onRestoreBackup
+        )
     }
 }
 
@@ -511,5 +468,14 @@ fun LanguageSelectionDialogPreview() {
             onLanguageSelected = {},
             onDismiss = {}
         )
+    }
+}
+
+// BackupSettings preview
+@Composable
+@Preview
+fun BackupSettingsPreview() {
+    NoWakeLockTheme {
+        BackupSettings(isBackupInProgress = false, isRestoreInProgress = false, onCreateBackup = {}, onRestoreBackup = {})
     }
 }
