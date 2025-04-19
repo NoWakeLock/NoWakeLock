@@ -103,6 +103,12 @@
     <string name="chinese_language_name">Chinois</string>
     <string name="french_language_name">Français</string>
     <string name="system_language_name">Identique au système</string>
+
+    <!-- Power Connection and Clear Data settings  -->
+    <string name="power_connection_detection">Détection de connexion de puissance</string>
+    <string name="power_connection_detection_desc">Réinitialiser les compteurs lorsque la puissance est connectée ou déconnectée</string>
+    <string name="clear_inactive_data">Effacer les données inactives</string>
+    <string name="clear_inactive_data_desc">Effacer les données des applications non actives lorsque les compteurs sont réinitialisés</string>
     
     <string-array name="scopes" translatable="false">
         <item>android</item>
