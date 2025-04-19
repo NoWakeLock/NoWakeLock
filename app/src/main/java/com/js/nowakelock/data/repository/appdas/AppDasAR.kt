@@ -50,7 +50,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
         val dbAppInfos = getDBAppInfos()//db AppInfos
         val sysAppInfos = getInstalledAppInfos()//system AppInfos
 
-        //取差集更新删除
+        // get difference set to update and delete
         insertAll(sysAppInfos.keys subtract dbAppInfos.keys, sysAppInfos)
         deleteAll(dbAppInfos.keys subtract sysAppInfos.keys, dbAppInfos)
     }
@@ -170,7 +170,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
         )
     }
 
-    /**db 插入新应用*/
+    // insert all new appinfos
     private suspend fun insertAll(
         packageNames: Set<String>,
         sysAppInfos: ArrayMap<String, AppInfo>
@@ -182,7 +182,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
         }
     }
 
-    /**db 删除卸载应用*/
+    // delete all uninstalled appinfos
     private suspend fun deleteAll(
         packageNames: Set<String>,
         dbAppInfos: ArrayMap<String, AppInfo>
@@ -194,7 +194,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
         }
     }
 
-    // 获取全部 system AppInfos
+    // get all system appinfos
     @SuppressLint("QueryPermissionsNeeded")
     private suspend fun getInstalledAppInfos(): ArrayMap<String, AppInfo> =
         withContext(Dispatchers.IO) {
@@ -219,7 +219,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
             return@withContext sysAppInfo
         }
 
-    // 获取全部数据库 AppInfos
+    // get all AppInfos
     private suspend fun getDBAppInfos(): ArrayMap<String, AppInfo> =
         withContext(Dispatchers.IO) {
             val dbAppInfos = ArrayMap<String, AppInfo>()
@@ -229,7 +229,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
             return@withContext dbAppInfos
         }
 
-    //获取单个 AppInfo
+    //get single AppInfo
     private fun getSysAppInfo(ai: ApplicationInfo): AppInfo {
         val easting = pm.getApplicationEnabledSetting(ai.packageName)
         val enabled = ai.enabled &&

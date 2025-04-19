@@ -35,12 +35,7 @@ fun appModule() = module {
 
 
     // Repository
-//    singleOf(::AppDaR) { bind<AppDaRepo>() }
     singleOf(::AppDasAR) { bind<AppDasRepo>() }
-//    singleOf(::IWakelockR) { bind<FR>(); named("WakelockR") }
-//    singleOf(::IAlarmR) { bind<FR>(); named("AlarmR") }
-//    singleOf(::IServiceR) { bind<FR>(); named("ServiceR") }
-//    singleOf(::DaR) { bind<DaRepo>() }
     singleOf(::BackupRepo)
 
     single { WakelockRepositoryImpl(get(), get()) }
@@ -48,8 +43,6 @@ fun appModule() = module {
     single { ServiceRepositoryImpl(get(), get()) }
 
     //
-//    single { DAInfoRepositoryImpl(get())}
-//    single { DADetailRepositoryImpl(get(), get()) }
     singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
     singleOf(::DADetailRepositoryImpl) { bind<DADetailRepository>() }
 
@@ -71,7 +64,6 @@ fun appModule() = module {
     viewModelOf(::ServicesViewModel)
     viewModelOf(::SettingsViewModel)
 
-//    viewModelOf(::DADetailViewModel)
     viewModel {
         DADetailViewModel(
             savedStateHandle = get(),
