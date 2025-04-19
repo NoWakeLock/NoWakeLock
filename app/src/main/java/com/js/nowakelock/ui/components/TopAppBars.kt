@@ -112,142 +112,160 @@ fun NoWakeLockTopAppBar(
 
     if (showSearch) {
         TopAppBar(
-            title = {}, navigationIcon = {
-            // return button
-            IconButton(
-                onClick = {
-                    onEvent(TopAppBarEvent.SearchDismissed)
-                    focusManager.clearFocus()
-                }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }, actions = {
-            TextField(
-                value = searchQuery,
-                onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
-                placeholder = {
-                    Text(
-                        when (route) {
-                            NavRoutes.APPS -> "Search apps"
-                            NavRoutes.WAKELOCKS -> "Search wakelocks"
-                            NavRoutes.ALARMS -> "Search alarms"
-                            NavRoutes.SERVICES -> "Search services"
-                            else -> "Search"
-                        }
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth(0.85f) // avoid full width
-                    .focusRequester(focusRequester),
-                singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                        alpha = 0.7f
-                    ),
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                ),
-                shape = RoundedCornerShape(24.dp),
-                leadingIcon = {
+            title = {}, 
+            navigationIcon = {
+                // return button
+                IconButton(
+                    onClick = {
+                        onEvent(TopAppBarEvent.SearchDismissed)
+                        focusManager.clearFocus()
+                    }
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
-                },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { onEvent(TopAppBarEvent.SearchQueryChanged("")) }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear search",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                }
+            }, 
+            actions = {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
+                    placeholder = {
+                        Text(
+                            when (route) {
+                                NavRoutes.APPS -> "Search apps"
+                                NavRoutes.WAKELOCKS -> "Search wakelocks"
+                                NavRoutes.ALARMS -> "Search alarms"
+                                NavRoutes.SERVICES -> "Search services"
+                                else -> "Search"
+                            },
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f) // avoid full width
+                        .padding(end = 8.dp)
+                        .focusRequester(focusRequester),
+                    singleLine = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    shape = RoundedCornerShape(28.dp),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { onEvent(TopAppBarEvent.SearchQueryChanged("")) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Clear search",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
-                })
-        }, colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+                )
+            }, 
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurface
+            )
         )
     } else {
         // Normal TopAppBar with dynamic actions based on current route
         TopAppBar(
-            title = { Text(text = title) }, navigationIcon = {
-            if (isDetailScreen) {
-                IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = stringResource(id = R.string.navigate_back),
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }, actions = {
-            Row {
-                // for all screens, display the search button first, then other operations (user switcher/refresh)
-                // all related screens display the search button, ensure the size is consistent
-                if (route == NavRoutes.APPS || route == NavRoutes.WAKELOCKS || route == NavRoutes.ALARMS || route == NavRoutes.SERVICES) {
-
-                    IconButton(
-                        onClick = { onEvent(TopAppBarEvent.SearchClicked) },
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(48.dp)
-                    ) {
+            title = { 
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
+                ) 
+            }, 
+            navigationIcon = {
+                if (isDetailScreen) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(24.dp)
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = R.string.navigate_back),
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
-
-                // 根据路由显示不同的额外操作按钮
-                when (route) {
-                    NavRoutes.APPS -> {
-                        // 用户切换器 - 只在Apps界面显示
-                        if (availableUsers.isNotEmpty()) {
-                            UserSwitcher(
-                                currentUserId = currentUserId,
-                                availableUsers = availableUsers,
-                                onUserChanged = { newUserId ->
-                                    onEvent(TopAppBarEvent.UserChanged(newUserId))
-                                })
-                        }
-                    }
-
-                    NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
-                        // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
+            }, 
+            actions = {
+                Row {
+                    // for all screens, display the search button first, then other operations (user switcher/refresh)
+                    // all related screens display the search button, ensure the size is consistent
+                    if (route == NavRoutes.APPS || route == NavRoutes.WAKELOCKS || route == NavRoutes.ALARMS || route == NavRoutes.SERVICES) {
                         IconButton(
-                            onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
+                            onClick = { onEvent(TopAppBarEvent.SearchClicked) },
                             modifier = Modifier
                                 .padding(horizontal = 4.dp)
                                 .size(48.dp)
                         ) {
                             Icon(
-                                Icons.Default.Refresh,
-                                contentDescription = "Refresh",
+                                Icons.Default.Search,
+                                contentDescription = "Search",
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
                     }
+
+                    // 根据路由显示不同的额外操作按钮
+                    when (route) {
+                        NavRoutes.APPS -> {
+                            // 用户切换器 - 只在Apps界面显示
+                            if (availableUsers.isNotEmpty()) {
+                                UserSwitcher(
+                                    currentUserId = currentUserId,
+                                    availableUsers = availableUsers,
+                                    onUserChanged = { newUserId ->
+                                        onEvent(TopAppBarEvent.UserChanged(newUserId))
+                                    }
+                                )
+                            }
+                        }
+
+                        NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
+                            // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
+                            IconButton(
+                                onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .size(48.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Refresh,
+                                    contentDescription = "Refresh",
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
                 }
-
-
-            }
-        }, colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface
-        )
+            }, 
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                actionIconContentColor = MaterialTheme.colorScheme.onSurface
+            )
         )
     }
 } 
