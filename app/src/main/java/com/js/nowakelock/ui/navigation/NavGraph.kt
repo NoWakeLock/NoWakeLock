@@ -20,6 +20,7 @@ import com.js.nowakelock.ui.screens.settings.SettingsScreen
 import com.js.nowakelock.ui.screens.das.ServiceScreen
 import com.js.nowakelock.ui.screens.das.WakelockScreen
 import com.js.nowakelock.ui.screens.dadetail.DADetailScreen
+import com.js.nowakelock.ui.screens.appdetail.AppDetailScreen
 import kotlinx.coroutines.launch
 
 /**
@@ -38,9 +39,7 @@ fun NoWakeLockNavGraph(
     currentUserId: Int = 0
 ) {
     NavHost(
-        navController = navController,
-        startDestination = NavRoutes.APPS,
-        modifier = modifier
+        navController = navController, startDestination = NavRoutes.APPS, modifier = modifier
     ) {
         composable(NavRoutes.APPS) {
             AppsScreen(
@@ -49,8 +48,14 @@ fun NoWakeLockNavGraph(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 onTopAppBarEvent = onTopAppBarEvent,
-                currentUserId = currentUserId
-            )
+                currentUserId = currentUserId,
+                navigateToAppDetail = { packageName ->
+                    navController.navigate(
+                        AppDetail(
+                            packageName = packageName, userId = currentUserId
+                        )
+                    )
+                })
         }
 
         composable(NavRoutes.WAKELOCKS) {
@@ -131,11 +136,28 @@ fun NoWakeLockNavGraph(
             }
 
             DADetailScreen(
-                daId = daDetail.daName,
-                type = type,
-                userId = daDetail.userId,
-                onNavigateBack = {
+                daId = daDetail.daName, type = type, userId = daDetail.userId, onNavigateBack = {
                     // Clear detail title when navigating away
+                    onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
+                    navController.navigateUp()
+                })
+        }
+
+        // App Detail Screen
+        composable<AppDetail> { backStackEntry ->
+            val appDetail = backStackEntry.toRoute<AppDetail>()
+            val appDetailTitle = stringResource(id = R.string.app_detail_title)
+            
+            // 设置详情页标题
+            LaunchedEffect(Unit) {
+                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(appDetailTitle))
+            }
+            
+            AppDetailScreen(
+                packageName = appDetail.packageName,
+                userId = appDetail.userId,
+                onNavigateBack = {
+                    // 导航返回时清除详情页标题
                     onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
                     navController.navigateUp()
                 }

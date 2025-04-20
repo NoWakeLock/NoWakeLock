@@ -155,4 +155,5 @@
     <!-- 实验功能设置 -->
     <string name="debug_mode">调试模式</string>
     <string name="debug_mode_desc">启用详细日志,用于排查问题</string>
+    <string name="error_loading_app_detail">Test</string>
 </resources>

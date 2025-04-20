@@ -121,7 +121,8 @@
     <!-- Experimental features -->
     <string name="debug_mode">Mode de débogage</string>
     <string name="debug_mode_desc">Activer le mode de débogage pour les problèmes de réveil/alarme/service non listés, exporter le journal complet dans Xposed et vous pourrez me l\'envoyer dans mon canal pour investiguer le problème.</string>
-    
+    <string name="error_loading_app_detail">Test</string>
+
     <string-array name="scopes" translatable="false">
         <item>android</item>
         <item>com.android.providers.settings</item>

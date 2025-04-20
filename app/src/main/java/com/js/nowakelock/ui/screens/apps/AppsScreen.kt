@@ -43,7 +43,8 @@ fun AppsScreen(
     searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit = {},
     onTopAppBarEvent: (TopAppBarEvent) -> Unit = {},
-    currentUserId: Int = 0
+    currentUserId: Int = 0,
+    navigateToAppDetail: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -152,7 +153,10 @@ fun AppsScreen(
                         ) { app ->
                             AppListItem(
                                 appWithStats = app,
-                                onItemClick = onAppClick
+                                onItemClick = {
+                                    onAppClick(it)
+                                    navigateToAppDetail(it.appInfo.packageName)
+                                }
                             )
                         }
                     }

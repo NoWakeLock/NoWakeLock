@@ -14,6 +14,7 @@ object NavRoutes {
     const val SETTINGS = "settings"
 
     const val DADETAIL = "DADetail"
+    const val APPDETAIL = "AppDetail"
 }
 
 /**
@@ -30,4 +31,16 @@ data class DADetail(
     val packageName: String? = null,
     val userId: Int = 0,
     val type: String = Type.UnKnow.value
+)
+
+/**
+ * Serializable navigation destination for the App detail screen
+ * 
+ * @param packageName 应用包名
+ * @param userId 用户ID
+ */
+@Serializable
+data class AppDetail(
+    val packageName: String,
+    val userId: Int = 0
 )

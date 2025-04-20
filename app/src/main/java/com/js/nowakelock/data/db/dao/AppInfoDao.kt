@@ -32,7 +32,11 @@ interface AppInfoDao : BaseDao<AppInfo> {
 
 
     @Query("select * from appInfo where packageName = :packageName and userId = :userId")
+    fun loadAppInfoFw(packageName: String, userId: Int = 0): Flow<AppInfo>
+
+    @Query("select * from appInfo where packageName = :packageName and userId = :userId")
     suspend fun loadAppInfo(packageName: String, userId: Int = 0): AppInfo
+
 
 //    @Query("select * from AppCount")
 //    suspend fun loadAppCount(): List<AppCount>
