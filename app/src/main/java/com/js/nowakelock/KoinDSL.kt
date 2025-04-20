@@ -1,6 +1,8 @@
 package com.js.nowakelock
 
 import com.js.nowakelock.data.db.AppDatabase
+import com.js.nowakelock.data.repository.appDetail.AppDetailRepository
+import com.js.nowakelock.data.repository.appDetail.AppDetailRepositoryImpl
 import com.js.nowakelock.data.repository.appdas.AppDasAR
 import com.js.nowakelock.data.repository.appdas.AppDasRepo
 import com.js.nowakelock.data.repository.backup.BackupRepo
@@ -8,8 +10,6 @@ import com.js.nowakelock.data.repository.backup.BackupManager
 import com.js.nowakelock.data.repository.daitem.WakelockRepositoryImpl
 import com.js.nowakelock.data.repository.daitem.AlarmRepositoryImpl
 import com.js.nowakelock.data.repository.daitem.ServiceRepositoryImpl
-import com.js.nowakelock.ui.screens.alarms.AlarmsViewModel
-import com.js.nowakelock.ui.screens.services.ServicesViewModel
 import com.js.nowakelock.ui.screens.settings.SettingsViewModel
 import com.js.nowakelock.ui.screens.das.DAsViewModel
 import com.js.nowakelock.ui.screens.apps.AppsViewModel
@@ -18,6 +18,7 @@ import com.js.nowakelock.data.repository.daDetail.DAInfoRepositoryImpl
 import com.js.nowakelock.data.repository.daDetail.DADetailRepository
 import com.js.nowakelock.data.repository.daDetail.DADetailRepositoryImpl
 import com.js.nowakelock.ui.screens.dadetail.DADetailViewModel
+import com.js.nowakelock.ui.screens.appdetail.AppDetailViewModel
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -45,6 +46,7 @@ fun appModule() = module {
     single { WakelockRepositoryImpl(get(), get()) }
     single { AlarmRepositoryImpl(get(), get()) }
     single { ServiceRepositoryImpl(get(), get()) }
+    single { AppDetailRepositoryImpl(get(), get(), get()) }
 
     //
     singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
@@ -64,8 +66,6 @@ fun appModule() = module {
     }
 
     viewModelOf(::AppsViewModel)
-    viewModelOf(::AlarmsViewModel)
-    viewModelOf(::ServicesViewModel)
     viewModelOf(::SettingsViewModel)
 
     viewModel {
@@ -73,6 +73,13 @@ fun appModule() = module {
             savedStateHandle = get(),
             daDetailRepository = get<DADetailRepository>(),
             daInfoRepository = get<DAInfoRepository>()
+        )
+    }
+
+    viewModel {
+        AppDetailViewModel(
+            savedStateHandle = get(),
+            appDasRepo = get<AppDetailRepositoryImpl>()
         )
     }
 

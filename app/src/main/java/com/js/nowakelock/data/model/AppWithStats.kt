@@ -11,6 +11,10 @@ data class AppWithStats(
     val wakelockCount: Int = 0,
     val wakelockBlockedCount: Int = 0, 
     val wakelockTime: Long = 0,
+    val alarmCount: Int = 0,
+    val alarmBlockedCount: Int = 0,
+    val serviceCount: Int = 0,
+    val serviceBlockedCount: Int = 0,
     val wakelockNames: List<String> = emptyList()
 ) {
     /**

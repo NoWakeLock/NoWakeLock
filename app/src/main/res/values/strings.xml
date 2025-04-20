@@ -197,4 +197,22 @@
     <string name="chinese_language_name">中文</string>
     <string name="french_language_name">Français</string>
     <string name="system_language_name">Follow System</string>
+
+    <string name="app_detail_title">应用详情</string>
+    <string name="back">返回</string>
+    <string name="app_statistics">应用统计</string>
+    <string name="wakelock_statistics">唤醒锁统计</string>
+    <string name="alarm_statistics">闹钟统计</string>
+    <string name="service_statistics">服务统计</string>
+    <string name="total_wakelocks">唤醒锁总数</string>
+    <string name="blocked_wakelocks">已屏蔽唤醒锁</string>
+    <string name="total_alarms">闹钟总数</string>
+    <string name="blocked_alarms">已屏蔽闹钟</string>
+    <string name="total_services">服务总数</string>
+    <string name="blocked_services">已屏蔽服务</string>
+    <string name="total_time">总时间</string>
+    <string name="saved_time">节省时间</string>
+    <string name="allowed">允许</string>
+    <string name="unknown_error">未知错误</string>
+    <string name="error_loading_app_detail">Test</string>
 </resources>
