@@ -19,7 +19,7 @@ object NavRoutes {
 
 /**
  * Serializable navigation destination for the DA detail screen
- * 
+ *
  * @param daName da name
  * @param packageName package name
  * @param userId user id
@@ -35,12 +35,13 @@ data class DADetail(
 
 /**
  * Serializable navigation destination for the App detail screen
- * 
+ *
  * @param packageName 应用包名
  * @param userId 用户ID
  */
 @Serializable
 data class AppDetail(
     val packageName: String,
-    val userId: Int = 0
+    val userId: Int = 0,
+    val label: String
 )

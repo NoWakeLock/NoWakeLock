@@ -106,14 +106,14 @@ fun AppDetailContent(
         modifier = Modifier.fillMaxSize()
     ) {
         // 应用信息头部
-        AppInfoHeader(
-            appWithStats = appInfo,
-            isBlocked = isBlocked,
-            onToggleBlock = onToggleBlock
-        )
+//        AppInfoHeader(
+//            appWithStats = appInfo,
+//            isBlocked = isBlocked,
+//            onToggleBlock = onToggleBlock
+//        )
 
         // 统计摘要卡片
-        StatisticsSummaryRow(appInfo = appInfo)
+//        StatisticsSummaryRow(appInfo = appInfo)
 
         // 标签页
         TabRow(
@@ -140,7 +140,7 @@ fun AppDetailContent(
 }
 
 /**
- * 应用信息头部
+ * App
  */
 @Composable
 fun AppInfoHeader(
@@ -229,61 +229,61 @@ fun AppInfoHeader(
     }
 }
 
-/**
- * 统计摘要行
- */
-@Composable
-fun StatisticsSummaryRow(appInfo: AppWithStats) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        // 唤醒锁统计
-        StatisticSummaryItem(
-            value = appInfo.wakelockCount.toString(),
-            label = stringResource(R.string.WakeLock),
-            modifier = Modifier.weight(1f)
-        )
-
-        // 闹钟统计
-        StatisticSummaryItem(
-            value = appInfo.alarmCount.toString(),
-            label = stringResource(R.string.Alarm),
-            modifier = Modifier.weight(1f)
-        )
-
-        // 服务统计
-        StatisticSummaryItem(
-            value = appInfo.serviceCount.toString(),
-            label = stringResource(R.string.Service),
-            modifier = Modifier.weight(1f)
-        )
-
-        // 总时间
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "5h",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "32m",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = stringResource(R.string.total_time),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
+///**
+// * 统计摘要行
+// */
+//@Composable
+//fun StatisticsSummaryRow(appInfo: AppWithStats) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 16.dp),
+//        horizontalArrangement = Arrangement.SpaceEvenly
+//    ) {
+//        // 唤醒锁统计
+//        StatisticSummaryItem(
+//            value = appInfo.wakelockCount.toString(),
+//            label = stringResource(R.string.WakeLock),
+//            modifier = Modifier.weight(1f)
+//        )
+//
+//        // 闹钟统计
+//        StatisticSummaryItem(
+//            value = appInfo.alarmCount.toString(),
+//            label = stringResource(R.string.Alarm),
+//            modifier = Modifier.weight(1f)
+//        )
+//
+//        // 服务统计
+//        StatisticSummaryItem(
+//            value = appInfo.serviceCount.toString(),
+//            label = stringResource(R.string.Service),
+//            modifier = Modifier.weight(1f)
+//        )
+//
+//        // 总时间
+//        Column(
+//            modifier = Modifier.weight(1f),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Text(
+//                text = "5h",
+//                style = MaterialTheme.typography.headlineMedium,
+//                fontWeight = FontWeight.Bold
+//            )
+//            Text(
+//                text = "32m",
+//                style = MaterialTheme.typography.titleMedium,
+//                fontWeight = FontWeight.SemiBold
+//            )
+//            Text(
+//                text = stringResource(R.string.total_time),
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant
+//            )
+//        }
+//    }
+//}
 
 /**
  * 统计摘要项

@@ -1,12 +1,10 @@
 package com.js.nowakelock.ui.screens.apps
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
@@ -17,15 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.js.nowakelock.R
 import com.js.nowakelock.data.model.AppWithStats
 import com.js.nowakelock.ui.components.TopAppBarEvent
 import com.js.nowakelock.ui.screens.apps.components.AppListItem
 import com.js.nowakelock.ui.screens.apps.components.AppsFilterSection
 import com.js.nowakelock.ui.screens.apps.components.AppsSortSection
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -44,7 +39,7 @@ fun AppsScreen(
     onSearchQueryChange: (String) -> Unit = {},
     onTopAppBarEvent: (TopAppBarEvent) -> Unit = {},
     currentUserId: Int = 0,
-    navigateToAppDetail: (String) -> Unit = {}
+    navigateToAppDetail: (String, String) -> Unit = { s: String, s1: String -> {}}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -155,7 +150,7 @@ fun AppsScreen(
                                 appWithStats = app,
                                 onItemClick = {
                                     onAppClick(it)
-                                    navigateToAppDetail(it.appInfo.packageName)
+                                    navigateToAppDetail(it.appInfo.packageName, it.appInfo.label)
                                 }
                             )
                         }

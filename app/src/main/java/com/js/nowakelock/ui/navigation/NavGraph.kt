@@ -49,10 +49,10 @@ fun NoWakeLockNavGraph(
                 onSearchQueryChange = onSearchQueryChange,
                 onTopAppBarEvent = onTopAppBarEvent,
                 currentUserId = currentUserId,
-                navigateToAppDetail = { packageName ->
+                navigateToAppDetail = { packageName, label ->
                     navController.navigate(
                         AppDetail(
-                            packageName = packageName, userId = currentUserId
+                            packageName = packageName, userId = currentUserId, label = label
                         )
                     )
                 })
@@ -146,18 +146,16 @@ fun NoWakeLockNavGraph(
         // App Detail Screen
         composable<AppDetail> { backStackEntry ->
             val appDetail = backStackEntry.toRoute<AppDetail>()
-            val appDetailTitle = stringResource(id = R.string.app_detail_title)
-            
-            // 设置详情页标题
-            LaunchedEffect(Unit) {
-                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(appDetailTitle))
+            val label = appDetail.label
+            LaunchedEffect(label) {
+                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(label))
             }
-            
+
             AppDetailScreen(
                 packageName = appDetail.packageName,
                 userId = appDetail.userId,
                 onNavigateBack = {
-                    // 导航返回时清除详情页标题
+                    // Clear detail title when navigating away
                     onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
                     navController.navigateUp()
                 }
