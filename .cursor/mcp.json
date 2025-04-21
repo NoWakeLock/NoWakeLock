@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "filesystem": {
+            "command": "cmd.exe",
+            "args": [
+                "/c", 
+                "C:\\Users\\stati\\scoop\\shims\\npm.cmd", 
+                "exec", 
+                "@modelcontextprotocol/server-filesystem", 
+                "C:/Android/repository/NoWakeLock"
+            ]
+        }
+    }
+}
