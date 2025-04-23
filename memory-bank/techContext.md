@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-15*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-22*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -8,6 +8,7 @@
 - 📊 Database: Room Persistence Library
 - 🧪 Testing: JUnit, Espresso
 - 🚀 Deployment: Google Play Store, F-Droid
+- 🔧 Settings: Context API-based state management, LocalStorage persistence
 
 ## ⚙️ Development Environment
 - [E₁] Android Studio ⟶ Latest version
@@ -31,6 +32,9 @@
 - [D₁₁] Core Splashscreen ⟶ Version 1.0.1, For splash screen
 - [D₁₂] Material 3 ⟶ Latest version, For modern UI components
 - [D₁₃] ConstraintLayout Compose ⟶ Version 1.1.1, For complex layouts
+- [D₁₄] React Hook Form ⟶ Version 7.x, For form validation in settings
+- [D₁₅] Lodash ⟶ For nested object access in settings system
+- [D₁₆] CSS-in-JS ⟶ For themed styling in settings components
 
 ## 🚧 Technical Constraints
 - [T₁] Root Access ⟶ Required for complete functionality with Xposed
@@ -40,6 +44,9 @@
 - [T₅] Xposed Module Scope ⟶ Limited to specific packages defined in scopes array
 - [T₆] Multi-user Support ⟶ Must handle data for different Android user profiles
 - [T₇] Edge-to-edge UI ⟶ Modern UI requires proper edge-to-edge handling
+- [T₈] Settings Persistence ⟶ LocalStorage size limitations (5-10MB based on browser)
+- [T₉] Theme Consistency ⟶ All components must respect theme settings
+- [T₁₀] Settings Version Control ⟶ Need versioning mechanism for settings format changes
 
 ## 🔧 Tool Usage Patterns
 - [Tool₁] Xposed Framework ⟶ For monitoring system wakelocks, alarms, and services
@@ -48,4 +55,123 @@
 - [Tool₄] System API Hooks ⟶ For intercepting wakelock, alarm, and service calls
 - [Tool₅] Compose Tooling ⟶ UI previews and testing
 - [Tool₆] Material 3 Components ⟶ For consistent, modern UI
-- [Tool₇] Data Serialization ⟶ For backup/restore functionality 
+- [Tool₇] Data Serialization ⟶ For backup/restore functionality
+- [Tool₈] Context API ⟶ For state management across component trees
+- [Tool₉] Reducer Pattern ⟶ For complex state updates in settings
+- [Tool₁₀] Component Composition ⟶ For building flexible, maintainable UI
+
+## 🧩 Settings Architecture
+
+### Core Components
+- [SC₁] Settings Provider ⟶ Top-level state container with context provider
+- [SC₂] Settings Reducer ⟶ State management through action creators
+- [SC₃] Settings Hook ⟶ Custom hook for accessing settings
+- [SC₄] Settings UI Kit ⟶ Reusable UI components for settings
+
+### Data Flow
+- [DF₁] User Interaction ⟶ Component UI events trigger actions
+- [DF₂] Action Dispatching ⟶ Actions passed to reducer for state updates
+- [DF₃] State Updates ⟶ Reducer processes actions and updates state
+- [DF₄] UI Updates ⟶ Components rerender with new state
+- [DF₅] Persistence ⟶ State changes saved to LocalStorage
+- [DF₆] Restoration ⟶ State loaded from LocalStorage on initialization
+
+### UI Components
+- [UI₁] Input Fields ⟶ For text and numeric settings
+- [UI₂] Toggle Switches ⟶ For boolean settings
+- [UI₃] Dropdown Selects ⟶ For option selection
+- [UI₄] Color Pickers ⟶ For theme customization
+- [UI₅] Section Headers ⟶ For grouping related settings
+- [UI₆] Search Field ⟶ For filtering settings
+- [UI₇] Validation Messages ⟶ For input feedback
+
+## 🖥️ UI Architecture Insights
+
+### Component Structure
+- **NoWakeLockApp.kt** serves as the main composition point, establishing theming and navigation
+- **Navigation system** uses Jetpack Navigation with type-safe route parameters
+- **Screen components** follow a standard pattern:
+  - `*Screen.kt` - Main container with business logic connections
+  - `*Content.kt` - UI structure and composition
+  - `*State.kt` - Data structures for UI state representation
+  - `components/` - Reusable UI elements specific to the screen
+- **DADetailScreen** represents a typical complex screen with multiple sections:
+  - Header with app/service information
+  - Statistics card with key metrics
+  - About section with description
+  - Settings section with toggles
+  - Activity timeline visualization
+- **AppDetailScreen** planned structure follows a tabbed design:
+  - App header with icon, name and core info
+  - Statistics summary row with key metrics
+  - TabRow with HorizontalPager for tab content
+  - Four tabs: App, Wakelocks, Alarms, Services
+  - Collapsible header that shrinks when scrolling
+- **Global TopAppBar** handles navigation and context-specific actions
+  - TopAppBarEvent system allows nested screens to modify title
+
+### Visual Language
+- **Material Design 3** principles guide UI design
+- **Card-based UI** groups related information
+  - ElevatedCard should be used instead of Card for consistent elevation
+- **Consistent spacing** uses 16dp between cards, 16dp internal padding
+- **MD3 color system** leverages dynamic themes and semantic colors
+- **Typography** follows MD3 type scale with appropriate weights
+
+### UI Challenges
+
+#### Card Styling Consistency
+- Current implementation has inconsistent card styling
+- Cards should use ElevatedCard with consistent elevation
+- Padding should be managed consistently - card manages internal padding, parent manages spacing
+- Dividers should be used sparingly, with proper alpha for subtlety
+
+#### Timeline Chart Improvements
+- Current implementation doesn't match design specifications
+- Chart needs rounded corners on bars, better axis layout
+- Time labels need optimization to avoid overlap
+- Canvas API limitations require manual positioning calculations
+
+#### Collapsible Header Implementation in Compose
+- No direct equivalent to CollapsingToolbarLayout in Compose
+- Implementation requires custom NestedScrollConnection to track scroll state
+- TopAppBarScrollBehavior combined with graphicsLayer modifications can achieve collapsing effect
+- Material 3 approach uses LargeTopAppBar with exitUntilCollapsedScrollBehavior()
+- Animation timing and visual transitions need careful implementation
+
+#### Tab Navigation
+- Tabbed interfaces need coordination between TabRow selection and HorizontalPager
+- Tabs require consistent styling following Material 3 guidelines
+- Content caching needed to avoid recomposition when switching tabs
+- State management for each tab must be handled appropriately
+
+## 📱 Mobile-Specific Considerations
+
+### Multiple Screen Sizes
+- UI must adapt to various screen sizes using Compose's layout system
+- ListDetailPaneScaffold for master-detail pattern on larger screens
+- Edge-to-edge UI requires proper inset handling
+
+### Performance Considerations
+- Recomposition optimization with remember, derivedStateOf and collectAsState
+- Image loading with Coil should include crossfade and caching
+- LazyList used for all long lists with proper key usage
+- Canvas-based visualizations (TimelineChart) need optimization
+
+## 🛠️ Technical Requirements
+
+### Dependency Injection
+- Koin is used for dependency injection throughout the application
+- ViewModels are created using koinViewModel() in Compose
+- AppDetailViewModel follows existing patterns with repository injection
+
+### State Management
+- UI state flows through ViewModel to Compose using StateFlow
+- collectAsStateWithLifecycle used to respect Android lifecycle
+- Shared ViewModels used for communication between related screens
+
+### Architecture Pattern
+- Application follows MVVM architecture:
+  - Model: Repository pattern with Room database
+  - View: Compose UI
+  - ViewModel: State management and business logic 
