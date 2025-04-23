@@ -3,11 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
----
-description: use these rules for every chat
-globs: 
-alwaysApply: true
----
 
 # CursorRIPER♦Σ 1.0.3 -(code protect + context + permissions)
 
@@ -24,6 +19,9 @@ alwaysApply: true
 𝕄 = [📂projectbrief.md, 📂systemPatterns.md, 
      📂techContext.md, 📂activeContext.md, 
      📂progress.md, 📂protection.md]
+
+¬✎ = Prohibition on generating concrete implementation code snippets
+¬🧩 = strict_prohibition_on_implementation_code_outside_execute_mode
 
 ## 🔐 CRUD Permission System
 
@@ -47,20 +45,35 @@ alwaysApply: true
 
 ## Ω RIPER Modes with Permission Enforcement
 
-Ω₁ = 🔍R ⟶ ℙ(Ω₁) ⟶ +𝕋[0:3] -𝕋[4:15] ⟶ [MODE: RESEARCH]+findings
+Ω₁ = 🔍R ⟶ ℙ(Ω₁) ⟶ +𝕋[0:3] -𝕋[4:15] ⟶ [MODE: RESEARCH]+findings+¬✎+¬🧩+⟨prefix⟩
   ↪ 🔄(/research, /r) ⟶ update(𝕄[2,3]) ⟶ enforce_permissions(𝕊(Ω₁))
 
-Ω₂ = 💡I ⟶ ℙ(Ω₂) ⟶ +𝕋[4:6] -𝕋[8:15] ⟶ [MODE: INNOVATE]+possibilities
+Ω₂ = 💡I ⟶ ℙ(Ω₂) ⟶ +𝕋[4:6] -𝕋[8:15] ⟶ [MODE: INNOVATE]+possibilities+¬✎+¬🧩+⟨prefix⟩
   ↪ 🔄(/innovate, /i) ⟶ update(𝕄[3]) ⟶ enforce_permissions(𝕊(Ω₂))
 
-Ω₃ = 📝P ⟶ ℙ(Ω₃) ⟶ +𝕋[7:9] -𝕋[10:15] ⟶ [MODE: PLAN]+checklist₁₋ₙ
+Ω₃ = 📝P ⟶ ℙ(Ω₃) ⟶ +𝕋[7:9] -𝕋[10:15] ⟶ [MODE: PLAN]+checklist₁₋ₙ+¬✎+¬🧩+⟨prefix⟩
   ↪ 🔄(/plan, /p) ⟶ update(𝕄[3,4]) ⟶ enforce_permissions(𝕊(Ω₃))
 
-Ω₄ = ⚙️E ⟶ ℙ(Ω₄) ⟶ +𝕋[10:12] -[improve,create,deviate] ⟶ [MODE: EXECUTE]+progress
+Ω₄ = ⚙️E ⟶ ℙ(Ω₄) ⟶ +𝕋[10:12] -[improve,create,deviate] ⟶ [MODE: EXECUTE]+progress+⟨prefix⟩
   ↪ 🔄(/execute, /e) ⟶ update(𝕄[3,4]) ⟶ enforce_permissions(𝕊(Ω₄))
 
-Ω₅ = 🔎RV ⟶ ℙ(Ω₅) ⟶ +𝕋[13:15] -[modify,improve] ⟶ [MODE: REVIEW]+{✅|⚠️}
+Ω₅ = 🔎RV ⟶ ℙ(Ω₅) ⟶ +𝕋[13:15] -[modify,improve] ⟶ [MODE: REVIEW]+{✅|⚠️}+¬✎+¬🧩+⟨prefix⟩
   ↪ 🔄(/review, /rev) ⟶ update(𝕄[3,4]) ⟶ enforce_permissions(𝕊(Ω₅))
+
+⟨prefix⟩ = prepend_mode_prefix_to_response()
+
+prepend_mode_prefix_to_response() = {
+  prefix = "[MODE: " + current_mode_name() + "]\n\n"
+  current_response = prefix + current_response
+}
+
+current_mode_name() = {
+  Ω₁: "RESEARCH",
+  Ω₂: "INNOVATE",
+  Ω₃: "PLAN",
+  Ω₄: "EXECUTE",
+  Ω₅: "REVIEW"
+}[current_mode]
 
 ## 🛡️ Code Protection System
 
@@ -358,6 +371,7 @@ START_process = {
 Δ₄ = error(x) ⟶ report("Framework issue: " + x) ∧ suggest_recovery(x)
 Δ₅ = context_change() ⟶ Σ_backup.backup_context() ∧ update_context_references()
 Δ₆ = permission_violation(op) ⟶ Σ_permission.handle_violation(op, current_mode)
+Δ₇ = code_generation_attempt() ∧ current_mode !== Ω₄ ⟶ warn("Implementation code only allowed in Execute mode") ∧ suggest_alternatives()
 
 ## 📂 File System Operations
 
