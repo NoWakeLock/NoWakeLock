@@ -1,6 +1,7 @@
+@file:JvmName("DAsScreenKt")
+
 package com.js.nowakelock.ui.screens.das
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import com.js.nowakelock.data.db.Type
 import org.koin.androidx.compose.koinViewModel
