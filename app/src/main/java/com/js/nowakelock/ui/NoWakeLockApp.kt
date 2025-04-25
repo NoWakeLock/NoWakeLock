@@ -135,7 +135,10 @@ fun NoWakeLockApp(
                 },
                 bottomBar = {
                     if (showBottomBar) {
-                        NoWakeLockBottomNavBar(navController = navController)
+                        NoWakeLockBottomNavBar(
+                            navController = navController,
+                            currentUserId = currentUserId
+                        )
                     }
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) },

@@ -54,18 +54,33 @@ fun appModule() = module {
 
     // ViewModel
     viewModel(named("WakelockViewModel")) {
-        DAsViewModel(get<WakelockRepositoryImpl>())
+        DAsViewModel(
+            daRepository = get<WakelockRepositoryImpl>(),
+            savedStateHandle = get()
+        )
     }
 
     viewModel(named("AlarmViewModel")) {
-        DAsViewModel(get<AlarmRepositoryImpl>())
+        DAsViewModel(
+            daRepository = get<AlarmRepositoryImpl>(),
+            savedStateHandle = get()
+        )
     }
 
     viewModel(named("ServiceViewModel")) {
-        DAsViewModel(get<ServiceRepositoryImpl>())
+        DAsViewModel(
+            daRepository = get<ServiceRepositoryImpl>(),
+            savedStateHandle = get()
+        )
     }
 
-    viewModelOf(::AppsViewModel)
+    viewModel {
+        AppsViewModel(
+            appDasRepo = get(),
+            savedStateHandle = get()
+        )
+    }
+
     viewModelOf(::SettingsViewModel)
 
     viewModel {

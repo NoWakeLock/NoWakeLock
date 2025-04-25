@@ -1,5 +1,3 @@
-@file:JvmName("DAsScreenKt")
-
 package com.js.nowakelock.ui.screens.das
 
 import androidx.compose.runtime.Composable
@@ -16,7 +14,9 @@ fun WakelockScreen(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    packageName: String? = null,
+    userId: Int? = null
 ) {
     DAsScreen(
         type = type,
@@ -25,7 +25,9 @@ fun WakelockScreen(
         isSearchActive = isSearchActive,
         onSearchActiveChange = onSearchActiveChange,
         searchQuery = searchQuery,
-        onSearchQueryChange = onSearchQueryChange
+        onSearchQueryChange = onSearchQueryChange,
+        packageName = packageName,
+        userId = userId
     )
 }
 
@@ -37,7 +39,9 @@ fun AlarmScreen(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    packageName: String? = null,
+    userId: Int? = null
 ) {
     DAsScreen(
         type = type,
@@ -46,7 +50,9 @@ fun AlarmScreen(
         isSearchActive = isSearchActive,
         onSearchActiveChange = onSearchActiveChange,
         searchQuery = searchQuery,
-        onSearchQueryChange = onSearchQueryChange
+        onSearchQueryChange = onSearchQueryChange,
+        packageName = packageName,
+        userId = userId
     )
 }
 
@@ -58,7 +64,9 @@ fun ServiceScreen(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    packageName: String? = null,
+    userId: Int? = null
 ) {
     DAsScreen(
         type = type,
@@ -67,6 +75,8 @@ fun ServiceScreen(
         isSearchActive = isSearchActive,
         onSearchActiveChange = onSearchActiveChange,
         searchQuery = searchQuery,
-        onSearchQueryChange = onSearchQueryChange
+        onSearchQueryChange = onSearchQueryChange,
+        packageName = packageName,
+        userId = userId
     )
 }
