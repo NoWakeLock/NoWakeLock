@@ -33,7 +33,9 @@ fun DAsScreen(
     isSearchActive: Boolean = false,
     onSearchActiveChange: (Boolean) -> Unit = {},
     searchQuery: String = "",
-    onSearchQueryChange: (String) -> Unit = {}
+    onSearchQueryChange: (String) -> Unit = {},
+    packageName: String? = null,
+    userId: Int? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,6 +48,11 @@ fun DAsScreen(
     LaunchedEffect(isSearchActive, searchQuery) {
         viewModel.setSearchActive(isSearchActive)
         viewModel.updateSearchQuery(searchQuery)
+    }
+    
+    // 设置包名和用户ID筛选器
+    LaunchedEffect(packageName, userId) {
+        viewModel.setAppFilter(packageName, userId)
     }
 
     // Top app bar scrolling behavior 

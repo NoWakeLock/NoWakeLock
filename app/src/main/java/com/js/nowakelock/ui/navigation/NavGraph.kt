@@ -39,26 +39,36 @@ fun NoWakeLockNavGraph(
     currentUserId: Int = 0
 ) {
     NavHost(
-        navController = navController, startDestination = NavRoutes.APPS, modifier = modifier
+        navController = navController, 
+        startDestination = Apps(),
+        modifier = modifier
     ) {
-        composable(NavRoutes.APPS) {
+        // 使用类型导航
+        composable<Apps> { backStackEntry ->
+            val appsParams = backStackEntry.toRoute<Apps>()
+            
             AppsScreen(
                 isSearchActive = isSearchActive,
                 onSearchActiveChange = onSearchActiveChange,
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 onTopAppBarEvent = onTopAppBarEvent,
-                currentUserId = currentUserId,
+                currentUserId = currentUserId,  // 使用外部传入的值
                 navigateToAppDetail = { packageName, label ->
                     navController.navigate(
                         AppDetail(
-                            packageName = packageName, userId = currentUserId, label = label
+                            packageName = packageName, 
+                            userId = currentUserId, 
+                            label = label
                         )
                     )
-                })
+                }
+            )
         }
 
-        composable(NavRoutes.WAKELOCKS) {
+        composable<Wakelocks> { backStackEntry ->
+            val params = backStackEntry.toRoute<Wakelocks>()
+            
             WakelockScreen(
                 navigateToDADetail = { name, packageName ->
                     navController.navigate(
@@ -73,11 +83,15 @@ fun NoWakeLockNavGraph(
                 isSearchActive = isSearchActive,
                 onSearchActiveChange = onSearchActiveChange,
                 searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange
+                onSearchQueryChange = onSearchQueryChange,
+                packageName = params.packageName,
+                userId = params.userId
             )
         }
 
-        composable(NavRoutes.ALARMS) {
+        composable<Alarms> { backStackEntry ->
+            val params = backStackEntry.toRoute<Alarms>()
+            
             AlarmScreen(
                 navigateToDADetail = { name, packageName ->
                     navController.navigate(
@@ -92,11 +106,15 @@ fun NoWakeLockNavGraph(
                 isSearchActive = isSearchActive,
                 onSearchActiveChange = onSearchActiveChange,
                 searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange
+                onSearchQueryChange = onSearchQueryChange,
+                packageName = params.packageName,
+                userId = params.userId
             )
         }
 
-        composable(NavRoutes.SERVICES) {
+        composable<Services> { backStackEntry ->
+            val params = backStackEntry.toRoute<Services>()
+            
             ServiceScreen(
                 navigateToDADetail = { name, packageName ->
                     navController.navigate(
@@ -111,7 +129,9 @@ fun NoWakeLockNavGraph(
                 isSearchActive = isSearchActive,
                 onSearchActiveChange = onSearchActiveChange,
                 searchQuery = searchQuery,
-                onSearchQueryChange = onSearchQueryChange
+                onSearchQueryChange = onSearchQueryChange,
+                packageName = params.packageName,
+                userId = params.userId
             )
         }
 
@@ -136,11 +156,15 @@ fun NoWakeLockNavGraph(
             }
 
             DADetailScreen(
-                daId = daDetail.daName, type = type, userId = daDetail.userId, onNavigateBack = {
+                daId = daDetail.daName, 
+                type = type, 
+                userId = daDetail.userId, 
+                onNavigateBack = {
                     // Clear detail title when navigating away
                     onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
                     navController.navigateUp()
-                })
+                }
+            )
         }
 
         // App Detail Screen

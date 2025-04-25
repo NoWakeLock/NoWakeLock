@@ -1,6 +1,10 @@
 package com.js.nowakelock.ui.navigation
 
 import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.ui.screens.apps.FilterOption
+import com.js.nowakelock.ui.screens.apps.SortOption
+import com.js.nowakelock.ui.screens.das.DAFilterOption
+import com.js.nowakelock.ui.screens.das.DASortOption
 import kotlinx.serialization.Serializable
 
 /**
@@ -16,6 +20,76 @@ object NavRoutes {
     const val DADETAIL = "DADetail"
     const val APPDETAIL = "AppDetail"
 }
+
+/**
+ * 应用屏幕的类型化导航目标
+ *
+ * @param currentUserId 当前用户ID
+ * @param searchQuery 搜索查询
+ * @param filterOption 过滤选项
+ * @param sortOption 排序选项
+ */
+@Serializable
+data class Apps(
+    val currentUserId: Int = 0,
+    val searchQuery: String = "",
+    val filterOption: FilterOption = FilterOption.ALL,
+    val sortOption: SortOption = SortOption.NAME
+)
+
+/**
+ * Wakelock屏幕的类型化导航目标
+ *
+ * @param packageName 包名过滤器
+ * @param userId 用户ID过滤器
+ * @param searchQuery 搜索查询
+ * @param filterOption 过滤选项
+ * @param sortOption 排序选项
+ */
+@Serializable
+data class Wakelocks(
+    val packageName: String? = null,
+    val userId: Int? = null,
+    val searchQuery: String = "",
+    val filterOption: DAFilterOption = DAFilterOption.ALL,
+    val sortOption: DASortOption = DASortOption.NAME
+)
+
+/**
+ * Alarm屏幕的类型化导航目标
+ *
+ * @param packageName 包名过滤器
+ * @param userId 用户ID过滤器
+ * @param searchQuery 搜索查询
+ * @param filterOption 过滤选项
+ * @param sortOption 排序选项
+ */
+@Serializable
+data class Alarms(
+    val packageName: String? = null,
+    val userId: Int? = null,
+    val searchQuery: String = "",
+    val filterOption: DAFilterOption = DAFilterOption.ALL,
+    val sortOption: DASortOption = DASortOption.NAME
+)
+
+/**
+ * Service屏幕的类型化导航目标
+ *
+ * @param packageName 包名过滤器
+ * @param userId 用户ID过滤器
+ * @param searchQuery 搜索查询
+ * @param filterOption 过滤选项
+ * @param sortOption 排序选项
+ */
+@Serializable
+data class Services(
+    val packageName: String? = null,
+    val userId: Int? = null,
+    val searchQuery: String = "",
+    val filterOption: DAFilterOption = DAFilterOption.ALL,
+    val sortOption: DASortOption = DASortOption.NAME
+)
 
 /**
  * Serializable navigation destination for the DA detail screen
