@@ -111,7 +111,7 @@ dependencies {
     //compose
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.activity:activity-compose:1.10.1'
-    implementation platform('androidx.compose:compose-bom:2025.04.00')
+    implementation platform('androidx.compose:compose-bom:2025.04.01')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
@@ -122,20 +122,20 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
 
 
-    implementation "androidx.datastore:datastore-preferences:1.1.4"
+    implementation "androidx.datastore:datastore-preferences:1.1.5"
     implementation 'androidx.compose.material:material-icons-extended' // 更多图标
     // SystemUiController已弃用，已改用官方的enableEdgeToEdge() API
     // implementation "com.google.accompanist:accompanist-systemuicontroller:0.34.0" // 系统 UI 控制
-    implementation("androidx.compose.material:material:1.8.0-rc03") // 下拉刷新
+    implementation("androidx.compose.material:material:1.8.0") // 下拉刷新
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    androidTestImplementation platform('androidx.compose:compose-bom:2025.03.01')
+    androidTestImplementation platform('androidx.compose:compose-bom:2025.04.01')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
 
     //Room
-    def room_version = "2.7.0"
+    def room_version = "2.7.1"
     implementation "androidx.room:room-runtime:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version" // Kotlin Extensions
