@@ -1,9 +1,9 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-25*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-26*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🔮 Current Focus
-Navigation system improvement with SavedStateHandle integration for reliable state management and robust screen transitions
+代码重构与组织优化，提高项目代码质量和可维护性，特别是UI组件的模块化设计
 
 ## 🔄 Recent Changes
 - [Change₁] 2025-04-15 ⟶ RIPER framework initialization
@@ -27,6 +27,7 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
 - [Change₁₅] 2025-04-21 ⟶ Analyzed unixTimeBoot implementation performance implications and database issues
 - [Change₁₆] 2025-04-22 ⟶ Completed detailed analysis of settings interface implementation architecture
 - [Change₁₇] 2025-04-22 ⟶ Designed AppDetailScreen architecture with Material Design 3 principles
+- [Change₂₂] 2025-04-26 ⟶ 完成TopAppBars.kt重构，使用组件拆分、状态集中管理和更好的代码组织方式
 
 ## 🚶 Next Steps
 - [Step₁₅] Fix navigation system TopAppBar issues by updating route detection logic, High
@@ -74,7 +75,7 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
   - [app/src/main/java/com/js/nowakelock/ui/navigation/NavRoutes.kt] ⟶ Navigation routes and type classes
   - [app/src/main/java/com/js/nowakelock/ui/navigation/NavGraph.kt] ⟶ Navigation graph with type-based navigation
   - [app/src/main/java/com/js/nowakelock/ui/components/BottomNavBar.kt] ⟶ Bottom navigation with hybrid navigation approach
-  - [app/src/main/java/com/js/nowakelock/ui/components/TopAppBars.kt] ⟶ TopAppBar with route detection issues
+  - [app/src/main/java/com/js/nowakelock/ui/components/TopAppBars.kt] ⟶ 刚完成重构的TopAppBar实现
   - [app/src/main/java/com/js/nowakelock/ui/screens/dadetail/DADetailContent.kt] ⟶ Main content component for DADetailScreen
   - [app/src/main/java/com/js/nowakelock/ui/screens/dadetail/components/DADetailHeaderCard.kt] ⟶ New combined header and stats card
   - [app/src/main/java/com/js/nowakelock/repository/DAInfoRepositoryImpl.kt] ⟶ Repository with JSON parsing error
@@ -102,7 +103,7 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
   - [NavRoutes] ⟶ String constants and class-based route definitions
   - [BottomNavItem] ⟶ Navigation item with route creation for bottom bar
   - [NoWakeLockBottomNavBar] ⟶ Bottom navigation implementation with hybrid approach
-  - [NoWakeLockTopAppBar] ⟶ TopAppBar with route detection
+  - [NoWakeLockTopAppBar] ⟶ 重构后的主TopAppBar组件，保持接口不变但改进内部实现
   - [DADetailHeaderCard] ⟶ New combined header and statistics card component
   - [DAInfoRepositoryImpl.loadDAInfos()] ⟶ Method with JSON parsing error
   - [DAInfoEntry] ⟶ Data model expecting string description
@@ -121,6 +122,8 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
   - [SettingsUI.Switch] ⟶ Toggle setting component
   - [SettingsUI.Select] ⟶ Dropdown selection setting component
   - [SettingsUI.ColorPicker] ⟶ Color selection setting component
+  - [RouteUtils] ⟶ 新增路由处理工具类，封装路由判断逻辑
+  - [TopAppBarUiState] ⟶ 新增TopAppBar状态管理数据类
 - 📚 Active Docs:
   - [memory-bank/progress.md] ⟶ Development milestones
   - [memory-bank/systemPatterns.md] ⟶ Architecture insights
@@ -138,7 +141,7 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
   - [app/src/main/java/com/js/nowakelock/ui/settings/components/] ⟶ Settings UI components
 
 ## 📡 Context Status
-- 🟢 Active: [JSON parsing error resolution, Card styling consistency, UI reconstruction planning, Component library design, TimelineChart improvements, Database migration, MD3 user badge design, Settings interface implementation, AppDetailScreen implementation]
+- 🟢 Active: [代码重构, UI组件优化, 组件模块化, 状态管理模式, Material Design 3标准实现]
 - 🟡 Partially Relevant: [System-level monitoring details]
 - 🟣 Essential: [Material 3 card styling patterns, Multi-language support in data models, MD3 implementation, Navigation architecture, Edge-to-edge implementation, Chart visualization best practices, Database versioning and migration, System time handling, Settings persistence patterns, Theme management]
 - 🔴 Deprecated: [None yet]
@@ -165,6 +168,9 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
 - [Pattern₁₆] Persistent Settings Storage ⟶ Settings stored in LocalStorage with JSON serialization
 - [Pattern₁₇] Reducer Pattern for Complex State ⟶ Complex state updates managed through reducer functions
 - [Pattern₁₈] Component Composition ⟶ UI built through composition of smaller, specialized components
+- [Pattern₂₂] 组件拆分与职责分离 ⟶ 将大型UI组件拆分为更小的可组合函数，每个函数负责特定功能
+- [Pattern₂₃] 状态集中管理 ⟶ 使用数据类封装UI状态，基于参数派生状态而非分散的条件判断
+- [Pattern₂₄] 工具类封装 ⟶ 将通用逻辑抽取到工具类中，提高代码复用性和可维护性
 
 ## 📚 Learnings & Insights
 - 2025-04-25 ⟶ SavedStateHandle provides automatic state restoration during configuration changes and process death, making it ideal for storing ViewModel parameters.
@@ -274,3 +280,6 @@ Navigation system improvement with SavedStateHandle integration for reliable sta
 - [Learning₅₅] 2025-04-22 ⟶ The TopAppBarEvent system allows setting detail screen titles from nested screens
 - [Learning₅₆] 2025-04-22 ⟶ StatisticCard component needed for displaying grouped statistics in a standardized format
 - [Learning₅₇] 2025-04-22 ⟶ LaunchedEffect triggering can affect the timing of UI events like title changes
+- 2025-04-26 ⟶ 通过组件拆分和状态集中管理可以大幅提升代码可读性和可维护性，而不必改变外部接口
+- 2025-04-26 ⟶ 工具类封装可以有效减少重复代码，提高代码质量和可测试性
+- 2025-04-26 ⟶ Compose预览函数是UI开发的重要工具，可以快速验证不同状态下组件的视觉表现
