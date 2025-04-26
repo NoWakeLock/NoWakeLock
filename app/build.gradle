@@ -122,7 +122,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
 
 
-    implementation "androidx.datastore:datastore-preferences:1.1.5"
+    implementation "androidx.datastore:datastore-preferences:1.1.4"
     implementation 'androidx.compose.material:material-icons-extended' // 更多图标
     // SystemUiController已弃用，已改用官方的enableEdgeToEdge() API
     // implementation "com.google.accompanist:accompanist-systemuicontroller:0.34.0" // 系统 UI 控制
