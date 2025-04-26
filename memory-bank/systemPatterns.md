@@ -1,9 +1,9 @@
 # σ₂: System Patterns
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-22*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-26*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🏛️ Architecture Overview
-NoWakeLock follows an MVVM architecture pattern with clean separation between data collection, processing, and presentation. The app consists of two main parts: a UI component built with Jetpack Compose, and a system integration component using Xposed hooks for monitoring system activities. The application is being reconstructed with Material Design 3 while maintaining the core functionality.
+NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compose UI框架、Koin依赖注入和Room数据库。项目关注点分离清晰，上层UI通过ViewModel与底层数据源交互，同时通过Xposed框架实现系统级钩子功能。
 
 ## 🧱 Component Structure
 - [C₁] UI Layer ⟶ Compose-based screens, navigation, and components with MD3 styling
@@ -106,3 +106,58 @@ NoWakeLock follows an MVVM architecture pattern with clean separation between da
 - [Set₁₀] Settings Categorization ⟶ Logical grouping of related settings
 - [Set₁₁] Search Functionality ⟶ Dynamic filtering of settings for improved discovery
 - [Set₁₂] Conditional Dependencies ⟶ Settings that show/hide based on other setting values 
+
+## 🧩 Component Design Patterns
+
+### 组件拆分与组合
+- **大型组件拆分**: 将复杂UI组件分解为小型、专一职责的可组合函数
+  - 示例: TopAppBar拆分为SearchModeTopBar和StandardModeTopBar
+  - 优势: 提高可读性、可维护性和可测试性
+  
+- **组件层次结构**:
+  ```
+  ParentComponent
+  ├── ControlComponent
+  │   ├── SubControlA
+  │   └── SubControlB
+  └── ContentComponent
+      ├── ContentSectionA
+      └── ContentSectionB
+  ```
+  
+- **组件命名约定**:
+  - 使用描述性命名，反映组件功能
+  - 相关组件使用共同前缀
+  - 私有/内部组件使用private修饰
+  
+### 状态管理模式
+- **状态集中化**:
+  - 使用数据类封装组件状态
+  - 从路由和参数派生UI状态，而非分散的条件判断
+  - 示例: `TopAppBarUiState`封装TopAppBar的所有UI状态
+  
+- **有状态/无状态组件分离**:
+  - 顶层组件管理状态
+  - 子组件设计为无状态，通过参数接收所需数据
+  
+- **状态记忆化**:
+  - 使用`remember`缓存计算结果
+  - 仅在依赖项变化时重新计算
+
+### 工具类模式
+- **功能封装**:
+  - 将通用逻辑抽取为工具类或辅助函数
+  - 示例: `RouteUtils`封装路由判断逻辑
+  
+- **命名空间组织**:
+  - 相关工具函数组织到同一对象或文件中
+  - 使用描述性命名表达功能意图
+
+### 样式与主题模式
+- **样式集中管理**:
+  - 将颜色、形状等样式属性抽取为可重用函数
+  - 示例: `standardTopAppBarColors()`提供一致的颜色设置
+  
+- **主题一致性**:
+  - 组件使用MaterialTheme属性而非硬编码值
+  - 通过样式函数确保跨组件视觉一致性 

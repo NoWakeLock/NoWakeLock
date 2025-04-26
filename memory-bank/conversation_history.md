@@ -76,3 +76,25 @@ In this conversation, we focused on initializing the NoWakeLock project with the
 - Implement additional battery optimization strategies
 - Improve data backup and recovery mechanisms
 - Test compatibility with newer Android versions
+
+## 2025-04-26: TopAppBars.kt 重构讨论和实施
+- 讨论了TopAppBar当前实现的问题和改进空间
+- 分析了TopAppBarEvent事件流和处理机制
+- 设计了重构方案，包括组件拆分、状态管理和代码组织优化
+- 实施了重构，保持接口不变但大幅改进内部实现
+- 完成测试验证，确认功能正常工作
+- 主要改进：
+  - 将大型组件拆分为功能独立的小组件
+  - 引入TopAppBarUiState集中管理UI状态
+  - 创建RouteUtils封装路由判断逻辑
+  - 提取样式相关代码为可重用函数
+  - 添加预览函数便于测试
+
+## 2025-04-25: SavedStateHandle 和导航系统改进
+- 实现了SavedStateHandle在ViewModels中的应用，提供参数管理和状态保存
+- 创建了类型化参数常量类，确保参数访问的类型安全
+- 解决了混合导航系统（字符串路由和类型路由）的兼容性问题
+- 改进了TopAppBar的路由检测逻辑，以适应不同的路由格式
+
+## 2025-04-22: AppDetailScreen 和设置系统设计
+// ... existing content ...
