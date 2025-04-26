@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-22*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-25*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -59,6 +59,37 @@
 - [Tool₈] Context API ⟶ For state management across component trees
 - [Tool₉] Reducer Pattern ⟶ For complex state updates in settings
 - [Tool₁₀] Component Composition ⟶ For building flexible, maintainable UI
+
+## 📝 SavedStateHandle Integration
+
+### Parameter Management
+- SavedStateHandle provides automatic state restoration during configuration changes and process death
+- All ViewModels now use SavedStateHandle to store and retrieve screen parameters
+- Parameter constant classes define string keys for all SavedStateHandle parameters
+- Screen parameters are passed through navigation arguments automatically
+- Custom properties with get/set accessors simplify interaction with SavedStateHandle
+
+### Navigation Parameter Flow
+- Navigation parameters are passed via route parameters (composable<Type>)
+- Parameters are automatically stored in SavedStateHandle by the Compose Navigation framework
+- ViewModels access these parameters through SavedStateHandle
+- UI components observe ViewModel state that incorporates these parameters
+- LaunchedEffect blocks synchronize UI state with ViewModel state
+
+## 🛠️ Navigation System Architecture
+
+### Type-Based Navigation
+- Route classes (Apps, Wakelocks, Alarms, Services) define type-safe navigation targets
+- composable<Type> used for type-safe navigation for main screens
+- String-based navigation retained for Settings screen
+- Navigation parameters like packageName and userId automatically passed through SavedStateHandle
+- Hybrid approach combines benefits of type-safety with backwards compatibility
+
+### Route Detection
+- Type-based routes generate complex path strings ("com.js.nowakelock.ui.navigation.Apps?parameters...")
+- TopAppBar uses pattern matching (route.contains()) instead of exact matching (route == NavRoutes.APPS)
+- BottomNavBar uses special handling for Settings screen string navigation
+- NavGraph preserves SavedStateHandle functionality while supporting mixed navigation approach
 
 ## 🧩 Settings Architecture
 
@@ -174,4 +205,42 @@
 - Application follows MVVM architecture:
   - Model: Repository pattern with Room database
   - View: Compose UI
-  - ViewModel: State management and business logic 
+  - ViewModel: State management and business logic with SavedStateHandle
+
+## 🚀 MVVM Enhancement with SavedStateHandle
+
+### ViewModel Improvements
+- SavedStateHandle provides automatic state restoration across configuration changes
+- Parameters are stored with string keys defined in constant classes
+- VM properties provide type-safe access to SavedStateHandle values
+- Default values ensure graceful handling of missing parameters
+- Initial values are synced from navigation parameters or external configuration
+
+### Type Safety Improvements
+- Parameter constant classes (AppsScreenParams, DAsScreenParams) prevent typos
+- Type-safe navigation with serialized classes ensures parameter consistency
+- ViewModel property accessors provide compile-time type checking
+- Navigation arguments are properly typed in route definitions
+
+### Implementation Pattern
+```kotlin
+// Parameter constants
+object DAsScreenParams {
+    const val PACKAGE_NAME = "packageName"
+    const val USER_ID = "userId"
+    // ... other parameters
+}
+
+// ViewModel implementation
+class DAsViewModel(
+    repository: Repository,
+    private val savedStateHandle: SavedStateHandle
+) {
+    // Type-safe accessor with default value
+    var packageName: String?
+        get() = savedStateHandle.get<String>(DAsScreenParams.PACKAGE_NAME)
+        set(value) { savedStateHandle[DAsScreenParams.PACKAGE_NAME] = value }
+        
+    // ... UI state and business logic
+}
+``` 

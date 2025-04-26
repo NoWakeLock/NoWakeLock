@@ -1,12 +1,16 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-22*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-25*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🔮 Current Focus
-Settings interface implementation with support for theme customization, persistent storage, and modular organization
+Navigation system improvement with SavedStateHandle integration for reliable state management and robust screen transitions
 
 ## 🔄 Recent Changes
 - [Change₁] 2025-04-15 ⟶ RIPER framework initialization
+- [Change₁₈] 2025-04-25 ⟶ Implemented SavedStateHandle in ViewModels for improved state management
+- [Change₁₉] 2025-04-25 ⟶ Created parameter constant classes for type safety
+- [Change₂₀] 2025-04-25 ⟶ Implemented type-based navigation with class objects
+- [Change₂₁] 2025-04-25 ⟶ Fixed navigation issues with hybrid approach for Settings screen
 - [Change₂] 2025-04-15 ⟶ Project phase changed from 🚧INITIALIZING to 🏗️DEVELOPMENT
 - [Change₃] 2025-04-15 ⟶ Initial codebase research completed
 - [Change₄] 2025-04-15 ⟶ Project brief updated with specific UI reconstruction and feature goals
@@ -25,6 +29,7 @@ Settings interface implementation with support for theme customization, persiste
 - [Change₁₇] 2025-04-22 ⟶ Designed AppDetailScreen architecture with Material Design 3 principles
 
 ## 🚶 Next Steps
+- [Step₁₅] Fix navigation system TopAppBar issues by updating route detection logic, High
 - [Step₁] Fix JSON parsing error in DAInfoRepositoryImpl by implementing multi-language support, High
 - [Step₂] Fix card styling inconsistencies by using ElevatedCard with proper parameters, High
 - [Step₃] Create MD3 UI component library using existing components as reference, High
@@ -42,6 +47,9 @@ Settings interface implementation with support for theme customization, persiste
 
 ## 🤔 Active Decisions
 - [Decision₁] ✅ ⟶ Adopt RIPER framework for project organization, To improve development efficiency and knowledge management
+- [Decision₁₆] ✅ ⟶ Use SavedStateHandle for managing screen parameters, Provides automatic state restoration during configuration changes
+- [Decision₁₇] ✅ ⟶ Create parameter constant classes for type safety, Makes parameter access more robust and prevents typos
+- [Decision₁₈] ✅ ⟶ Implement hybrid navigation approach for mixed string and type routes, Pragmatic solution to maintain backward compatibility
 - [Decision₂] ✅ ⟶ Move project to development phase, Framework initialization complete
 - [Decision₃] ✅ ⟶ Focus on MD3 UI reconstruction as primary goal, Based on updated project brief
 - [Decision₄] ✅ ⟶ Prioritize multi-user support and backup functionality, Critical for complete feature set
@@ -59,6 +67,14 @@ Settings interface implementation with support for theme customization, persiste
 
 ## 📎 Context References
 - 📄 Active Files:
+  - [app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsViewModel.kt] ⟶ Updated to use SavedStateHandle for parameter management
+  - [app/src/main/java/com/js/nowakelock/ui/screens/das/DAsViewModel.kt] ⟶ Updated to use SavedStateHandle for parameter management
+  - [app/src/main/java/com/js/nowakelock/ui/navigation/params/AppsScreenParams.kt] ⟶ Parameter constants for AppsScreen
+  - [app/src/main/java/com/js/nowakelock/ui/navigation/params/DAsScreenParams.kt] ⟶ Parameter constants for DAs screens
+  - [app/src/main/java/com/js/nowakelock/ui/navigation/NavRoutes.kt] ⟶ Navigation routes and type classes
+  - [app/src/main/java/com/js/nowakelock/ui/navigation/NavGraph.kt] ⟶ Navigation graph with type-based navigation
+  - [app/src/main/java/com/js/nowakelock/ui/components/BottomNavBar.kt] ⟶ Bottom navigation with hybrid navigation approach
+  - [app/src/main/java/com/js/nowakelock/ui/components/TopAppBars.kt] ⟶ TopAppBar with route detection issues
   - [app/src/main/java/com/js/nowakelock/ui/screens/dadetail/DADetailContent.kt] ⟶ Main content component for DADetailScreen
   - [app/src/main/java/com/js/nowakelock/ui/screens/dadetail/components/DADetailHeaderCard.kt] ⟶ New combined header and stats card
   - [app/src/main/java/com/js/nowakelock/repository/DAInfoRepositoryImpl.kt] ⟶ Repository with JSON parsing error
@@ -79,6 +95,14 @@ Settings interface implementation with support for theme customization, persiste
   - [app/src/main/java/com/js/nowakelock/data/repository/appdas/AppDasRepo.kt] ⟶ Repository for app data access
   - [app/src/main/java/com/js/nowakelock/ui/components/StatisticCard.kt] ⟶ Reusable statistics display component
 - 💻 Active Code:
+  - [AppsViewModel.currentUserId] ⟶ SavedStateHandle property for user ID
+  - [DAsViewModel.packageName] ⟶ SavedStateHandle property for package filtering
+  - [AppsScreenParams] ⟶ Constants for AppsViewModel parameters
+  - [DAsScreenParams] ⟶ Constants for DAsViewModel parameters
+  - [NavRoutes] ⟶ String constants and class-based route definitions
+  - [BottomNavItem] ⟶ Navigation item with route creation for bottom bar
+  - [NoWakeLockBottomNavBar] ⟶ Bottom navigation implementation with hybrid approach
+  - [NoWakeLockTopAppBar] ⟶ TopAppBar with route detection
   - [DADetailHeaderCard] ⟶ New combined header and statistics card component
   - [DAInfoRepositoryImpl.loadDAInfos()] ⟶ Method with JSON parsing error
   - [DAInfoEntry] ⟶ Data model expecting string description
@@ -121,6 +145,9 @@ Settings interface implementation with support for theme customization, persiste
 
 ## 💡 Project Patterns & Preferences
 - [Pattern₁] MVVM Architecture ⟶ App follows MVVM pattern with Compose UI
+- [Pattern₁₉] SavedStateHandle for ViewModel Parameters ⟶ Screen parameters stored in SavedStateHandle for automatic state restoration
+- [Pattern₂₀] Parameter Constants ⟶ String constants for parameter names to prevent typos and improve type safety
+- [Pattern₂₁] Hybrid Navigation ⟶ Mix of string routes and type-based routes depending on screen needs
 - [Pattern₂] Dependency Injection ⟶ Uses Koin for DI with modular organization
 - [Pattern₃] Screen-Based Organization ⟶ UI divided by feature screens in separate packages
 - [Pattern₄] Type-Safe Navigation ⟶ Uses serializable classes for route parameters
@@ -140,6 +167,14 @@ Settings interface implementation with support for theme customization, persiste
 - [Pattern₁₈] Component Composition ⟶ UI built through composition of smaller, specialized components
 
 ## 📚 Learnings & Insights
+- 2025-04-25 ⟶ SavedStateHandle provides automatic state restoration during configuration changes and process death, making it ideal for storing ViewModel parameters.
+- 2025-04-25 ⟶ Using type-based navigation (like `composable<Apps>`) changes the actual route from simple strings to complex generated paths like "com.js.nowakelock.ui.navigation.Apps?parameters..."
+- 2025-04-25 ⟶ Route detection logic in UI components needs to be updated when switching from string-based to type-based navigation.
+- 2025-04-25 ⟶ String comparison for routes (`route == NavRoutes.APPS`) fails with type-based navigation, requiring pattern matching (`route.contains(NavRoutes.APPS)`).
+- 2025-04-25 ⟶ Mixing string-based and type-based navigation in the same application requires careful handling of different route formats.
+- 2025-04-25 ⟶ Creating parameter constant classes improves code maintainability by centralizing parameter names and preventing typos.
+- 2025-04-25 ⟶ Property delegation in Kotlin (`var property by savedStateHandle.stateIn()`) can simplify SavedStateHandle usage but isn't available in all versions.
+
 - 2025-04-13 ⟶ 完成系统初始化，建立了 memory-bank 结构和文档归档规范。
 - 2025-04-13 ⟶ 关键代码段应用了分级保护注释，形成了保护注册表和开发阶段的保护策略。
 - 2025-04-13 ⟶ 项目阶段切换机制和进度追踪体系完善，支持开发过程的阶段性备份。
