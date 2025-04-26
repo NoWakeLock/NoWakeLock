@@ -182,7 +182,10 @@ fun NoWakeLockNavGraph(
                     // Clear detail title when navigating away
                     onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
                     navController.navigateUp()
-                }
+                },
+                navController = navController,
+                isSearchActive = isSearchActive,
+                searchQuery = searchQuery
             )
         }
     }

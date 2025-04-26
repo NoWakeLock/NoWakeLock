@@ -22,6 +22,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,14 +39,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import androidx.navigation.NavController
 import com.js.nowakelock.BasicApp.Companion.context
 import com.js.nowakelock.R
+import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.AppWithStats
 import com.js.nowakelock.ui.components.StatisticCard
+import com.js.nowakelock.ui.navigation.DADetail
 import org.koin.androidx.compose.koinViewModel
-import  com.js.nowakelock.data.db.entity.AppInfo
+import com.js.nowakelock.data.db.entity.AppInfo
 
 /**
  * 应用详情页面
@@ -55,6 +57,9 @@ fun AppDetailScreen(
     packageName: String,
     userId: Int = 0,
     onNavigateBack: () -> Unit,
+    navController: NavController? = null,
+    isSearchActive: Boolean = false,
+    searchQuery: String = "",
     viewModel: AppDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,7 +87,12 @@ fun AppDetailScreen(
                     AppDetailContent(
                         appInfo = appInfo,
                         isBlocked = uiState.isBlocked,
-                        onToggleBlock = { viewModel.toggleAppBlockStatus() }
+                        onToggleBlock = { viewModel.toggleAppBlockStatus() },
+                        navController = navController,
+                        packageName = packageName,
+                        userId = userId,
+                        isSearchActive = isSearchActive,
+                        searchQuery = searchQuery
                     )
                 }
             }
@@ -97,23 +107,33 @@ fun AppDetailScreen(
 fun AppDetailContent(
     appInfo: AppWithStats,
     isBlocked: Boolean,
-    onToggleBlock: () -> Unit
+    onToggleBlock: () -> Unit,
+    navController: NavController? = null,
+    packageName: String,
+    userId: Int,
+    isSearchActive: Boolean = false,
+    searchQuery: String = ""
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("App", "Wakelocks", "Alarms", "Services")
+    
+    // Track which tabs have been loaded for lazy loading
+    val loadedTabs = remember { mutableSetOf(0) }
+    
+    // When tab changes, add it to loaded tabs
+    LaunchedEffect(selectedTabIndex) {
+        loadedTabs.add(selectedTabIndex)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         // 应用信息头部
-//        AppInfoHeader(
-//            appWithStats = appInfo,
-//            isBlocked = isBlocked,
-//            onToggleBlock = onToggleBlock
-//        )
-
-        // 统计摘要卡片
-//        StatisticsSummaryRow(appInfo = appInfo)
+        AppInfoHeader(
+            appWithStats = appInfo,
+            isBlocked = isBlocked,
+            onToggleBlock = onToggleBlock
+        )
 
         // 标签页
         TabRow(
@@ -132,9 +152,96 @@ fun AppDetailContent(
         // 标签页内容
         when (selectedTabIndex) {
             0 -> AppTabContent(appInfo)
-            1 -> WakelocksTabContent(appInfo)
-            2 -> AlarmsTabContent(appInfo)
-            3 -> ServicesTabContent(appInfo)
+            1 -> {
+                // Only show content if this tab has been loaded
+                if (1 in loadedTabs) {
+                    WakelocksTabContent(
+                        appInfo = appInfo,
+                        packageName = packageName,
+                        userId = userId,
+                        isSearchActive = if (selectedTabIndex == 1) isSearchActive else false,
+                        searchQuery = if (selectedTabIndex == 1) searchQuery else "",
+                        onNavigateToDetail = { name, pkgName ->
+                            navController?.navigate(
+                                DADetail(
+                                    daName = name,
+                                    packageName = pkgName,
+                                    userId = userId,
+                                    type = Type.Wakelock.value
+                                )
+                            )
+                        }
+                    )
+                } else {
+                    // Show loading placeholder
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+            2 -> {
+                // Only show content if this tab has been loaded
+                if (2 in loadedTabs) {
+                    AlarmsTabContent(
+                        appInfo = appInfo,
+                        packageName = packageName,
+                        userId = userId,
+                        isSearchActive = if (selectedTabIndex == 2) isSearchActive else false,
+                        searchQuery = if (selectedTabIndex == 2) searchQuery else "",
+                        onNavigateToDetail = { name, pkgName ->
+                            navController?.navigate(
+                                DADetail(
+                                    daName = name,
+                                    packageName = pkgName,
+                                    userId = userId,
+                                    type = Type.Alarm.value
+                                )
+                            )
+                        }
+                    )
+                } else {
+                    // Show loading placeholder
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+            3 -> {
+                // Only show content if this tab has been loaded
+                if (3 in loadedTabs) {
+                    ServicesTabContent(
+                        appInfo = appInfo,
+                        packageName = packageName,
+                        userId = userId,
+                        isSearchActive = if (selectedTabIndex == 3) isSearchActive else false,
+                        searchQuery = if (selectedTabIndex == 3) searchQuery else "",
+                        onNavigateToDetail = { name, pkgName ->
+                            navController?.navigate(
+                                DADetail(
+                                    daName = name,
+                                    packageName = pkgName,
+                                    userId = userId,
+                                    type = Type.Service.value
+                                )
+                            )
+                        }
+                    )
+                } else {
+                    // Show loading placeholder
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
         }
     }
 }
@@ -229,62 +336,6 @@ fun AppInfoHeader(
     }
 }
 
-///**
-// * 统计摘要行
-// */
-//@Composable
-//fun StatisticsSummaryRow(appInfo: AppWithStats) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 16.dp),
-//        horizontalArrangement = Arrangement.SpaceEvenly
-//    ) {
-//        // 唤醒锁统计
-//        StatisticSummaryItem(
-//            value = appInfo.wakelockCount.toString(),
-//            label = stringResource(R.string.WakeLock),
-//            modifier = Modifier.weight(1f)
-//        )
-//
-//        // 闹钟统计
-//        StatisticSummaryItem(
-//            value = appInfo.alarmCount.toString(),
-//            label = stringResource(R.string.Alarm),
-//            modifier = Modifier.weight(1f)
-//        )
-//
-//        // 服务统计
-//        StatisticSummaryItem(
-//            value = appInfo.serviceCount.toString(),
-//            label = stringResource(R.string.Service),
-//            modifier = Modifier.weight(1f)
-//        )
-//
-//        // 总时间
-//        Column(
-//            modifier = Modifier.weight(1f),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Text(
-//                text = "5h",
-//                style = MaterialTheme.typography.headlineMedium,
-//                fontWeight = FontWeight.Bold
-//            )
-//            Text(
-//                text = "32m",
-//                style = MaterialTheme.typography.titleMedium,
-//                fontWeight = FontWeight.SemiBold
-//            )
-//            Text(
-//                text = stringResource(R.string.total_time),
-//                style = MaterialTheme.typography.bodySmall,
-//                color = MaterialTheme.colorScheme.onSurfaceVariant
-//            )
-//        }
-//    }
-//}
-
 /**
  * 统计摘要项
  */
@@ -370,13 +421,32 @@ fun AppTabContent(appInfo: AppWithStats) {
  * Wakelocks标签页内容
  */
 @Composable
-fun WakelocksTabContent(appInfo: AppWithStats) {
-    // 这里实现唤醒锁列表
-    Text(
-        text = "Wakelocks content",
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+fun WakelocksTabContent(
+    appInfo: AppWithStats,
+    packageName: String,
+    userId: Int,
+    isSearchActive: Boolean,
+    searchQuery: String,
+    onNavigateToDetail: (String, String) -> Unit
+) {
+    // 使用WakelockScreen，传递packageName和userId进行过滤
+    val viewModel = koinViewModel<com.js.nowakelock.ui.screens.das.DAsViewModel>(
+        qualifier = org.koin.core.qualifier.named("WakelockViewModel")
+    )
+    
+    // 设置应用过滤器
+    LaunchedEffect(packageName, userId) {
+        viewModel.setAppFilter(packageName, userId)
+    }
+    
+    // 使用WakelockScreen组件，复用现有实现
+    com.js.nowakelock.ui.screens.das.WakelockScreen(
+        navigateToDADetail = onNavigateToDetail,
+        viewModel = viewModel,
+        isSearchActive = isSearchActive,
+        searchQuery = searchQuery,
+        packageName = packageName,
+        userId = userId
     )
 }
 
@@ -384,13 +454,32 @@ fun WakelocksTabContent(appInfo: AppWithStats) {
  * Alarms标签页内容
  */
 @Composable
-fun AlarmsTabContent(appInfo: AppWithStats) {
-    // 这里实现闹钟列表
-    Text(
-        text = "Alarms content",
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+fun AlarmsTabContent(
+    appInfo: AppWithStats,
+    packageName: String,
+    userId: Int,
+    isSearchActive: Boolean,
+    searchQuery: String,
+    onNavigateToDetail: (String, String) -> Unit
+) {
+    // 使用AlarmScreen，传递packageName和userId进行过滤
+    val viewModel = koinViewModel<com.js.nowakelock.ui.screens.das.DAsViewModel>(
+        qualifier = org.koin.core.qualifier.named("AlarmViewModel")
+    )
+    
+    // 设置应用过滤器
+    LaunchedEffect(packageName, userId) {
+        viewModel.setAppFilter(packageName, userId)
+    }
+    
+    // 使用AlarmScreen组件，复用现有实现
+    com.js.nowakelock.ui.screens.das.AlarmScreen(
+        navigateToDADetail = onNavigateToDetail,
+        viewModel = viewModel,
+        isSearchActive = isSearchActive,
+        searchQuery = searchQuery,
+        packageName = packageName,
+        userId = userId
     )
 }
 
@@ -398,13 +487,32 @@ fun AlarmsTabContent(appInfo: AppWithStats) {
  * Services标签页内容
  */
 @Composable
-fun ServicesTabContent(appInfo: AppWithStats) {
-    // 这里实现服务列表
-    Text(
-        text = "Services content",
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+fun ServicesTabContent(
+    appInfo: AppWithStats,
+    packageName: String,
+    userId: Int,
+    isSearchActive: Boolean,
+    searchQuery: String,
+    onNavigateToDetail: (String, String) -> Unit
+) {
+    // 使用ServiceScreen，传递packageName和userId进行过滤
+    val viewModel = koinViewModel<com.js.nowakelock.ui.screens.das.DAsViewModel>(
+        qualifier = org.koin.core.qualifier.named("ServiceViewModel")
+    )
+    
+    // 设置应用过滤器
+    LaunchedEffect(packageName, userId) {
+        viewModel.setAppFilter(packageName, userId)
+    }
+    
+    // 使用ServiceScreen组件，复用现有实现
+    com.js.nowakelock.ui.screens.das.ServiceScreen(
+        navigateToDADetail = onNavigateToDetail,
+        viewModel = viewModel,
+        isSearchActive = isSearchActive,
+        searchQuery = searchQuery,
+        packageName = packageName,
+        userId = userId
     )
 }
 
@@ -426,7 +534,7 @@ fun AppDetailContentPreview() {
         serviceCount = 3,
         serviceBlockedCount = 0
     )
-    AppDetailContent(appInfo = appInfo, isBlocked = false, onToggleBlock = {})
+    AppDetailContent(appInfo = appInfo, isBlocked = false, onToggleBlock = {}, navController = null, packageName = "", userId = 0)
 }
             
 

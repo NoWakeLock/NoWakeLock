@@ -137,7 +137,8 @@ private object RouteUtils {
         return screenType == ScreenType.APPS || 
                screenType == ScreenType.WAKELOCKS || 
                screenType == ScreenType.ALARMS || 
-               screenType == ScreenType.SERVICES
+               screenType == ScreenType.SERVICES ||
+               isRouteOf(route, NavRoutes.APPDETAIL)  // Add AppDetail route to support search
     }
 }
 
