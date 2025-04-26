@@ -11,11 +11,11 @@ import kotlinx.serialization.Serializable
  * Navigation routes
  */
 object NavRoutes {
-    const val APPS = "apps"
-    const val WAKELOCKS = "wakelocks"
-    const val ALARMS = "alarms"
-    const val SERVICES = "services"
-    const val SETTINGS = "settings"
+    const val APPS = "Apps"
+    const val WAKELOCKS = "Wakelocks"
+    const val ALARMS = "Alarms"
+    const val SERVICES = "Services"
+    const val SETTINGS = "Settings"
 
     const val DADETAIL = "DADetail"
     const val APPDETAIL = "AppDetail"

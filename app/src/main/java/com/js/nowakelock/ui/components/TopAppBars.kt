@@ -33,8 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.js.nowakelock.R
+import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.ui.navigation.NavRoutes
+import kotlin.contracts.contract
 
 // Event to be handled by the appropriate screen
 sealed class TopAppBarEvent {
@@ -62,23 +64,28 @@ fun NoWakeLockTopAppBar(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     // Use passed currentRoute or get it from NavController if not provided
-    val route = currentRoute ?: navBackStackEntry?.destination?.route
+    val route: String = (currentRoute ?: navBackStackEntry?.destination?.route).toString()
+
+    LogUtil.d("NoWakeLockTopAppBar", "Current route: $route")
     // Check for the new type-safe route format as well as the legacy format for backward compatibility
-    val isDetail = route?.contains(NavRoutes.DADETAIL) == true || route?.contains(NavRoutes.APPDETAIL) == true
+    val isDetail = route.contains(NavRoutes.DADETAIL) || route.contains(NavRoutes.APPDETAIL)
 
-
-    val title = if (isDetail) detailTitle ?: "Detail" else when (route) {
-        NavRoutes.APPS -> stringResource(id = R.string.Apps)
-        NavRoutes.WAKELOCKS -> stringResource(id = R.string.WakeLock)
-        NavRoutes.ALARMS -> stringResource(id = R.string.Alarm)
-        NavRoutes.SERVICES -> stringResource(id = R.string.Service)
-        NavRoutes.SETTINGS -> stringResource(id = R.string.settings)
+    // Determine the title based on the current route
+    val title = when {
+        route.contains(NavRoutes.DADETAIL) || route.contains(NavRoutes.APPDETAIL) -> detailTitle ?: "Detail"
+        route.contains(NavRoutes.APPS) -> stringResource(id = R.string.Apps)
+        route.contains(NavRoutes.WAKELOCKS) -> stringResource(id = R.string.WakeLock)
+        route.contains(NavRoutes.ALARMS) -> stringResource(id = R.string.Alarm)
+        route.contains(NavRoutes.SERVICES) -> stringResource(id = R.string.Service)
+        route.contains(NavRoutes.SETTINGS) -> stringResource(id = R.string.settings)
         else -> stringResource(id = R.string.app_name)
     }
 
     // Only show search interface in relevant screens
     val showSearch =
-        isSearchActive && (route == NavRoutes.APPS || route == NavRoutes.WAKELOCKS || route == NavRoutes.ALARMS || route == NavRoutes.SERVICES)
+        isSearchActive && (route.contains(NavRoutes.APPS) || route.contains(NavRoutes.WAKELOCKS) || route.contains(
+            NavRoutes.ALARMS
+        ) || route.contains(NavRoutes.SERVICES))
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -91,7 +98,7 @@ fun NoWakeLockTopAppBar(
 
     if (showSearch) {
         TopAppBar(
-            title = {}, 
+            title = {},
             navigationIcon = {
                 // return button
                 IconButton(
@@ -106,18 +113,18 @@ fun NoWakeLockTopAppBar(
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-            }, 
+            },
             actions = {
                 TextField(
                     value = searchQuery,
                     onValueChange = { onEvent(TopAppBarEvent.SearchQueryChanged(it)) },
                     placeholder = {
                         Text(
-                            when (route) {
-                                NavRoutes.APPS -> "Search apps"
-                                NavRoutes.WAKELOCKS -> "Search wakelocks"
-                                NavRoutes.ALARMS -> "Search alarms"
-                                NavRoutes.SERVICES -> "Search services"
+                            when {
+                                route.contains(NavRoutes.APPS) -> "Search apps"
+                                route.contains(NavRoutes.WAKELOCKS) -> "Search wakelocks"
+                                route.contains(NavRoutes.ALARMS) -> "Search alarms"
+                                route.contains(NavRoutes.SERVICES) -> "Search services"
                                 else -> "Search"
                             },
                             style = MaterialTheme.typography.bodyMedium
@@ -130,7 +137,9 @@ fun NoWakeLockTopAppBar(
                     singleLine = true,
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                            alpha = 0.6f
+                        ),
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -157,7 +166,7 @@ fun NoWakeLockTopAppBar(
                         }
                     }
                 )
-            }, 
+            },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface,
                 scrolledContainerColor = MaterialTheme.colorScheme.surface,
@@ -167,12 +176,12 @@ fun NoWakeLockTopAppBar(
     } else {
         // Normal TopAppBar with dynamic actions based on current route
         TopAppBar(
-            title = { 
+            title = {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge
-                ) 
-            }, 
+                )
+            },
             navigationIcon = {
                 if (isDetail) {
                     IconButton(onClick = { navController.navigateUp() }) {
@@ -183,12 +192,15 @@ fun NoWakeLockTopAppBar(
                         )
                     }
                 }
-            }, 
+            },
             actions = {
                 Row {
                     // for all screens, display the search button first, then other operations (user switcher/refresh)
                     // all related screens display the search button, ensure the size is consistent
-                    if (route == NavRoutes.APPS || route == NavRoutes.WAKELOCKS || route == NavRoutes.ALARMS || route == NavRoutes.SERVICES) {
+                    if (route.contains(NavRoutes.APPS) || route.contains(NavRoutes.WAKELOCKS) || route.contains(
+                            NavRoutes.ALARMS
+                        ) || route.contains(NavRoutes.SERVICES)
+                    ) {
                         IconButton(
                             onClick = { onEvent(TopAppBarEvent.SearchClicked) },
                             modifier = Modifier
@@ -205,8 +217,8 @@ fun NoWakeLockTopAppBar(
                     }
 
                     // 根据路由显示不同的额外操作按钮
-                    when (route) {
-                        NavRoutes.APPS -> {
+                    when {
+                        route.contains(NavRoutes.APPS) -> {
                             // 用户切换器 - 只在Apps界面显示
                             if (availableUsers.isNotEmpty()) {
                                 UserSwitcher(
@@ -219,7 +231,9 @@ fun NoWakeLockTopAppBar(
                             }
                         }
 
-                        NavRoutes.WAKELOCKS, NavRoutes.ALARMS, NavRoutes.SERVICES -> {
+                        route.contains(NavRoutes.WAKELOCKS) || route.contains(NavRoutes.ALARMS) || route.contains(
+                            NavRoutes.SERVICES
+                        ) -> {
                             // 刷新按钮 - 在其他数据界面显示，确保尺寸与UserSwitcher一致
                             IconButton(
                                 onClick = { onEvent(TopAppBarEvent.RefreshClicked) },
@@ -237,7 +251,7 @@ fun NoWakeLockTopAppBar(
                         }
                     }
                 }
-            }, 
+            },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface,
                 scrolledContainerColor = MaterialTheme.colorScheme.surface,
