@@ -38,18 +38,19 @@ fun DAsScreen(
     userId: Int? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isAppDetailScreen = packageName != null && packageName != ""
 
     // Use derivedStateOf to prevent unnecessary recompositions
     val dasList by remember(uiState.das) {
         derivedStateOf { uiState.das }
     }
-    
+
     // Update viewModel search state when external search state changes
     LaunchedEffect(isSearchActive, searchQuery) {
         viewModel.setSearchActive(isSearchActive)
         viewModel.updateSearchQuery(searchQuery)
     }
-    
+
     // 设置包名和用户ID筛选器
     LaunchedEffect(packageName, userId) {
         viewModel.setAppFilter(packageName, userId)
@@ -113,15 +114,17 @@ fun DAsScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 8.dp)
                 ) {
-                    // Summary card as first list item
-                    item(key = "summary_card") {
-                        DAsSummary(
-                            type = type,
-                            total = uiState.totalDAs,
-                            blockedCount = uiState.blockedCount,
-                            allowedCount = uiState.allowedCount,
-                            modifier = Modifier.padding(top = 8.dp) // Add some top padding
-                        )
+                    if (!isAppDetailScreen) {
+                        // Summary card as first list item
+                        item(key = "summary_card") {
+                            DAsSummary(
+                                type = type,
+                                total = uiState.totalDAs,
+                                blockedCount = uiState.blockedCount,
+                                allowedCount = uiState.allowedCount,
+                                modifier = Modifier.padding(top = 8.dp) // Add some top padding
+                            )
+                        }
                     }
 
                     // DA list items
@@ -136,11 +139,11 @@ fun DAsScreen(
                                 else -> "normal"
                             }
                         }
-                    )  { daItem ->
+                    ) { daItem ->
                         key(daItem.fullBlocked, daItem.screenOffBlock, daItem.timeWindowSec) {
-                            when (type){
+                            when (type) {
                                 Type.Service -> ServiceListItem(
-                                    daItem = daItem, 
+                                    daItem = daItem,
                                     onToggleFullBlock = { enable ->
                                         viewModel.updateDAFullBlockState(
                                             daItem = daItem, isBlocked = !enable
@@ -150,18 +153,19 @@ fun DAsScreen(
                                         navigateToDADetail(it.name, it.packageName)
                                     }
                                 )
+
                                 else -> DAListItem(
-                                    daItem = daItem, 
+                                    daItem = daItem,
                                     onToggleFullBlock = { enable ->
                                         viewModel.updateDAFullBlockState(
                                             daItem = daItem, isBlocked = !enable
                                         )
-                                    }, 
+                                    },
                                     onToggleScreenOffBlock = { enable ->
                                         viewModel.updateDAScreenOffBlockState(
                                             daItem = daItem, isBlocked = !enable
                                         )
-                                    }, 
+                                    },
                                     onTimeWindowChange = { timeWindow ->
                                         viewModel.updateDATimeWindow(
                                             daItem = daItem, timeWindow = timeWindow
