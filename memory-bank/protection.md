@@ -1,6 +1,6 @@
 # σ₆: Protection Registry
-*v1.0 | Created: 2025-04-25 | Updated: 2025-04-25*
-*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
+*v1.0 | Created: 2025-04-25 | Updated: 2025-04-27*
+*Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
 
 ## 🛡️ Protected Regions
 
@@ -22,11 +22,20 @@
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/components/TopAppBars.kt` - 顶部应用栏
   - 保护理由: 全局UI组件，出现在所有页面
   - 当前问题: 路由检测逻辑需更新以支持类型导航
-  - 最后修改: 2025-04-25 (初步添加路由包含检测)
+  - 最后修改: 2025-04-27 (更新 shouldShowSearch 方法支持 AppDetail 路由)
 
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/components/BottomNavBar.kt` - 底部导航栏
   - 保护理由: 全局UI组件，负责主要页面跳转
   - 最后修改: 2025-04-25 (添加混合导航支持)
+
+### 屏幕实现
+- **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/screens/appdetail/AppDetailScreen.kt` - 应用详情屏幕
+  - 保护理由: 复杂的标签页界面实现，集成多个功能组件
+  - 最后修改: 2025-04-27 (实现 Tab 内容集成和懒加载)
+
+- **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/screens/das/DAsScreen.kt` - 设备自动化列表屏幕
+  - 保护理由: 核心功能屏幕，被多处复用
+  - 最后修改: 2025-04-15 (初始实现)
 
 ### 模型和参数定义
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/navigation/params/AppsScreenParams.kt` - Apps参数常量
@@ -47,6 +56,9 @@
   - 最后修改: 2025-04-25 (改用SavedStateHandle，添加应用筛选)
 
 ## 📜 Protection History
+- 2025-04-27 ⟶ 添加 AppDetailScreen 到保护列表，实现了 Tab 内容集成
+- 2025-04-27 ⟶ 更新 TopAppBars.kt 的保护记录，添加最新修改
+- 2025-04-27 ⟶ 添加 DAsScreen.kt 到保护列表，被 AppDetailScreen 集成使用
 - 2025-04-25 ⟶ 添加新创建的参数常量类到保护列表
 - 2025-04-25 ⟶ 更新导航相关组件的保护状态
 - 2025-04-25 ⟶ 将TopAppBars.kt标记为需要进一步调整的组件

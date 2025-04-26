@@ -1,11 +1,16 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-26*
-*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-27*
+*Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
 
 ## 🔮 Current Focus
-代码重构与组织优化，提高项目代码质量和可维护性，特别是UI组件的模块化设计
+AppDetailScreen Tab 内容集成，实现懒加载和搜索功能
 
 ## 🔄 Recent Changes
+- [Change₂₃] 2025-04-27 ⟶ 实现 AppDetailScreen 的 Tab 内容与 DAsScreen 的集成
+- [Change₂₄] 2025-04-27 ⟶ 实现 Tab 懒加载功能，提高性能
+- [Change₂₅] 2025-04-27 ⟶ 实现搜索状态传递，仅影响当前选中的 Tab
+- [Change₂₆] 2025-04-27 ⟶ 更新 RouteUtils 支持 AppDetail 路由的搜索功能
+- [Change₂₇] 2025-04-27 ⟶ 实现从 Tab 内容到 DA 详情页的导航
 - [Change₁] 2025-04-15 ⟶ RIPER framework initialization
 - [Change₁₈] 2025-04-25 ⟶ Implemented SavedStateHandle in ViewModels for improved state management
 - [Change₁₉] 2025-04-25 ⟶ Created parameter constant classes for type safety
@@ -30,6 +35,7 @@
 - [Change₂₂] 2025-04-26 ⟶ 完成TopAppBars.kt重构，使用组件拆分、状态集中管理和更好的代码组织方式
 
 ## 🚶 Next Steps
+- [Step₁₆] 优化 AppDetailScreen Tab 内容的 UI，移除不必要的元素，Medium
 - [Step₁₅] Fix navigation system TopAppBar issues by updating route detection logic, High
 - [Step₁] Fix JSON parsing error in DAInfoRepositoryImpl by implementing multi-language support, High
 - [Step₂] Fix card styling inconsistencies by using ElevatedCard with proper parameters, High
@@ -65,6 +71,9 @@
 - [Decision₁₃] ✅ ⟶ Use React Context API approach for settings management, Provides unified state management across component tree
 - [Decision₁₄] ✅ ⟶ Store settings in LocalStorage with JSON serialization, Ensures settings persistence between sessions
 - [Decision₁₅] ✅ ⟶ Implement useReducer pattern for complex settings state management, Enables more structured state updates
+- [Decision₁₉] ✅ ⟶ 在 AppDetailScreen 中集成已有的 DAsScreen 实现，而不是创建新组件，更好地复用代码
+- [Decision₂₀] ✅ ⟶ 实现 Tab 懒加载，仅在 Tab 被选中时加载内容，提高性能
+- [Decision₂₁] ✅ ⟶ 将搜索状态仅传递给当前选中的 Tab，简化状态管理
 
 ## 📎 Context References
 - 📄 Active Files:
@@ -95,6 +104,11 @@
   - [app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsScreen.kt] ⟶ Apps list screen with navigation to app details
   - [app/src/main/java/com/js/nowakelock/data/repository/appdas/AppDasRepo.kt] ⟶ Repository for app data access
   - [app/src/main/java/com/js/nowakelock/ui/components/StatisticCard.kt] ⟶ Reusable statistics display component
+  - [app/src/main/java/com/js/nowakelock/ui/screens/appdetail/AppDetailScreen.kt] ⟶ 实现了 Tab 内容集成和懒加载
+  - [app/src/main/java/com/js/nowakelock/ui/components/TopAppBars.kt] ⟶ 更新以支持 AppDetail 路由的搜索功能
+  - [app/src/main/java/com/js/nowakelock/ui/navigation/NavGraph.kt] ⟶ 更新以传递搜索状态给 AppDetailScreen
+  - [app/src/main/java/com/js/nowakelock/ui/screens/das/DAsScreens.kt] ⟶ 提供 WakelockScreen, AlarmScreen, ServiceScreen 组件
+  - [app/src/main/java/com/js/nowakelock/ui/screens/das/DAsViewModel.kt] ⟶ 处理 DA 列表的加载和过滤
 - 💻 Active Code:
   - [AppsViewModel.currentUserId] ⟶ SavedStateHandle property for user ID
   - [DAsViewModel.packageName] ⟶ SavedStateHandle property for package filtering
@@ -124,6 +138,14 @@
   - [SettingsUI.ColorPicker] ⟶ Color selection setting component
   - [RouteUtils] ⟶ 新增路由处理工具类，封装路由判断逻辑
   - [TopAppBarUiState] ⟶ 新增TopAppBar状态管理数据类
+  - [RouteUtils.shouldShowSearch] ⟶ 更新支持 AppDetail 路由的搜索功能
+  - [AppDetailScreen.selectedTabIndex] ⟶ 跟踪当前选中的 Tab
+  - [AppDetailScreen.loadedTabs] ⟶ 用于懒加载的已加载 Tab 集合
+  - [WakelocksTabContent] ⟶ 集成了 WakelockScreen 的 Tab 内容
+  - [AlarmsTabContent] ⟶ 集成了 AlarmScreen 的 Tab 内容
+  - [ServicesTabContent] ⟶ 集成了 ServiceScreen 的 Tab 内容
+  - [koinViewModel(qualifier = named("..."))] ⟶ 获取特定类型的 DAsViewModel
+  - [viewModel.setAppFilter(packageName, userId)] ⟶ 设置 DA 列表的包名和用户 ID 过滤器
 - 📚 Active Docs:
   - [memory-bank/progress.md] ⟶ Development milestones
   - [memory-bank/systemPatterns.md] ⟶ Architecture insights
@@ -141,7 +163,7 @@
   - [app/src/main/java/com/js/nowakelock/ui/settings/components/] ⟶ Settings UI components
 
 ## 📡 Context Status
-- 🟢 Active: [代码重构, UI组件优化, 组件模块化, 状态管理模式, Material Design 3标准实现]
+- 🟢 Active: [AppDetailScreen Tab 集成, 懒加载, 搜索状态管理]
 - 🟡 Partially Relevant: [System-level monitoring details]
 - 🟣 Essential: [Material 3 card styling patterns, Multi-language support in data models, MD3 implementation, Navigation architecture, Edge-to-edge implementation, Chart visualization best practices, Database versioning and migration, System time handling, Settings persistence patterns, Theme management]
 - 🔴 Deprecated: [None yet]
@@ -171,6 +193,9 @@
 - [Pattern₂₂] 组件拆分与职责分离 ⟶ 将大型UI组件拆分为更小的可组合函数，每个函数负责特定功能
 - [Pattern₂₃] 状态集中管理 ⟶ 使用数据类封装UI状态，基于参数派生状态而非分散的条件判断
 - [Pattern₂₄] 工具类封装 ⟶ 将通用逻辑抽取到工具类中，提高代码复用性和可维护性
+- [Pattern₂₅] Tab 懒加载模式 ⟶ 使用 mutableSetOf 跟踪已加载的 Tab，只在需要时创建内容
+- [Pattern₂₆] 条件性搜索状态传递 ⟶ 搜索状态只传递给当前选中的 Tab，简化状态管理
+- [Pattern₂₇] 复用现有组件 ⟶ 优先集成现有组件而不是创建新组件，减少代码重复
 
 ## 📚 Learnings & Insights
 - 2025-04-25 ⟶ SavedStateHandle provides automatic state restoration during configuration changes and process death, making it ideal for storing ViewModel parameters.
@@ -283,3 +308,7 @@
 - 2025-04-26 ⟶ 通过组件拆分和状态集中管理可以大幅提升代码可读性和可维护性，而不必改变外部接口
 - 2025-04-26 ⟶ 工具类封装可以有效减少重复代码，提高代码质量和可测试性
 - 2025-04-26 ⟶ Compose预览函数是UI开发的重要工具，可以快速验证不同状态下组件的视觉表现
+- 2025-04-27 ⟶ 通过集成现有组件而不是创建新的实现，可以大幅减少代码重复并保持一致的用户体验。
+- 2025-04-27 ⟶ 懒加载模式通过跟踪已加载内容的集合，可以有效减少不必要的渲染和数据加载，提高性能。
+- 2025-04-27 ⟶ 条件性搜索状态传递比创建复杂的上下文映射更简单且易于理解，适合 Tab 结构的应用。
+- 2025-04-27 ⟶ 为特定组件使用 named qualifier 创建 ViewModel 实例，可以在不同上下文中复用相同的数据源。

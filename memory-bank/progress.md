@@ -1,11 +1,14 @@
 # σ₅: Progress Tracker
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-26*
-*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-27*
+*Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
 
 ## 📈 Project Status
-Completion: 32%
+Completion: 35%
 
 ## ✅ Completed Features
+- [Feature₂₀] 2025-04-27 ⟶ AppDetailScreen Tab 集成，实现了应用详情页唤醒锁/闹钟/服务标签页
+- [Feature₂₁] 2025-04-27 ⟶ Tab 懒加载功能，提高应用性能
+- [Feature₂₂] 2025-04-27 ⟶ 搜索状态传递机制，使搜索只影响当前选中的 Tab
 - [Feature₁] 2025-04-13 ⟶ System initialization, RIPER framework and memory-bank structure created
 - [Feature₁₈] 2025-04-25 ⟶ ViewModel SavedStateHandle implementation, Refactored ViewModels to use SavedStateHandle for state preservation
 - [Feature₂] 2025-04-13 ⟶ Code protection, Applied protection markers to critical code sections
@@ -27,7 +30,8 @@ Completion: 32%
 - [Feature₁₉] 2025-04-26 ⟶ TopAppBars.kt 重构完成，改进了组件结构和代码可维护性，保持接口不变
 
 ## 🚧 In Progress
-- [WIP₁] 35% ⟶ Material Design 3 UI reconstruction, Component styling standards established and initial components created
+- [WIP₁] 40% ⟶ Material Design 3 UI reconstruction, Component styling standards established and initial components created
+- [WIP₉] 50% ⟶ AppDetailScreen implementation, Tab 集成完成，UI 优化仍需改进
 - [WIP₂] 15% ⟶ Complete wakelock/alarm/service support, Core functionality analyzed and enhancement plan drafted
 - [WIP₃] 20% ⟶ Multi-user support, Initial implementation identified and architecture planned
 - [WIP₄] 35% ⟶ DADetailScreen UI improvements, Header card combined and styling issues identified
@@ -35,10 +39,10 @@ Completion: 32%
 - [WIP₆] 40% ⟶ TimelineChart improvements, Analysis complete and implementation plan established
 - [WIP₇] 25% ⟶ Database migration implementation, Version issues identified and migration strategy planned
 - [WIP₈] 20% ⟶ UI components standardization, MD3 badge design principles established
-- [WIP₉] 15% ⟶ AppDetailScreen implementation, Architecture designed and initial components created
-- [WIP₁₀] 45% ⟶ Navigation system improvement, Type-safe navigation implemented with SavedStateHandle integration
+- [WIP₁₀] 65% ⟶ Navigation system improvement, Type-safe navigation implemented with SavedStateHandle integration
 
 ## 📝 To Do
+- [Todo₁₄] Medium ⟶ 优化 AppDetailScreen Tab 内容的 UI，移除不必要的元素
 - [Todo₁] High ⟶ Implement internal JSON parsing model in DAInfoRepositoryImpl
 - [Todo₁₃] Medium ⟶ Fix navigation system issues with mixed string and type-based routes
 - [Todo₂] High ⟶ Fix card styling inconsistencies in DADetailHeaderCard
@@ -68,6 +72,9 @@ Completion: 32%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₁₁] 2025-04-27 ⟶ 集成现有 DAsScreen 而不是创建新组件，Status: ✅ Accepted
+- [Decision₁₂] 2025-04-27 ⟶ 实现 Tab 懒加载以提高性能，Status: ✅ Accepted
+- [Decision₁₃] 2025-04-27 ⟶ 使用条件性搜索状态传递，Status: ✅ Accepted
 - [Decision₁] 2025-04-15 ⟶ Adopt RIPER framework for project management, Status: ✅ Accepted
 - [Decision₁₁] 2025-04-25 ⟶ Use SavedStateHandle in ViewModels for parameter management, Status: ✅ Accepted
 - [Decision₁₂] 2025-04-25 ⟶ Adopt hybrid navigation approach with special handling for Settings screen, Status: ✅ Accepted
@@ -83,8 +90,8 @@ Completion: 32%
 
 ## 📊 Progress Metrics
 - 💻 Code Areas:
-  - UI Components: 20% complete
-  - Navigation System: 45% complete
+  - UI Components: 30% complete
+  - Navigation System: 65% complete
   - Data Models: 80% complete (existing functionality)
   - Database Access: 75% complete (existing functionality)
   - Xposed Integration: 90% complete (existing functionality)
@@ -94,11 +101,11 @@ Completion: 32%
   - Multi-language Support: 15% complete
   - Data Visualization: 30% complete
   - Database Migration: 10% complete
-  - MD3 UI Standards: 25% complete
-  - AppDetailScreen: 15% complete
+  - MD3 UI Standards: 30% complete
+  - AppDetailScreen: 50% complete
 
 - 📈 Feature Implementation:
-  - MD3 UI: 35% complete
+  - MD3 UI: 40% complete
   - Wakelock Monitoring: 90% complete
   - Alarm Monitoring: 85% complete
   - Service Monitoring: 85% complete
@@ -110,7 +117,7 @@ Completion: 32%
   - TimelineChart: 40% complete
   - Database Migrations: 15% complete
   - Badge System Design: 40% complete
-  - AppDetailScreen: 15% complete
+  - AppDetailScreen: 50% complete
 
 - 🧪 Testing Status:
   - Unit Tests: 5% coverage
@@ -119,6 +126,7 @@ Completion: 32%
   - Compatibility Tests: 0% coverage
 
 ## 🔮 Next Milestones
+- [Milestone₁₁] AppDetailScreen Tab UI 优化 (Target: +1 week)
 - [Milestone₁] DAInfoRepositoryImpl multi-language support implementation (Target: +1 week)
 - [Milestone₁₀] Fix navigation system TopAppBar issues (Target: +3 days)
 - [Milestone₂] DADetailScreen UI improvements complete (Target: +1 week)
