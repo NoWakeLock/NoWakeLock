@@ -116,10 +116,10 @@ fun AppDetailContent(
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("App", "Wakelocks", "Alarms", "Services")
-    
+
     // Track which tabs have been loaded for lazy loading
     val loadedTabs = remember { mutableSetOf(0) }
-    
+
     // When tab changes, add it to loaded tabs
     LaunchedEffect(selectedTabIndex) {
         loadedTabs.add(selectedTabIndex)
@@ -128,13 +128,6 @@ fun AppDetailContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 应用信息头部
-        AppInfoHeader(
-            appWithStats = appInfo,
-            isBlocked = isBlocked,
-            onToggleBlock = onToggleBlock
-        )
-
         // 标签页
         TabRow(
             selectedTabIndex = selectedTabIndex,
@@ -182,6 +175,7 @@ fun AppDetailContent(
                     }
                 }
             }
+
             2 -> {
                 // Only show content if this tab has been loaded
                 if (2 in loadedTabs) {
@@ -212,6 +206,7 @@ fun AppDetailContent(
                     }
                 }
             }
+
             3 -> {
                 // Only show content if this tab has been loaded
                 if (3 in loadedTabs) {
@@ -251,9 +246,7 @@ fun AppDetailContent(
  */
 @Composable
 fun AppInfoHeader(
-    appWithStats: AppWithStats,
-    isBlocked: Boolean,
-    onToggleBlock: () -> Unit
+    appWithStats: AppWithStats
 ) {
     // Get app icon using PackageManager
     val appIcon = remember {
@@ -374,6 +367,10 @@ fun AppTabContent(appInfo: AppWithStats) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+
+        // maybe no need this at all
+//        AppInfoHeader(appWithStats = appInfo)
+
         Text(
             text = stringResource(R.string.app_statistics),
             style = MaterialTheme.typography.titleMedium,
@@ -433,12 +430,12 @@ fun WakelocksTabContent(
     val viewModel = koinViewModel<com.js.nowakelock.ui.screens.das.DAsViewModel>(
         qualifier = org.koin.core.qualifier.named("WakelockViewModel")
     )
-    
+
     // 设置应用过滤器
     LaunchedEffect(packageName, userId) {
         viewModel.setAppFilter(packageName, userId)
     }
-    
+
     // 使用WakelockScreen组件，复用现有实现
     com.js.nowakelock.ui.screens.das.WakelockScreen(
         navigateToDADetail = onNavigateToDetail,
@@ -466,12 +463,12 @@ fun AlarmsTabContent(
     val viewModel = koinViewModel<com.js.nowakelock.ui.screens.das.DAsViewModel>(
         qualifier = org.koin.core.qualifier.named("AlarmViewModel")
     )
-    
+
     // 设置应用过滤器
     LaunchedEffect(packageName, userId) {
         viewModel.setAppFilter(packageName, userId)
     }
-    
+
     // 使用AlarmScreen组件，复用现有实现
     com.js.nowakelock.ui.screens.das.AlarmScreen(
         navigateToDADetail = onNavigateToDetail,
@@ -499,12 +496,12 @@ fun ServicesTabContent(
     val viewModel = koinViewModel<com.js.nowakelock.ui.screens.das.DAsViewModel>(
         qualifier = org.koin.core.qualifier.named("ServiceViewModel")
     )
-    
+
     // 设置应用过滤器
     LaunchedEffect(packageName, userId) {
         viewModel.setAppFilter(packageName, userId)
     }
-    
+
     // 使用ServiceScreen组件，复用现有实现
     com.js.nowakelock.ui.screens.das.ServiceScreen(
         navigateToDADetail = onNavigateToDetail,
@@ -534,7 +531,14 @@ fun AppDetailContentPreview() {
         serviceCount = 3,
         serviceBlockedCount = 0
     )
-    AppDetailContent(appInfo = appInfo, isBlocked = false, onToggleBlock = {}, navController = null, packageName = "", userId = 0)
+    AppDetailContent(
+        appInfo = appInfo,
+        isBlocked = false,
+        onToggleBlock = {},
+        navController = null,
+        packageName = "",
+        userId = 0
+    )
 }
             
 
