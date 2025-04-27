@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +19,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -367,49 +372,150 @@ fun AppTabContent(appInfo: AppWithStats) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-
-        // maybe no need this at all
-//        AppInfoHeader(appWithStats = appInfo)
-
         Text(
             text = stringResource(R.string.app_statistics),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
 
-        // 唤醒锁统计
-        StatisticCard(
-            title = stringResource(R.string.wakelock_statistics),
-            items = listOf(
-                Pair(stringResource(R.string.total_wakelocks), appInfo.wakelockCount.toString()),
-                Pair(
-                    stringResource(R.string.blocked_wakelocks),
-                    appInfo.wakelockBlockedCount.toString()
-                ),
-                Pair(stringResource(R.string.total_time), "5h 32m"),
-                Pair(stringResource(R.string.saved_time), "1h 15m")
-            )
-        )
-
-        // 闹钟统计
-        StatisticCard(
-            title = stringResource(R.string.alarm_statistics),
-            items = listOf(
-                Pair(stringResource(R.string.total_alarms), appInfo.alarmCount.toString()),
-                Pair(stringResource(R.string.blocked_alarms), appInfo.alarmBlockedCount.toString())
-            )
-        )
-
-        // 服务统计
-        StatisticCard(
-            title = stringResource(R.string.service_statistics),
-            items = listOf(
-                Pair(stringResource(R.string.total_services), appInfo.serviceCount.toString()),
-                Pair(
-                    stringResource(R.string.blocked_services),
-                    appInfo.serviceBlockedCount.toString()
+        // 合并统计卡片
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
+            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                modifier = Modifier.padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // 唤醒锁统计部分
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // 第一列：唤醒锁总数和总时间
+                    Column(modifier = Modifier.weight(1f)) {
+                        StatItemHorizontal(
+                            label = stringResource(R.string.total_wakelocks),
+                            value = appInfo.wakelockCount.toString()
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        StatItemHorizontal(
+                            label = stringResource(R.string.total_time),
+                            value = appInfo.getFormattedTime()
+                        )
+                    }
+                    
+                    // 第二列：已屏蔽唤醒锁和节省时间
+                    Column(modifier = Modifier.weight(1f)) {
+                        StatItemHorizontal(
+                            label = stringResource(R.string.blocked_wakelocks),
+                            value = appInfo.wakelockBlockedCount.toString()
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        StatItemHorizontal(
+                            label = stringResource(R.string.saved_time),
+                            value = "1h 15m"
+                        )
+                    }
+                }
+                
+                // 分隔线
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                 )
-            )
+                
+                // 闹钟统计部分
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    StatItemHorizontal(
+                        label = stringResource(R.string.total_alarms),
+                        value = appInfo.alarmCount.toString(),
+                        modifier = Modifier.weight(1f)
+                    )
+                    StatItemHorizontal(
+                        label = stringResource(R.string.blocked_alarms),
+                        value = appInfo.alarmBlockedCount.toString(),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                
+                // 分隔线
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+                
+                // 服务统计部分
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    StatItemHorizontal(
+                        label = stringResource(R.string.total_services),
+                        value = appInfo.serviceCount.toString(),
+                        modifier = Modifier.weight(1f)
+                    )
+                    StatItemHorizontal(
+                        label = stringResource(R.string.blocked_services),
+                        value = appInfo.serviceBlockedCount.toString(),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 水平布局的统计项组件，标签在左侧，值在右侧
+ */
+@Composable
+private fun StatItemHorizontal(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+/**
+ * 统计项组件，用于在统计卡片内显示标签和值
+ */
+@Composable
+private fun StatItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
