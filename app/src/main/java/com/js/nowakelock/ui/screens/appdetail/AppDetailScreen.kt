@@ -13,15 +13,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -53,6 +59,7 @@ import com.js.nowakelock.ui.components.StatisticCard
 import com.js.nowakelock.ui.navigation.DADetail
 import org.koin.androidx.compose.koinViewModel
 import com.js.nowakelock.data.db.entity.AppInfo
+import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
  * 应用详情页面
@@ -378,91 +385,157 @@ fun AppTabContent(appInfo: AppWithStats) {
             fontWeight = FontWeight.Bold
         )
 
-        // 合并统计卡片
-        ElevatedCard(
+        // 统计卡片 - 接近截图样式
+        Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f)
+            ),
+            shape = RoundedCornerShape(8.dp)
         ) {
             Column(
-                modifier = Modifier.padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 // 唤醒锁统计部分
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Column(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    // 第一列：唤醒锁总数和总时间
-                    Column(modifier = Modifier.weight(1f)) {
-                        StatItemHorizontal(
-                            label = stringResource(R.string.total_wakelocks),
-                            value = appInfo.wakelockCount.toString()
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        StatItemHorizontal(
-                            label = stringResource(R.string.total_time),
-                            value = appInfo.getFormattedTime()
-                        )
-                    }
+                    // 唤醒锁数量行
+                    StatisticRowWithIcon(
+                        icon = Icons.Outlined.Lock,
+                        leftLabel = stringResource(R.string.total_wakelocks),
+                        leftValue = appInfo.wakelockCount.toString(),
+                        rightLabel = stringResource(R.string.blocked_wakelocks),
+                        rightValue = appInfo.wakelockBlockedCount.toString()
+                    )
                     
-                    // 第二列：已屏蔽唤醒锁和节省时间
-                    Column(modifier = Modifier.weight(1f)) {
-                        StatItemHorizontal(
-                            label = stringResource(R.string.blocked_wakelocks),
-                            value = appInfo.wakelockBlockedCount.toString()
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        StatItemHorizontal(
-                            label = stringResource(R.string.saved_time),
-                            value = "1h 15m"
-                        )
-                    }
+                    // 唤醒锁时间行
+                    StatisticRowWithIcon(
+                        icon = null,
+                        leftLabel = stringResource(R.string.total_time),
+                        leftValue = appInfo.getFormattedTime(),
+                        rightLabel = stringResource(R.string.saved_time),
+                        rightValue = "1h 15m"
+                    )
                 }
-                
-                // 分隔线
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
                 
                 // 闹钟统计部分
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    StatItemHorizontal(
-                        label = stringResource(R.string.total_alarms),
-                        value = appInfo.alarmCount.toString(),
-                        modifier = Modifier.weight(1f)
-                    )
-                    StatItemHorizontal(
-                        label = stringResource(R.string.blocked_alarms),
-                        value = appInfo.alarmBlockedCount.toString(),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                
-                // 分隔线
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                StatisticRowWithIcon(
+                    icon = Icons.Outlined.AccessTime,
+                    leftLabel = stringResource(R.string.total_alarms),
+                    leftValue = appInfo.alarmCount.toString(),
+                    rightLabel = stringResource(R.string.blocked_alarms),
+                    rightValue = appInfo.alarmBlockedCount.toString(),
+                    useAlternateBackground = true
                 )
                 
                 // 服务统计部分
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    StatItemHorizontal(
-                        label = stringResource(R.string.total_services),
-                        value = appInfo.serviceCount.toString(),
-                        modifier = Modifier.weight(1f)
+                StatisticRowWithIcon(
+                    icon = Icons.Outlined.Build,
+                    leftLabel = stringResource(R.string.total_services),
+                    leftValue = appInfo.serviceCount.toString(),
+                    rightLabel = stringResource(R.string.blocked_services),
+                    rightValue = appInfo.serviceBlockedCount.toString(),
+                    useAlternateBackground = true
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 带图标的统计行，显示一个图标和两组统计数据
+ */
+@Composable
+private fun StatisticRowWithIcon(
+    icon: ImageVector?,
+    leftLabel: String,
+    leftValue: String,
+    rightLabel: String,
+    rightValue: String,
+    useAlternateBackground: Boolean = false
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (useAlternateBackground) Modifier.background(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.1f)
+                ) else Modifier
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 图标区域
+            Box(
+                modifier = Modifier.width(20.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    StatItemHorizontal(
-                        label = stringResource(R.string.blocked_services),
-                        value = appInfo.serviceBlockedCount.toString(),
-                        modifier = Modifier.weight(1f)
+                }
+            }
+            
+            // 数据区域
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // 左侧部分(标签和值)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                ) {
+                    // 标签在左
+                    Text(
+                        text = leftLabel,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    )
+                    
+                    // 值在右
+                    Text(
+                        text = leftValue,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
+                }
+                
+                // 右侧部分(标签和值)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp)
+                ) {
+                    // 标签在左
+                    Text(
+                        text = rightLabel,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    )
+                    
+                    // 值在右
+                    Text(
+                        text = rightValue,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
             }
@@ -491,7 +564,7 @@ private fun StatItemHorizontal(
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold
         )
     }
@@ -628,23 +701,51 @@ fun AppDetailContentPreview() {
             packageName = "com.example.app",
             processName = "com.example.app",
             icon = 0,
-            system = false
+            system = false,
+            label = "Example App"
         ),
-        wakelockCount = 10,
-        wakelockBlockedCount = 2,
-        alarmCount = 5,
-        alarmBlockedCount = 1,
-        serviceCount = 3,
-        serviceBlockedCount = 0
+        wakelockCount = 37202,
+        wakelockBlockedCount = 132,
+        wakelockTime = 578820000, // 160h 47m in milliseconds
+        alarmCount = 9040,
+        alarmBlockedCount = 78,
+        serviceCount = 156,
+        serviceBlockedCount = 12
     )
     AppDetailContent(
         appInfo = appInfo,
         isBlocked = false,
         onToggleBlock = {},
         navController = null,
-        packageName = "",
+        packageName = "com.example.app",
         userId = 0
     )
+}
+
+// Preview AppTabContent only
+@Preview
+@Composable
+fun AppTabContentPreview() {
+    val appInfo = AppWithStats(
+        appInfo = AppInfo(
+            packageName = "com.example.app",
+            processName = "com.example.app",
+            icon = 0,
+            system = false,
+            label = "Example App"
+        ),
+        wakelockCount = 37202,
+        wakelockBlockedCount = 132,
+        wakelockTime = 578820000, // 160h 47m in milliseconds
+        alarmCount = 9040,
+        alarmBlockedCount = 78,
+        serviceCount = 156,
+        serviceBlockedCount = 12
+    )
+    
+    MaterialTheme {
+        AppTabContent(appInfo = appInfo)
+    }
 }
             
 
