@@ -1,6 +1,6 @@
 ---
 description: CursorRIPER♦Σ 1.0.4 -(code protect + context + permissions)
-globs: **/*.*
+globs: 
 alwaysApply: true
 ---
 # CursorRIPER♦Σ 1.0.4 -(code protect + context + permissions)

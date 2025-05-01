@@ -1,6 +1,6 @@
 ---
 description: MCP Filesystem integration for CursorRIPER Σ
-globs: **/*.*
+globs: 
 alwaysApply: true
 ---
 
