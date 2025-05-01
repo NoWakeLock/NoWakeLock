@@ -53,6 +53,7 @@ import com.js.nowakelock.ui.navigation.DADetail
 import org.koin.androidx.compose.koinViewModel
 import com.js.nowakelock.data.db.entity.AppInfo
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.runtime.derivedStateOf
 
 /**
  * 应用详情页面
@@ -123,11 +124,18 @@ fun AppDetailContent(
     val tabs = listOf("App", "Wakelocks", "Alarms", "Services")
 
     // Track which tabs have been loaded for lazy loading
-    val loadedTabs = remember { mutableSetOf(0) }
-
-    // When tab changes, add it to loaded tabs
+    val loadedTabs = remember { mutableStateOf(setOf(0)) }
+    
+    // when selectedTabIndex changes, immediately include the new tab index
+    val currentLoadedTabs by remember {
+        derivedStateOf { 
+            loadedTabs.value + selectedTabIndex 
+        }
+    }
+    
+    // update the persistent loaded tab set, so it remains loaded on next recomposition
     LaunchedEffect(selectedTabIndex) {
-        loadedTabs.add(selectedTabIndex)
+        loadedTabs.value = loadedTabs.value + selectedTabIndex
     }
 
     Column(
@@ -150,8 +158,7 @@ fun AppDetailContent(
         when (selectedTabIndex) {
             0 -> AppTabContent(appInfo)
             1 -> {
-                // Only show content if this tab has been loaded
-                if (1 in loadedTabs) {
+                if (1 in currentLoadedTabs) {
                     WakelocksTabContent(
                         appInfo = appInfo,
                         packageName = packageName,
@@ -170,7 +177,6 @@ fun AppDetailContent(
                         }
                     )
                 } else {
-                    // Show loading placeholder
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -181,8 +187,7 @@ fun AppDetailContent(
             }
 
             2 -> {
-                // Only show content if this tab has been loaded
-                if (2 in loadedTabs) {
+                if (2 in currentLoadedTabs) {
                     AlarmsTabContent(
                         appInfo = appInfo,
                         packageName = packageName,
@@ -201,7 +206,6 @@ fun AppDetailContent(
                         }
                     )
                 } else {
-                    // Show loading placeholder
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -212,8 +216,7 @@ fun AppDetailContent(
             }
 
             3 -> {
-                // Only show content if this tab has been loaded
-                if (3 in loadedTabs) {
+                if (3 in currentLoadedTabs) {
                     ServicesTabContent(
                         appInfo = appInfo,
                         packageName = packageName,
@@ -232,7 +235,6 @@ fun AppDetailContent(
                         }
                     )
                 } else {
-                    // Show loading placeholder
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center

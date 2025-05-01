@@ -73,38 +73,50 @@ data class DAsUiState(
  * Also manages DA settings updates
  */
 open class DAsViewModel(
-    private val daRepository: DARepository,
-    private val savedStateHandle: SavedStateHandle
+    private val daRepository: DARepository, private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    // 从SavedStateHandle读取参数
+    // read arguments from savedStateHandle
     var packageName: String?
         get() = savedStateHandle.get<String>(DAsScreenParams.PACKAGE_NAME)
-        set(value) { savedStateHandle[DAsScreenParams.PACKAGE_NAME] = value }
-        
+        set(value) {
+            savedStateHandle[DAsScreenParams.PACKAGE_NAME] = value
+        }
+
     var userId: Int?
         get() = savedStateHandle.get<Int>(DAsScreenParams.USER_ID)
-        set(value) { savedStateHandle[DAsScreenParams.USER_ID] = value }
-        
+        set(value) {
+            savedStateHandle[DAsScreenParams.USER_ID] = value
+        }
+
     var searchQuery: String
         get() = savedStateHandle.get<String>(DAsScreenParams.SEARCH_QUERY) ?: ""
-        set(value) { savedStateHandle[DAsScreenParams.SEARCH_QUERY] = value }
-        
+        set(value) {
+            savedStateHandle[DAsScreenParams.SEARCH_QUERY] = value
+        }
+
     var isSearchActive: Boolean
         get() = savedStateHandle.get<Boolean>(DAsScreenParams.IS_SEARCH_ACTIVE) ?: false
-        set(value) { savedStateHandle[DAsScreenParams.IS_SEARCH_ACTIVE] = value }
-        
-    var currentFilterOption: DAFilterOption
-        get() = savedStateHandle.get<DAFilterOption>(DAsScreenParams.FILTER_OPTION) ?: DAFilterOption.ALL
-        set(value) { savedStateHandle[DAsScreenParams.FILTER_OPTION] = value }
-        
-    var currentSortOption: DASortOption
+        set(value) {
+            savedStateHandle[DAsScreenParams.IS_SEARCH_ACTIVE] = value
+        }
+
+    private var currentFilterOption: DAFilterOption
+        get() = savedStateHandle.get<DAFilterOption>(DAsScreenParams.FILTER_OPTION)
+            ?: DAFilterOption.ALL
+        set(value) {
+            savedStateHandle[DAsScreenParams.FILTER_OPTION] = value
+        }
+
+    private var currentSortOption: DASortOption
         get() = savedStateHandle.get<DASortOption>(DAsScreenParams.SORT_OPTION) ?: DASortOption.NAME
-        set(value) { savedStateHandle[DAsScreenParams.SORT_OPTION] = value }
+        set(value) {
+            savedStateHandle[DAsScreenParams.SORT_OPTION] = value
+        }
 
     private val _uiState = MutableStateFlow(
         DAsUiState(
-            isLoading = true, 
+            isLoading = true,
             loadingSource = LoadingSource.INITIAL,
             searchQuery = searchQuery,
             isSearchActive = isSearchActive,
@@ -141,9 +153,17 @@ open class DAsViewModel(
             try {
                 // Select data flow based on sort option
                 val daFlow = when (currentSortOption) {
-                    DASortOption.NAME -> daRepository.getDAItemsSortedByName()
-                    DASortOption.COUNT -> daRepository.getDAItemsSortedByCount()
-                    DASortOption.TIME -> daRepository.getDAItemsSortedByTime()
+                    DASortOption.NAME -> daRepository.getDAItemsSortedByName(
+                        packageName = packageName ?: "", userId = userId ?: -1
+                    )
+
+                    DASortOption.COUNT -> daRepository.getDAItemsSortedByCount(
+                        packageName = packageName ?: "", userId = userId ?: -1
+                    )
+
+                    DASortOption.TIME -> daRepository.getDAItemsSortedByTime(
+                        packageName = packageName ?: "", userId = userId ?: -1
+                    )
                 }
 
                 // Collect and update UI state
@@ -151,38 +171,34 @@ open class DAsViewModel(
                     // Apply custom distinctUntilChanged to filter out equivalent lists
                     .distinctUntilChanged { old, new ->
                         if (old.size != new.size) return@distinctUntilChanged false
-                        
+
                         // Check if lists contain the same items with the same state
                         val oldMap = old.associateBy { "${it.name}_${it.packageName}_${it.userId}" }
                         val newMap = new.associateBy { "${it.name}_${it.packageName}_${it.userId}" }
-                        
+
                         if (oldMap.keys != newMap.keys) return@distinctUntilChanged false
-                        
+
                         // Deep comparison of relevant state properties
                         oldMap.keys.all { key ->
                             val oldItem = oldMap[key]!!
                             val newItem = newMap[key]!!
-                            
-                            oldItem.fullBlocked == newItem.fullBlocked &&
-                            oldItem.screenOffBlock == newItem.screenOffBlock &&
-                            oldItem.timeWindowSec == newItem.timeWindowSec
+
+                            oldItem.fullBlocked == newItem.fullBlocked && oldItem.screenOffBlock == newItem.screenOffBlock && oldItem.timeWindowSec == newItem.timeWindowSec
                         }
-                    }
-                    .collect { daList ->
-                        // 首先根据包名和用户ID过滤
+                    }.collect { daList ->
+                        // packageName / userId
                         val pkgFilteredList = daList.filter { da ->
-                            (packageName == null || da.packageName == packageName) &&
-                            (userId == null || da.userId == userId)
+                            (packageName == null || da.packageName == packageName) && (userId == null || da.userId == userId)
                         }
-                        
-                        // 然后应用筛选选项
+
+                        // app filter
                         val filteredList = when (currentFilterOption) {
                             DAFilterOption.ALL -> pkgFilteredList
                             DAFilterOption.BLOCKED -> pkgFilteredList.filter { it.fullBlocked }
                             DAFilterOption.ALLOWED -> pkgFilteredList.filter { !it.fullBlocked }
                         }
 
-                        // 应用搜索过滤
+                        // search filter
                         val query = searchQuery.trim().lowercase()
                         val searchFilteredList = if (query.isNotEmpty()) {
                             filteredList.filter { da ->
@@ -193,7 +209,7 @@ open class DAsViewModel(
                             filteredList
                         }
 
-                        // 计算统计信息
+                        // count
                         val totalCount = pkgFilteredList.size
                         val blockedCount = pkgFilteredList.count { it.fullBlocked }
 
@@ -265,7 +281,7 @@ open class DAsViewModel(
             updateSearchQuery("")
         }
     }
-    
+
     /**
      * 设置包名和用户ID过滤器
      */
@@ -273,11 +289,10 @@ open class DAsViewModel(
         if (this.packageName != packageName || this.userId != userId) {
             this.packageName = packageName
             this.userId = userId
-            _uiState.update { 
+            _uiState.update {
                 it.copy(
-                    packageName = packageName,
-                    userId = userId
-                ) 
+                    packageName = packageName, userId = userId
+                )
             }
             loadDAs(LoadingSource.FILTER_CHANGE)
         }
