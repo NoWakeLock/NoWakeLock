@@ -25,6 +25,7 @@ class SPTools {
             return prefs?.getString(key, defaultValue) ?: defaultValue
         }
 
+        @SuppressLint("CommitPrefEdits")
         fun setString(key: String, value: String) {
             with(prefs?.edit() ?: return) {
                 putString(key, value)
@@ -37,6 +38,7 @@ class SPTools {
             return prefs?.getBoolean(key, defaultValue) ?: defaultValue
         }
 
+        @SuppressLint("CommitPrefEdits")
         fun setBoolean(key: String, value: Boolean) {
             with(prefs?.edit() ?: return) {
                 putBoolean(key, value)
@@ -49,6 +51,7 @@ class SPTools {
             return prefs?.getInt(key, defaultValue) ?: defaultValue
         }
 
+        @SuppressLint("CommitPrefEdits")
         fun setInt(key: String, value: Int) {
             with(prefs?.edit() ?: return) {
                 putInt(key, value)
@@ -60,6 +63,7 @@ class SPTools {
             return prefs?.getLong(key, defaultValue) ?: defaultValue
         }
 
+        @SuppressLint("CommitPrefEdits")
         fun setLong(key: String, value: Long) {
             with(prefs?.edit() ?: return) {
                 putLong(key, value)
