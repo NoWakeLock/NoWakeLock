@@ -69,12 +69,12 @@ fun DAsSummary(
 
             // Progress indicator
             LinearProgressIndicator(
-                progress = blockedPercentage / 100f,
+                progress = { blockedPercentage / 100f },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(12.dp),
                 color = BlockedRed,
-                trackColor = AllowedGreen
+                trackColor = AllowedGreen,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
