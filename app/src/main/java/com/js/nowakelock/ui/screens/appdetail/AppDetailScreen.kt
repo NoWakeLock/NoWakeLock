@@ -1,14 +1,18 @@
 package com.js.nowakelock.ui.screens.appdetail
 
 import android.content.pm.PackageManager
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -16,23 +20,37 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +58,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.js.nowakelock.BasicApp.Companion.context
 import com.js.nowakelock.R
@@ -53,10 +73,11 @@ import com.js.nowakelock.ui.navigation.DADetail
 import org.koin.androidx.compose.koinViewModel
 import com.js.nowakelock.data.db.entity.AppInfo
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.runtime.derivedStateOf
+import com.js.nowakelock.data.db.entity.AppSt
+import androidx.compose.material3.SwitchDefaults
 
 /**
- * 应用详情页面
+ * App Detail Screen - Entry point composable for the app details
  */
 @Composable
 fun AppDetailScreen(
@@ -68,6 +89,7 @@ fun AppDetailScreen(
     searchQuery: String = "",
     viewModel: AppDetailViewModel = koinViewModel()
 ) {
+    // Collect UI state with lifecycle awareness
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -93,7 +115,18 @@ fun AppDetailScreen(
                     AppDetailContent(
                         appInfo = appInfo,
                         isBlocked = uiState.isBlocked,
+                        appSt = uiState.appSt,
                         onToggleBlock = { viewModel.toggleAppBlockStatus() },
+                        onUpdateWakelockBlock = { viewModel.updateWakelockBlock(it) },
+                        onUpdateAlarmBlock = { viewModel.updateAlarmBlock(it) },
+                        onUpdateServiceBlock = { viewModel.updateServiceBlock(it) },
+                        onAddWakelockPattern = { viewModel.addWakelockPattern(it) },
+                        onRemoveWakelockPattern = { viewModel.removeWakelockPattern(it) },
+                        onAddAlarmPattern = { viewModel.addAlarmPattern(it) },
+                        onRemoveAlarmPattern = { viewModel.removeAlarmPattern(it) },
+                        onAddServicePattern = { viewModel.addServicePattern(it) },
+                        onRemoveServicePattern = { viewModel.removeServicePattern(it) },
+                        validateRegexPattern = { viewModel.validateRegexPattern(it) },
                         navController = navController,
                         packageName = packageName,
                         userId = userId,
@@ -107,13 +140,24 @@ fun AppDetailScreen(
 }
 
 /**
- * 应用详情内容区域
+ * App Detail Content - Manages tabs and content area
  */
 @Composable
 fun AppDetailContent(
     appInfo: AppWithStats,
     isBlocked: Boolean,
+    appSt: AppSt?,
     onToggleBlock: () -> Unit,
+    onUpdateWakelockBlock: (Boolean) -> Unit,
+    onUpdateAlarmBlock: (Boolean) -> Unit,
+    onUpdateServiceBlock: (Boolean) -> Unit,
+    onAddWakelockPattern: (String) -> Unit,
+    onRemoveWakelockPattern: (String) -> Unit,
+    onAddAlarmPattern: (String) -> Unit,
+    onRemoveAlarmPattern: (String) -> Unit,
+    onAddServicePattern: (String) -> Unit,
+    onRemoveServicePattern: (String) -> Unit,
+    validateRegexPattern: (String) -> Boolean,
     navController: NavController? = null,
     packageName: String,
     userId: Int,
@@ -125,14 +169,14 @@ fun AppDetailContent(
 
     // Track which tabs have been loaded for lazy loading
     val loadedTabs = remember { mutableStateOf(setOf(0)) }
-    
+
     // when selectedTabIndex changes, immediately include the new tab index
     val currentLoadedTabs by remember {
-        derivedStateOf { 
-            loadedTabs.value + selectedTabIndex 
+        derivedStateOf {
+            loadedTabs.value + selectedTabIndex
         }
     }
-    
+
     // update the persistent loaded tab set, so it remains loaded on next recomposition
     LaunchedEffect(selectedTabIndex) {
         loadedTabs.value = loadedTabs.value + selectedTabIndex
@@ -156,14 +200,32 @@ fun AppDetailContent(
         }
 
         when (selectedTabIndex) {
-            0 -> AppTabContent(appInfo)
+            0 -> {
+                appSt?.let { appSettings ->
+                    AppTabContent(
+                        appInfo = appInfo,
+                        appSt = appSettings,
+                        onUpdateWakelockBlock = onUpdateWakelockBlock,
+                        onUpdateAlarmBlock = onUpdateAlarmBlock,
+                        onUpdateServiceBlock = onUpdateServiceBlock,
+                        onAddWakelockPattern = onAddWakelockPattern,
+                        onRemoveWakelockPattern = onRemoveWakelockPattern,
+                        onAddAlarmPattern = onAddAlarmPattern,
+                        onRemoveAlarmPattern = onRemoveAlarmPattern,
+                        onAddServicePattern = onAddServicePattern,
+                        onRemoveServicePattern = onRemoveServicePattern,
+                        validateRegexPattern = validateRegexPattern
+                    )
+                }
+            }
+
             1 -> {
                 if (1 in currentLoadedTabs) {
                     WakelocksTabContent(
                         appInfo = appInfo,
                         packageName = packageName,
                         userId = userId,
-                        isSearchActive = if (selectedTabIndex == 1) isSearchActive else false,
+                        isSearchActive = selectedTabIndex == 1 && isSearchActive,
                         searchQuery = if (selectedTabIndex == 1) searchQuery else "",
                         onNavigateToDetail = { name, pkgName ->
                             navController?.navigate(
@@ -192,7 +254,7 @@ fun AppDetailContent(
                         appInfo = appInfo,
                         packageName = packageName,
                         userId = userId,
-                        isSearchActive = if (selectedTabIndex == 2) isSearchActive else false,
+                        isSearchActive = selectedTabIndex == 2 && isSearchActive,
                         searchQuery = if (selectedTabIndex == 2) searchQuery else "",
                         onNavigateToDetail = { name, pkgName ->
                             navController?.navigate(
@@ -221,7 +283,7 @@ fun AppDetailContent(
                         appInfo = appInfo,
                         packageName = packageName,
                         userId = userId,
-                        isSearchActive = if (selectedTabIndex == 3) isSearchActive else false,
+                        isSearchActive = selectedTabIndex == 3 && isSearchActive,
                         searchQuery = if (selectedTabIndex == 3) searchQuery else "",
                         onNavigateToDetail = { name, pkgName ->
                             navController?.navigate(
@@ -336,40 +398,61 @@ fun AppInfoHeader(
 }
 
 /**
- * AppTab
+ * App Tab Content - Displays app information and settings
  */
 @Composable
-fun AppTabContent(appInfo: AppWithStats) {
+fun AppTabContent(
+    appInfo: AppWithStats,
+    appSt: AppSt,
+    onUpdateWakelockBlock: (Boolean) -> Unit,
+    onUpdateAlarmBlock: (Boolean) -> Unit,
+    onUpdateServiceBlock: (Boolean) -> Unit,
+    onAddWakelockPattern: (String) -> Unit,
+    onRemoveWakelockPattern: (String) -> Unit,
+    onAddAlarmPattern: (String) -> Unit,
+    onRemoveAlarmPattern: (String) -> Unit,
+    onAddServicePattern: (String) -> Unit,
+    onRemoveServicePattern: (String) -> Unit,
+    validateRegexPattern: (String) -> Boolean
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Statistics Section
         Text(
             text = stringResource(R.string.app_statistics),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
 
         // Count card
-        Card(
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f)
+//            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(
+                0.5.dp,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             ),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 0.5.dp, // Very subtle tonal elevation for depth
+            shadowElevation = 1.dp, // Minimal shadow for the floating effect
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
-                // 唤醒锁统计部分
+                // Wakelock statistics
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // 唤醒锁数量行
+                    // Wakelock count row
                     StatisticRowWithIcon(
                         icon = Icons.Outlined.Lock,
                         leftLabel = stringResource(R.string.total_wakelocks),
@@ -377,8 +460,8 @@ fun AppTabContent(appInfo: AppWithStats) {
                         rightLabel = stringResource(R.string.blocked_wakelocks),
                         rightValue = appInfo.wakelockBlockedCount.toString()
                     )
-                    
-                    // 唤醒锁时间行
+
+                    // Wakelock time row
                     StatisticRowWithIcon(
                         icon = null,
                         leftLabel = stringResource(R.string.total_time),
@@ -387,8 +470,8 @@ fun AppTabContent(appInfo: AppWithStats) {
                         rightValue = appInfo.getFormattedBlockedTime()
                     )
                 }
-                
-                // 闹钟统计部分
+
+                // Alarm statistics
                 StatisticRowWithIcon(
                     icon = Icons.Outlined.AccessTime,
                     leftLabel = stringResource(R.string.total_alarms),
@@ -397,8 +480,8 @@ fun AppTabContent(appInfo: AppWithStats) {
                     rightValue = appInfo.alarmBlockedCount.toString(),
                     useAlternateBackground = true
                 )
-                
-                // 服务统计部分
+
+                // Service statistics
                 StatisticRowWithIcon(
                     icon = Icons.Outlined.Build,
                     leftLabel = stringResource(R.string.total_services),
@@ -409,11 +492,222 @@ fun AppTabContent(appInfo: AppWithStats) {
                 )
             }
         }
+
+        // Settings Section
+        Text(
+            text = stringResource(R.string.app_settings),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+
+        // Settings Card
+        SettingsCard(
+            appSt = appSt,
+            onUpdateWakelockBlock = onUpdateWakelockBlock,
+            onUpdateAlarmBlock = onUpdateAlarmBlock,
+            onUpdateServiceBlock = onUpdateServiceBlock,
+            onAddWakelockPattern = onAddWakelockPattern,
+            onRemoveWakelockPattern = onRemoveWakelockPattern,
+            onAddAlarmPattern = onAddAlarmPattern,
+            onRemoveAlarmPattern = onRemoveAlarmPattern,
+            onAddServicePattern = onAddServicePattern,
+            onRemoveServicePattern = onRemoveServicePattern,
+            validateRegexPattern = validateRegexPattern
+        )
     }
 }
 
 /**
- * 带图标的统计行，显示一个图标和两组统计数据
+ * Settings Card component that displays app settings
+ * Contains block toggles and pattern management sections
+ */
+@Composable
+private fun SettingsCard(
+    appSt: AppSt,
+    onUpdateWakelockBlock: (Boolean) -> Unit,
+    onUpdateAlarmBlock: (Boolean) -> Unit,
+    onUpdateServiceBlock: (Boolean) -> Unit,
+    onAddWakelockPattern: (String) -> Unit,
+    onRemoveWakelockPattern: (String) -> Unit,
+    onAddAlarmPattern: (String) -> Unit,
+    onRemoveAlarmPattern: (String) -> Unit,
+    onAddServicePattern: (String) -> Unit,
+    onRemoveServicePattern: (String) -> Unit,
+    validateRegexPattern: (String) -> Boolean
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 0.5.dp, // Very subtle tonal elevation for depth
+        shadowElevation = 1.dp // Minimal shadow for the floating effect
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 0.dp)
+        ) {
+            // Block Settings Section
+            BlockSettingsSection(
+                appSt = appSt,
+                onUpdateWakelockBlock = onUpdateWakelockBlock,
+                onUpdateAlarmBlock = onUpdateAlarmBlock,
+                onUpdateServiceBlock = onUpdateServiceBlock
+            )
+
+            // Add divider between sections
+            Divider(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
+
+            // Pattern Settings Section
+            PatternSettingsSection(
+                title = stringResource(R.string.wakelock_patterns),
+                patterns = appSt.rE_Wakelock,
+                onAddPattern = onAddWakelockPattern,
+                onRemovePattern = onRemoveWakelockPattern,
+                validateRegexPattern = validateRegexPattern
+            )
+
+            // Add divider between pattern sections
+            Divider(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
+
+            PatternSettingsSection(
+                title = stringResource(R.string.alarm_patterns),
+                patterns = appSt.rE_Alarm,
+                onAddPattern = onAddAlarmPattern,
+                onRemovePattern = onRemoveAlarmPattern,
+                validateRegexPattern = validateRegexPattern
+            )
+
+            // Add divider between pattern sections
+            Divider(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
+
+            PatternSettingsSection(
+                title = stringResource(R.string.service_patterns),
+                patterns = appSt.rE_Service,
+                onAddPattern = onAddServicePattern,
+                onRemovePattern = onRemoveServicePattern,
+                validateRegexPattern = validateRegexPattern
+            )
+        }
+    }
+}
+
+/**
+ * Block Settings Section component
+ * Displays global block toggles for wakelock, alarm, and service
+ */
+@Composable
+private fun BlockSettingsSection(
+    appSt: AppSt,
+    onUpdateWakelockBlock: (Boolean) -> Unit,
+    onUpdateAlarmBlock: (Boolean) -> Unit,
+    onUpdateServiceBlock: (Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+
+        // Toggles container with background
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Wakelock Toggle
+                SettingToggle(
+                    title = stringResource(R.string.allow_wakelocks),
+                    checked = !appSt.wakelock,
+                    onCheckedChange = onUpdateWakelockBlock
+                )
+
+                // Divider between toggles
+                Divider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+
+                // Alarm Toggle
+                SettingToggle(
+                    title = stringResource(R.string.allow_alarms),
+                    checked = !appSt.alarm,
+                    onCheckedChange = onUpdateAlarmBlock
+                )
+
+                // Divider between toggles
+                Divider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+
+                // Service Toggle
+                SettingToggle(
+                    title = stringResource(R.string.allow_services),
+                    checked = !appSt.service,
+                    onCheckedChange = onUpdateServiceBlock
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Setting Toggle component for block settings
+ * Displays a toggle switch with a title
+ */
+@Composable
+private fun SettingToggle(
+    title: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.Transparent // Transparent background
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable { onCheckedChange(checked) }
+                .padding(horizontal = 0.dp, vertical = 0.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                modifier = Modifier.padding(start = 0.dp),
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                    checkedBorderColor = MaterialTheme.colorScheme.primary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    uncheckedBorderColor = MaterialTheme.colorScheme.outline
+                )
+            )
+        }
+    }
+}
+
+/**
+ * Displays a statistic row with icon and two label-value pairs
  */
 @Composable
 private fun StatisticRowWithIcon(
@@ -429,80 +723,84 @@ private fun StatisticRowWithIcon(
             .fillMaxWidth()
             .then(
                 if (useAlternateBackground) Modifier.background(
-                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.1f)
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 ) else Modifier
             )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 8.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 图标区域
+            // Icon area
             Box(
-                modifier = Modifier.width(20.dp),
+                modifier = Modifier.width(24.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (icon != null) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-            
-            // 数据区域
+
+            // Data area
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 4.dp),
+                    .padding(start = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // 左侧部分(标签和值)
+                // Left part (label and value)
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp)
                 ) {
-                    // 标签在左
+                    // Label on left
                     Text(
                         text = leftLabel,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
-                    
-                    // 值在右
+
+                    // Value on right
                     Text(
                         text = leftValue,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
-                
-                // 右侧部分(标签和值)
+
+                // Right part (label and value)
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
                 ) {
-                    // 标签在左
+                    // Label on left
                     Text(
                         text = rightLabel,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
-                    
-                    // 值在右
+
+                    // Value on right
                     Text(
                         text = rightValue,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
+                        color = if (rightLabel.contains("blocked", ignoreCase = true))
+                            MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
@@ -512,52 +810,199 @@ private fun StatisticRowWithIcon(
 }
 
 /**
- * 水平布局的统计项组件，标签在左侧，值在右侧
+ * Pattern Settings Section component
+ * Displays and manages regex patterns for blocking
  */
 @Composable
-private fun StatItemHorizontal(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
+private fun PatternSettingsSection(
+    title: String,
+    patterns: Set<String>,
+    onAddPattern: (String) -> Unit,
+    onRemovePattern: (String) -> Unit,
+    validateRegexPattern: (String) -> Boolean
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+    var showInput by remember { mutableStateOf(false) }
+    var inputValue by remember { mutableStateOf("") }
+    var isValidPattern by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 0.dp)
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold
-        )
+        // Section Title Row with Add Button
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+
+            // Add Button
+            IconButton(
+                onClick = { showInput = true },
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_pattern),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        // Pattern Chips display
+        if (patterns.isNotEmpty()) {
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                patterns.forEach { pattern ->
+                    PatternChip(
+                        pattern = pattern,
+                        onRemove = { onRemovePattern(pattern) }
+                    )
+                }
+            }
+        } else if (!showInput) {
+            // Empty state hint
+            Text(
+                text = stringResource(R.string.add_pattern),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+
+        // Pattern Input Form
+        if (showInput) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = inputValue,
+                        onValueChange = {
+                            inputValue = it
+                            isValidPattern = true // Reset validation on input change
+                        },
+                        modifier = Modifier.weight(1f),
+                        label = { Text(stringResource(R.string.pattern)) },
+                        isError = !isValidPattern,
+                        supportingText = {
+                            if (!isValidPattern) {
+                                Text(
+                                    text = stringResource(R.string.invalid_regex),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                        )
+                    )
+
+                    Column {
+                        IconButton(
+                            onClick = {
+                                // Validate and add pattern
+                                if (validateRegexPattern(inputValue)) {
+                                    onAddPattern(inputValue)
+                                    inputValue = ""
+                                    showInput = false
+                                } else {
+                                    isValidPattern = false
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = stringResource(R.string.add),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                // Cancel input
+                                inputValue = ""
+                                showInput = false
+                                isValidPattern = true
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = stringResource(R.string.cancel),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
 /**
- * 统计项组件，用于在统计卡片内显示标签和值
+ * Pattern Chip component
+ * Displays a regex pattern with delete button
  */
 @Composable
-private fun StatItem(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
+private fun PatternChip(
+    pattern: String,
+    onRemove: () -> Unit
 ) {
-    Column(modifier = modifier) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold
-        )
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+        modifier = Modifier.height(36.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 12.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = pattern,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+
+            IconButton(
+                onClick = onRemove,
+                modifier = Modifier.size(28.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.remove),
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
     }
 }
 
@@ -680,10 +1125,33 @@ fun AppDetailContentPreview() {
         serviceCount = 156,
         serviceBlockedCount = 12
     )
+
+    val appSt = AppSt(
+        packageName = "com.example.app",
+        userId = 0,
+        wakelock = true,
+        alarm = false,
+        service = true,
+        rE_Wakelock = setOf("MyWakeLock.*"),
+        rE_Alarm = setOf("AlarmManager.*"),
+        rE_Service = emptySet()
+    )
+
     AppDetailContent(
         appInfo = appInfo,
         isBlocked = false,
+        appSt = appSt,
         onToggleBlock = {},
+        onUpdateWakelockBlock = {},
+        onUpdateAlarmBlock = {},
+        onUpdateServiceBlock = {},
+        onAddWakelockPattern = {},
+        onRemoveWakelockPattern = {},
+        onAddAlarmPattern = {},
+        onRemoveAlarmPattern = {},
+        onAddServicePattern = {},
+        onRemoveServicePattern = {},
+        validateRegexPattern = { true },
         navController = null,
         packageName = "com.example.app",
         userId = 0
@@ -710,9 +1178,33 @@ fun AppTabContentPreview() {
         serviceCount = 156,
         serviceBlockedCount = 12
     )
-    
+
+    val appSt = AppSt(
+        packageName = "com.example.app",
+        userId = 0,
+        wakelock = true,
+        alarm = false,
+        service = true,
+        rE_Wakelock = setOf("MyWakeLock.*"),
+        rE_Alarm = setOf("AlarmManager.*"),
+        rE_Service = emptySet()
+    )
+
     MaterialTheme {
-        AppTabContent(appInfo = appInfo)
+        AppTabContent(
+            appInfo = appInfo,
+            appSt = appSt,
+            onUpdateWakelockBlock = {},
+            onUpdateAlarmBlock = {},
+            onUpdateServiceBlock = {},
+            onAddWakelockPattern = {},
+            onRemoveWakelockPattern = {},
+            onAddAlarmPattern = {},
+            onRemoveAlarmPattern = {},
+            onAddServicePattern = {},
+            onRemoveServicePattern = {},
+            validateRegexPattern = { true }
+        )
     }
 }
             

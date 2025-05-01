@@ -136,6 +136,23 @@
     <string name="french_language_name">法语</string>
     <string name="system_language_name">跟随系统</string>
 
+    <string name="app_detail_title">应用详情</string>
+    <string name="back">返回</string>
+    <string name="app_statistics">应用统计</string>
+    <string name="wakelock_statistics">唤醒锁统计</string>
+    <string name="alarm_statistics">闹钟统计</string>
+    <string name="service_statistics">服务统计</string>
+    <string name="total_wakelocks">唤醒锁总数</string>
+    <string name="blocked_wakelocks">已屏蔽唤醒锁</string>
+    <string name="total_alarms">闹钟总数</string>
+    <string name="blocked_alarms">已屏蔽闹钟</string>
+    <string name="total_services">服务总数</string>
+    <string name="blocked_services">已屏蔽服务</string>
+    <string name="total_time">总时间</string>
+    <string name="saved_time">节省时间</string>
+    <string name="allowed">允许</string>
+    <string name="unknown_error">未知错误</string>
+
     <!-- 数据管理设置 -->
     <string name="power_connection_detection">电源连接检测</string>
     <string name="power_connection_detection_desc">电源连接时重置计数</string>
@@ -156,4 +173,19 @@
     <string name="debug_mode">调试模式</string>
     <string name="debug_mode_desc">启用详细日志,用于排查问题</string>
     <string name="error_loading_app_detail">Test</string>
+
+    <!-- App Settings Strings -->
+    <string name="app_settings">应用设置</string>
+    <string name="block_settings">全局阻止设置</string>
+    <string name="wakelock_patterns">唤醒锁正则匹配</string>
+    <string name="alarm_patterns">闹钟正则匹配</string>
+    <string name="service_patterns">服务正则匹配</string>
+    <string name="allow_wakelocks">允许唤醒锁</string>
+    <string name="allow_alarms">允许闹钟</string>
+    <string name="allow_services">允许服务</string>
+    <string name="add_pattern">添加匹配模式</string>
+    <string name="pattern">正则表达式</string>
+    <string name="invalid_regex">无效的正则表达式</string>
+    <string name="add">添加</string>
+    <string name="remove">移除</string>
 </resources>

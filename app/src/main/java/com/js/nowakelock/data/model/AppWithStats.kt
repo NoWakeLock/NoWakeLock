@@ -35,6 +35,8 @@ data class AppWithStats(
     }
 
     fun getFormattedBlockedTime(): String {
+        if (wakelockCount <= 0) return "0s"
+        
         val blockTime = wakelockTime / wakelockCount * wakelockBlockedCount
 
         if (blockTime <= 0) return "0s"

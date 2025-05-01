@@ -48,7 +48,7 @@ fun appModule() = module {
     single { ServiceRepositoryImpl(get(), get()) }
     
     // Update to include appDaDao
-    single<AppDetailRepository> { AppDetailRepositoryImpl(get(), get(), get(), get()) }
+    single { AppDetailRepositoryImpl(get(), get(), get(), get()) }
 
     //
     singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
