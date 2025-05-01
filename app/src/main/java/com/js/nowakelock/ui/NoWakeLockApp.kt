@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,7 +22,6 @@ import com.js.nowakelock.ui.components.*
 import com.js.nowakelock.ui.navigation.NoWakeLockNavGraph
 import com.js.nowakelock.ui.theme.NoWakeLockTheme
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
 import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 
@@ -36,7 +34,7 @@ fun NoWakeLockApp(
     appDasRepo: AppDasRepo = koinInject(),
     modifier: Modifier = Modifier
 ) {
-    KoinContext() {
+    KoinContext {
         // Get UserPreferencesRepository from Koin
         val userPreferencesRepository: UserPreferencesRepository = koinInject()
         

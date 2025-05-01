@@ -52,7 +52,7 @@ fun DAListItem(
 
     // For time window input
     var timeWindowText by remember(daItem.timeWindowSec) {
-        mutableStateOf(daItem.timeWindowSec?.toString() ?: "0")
+        mutableStateOf(daItem.timeWindowSec.toString())
     }
 
     // Card with status bar indicator

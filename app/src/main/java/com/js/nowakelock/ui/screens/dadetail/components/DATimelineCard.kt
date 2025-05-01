@@ -110,7 +110,7 @@ fun DATimelineCardPreview() {
         )
     }
     
-    androidx.compose.material3.Surface {
+    Surface {
         DATimelineCard(timelineData = mockTimelineData)
     }
 }
@@ -121,7 +121,7 @@ fun DATimelineCardPreview() {
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
 fun DATimelineCardEmptyPreview() {
-    androidx.compose.material3.Surface {
+    Surface {
         DATimelineCard(timelineData = emptyList())
     }
 } 

@@ -62,8 +62,8 @@ fun UserSwitcher(
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            
-            Divider()
+
+            HorizontalDivider()
             
             availableUsers.forEach { user ->
                 DropdownMenuItem(

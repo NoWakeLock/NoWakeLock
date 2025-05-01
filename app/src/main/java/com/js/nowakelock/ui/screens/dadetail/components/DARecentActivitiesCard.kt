@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -93,7 +92,7 @@ fun DARecentActivitiesCardPreview() {
         )
     }
 
-    androidx.compose.material3.Surface {
+    Surface {
         DARecentActivitiesCard(
             activities = mockActivities,
             type = Type.Wakelock
@@ -181,7 +180,7 @@ fun ActivityItemAllowedPreview() {
         formattedDuration = "2m 0s"
     )
 
-    androidx.compose.material3.Surface {
+    Surface {
         ActivityItem(event = mockEvent)
     }
 }
@@ -201,7 +200,7 @@ fun ActivityItemBlockedPreview() {
         formattedDuration = "3m 0s"
     )
 
-    androidx.compose.material3.Surface {
+    Surface {
         ActivityItem(event = mockEvent)
     }
 }
@@ -212,7 +211,7 @@ fun ActivityItemBlockedPreview() {
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
 fun DARecentActivitiesCardEmptyPreview() {
-    androidx.compose.material3.Surface {
+    Surface {
         DARecentActivitiesCard(
             activities = emptyList(),
             type = Type.Alarm

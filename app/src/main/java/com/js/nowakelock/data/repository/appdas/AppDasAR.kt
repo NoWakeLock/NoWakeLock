@@ -62,7 +62,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
             it
         }
 
-        val result = getCPResult(BasicApp.context, ProviderMethod.LoadInfos.value, args)
+        val result = getCPResult(context, ProviderMethod.LoadInfos.value, args)
         result?.let {
             try {
                 val infos = result.getSerializable("infos") as Array<Info>?
@@ -70,7 +70,7 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
                     daDao.insert(it)
                 }
             }catch (e:Exception){
-                getCPResult(BasicApp.context, ProviderMethod.ClearData.value, Bundle())
+                getCPResult(context, ProviderMethod.ClearData.value, Bundle())
                 LogUtil.d("AppDasAR", "getSerializable err: $e")
             }finally {
                 LogUtil.d("AppDasAR", "getSerializable err clearAll")
