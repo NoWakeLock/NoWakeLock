@@ -46,7 +46,9 @@ fun appModule() = module {
     single { WakelockRepositoryImpl(get(), get()) }
     single { AlarmRepositoryImpl(get(), get()) }
     single { ServiceRepositoryImpl(get(), get()) }
-    single { AppDetailRepositoryImpl(get(), get(), get()) }
+    
+    // Update to include appDaDao
+    single<AppDetailRepository> { AppDetailRepositoryImpl(get(), get(), get(), get()) }
 
     //
     singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
@@ -94,7 +96,7 @@ fun appModule() = module {
     viewModel {
         AppDetailViewModel(
             savedStateHandle = get(),
-            appDasRepo = get<AppDetailRepositoryImpl>()
+            appDetailRepo = get<AppDetailRepositoryImpl>()
         )
     }
 
