@@ -1,11 +1,12 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-28*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-29*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🔮 Current Focus
-完善 AppDetailScreen 的实现和优化，特别是标签页懒加载机制的优化。目前已实现通过 derivedStateOf 改进标签页切换体验，确保首次点击标签页即显示内容而非加载指示器。下一步将继续对标签页内容进行 UI 优化。
+实现了 AppTabContent 的设置界面，为 AppSt 创建了符合 Material Design 3 的 UI 组件，包括全局阻止开关和正则表达式模式管理。设置界面完美集成到现有的应用详情页面，保持一致的设计语言和用户体验。下一步将进一步优化标签页内容的 UI，改进视觉细节和交互体验。
 
 ## 🔄 Recent Changes
+- [Change₂₈] 2025-04-29 ⟶ 实现 AppTabContent 的 AppSt 设置 UI，包括全局阻止开关和正则表达式模式管理
 - [Change₂₃] 2025-04-27 ⟶ 实现 AppDetailScreen 的 Tab 内容与 DAsScreen 的集成
 - [Change₂₄] 2025-04-27 ⟶ 实现 Tab 懒加载功能，提高性能
 - [Change₂₅] 2025-04-27 ⟶ 实现搜索状态传递，仅影响当前选中的 Tab
@@ -77,6 +78,8 @@
 
 ## 📎 Context References
 - 📄 Active Files:
+  - [app/src/main/java/com/js/nowakelock/ui/screens/appdetail/AppDetailScreen.kt] ⟶ 实现了 AppSt 设置 UI 和 Tab 内容集成
+  - [app/src/main/res/values/strings.xml] ⟶ 添加了设置 UI 相关的字符串资源
   - [app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsViewModel.kt] ⟶ Updated to use SavedStateHandle for parameter management
   - [app/src/main/java/com/js/nowakelock/ui/screens/das/DAsViewModel.kt] ⟶ Updated to use SavedStateHandle for parameter management
   - [app/src/main/java/com/js/nowakelock/ui/navigation/params/AppsScreenParams.kt] ⟶ Parameter constants for AppsScreen
@@ -109,7 +112,17 @@
   - [app/src/main/java/com/js/nowakelock/ui/navigation/NavGraph.kt] ⟶ 更新以传递搜索状态给 AppDetailScreen
   - [app/src/main/java/com/js/nowakelock/ui/screens/das/DAsScreens.kt] ⟶ 提供 WakelockScreen, AlarmScreen, ServiceScreen 组件
   - [app/src/main/java/com/js/nowakelock/ui/screens/das/DAsViewModel.kt] ⟶ 处理 DA 列表的加载和过滤
-- 💻 Active Code:
+
+## 💻 Active Code:
+  - [AppDetailScreen.SettingsCard] ⟶ AppSt 设置卡片组件，展示全局设置和模式管理
+  - [AppDetailScreen.BlockSettingsSection] ⟶ 全局阻止设置区域，包含唤醒锁/闹钟/服务开关
+  - [AppDetailScreen.PatternSettingsSection] ⟶ 正则表达式模式设置区域，支持添加和删除模式
+  - [AppDetailScreen.PatternChip] ⟶ 模式显示组件，展示已添加的正则表达式
+  - [AppDetailScreen.SettingToggle] ⟶ 设置开关组件，用于启用/禁用全局阻止功能
+  - [AppDetailViewModel.updateWakelockBlock] ⟶ 更新全局唤醒锁阻止设置
+  - [AppDetailViewModel.addWakelockPattern] ⟶ 添加唤醒锁阻止模式
+  - [AppDetailViewModel.removeWakelockPattern] ⟶ 删除唤醒锁阻止模式
+  - [AppDetailViewModel.validateRegexPattern] ⟶ 验证正则表达式模式是否有效
   - [AppsViewModel.currentUserId] ⟶ SavedStateHandle property for user ID
   - [DAsViewModel.packageName] ⟶ SavedStateHandle property for package filtering
   - [AppsScreenParams] ⟶ Constants for AppsViewModel parameters
@@ -146,11 +159,13 @@
   - [ServicesTabContent] ⟶ 集成了 ServiceScreen 的 Tab 内容
   - [koinViewModel(qualifier = named("..."))] ⟶ 获取特定类型的 DAsViewModel
   - [viewModel.setAppFilter(packageName, userId)] ⟶ 设置 DA 列表的包名和用户 ID 过滤器
-- 📚 Active Docs:
+
+## 📚 Active Docs:
   - [memory-bank/progress.md] ⟶ Development milestones
   - [memory-bank/systemPatterns.md] ⟶ Architecture insights
   - [memory-bank/techContext.md] ⟶ Technical implementation details
-- 📁 Active Folders:
+
+## 📁 Active Folders:
   - [app/src/main/java/com/js/nowakelock/ui/screens/dadetail/] ⟶ DADetail screen implementation
   - [app/src/main/java/com/js/nowakelock/ui/screens/dadetail/components/] ⟶ DADetail screen components
   - [app/src/main/java/com/js/nowakelock/repository/] ⟶ Repository implementations
