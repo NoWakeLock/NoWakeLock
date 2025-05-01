@@ -1,9 +1,9 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-27*
-*Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-28*
+*Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🔮 Current Focus
-AppDetailScreen Tab 内容集成，实现懒加载和搜索功能
+完善 AppDetailScreen 的实现和优化，特别是标签页懒加载机制的优化。目前已实现通过 derivedStateOf 改进标签页切换体验，确保首次点击标签页即显示内容而非加载指示器。下一步将继续对标签页内容进行 UI 优化。
 
 ## 🔄 Recent Changes
 - [Change₂₃] 2025-04-27 ⟶ 实现 AppDetailScreen 的 Tab 内容与 DAsScreen 的集成
@@ -163,10 +163,17 @@ AppDetailScreen Tab 内容集成，实现懒加载和搜索功能
   - [app/src/main/java/com/js/nowakelock/ui/settings/components/] ⟶ Settings UI components
 
 ## 📡 Context Status
-- 🟢 Active: [AppDetailScreen Tab 集成, 懒加载, 搜索状态管理]
-- 🟡 Partially Relevant: [System-level monitoring details]
-- 🟣 Essential: [Material 3 card styling patterns, Multi-language support in data models, MD3 implementation, Navigation architecture, Edge-to-edge implementation, Chart visualization best practices, Database versioning and migration, System time handling, Settings persistence patterns, Theme management]
-- 🔴 Deprecated: [None yet]
+- 🟢 Active: 
+  - AppDetailScreen 标签页懒加载优化
+  - Tab 切换时的 UI 体验
+  - Compose 中的 derivedStateOf 用法
+- 🟡 Partially Relevant: 
+  - DAsViewModel 性能优化
+  - WakelockScreen/AlarmScreen/ServiceScreen 实现
+- 🟣 Essential: 
+  - Composable 重组机制理解
+  - LaunchedEffect 和 derivedStateOf 的正确使用方式
+- 🔴 Deprecated: N/A
 
 ## 💡 Project Patterns & Preferences
 - [Pattern₁] MVVM Architecture ⟶ App follows MVVM pattern with Compose UI
@@ -312,3 +319,43 @@ AppDetailScreen Tab 内容集成，实现懒加载和搜索功能
 - 2025-04-27 ⟶ 懒加载模式通过跟踪已加载内容的集合，可以有效减少不必要的渲染和数据加载，提高性能。
 - 2025-04-27 ⟶ 条件性搜索状态传递比创建复杂的上下文映射更简单且易于理解，适合 Tab 结构的应用。
 - 2025-04-27 ⟶ 为特定组件使用 named qualifier 创建 ViewModel 实例，可以在不同上下文中复用相同的数据源。
+
+## 🧠 Knowledge Gained
+- 🔍 Jetpack Compose 重组机制
+  - LaunchedEffect 在重组后执行，而不是在重组过程中
+  - derivedStateOf 可用于立即响应状态变化，解决 LaunchedEffect 延迟执行问题
+  - 状态更新和 UI 渲染遵循单向数据流
+- 🛠️ 懒加载最佳实践
+  - 使用 remember { mutableStateOf(Set) } 跟踪已加载内容
+  - 结合 derivedStateOf 确保当前选中项始终被视为已加载
+  - 保持 LaunchedEffect 用于持久化已加载状态
+- 📊 Wakelock/Alarm/Service 数据加载优化
+  - 标签页各自拥有独立 ViewModel 导致数据重复加载
+  - 初始化阶段同时进行数据同步和 UI 渲染影响性能
+  - 未来改进方向：共享 ViewModel 或预加载数据
+
+## 📌 Important Details
+- 🔵 LaunchedEffect 执行时机
+  - 不在当前重组周期内执行，而是在重组完成后调度执行
+  - 这导致依赖 LaunchedEffect 更新的状态在当前重组周期内不可用
+- 🔵 derivedStateOf 特性
+  - 创建依赖于其他状态的派生状态
+  - 只在依赖状态变化时重新计算
+  - 在当前重组周期内立即可用
+- 🔵 Compose 中的懒加载实现
+  - 原始实现：使用 remember { mutableSetOf(0) } 和 LaunchedEffect 添加标签
+  - 优化实现：使用 remember { mutableStateOf(setOf(0)) } 和 derivedStateOf 立即包含当前标签
+  - 这避免了用户首次点击标签时看到加载指示器的问题
+
+## 🔧 Current Tasks
+1. ✅ 分析 AppDetailScreen 标签页切换问题
+2. ✅ 理解 Compose 中 LaunchedEffect 和状态更新的执行顺序
+3. ✅ 实现使用 derivedStateOf 的优化解决方案
+4. ⏳ 继续优化 tab 内容的 UI 设计和布局
+5. ⏳ 考虑优化 ViewModel 创建和数据加载策略
+
+## 📚 Learning Resources
+- [Compose State and State Hoisting](https://developer.android.com/jetpack/compose/state)
+- [Side-effects in Compose](https://developer.android.com/jetpack/compose/side-effects)
+- [LaunchedEffect API documentation](https://developer.android.com/reference/kotlin/androidx/compose/runtime/package-summary#LaunchedEffect)
+- [derivedStateOf API documentation](https://developer.android.com/reference/kotlin/androidx/compose/runtime/package-summary#derivedStateOf)

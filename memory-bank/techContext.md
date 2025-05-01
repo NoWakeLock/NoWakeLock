@@ -163,6 +163,30 @@
 - Time labels need optimization to avoid overlap
 - Canvas API limitations require manual positioning calculations
 
+#### Lazy Loading Tabs in Compose
+- Issue identified with current lazy loading implementation in tabbed interfaces
+- Original implementation showed loading indicator on first tab selection, actual content only on second selection
+- Problem root cause: LaunchedEffect executes after composition, creating a timing issue
+- Solution implemented using derivedStateOf to immediately include current tab in loaded tabs set:
+  ```kotlin
+  // Track persistent loaded tabs state
+  val loadedTabs = remember { mutableStateOf(setOf(0)) }
+  
+  // Use derivedStateOf to immediately include current tab in loaded set
+  val currentLoadedTabs by remember {
+      derivedStateOf { 
+          loadedTabs.value + selectedTabIndex 
+      }
+  }
+  
+  // Still persist loaded tabs for future recompositions
+  LaunchedEffect(selectedTabIndex) {
+      loadedTabs.value = loadedTabs.value + selectedTabIndex
+  }
+  ```
+- This pattern ensures immediate UI response while preserving lazy loading benefits
+- Important learning: Use derivedStateOf when UI needs to immediately react to state changes
+
 #### Collapsible Header Implementation in Compose
 - No direct equivalent to CollapsingToolbarLayout in Compose
 - Implementation requires custom NestedScrollConnection to track scroll state
@@ -175,6 +199,7 @@
 - Tabs require consistent styling following Material 3 guidelines
 - Content caching needed to avoid recomposition when switching tabs
 - State management for each tab must be handled appropriately
+- LaunchedEffect with derivedStateOf ensures smooth tab transitions
 
 ## 📱 Mobile-Specific Considerations
 
