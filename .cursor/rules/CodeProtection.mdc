@@ -1,9 +1,4 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: Code protection rules and behaviors
 globs: **/*.*
 alwaysApply: true
