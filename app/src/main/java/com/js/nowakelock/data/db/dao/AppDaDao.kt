@@ -8,20 +8,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDaDao : BaseDao<AppSt> {
-
-// todo: clean up
-//    @Query("select * from appInfo where packageName = :packageName and userId = :userId")
-//    fun loadAppInfo(packageName: String, userId: Int): Flow<AppInfo>
-//
-//    @Query("select * from appSt where packageName_st = :packageName and userId_appSt = :userId")
-//    fun loadAppSt(packageName: String, userId: Int): Flow<AppSt?>
-
-//    @Query("select * from AppCount where packageName_count = :packageName and userId_count = :userId")
-//    fun loadAppCount(packageName: String, userId: Int): Flow<AppCount?>
-
     /**
      * FOR Backup
      */
     @Query("select * from appSt")
     suspend fun loadAllAppSts(): List<AppSt>
+    
+    /**
+     * Gets the AppSt for a specific package and user
+     */
+    @Query("SELECT * FROM appSt WHERE packageName_st = :packageName AND userId_appSt = :userId")
+    fun getAppSt(packageName: String, userId: Int): Flow<AppSt?>
 }
