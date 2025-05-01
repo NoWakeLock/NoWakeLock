@@ -3,17 +3,12 @@ package com.js.nowakelock.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.js.nowakelock.R
 import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.data.repository.appdas.AppDasRepo
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
@@ -44,7 +39,7 @@ fun NoWakeLockApp(
         // Apply the theme to the entire app
         NoWakeLockTheme(themeMode = themeMode) {
             val navController = rememberNavController()
-            val snackbarHostState = remember { SnackbarHostState() }
+            val snackBarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
@@ -55,7 +50,7 @@ fun NoWakeLockApp(
             var searchQuery by remember { mutableStateOf("") }
 
             // State for user management
-            var currentUserId by remember { mutableStateOf(0) } // Default to user 0 (primary user)
+            var currentUserId by remember { mutableIntStateOf(0) } // Default to user 0 (primary user)
             var availableUsers by remember { mutableStateOf(listOf(UserInfo.createPrimaryUser())) } // Initialize with primary user
 
             // State for detail screen title
@@ -76,7 +71,7 @@ fun NoWakeLockApp(
                 } catch (e: Exception) {
                     // Log and show error but don't block UI
                     scope.launch {
-                        snackbarHostState.showSnackbar("Error loading users: ${e.message}")
+                        snackBarHostState.showSnackbar("Error loading users: ${e.message}")
                     }
                 }
             }
@@ -139,7 +134,7 @@ fun NoWakeLockApp(
                         )
                     }
                 },
-                snackbarHost = { SnackbarHost(snackbarHostState) },
+                snackbarHost = { SnackbarHost(snackBarHostState) },
                 modifier = modifier.fillMaxSize()
             ) { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues)) {
