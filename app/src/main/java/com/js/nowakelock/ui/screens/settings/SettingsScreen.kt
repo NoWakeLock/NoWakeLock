@@ -72,7 +72,7 @@ fun SettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    // 单独收集各个状态，避免整体刷新
+    // collect the state
     val themeMode by viewModel.themeMode.collectAsState()
     val languageMode by viewModel.languageMode.collectAsState()
     val powerFlag by viewModel.powerFlag.collectAsState()
@@ -86,7 +86,7 @@ fun SettingsScreen(
     // Snackbar state
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // 文件选择结果处理器
+    // file selection result handler
     val createDocumentLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
@@ -126,7 +126,7 @@ fun SettingsScreen(
             ) {
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // 界面设置区域 - 使用 remember 缓存不变的部分
+                // interface settings area - use remember to cache the unchanged part
                 InterfaceSettings(
                     themeMode = themeMode,
                     languageMode = languageMode,
@@ -134,7 +134,7 @@ fun SettingsScreen(
                     onShowLanguageDialog = { showLanguageDialog = true }
                 )
                 
-                // 数据管理设置区域 - 单独封装，只有相关状态变化时才会重组
+                // data management settings area - encapsulated separately, only when related status changes will it be重组
                 DataManagementSettings(
                     powerFlag = powerFlag,
                     clearFlag = clearFlag,
@@ -142,7 +142,7 @@ fun SettingsScreen(
                     onClearFlagChanged = { viewModel.updateClearFlag(it) }
                 )
                 
-                // 备份和恢复功能
+                // backup and restore function
                 BackupSettings(
                     isBackupInProgress = uiState.backupInProgress,
                     isRestoreInProgress = uiState.restoreInProgress,
@@ -154,7 +154,7 @@ fun SettingsScreen(
                     }
                 )
                 
-                // 实验性功能设置
+                // experimental function settings
                 ExperimentalSettings(
                     debugMode = debugMode,
                     onDebugModeChanged = { viewModel.updateDebugMode(it) }
@@ -182,7 +182,7 @@ fun SettingsScreen(
     }
 }
 
-// 界面设置组件 - 使用 SettingsValueItem
+// interface settings component - use SettingsValueItem
 @Composable
 private fun InterfaceSettings(
     themeMode: ThemeMode,
@@ -193,7 +193,7 @@ private fun InterfaceSettings(
     SettingsCategoryTitle(title = stringResource(id = R.string.settings_interface))
     
     SettingsCard {
-        // 主题选择项
+        // theme selection item
         SettingsValueItem(
             title = stringResource(id = R.string.theme),
             subtitle = stringResource(id = R.string.theme_list),
@@ -201,17 +201,17 @@ private fun InterfaceSettings(
             onClick = onShowThemeDialog
         )
 
-        // 语言选择项
+        // language selection item
         SettingsValueItem(
             title = stringResource(id = R.string.language),
-            subtitle = null,  // 可以添加语言选择的描述
+            subtitle = null,
             value = getLanguageSubtitle(languageMode),
             onClick = onShowLanguageDialog
         )
     }
 }
 
-// 数据管理设置组件 - 保持 SettingsSwitchItem 但使用新实现
+// data management settings component - keep SettingsSwitchItem but use new implementation
 @Composable
 private fun DataManagementSettings(
     powerFlag: Boolean,
@@ -230,8 +230,8 @@ private fun DataManagementSettings(
             checked = powerFlag,
             onCheckedChange = onPowerFlagChanged
         )
-        
-        // Clear Data Toggle - 只有当 powerFlag 启用时才可用
+            
+        // Clear Data Toggle - only available when powerFlag is enabled
         SettingsSwitchItem(
             title = stringResource(id = R.string.clear_inactive_data),
             subtitle = stringResource(id = R.string.clear_inactive_data_desc),
@@ -242,7 +242,7 @@ private fun DataManagementSettings(
     }
 }
 
-// 备份设置组件 - 使用 SettingsActionItem
+// backup settings component - use SettingsActionItem
 @Composable
 private fun BackupSettings(
     isBackupInProgress: Boolean,
@@ -254,7 +254,7 @@ private fun BackupSettings(
     SettingsCategoryTitle(title = stringResource(id = R.string.settings_backup))
     
     SettingsCard {
-        // 创建备份操作
+        // create backup operation
         SettingsActionItem(
             title = stringResource(id = R.string.create_backup),
             subtitle = stringResource(id = R.string.create_backup_desc),
@@ -265,7 +265,7 @@ private fun BackupSettings(
             onClick = onCreateBackup
         )
         
-        // 恢复备份操作
+        // restore backup operation
         SettingsActionItem(
             title = stringResource(id = R.string.restore_backup),
             subtitle = stringResource(id = R.string.restore_backup_desc),
@@ -278,7 +278,7 @@ private fun BackupSettings(
     }
 }
 
-// 实验性功能设置组件
+// experimental function settings component
 @Composable
 private fun ExperimentalSettings(
     debugMode: Boolean,
@@ -328,14 +328,14 @@ private fun ThemeSelectionDialog(
         title = {
             Text(
                 text = stringResource(id = R.string.theme),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .fillMaxWidth(0.9f)  // 限制对话框宽度
+            .fillMaxWidth(0.9f)  // limit the dialog width
             .padding(horizontal = 0.dp),
         text = {
             Column(
@@ -399,14 +399,14 @@ private fun LanguageSelectionDialog(
         title = {
             Text(
                 text = stringResource(id = R.string.language),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
         },
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .fillMaxWidth(0.9f)  // 限制对话框宽度
+            .fillMaxWidth(0.9f)  // limit the dialog width
             .padding(horizontal = 0.dp),
         text = {
             Column(
