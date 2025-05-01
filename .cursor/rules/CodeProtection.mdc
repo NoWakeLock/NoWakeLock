@@ -1,6 +1,6 @@
 ---
 description: Code protection rules and behaviors
-globs: **/*.*
+globs: 
 alwaysApply: true
 ---
 

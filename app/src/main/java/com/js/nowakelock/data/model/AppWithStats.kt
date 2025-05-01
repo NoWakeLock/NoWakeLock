@@ -22,15 +22,31 @@ data class AppWithStats(
      */
     fun getFormattedTime(): String {
         if (wakelockTime <= 0) return "0s"
-        
+
         val seconds = wakelockTime / 1000
         val minutes = seconds / 60
         val hours = minutes / 60
-        
+
         return when {
             hours > 0 -> "${hours}h ${minutes % 60}m"
-            minutes > 0 -> "${minutes}m ${seconds % 60}s" 
+            minutes > 0 -> "${minutes}m ${seconds % 60}s"
             else -> "${seconds}s"
         }
     }
-} 
+
+    fun getFormattedBlockedTime(): String {
+        val blockTime = wakelockTime / wakelockCount * wakelockBlockedCount
+
+        if (blockTime <= 0) return "0s"
+
+        val seconds = blockTime / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+
+        return when {
+            hours > 0 -> "${hours}h ${minutes % 60}m"
+            minutes > 0 -> "${minutes}m ${seconds % 60}s"
+            else -> "${seconds}s"
+        }
+    }
+}

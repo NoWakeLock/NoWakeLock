@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,9 +22,6 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -43,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +49,6 @@ import com.js.nowakelock.BasicApp.Companion.context
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.AppWithStats
-import com.js.nowakelock.ui.components.StatisticCard
 import com.js.nowakelock.ui.navigation.DADetail
 import org.koin.androidx.compose.koinViewModel
 import com.js.nowakelock.data.db.entity.AppInfo
@@ -140,7 +133,7 @@ fun AppDetailContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 标签页
+        // Tab
         TabRow(
             selectedTabIndex = selectedTabIndex,
             contentColor = MaterialTheme.colorScheme.primary
@@ -154,7 +147,6 @@ fun AppDetailContent(
             }
         }
 
-        // 标签页内容
         when (selectedTabIndex) {
             0 -> AppTabContent(appInfo)
             1 -> {
@@ -342,33 +334,7 @@ fun AppInfoHeader(
 }
 
 /**
- * 统计摘要项
- */
-@Composable
-fun StatisticSummaryItem(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-/**
- * App标签页内容
+ * AppTab
  */
 @Composable
 fun AppTabContent(appInfo: AppWithStats) {
@@ -385,7 +351,7 @@ fun AppTabContent(appInfo: AppWithStats) {
             fontWeight = FontWeight.Bold
         )
 
-        // 统计卡片 - 接近截图样式
+        // Count card
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -416,7 +382,7 @@ fun AppTabContent(appInfo: AppWithStats) {
                         leftLabel = stringResource(R.string.total_time),
                         leftValue = appInfo.getFormattedTime(),
                         rightLabel = stringResource(R.string.saved_time),
-                        rightValue = "1h 15m"
+                        rightValue = appInfo.getFormattedBlockedTime()
                     )
                 }
                 
