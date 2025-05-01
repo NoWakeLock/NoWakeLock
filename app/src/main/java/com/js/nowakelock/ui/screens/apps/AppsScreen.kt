@@ -72,8 +72,9 @@ fun AppsScreen(
     
     // pass the user changed event to the top app bar
     LaunchedEffect(uiState.currentUserId) {
-        // only notify the parent component when the user changes in the ViewModel, avoid circular
-        if (currentUserId != uiState.currentUserId) {
+        // only notify the parent component when the user changes in the ViewModel
+        // avoid circular
+        if (currentUserId == 0 && uiState.currentUserId != 0) {
             onTopAppBarEvent(TopAppBarEvent.UserChanged(uiState.currentUserId))
         }
     }
