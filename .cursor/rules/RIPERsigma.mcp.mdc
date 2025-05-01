@@ -1,11 +1,6 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: MCP Services Configuration for CursorRIPER.sigma
-globs: 
+globs: **/*.*
 alwaysApply: true
 ---
 
