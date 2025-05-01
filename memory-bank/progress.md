@@ -6,6 +6,7 @@
 Completion: 40%
 
 ## ✅ Completed Features
+- [Feature₂₅] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题修复：采用单向同步方案3，仅在 UI 为默认值(0)且 ViewModel 有非默认值时同步，避免循环，保证用户选择能正确恢复
 - [Feature₂₄] 2025-04-29 ⟶ AppTabContent设置UI实现，创建了符合Material Design 3的AppSt设置界面，支持全局阻止开关和正则表达式模式管理
 - [Feature₂₃] 2025-04-28 ⟶ AppDetailScreen 标签页懒加载问题修复，通过 derivedStateOf 优化确保首次点击 Tab 即显示内容
 - [Feature₂₀] 2025-04-27 ⟶ AppDetailScreen Tab 集成，实现了应用详情页唤醒锁/闹钟/服务标签页
@@ -74,6 +75,7 @@ Completion: 40%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₂₃] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题采用方案3修复：单向同步，避免循环，保证用户选择恢复，Status: ✅ Accepted
 - [Decision₂₂] 2025-04-29 ⟶ 使用Kotlin和Compose最佳实践实现AppSt设置UI，包括视觉层次结构、状态管理和用户交互模式, Status: ✅ Accepted
 - [Decision₁₄] 2025-04-28 ⟶ 使用 derivedStateOf 优化标签页懒加载，解决首次点击不显示问题，Status: ✅ Accepted
 - [Decision₁₁] 2025-04-27 ⟶ 集成现有 DAsScreen 而不是创建新组件，Status: ✅ Accepted

@@ -1,5 +1,5 @@
 # σ₆: Protection Registry
-*v1.0 | Created: 2025-04-25 | Updated: 2025-04-27*
+*v1.0 | Created: 2025-04-25 | Updated: 2025-04-29*
 *Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
 
 ## 🛡️ Protected Regions
@@ -55,7 +55,12 @@
   - 保护理由: 处理唤醒锁、闹钟和服务的数据管理
   - 最后修改: 2025-04-25 (改用SavedStateHandle，添加应用筛选)
 
+- **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsScreen.kt` - AppsScreen
+  - 保护理由: 关键多用户UI同步逻辑，涉及配置变更下的状态恢复与循环同步风险，需严格遵循单向同步和保护规则
+  - 最后修改: 2025-04-29 (修复语言切换后用户切换无限循环问题，采用单向同步方案3)
+
 ## 📜 Protection History
+- 2025-04-29 ⟶ AppsScreen.kt 加入保护列表，修复语言切换后用户切换无限循环问题，采用单向同步方案3
 - 2025-04-27 ⟶ 添加 AppDetailScreen 到保护列表，实现了 Tab 内容集成
 - 2025-04-27 ⟶ 更新 TopAppBars.kt 的保护记录，添加最新修改
 - 2025-04-27 ⟶ 添加 DAsScreen.kt 到保护列表，被 AppDetailScreen 集成使用
