@@ -128,4 +128,36 @@
         <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
+
+    <!-- App Settings Strings -->
+    <string name="app_settings">Paramètres de l\'application</string>
+    <string name="block_settings">Paramètres de blocage global</string>
+    <string name="wakelock_patterns">Expressions régulières de blocage des réveils</string>
+    <string name="alarm_patterns">Expressions régulières de blocage des alarmes</string>
+    <string name="service_patterns">Expressions régulières de blocage des services</string>
+    <string name="allow_wakelocks">Autoriser les réveils</string>
+    <string name="allow_alarms">Autoriser les alarmes</string>
+    <string name="allow_services">Autoriser les services</string>
+    <string name="add_pattern">Ajouter une expression régulière</string>
+    <string name="pattern">Expression régulière</string>
+    <string name="invalid_regex">Expression régulière invalide</string>
+    <string name="add">Ajouter</string>
+    <string name="remove">Supprimer</string>
+
+
+    <string name="app_detail_title">Détails de l\'application</string>
+    <string name="app_statistics">Statistiques de l\'application</string>
+    <string name="wakelock_statistics">Statistiques des réveils</string>
+    <string name="alarm_statistics">Statistiques des alarmes</string>
+    <string name="service_statistics">Statistiques des services</string>
+    <string name="total_wakelocks">Total des réveils</string>
+    <string name="blocked_wakelocks">Réveils bloqués</string>
+    <string name="total_alarms">Total des alarmes</string>
+    <string name="blocked_alarms">Alarmes bloquées</string>
+    <string name="total_services">Total des services</string>
+    <string name="blocked_services">Services bloqués</string>
+    <string name="total_time">Temps total</string>
+    <string name="saved_time">Temps économisé</string>
+    <string name="allowed">Autorisé</string>
+    
 </resources>

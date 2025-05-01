@@ -198,21 +198,36 @@
     <string name="french_language_name">Français</string>
     <string name="system_language_name">Follow System</string>
 
-    <string name="app_detail_title">应用详情</string>
-    <string name="back">返回</string>
-    <string name="app_statistics">应用统计</string>
-    <string name="wakelock_statistics">唤醒锁统计</string>
-    <string name="alarm_statistics">闹钟统计</string>
-    <string name="service_statistics">服务统计</string>
-    <string name="total_wakelocks">唤醒锁总数</string>
-    <string name="blocked_wakelocks">已屏蔽唤醒锁</string>
-    <string name="total_alarms">闹钟总数</string>
-    <string name="blocked_alarms">已屏蔽闹钟</string>
-    <string name="total_services">服务总数</string>
-    <string name="blocked_services">已屏蔽服务</string>
-    <string name="total_time">总时间</string>
-    <string name="saved_time">节省时间</string>
-    <string name="allowed">允许</string>
-    <string name="unknown_error">未知错误</string>
+    <string name="app_detail_title">Application Details</string>
+    <string name="back">Back</string>
+    <string name="app_statistics">Application Statistics</string>
+    <string name="wakelock_statistics">Wakelock Statistics</string>
+    <string name="alarm_statistics">Alarm Statistics</string>
+    <string name="service_statistics">Service Statistics</string>
+    <string name="total_wakelocks">Count</string>
+    <string name="blocked_wakelocks">Blocked</string>
+    <string name="total_alarms">Count</string>
+    <string name="blocked_alarms">Blocked</string>
+    <string name="total_services">Count</string>
+    <string name="blocked_services">Blocked</string>
+    <string name="total_time">Time</string>
+    <string name="saved_time">Saved Time</string>
+    <string name="allowed">Allowed</string>
+    <string name="unknown_error">Unknown Error</string>
     <string name="error_loading_app_detail">Test</string>
+    
+    <!-- App Settings Strings -->
+    <string name="app_settings">App Settings</string>
+    <string name="block_settings">Global Block Settings</string>
+    <string name="wakelock_patterns">Wakelock Patterns</string>
+    <string name="alarm_patterns">Alarm Patterns</string>
+    <string name="service_patterns">Service Patterns</string>
+    <string name="allow_wakelocks">Allow Wakelocks</string>
+    <string name="allow_alarms">Allow Alarms</string>
+    <string name="allow_services">Allow Services</string>
+    <string name="add_pattern">Add Pattern</string>
+    <string name="pattern">Pattern</string>
+    <string name="invalid_regex">Invalid Regex</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
 </resources>

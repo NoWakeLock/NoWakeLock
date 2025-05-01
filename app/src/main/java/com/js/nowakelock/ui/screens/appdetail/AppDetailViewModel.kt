@@ -119,9 +119,9 @@ class AppDetailViewModel(
     /**
      * Updates global wakelock block setting
      */
-    fun updateWakelockBlock(isBlocked: Boolean) {
+    fun updateWakelockBlock(isAllow: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         _uiState.value.appSt?.let { currentAppSt ->
-            val updatedAppSt = currentAppSt.copy(wakelock = isBlocked)
+            val updatedAppSt = currentAppSt.copy(wakelock = !isAllow)
             saveAppSt(updatedAppSt)
         }
     }
@@ -129,9 +129,9 @@ class AppDetailViewModel(
     /**
      * Updates global alarm block setting
      */
-    fun updateAlarmBlock(isBlocked: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateAlarmBlock(isAllow: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         _uiState.value.appSt?.let { currentAppSt ->
-            val updatedAppSt = currentAppSt.copy(alarm = isBlocked)
+            val updatedAppSt = currentAppSt.copy(alarm = !isAllow)
             saveAppSt(updatedAppSt)
         }
     }
@@ -139,9 +139,9 @@ class AppDetailViewModel(
     /**
      * Updates global service block setting
      */
-    fun updateServiceBlock(isBlocked: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateServiceBlock(isAllow: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         _uiState.value.appSt?.let { currentAppSt ->
-            val updatedAppSt = currentAppSt.copy(service = isBlocked)
+            val updatedAppSt = currentAppSt.copy(service = !isAllow)
             saveAppSt(updatedAppSt)
         }
     }
