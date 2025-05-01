@@ -142,16 +142,19 @@ fun NoWakeLockTheme(
         else -> LightColorScheme
     }
     
-    // 选择扩展颜色
+    // choose the color scheme
     val extendedColors = if (darkTheme) DarkExtendedColors else LightExtendedColors
-    
-    // 使用官方的方式处理系统UI
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+
+    // tapBar only when android version < 15
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+        val view = LocalView.current
+        if (!view.isInEditMode) {
+            SideEffect {
+                val window = (view.context as Activity).window
+                window.statusBarColor = colorScheme.background.toArgb()
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                    !darkTheme
+            }
         }
     }
 
