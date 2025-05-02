@@ -1,12 +1,12 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-30*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
 - 🖥️ Frontend: Jetpack Compose, Material 3, Compose Navigation
 - 🗄️ Backend: Kotlin, Android SDK, Xposed Framework
 - 📊 Database: Room Persistence Library
-- 🧪 Testing: JUnit, Espresso
+- 🧪 Testing: JUnit, Mockito, Truth
 - 🚀 Deployment: Google Play Store, F-Droid
 - 🔧 Settings: Context API-based state management, LocalStorage persistence
 
@@ -347,5 +347,122 @@ class DAsViewModel(
         set(value) { savedStateHandle[DAsScreenParams.PACKAGE_NAME] = value }
         
     // ... UI state and business logic
+}
+```
+
+## 🧪 Testing Architecture
+
+### 核心测试框架组件
+- [TC₁] JUnit 4 ⟶ 主要测试框架，提供测试执行环境和生命周期管理
+- [TC₂] Mockito ⟶ 用于模拟外部依赖，如系统服务和数据库操作
+- [TC₃] Truth ⟶ 用于流畅的断言语法，提高测试可读性
+- [TC₄] JUnit RunWith ⟶ 用于自定义测试运行器和套件
+
+### 测试类型和范围
+- [TT₁] 单元测试 ⟶ 验证核心算法和业务逻辑的正确性
+- [TT₂] 集成测试 ⟶ 验证组件间交互和数据流
+- [TT₃] UI测试 ⟶ 验证用户界面行为和交互
+- [TT₄] 端到端测试 ⟶ 验证完整用户流程
+
+### 测试工具和辅助类
+- [TU₁] TestUtils ⟶ 提供测试辅助功能，如单例重置和反射访问
+```kotlin
+object TestUtils {
+    // 重置单例实例，允许测试在干净环境中运行
+    fun resetWakelockRegistry() {
+        try {
+            // 使用反射访问和修改单例字段
+            val registryClass = WakelockRegistry::class.java
+            val instanceField = registryClass.getDeclaredField("instance")
+            instanceField.isAccessible = true
+            
+            // 移除final修饰符，允许修改
+            try {
+                val modifiersField = Field::class.java.getDeclaredField("modifiers")
+                modifiersField.isAccessible = true
+                modifiersField.setInt(instanceField, instanceField.modifiers and Modifier.FINAL.inv())
+            } catch (e: Exception) {
+                // 在某些JVM中可能无法修改final修饰符
+                Log.d("TestUtils", "Could not remove final modifier: ${e.message}")
+            }
+            
+            // 设置单例为null，强制重新创建
+            instanceField.set(null, null)
+            
+            // 尝试清除内部状态
+            try {
+                val registry = WakelockRegistry.getInstance()
+                registry.clearAll()
+            } catch (e: Exception) {
+                Log.e("TestUtils", "Failed to reset registry: ${e.message}")
+            }
+        } catch (e: Exception) {
+            Log.e("TestUtils", "Failed to reset singleton: ${e.message}")
+        }
+    }
+}
+```
+
+- [TU₂] MockLog ⟶ 模拟Android日志系统，捕获和验证日志输出
+- [TU₃] TestTimeProvider ⟶ 提供可控的时间源，用于测试与时间相关的逻辑
+
+### 测试套件和执行控制
+- [TS₁] 测试套件 ⟶ 使用JUnit Suite组织测试执行顺序
+```kotlin
+@RunWith(Suite::class)
+@Suite.SuiteClasses(
+    WakelockCounterTest::class,
+    WakelockRegistryBasicTest::class,
+    WakelockRegistryProblemTest::class
+)
+class WakelockTests {
+    // 测试套件类，控制测试执行顺序
+    // 没有实际代码，仅作为测试类的容器
+}
+```
+
+- [TS₂] 测试类拆分 ⟶ 将大型测试类拆分为小型、聚焦的测试类，解决状态污染问题
+- [TS₃] 测试生命周期钩子 ⟶ 使用@Before, @After, @BeforeClass, @AfterClass确保测试环境一致性
+
+### 单例测试挑战与模式
+- [STC₁] 单例重置 ⟶ 使用反射技术在测试间重置单例状态
+- [STC₂] 测试隔离 ⟶ 确保每个测试在隔离环境中运行，避免状态污染
+- [STC₃] 类型分类 ⟶ 将测试按功能和依赖关系分类，以最大化测试覆盖率
+- [STC₄] 状态验证 ⟶ 测试前后显式验证系统状态，确保测试前提条件和后置条件
+
+### 状态管理测试模式
+```kotlin
+class WakelockRegistryProblemTest {
+    @Before
+    fun setUp() {
+        // 在每个测试前重置单例状态
+        TestUtils.resetWakelockRegistry()
+    }
+    
+    @After
+    fun tearDown() {
+        // 在每个测试后清理状态
+        TestUtils.resetWakelockRegistry()
+    }
+    
+    @Test
+    fun getActiveWakelockStats_shouldReturnActiveWakelocks() {
+        // 显式重置确保干净的测试环境
+        TestUtils.resetWakelockRegistry()
+        
+        // 测试准备
+        val registry = WakelockRegistry.getInstance()
+        registry.clearAll()
+        
+        // 测试执行
+        registry.handleAcquire("com.test", "test_wl", Type.WAKELOCK)
+        registry.handleAcquire("com.test", "test_wl2", Type.WAKELOCK)
+        registry.handleRelease("com.test", "test_wl2", Type.WAKELOCK)
+        
+        // 状态验证
+        val activeStats = registry.getActiveWakelockStats()
+        assertThat(activeStats).hasSize(1)
+        assertThat(activeStats[0].tag).isEqualTo("test_wl")
+    }
 }
 ``` 

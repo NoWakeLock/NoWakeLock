@@ -1,5 +1,5 @@
 # Conversation History
-*Updated: 2025-04-17*
+*Updated: 2025-05-01*
 
 ## 2025-04-17: DADetailScreen UI Improvements
 
@@ -98,3 +98,26 @@ In this conversation, we focused on initializing the NoWakeLock project with the
 
 ## 2025-04-22: AppDetailScreen 和设置系统设计
 // ... existing content ...
+
+## 系统交互历史
+
+### 唤醒锁计时系统测试实现 [2025-05-01]
+- **状态**: 🟢 已解决
+- **问题**: WakelockRegistry测试类中的最后两个测试在单独运行时可以通过，但与其他测试一起运行时失败
+- **分析**: 
+  - 测试失败主要是由于单例模式导致的状态污染问题，当多个测试按顺序运行时，前一个测试的状态影响后续测试
+  - getActiveWakelockStats和getTotalTrackedWakelocks方法的测试尤其容易受到影响
+  - 需要实现一种机制来在测试间重置单例状态，确保测试隔离性
+- **解决方案**:
+  1. 增强了TestUtils.resetWakelockRegistry方法，使用反射技术彻底重置单例实例
+  2. 将大型测试类WakelockRegistryTest拆分为WakelockRegistryBasicTest和WakelockRegistryProblemTest
+  3. 添加了@Before和@After方法确保每个测试前后重置状态
+  4. 创建了测试套件WakelockTests控制测试执行顺序
+  5. 在问题测试方法中显式调用resetWakelockRegistry和clearAll确保干净的测试环境
+  6. 记录到memory-bank文件，更新技术文档和测试模式
+
+### 多用户界面循环同步问题 [2025-04-29]
+// ... existing conversation history ...
+
+## 代码优化历史
+// ... existing code optimization history ...

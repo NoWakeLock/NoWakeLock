@@ -1,11 +1,15 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-30*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🔮 Current Focus
-完成了唤醒锁的countTime计算重构，解决了重叠间隔问题。实现了WakelockCounter和WakelockRegistry类，使用内存数据结构而非数据库操作，通过AtomicInteger和@Volatile确保线程安全，实现了高效准确的唤醒锁使用时间统计。目前发现countTime计算与util显示时间计算存在不一致问题，需要在未来解决，但核心功能已经完成并符合设计目标。
+为核心功能添加单元测试，特别是为新开发的唤醒锁计时系统创建了全面的测试套件。实现了WakelockCounter和WakelockRegistry类的单元测试，验证了非重叠计时算法的准确性。使用JUnit测试框架，测试了各种场景，包括初始状态、增减计数操作、边界条件和状态维护。通过测试套件和测试类拆分解决了测试间干扰问题。完成了唤醒锁重叠时间计算功能的测试验证。仍需解决countTime计算与util显示时间计算存在的不一致问题。
 
 ## 🔄 Recent Changes
+- [Change₃₄] 2025-05-01 ⟶ 创建 WakelockCounterTest 类，验证单个唤醒锁计数器的功能和非重叠持续时间计算
+- [Change₃₅] 2025-05-01 ⟶ 创建 WakelockRegistryBasicTest 和 WakelockRegistryProblemTest 类，分别测试基本功能和复杂边缘情况
+- [Change₃₆] 2025-05-01 ⟶ 实现 TestUtils 工具类，提供测试辅助功能如单例重置和日志模拟
+- [Change₃₇] 2025-05-01 ⟶ 创建测试套件 WakelockTests，控制测试执行顺序确保测试间隔离
 - [Change₃₁] 2025-04-30 ⟶ 实现了WakelockCounter类，用于追踪单个唤醒锁的活跃实例并计算非重叠持续时间
 - [Change₃₂] 2025-04-30 ⟶ 实现了WakelockRegistry类，管理所有唤醒锁计数器并提供统一接口
 - [Change₃₃] 2025-04-30 ⟶ 修改XProvider类，使用WakelockRegistry计算准确的countTime
@@ -41,6 +45,7 @@
 - [Change₂₂] 2025-04-26 ⟶ 完成TopAppBars.kt重构，使用组件拆分、状态集中管理和更好的代码组织方式
 
 ## 🚶 Next Steps
+- [Step₁₈] 为其他核心组件添加单元测试，如XProvider和数据访问层，Medium
 - [Step₁₇] 解决唤醒锁countTime与util显示时间计算不一致问题，Medium
 - [Step₁₆] 优化 AppDetailScreen Tab 内容的 UI，移除不必要的元素，Medium
 - [Step₁₅] Fix navigation system TopAppBar issues by updating route detection logic, High
@@ -60,6 +65,7 @@
 - [Step₁₄] Design collapsible header pattern for AppDetailScreen following MD3 principles, Medium
 
 ## 🤔 Active Decisions
+- [Decision₂₅] ✅ ⟶ 将大型测试类拆分为小型、聚焦的测试类，并使用测试套件控制执行顺序，解决测试间的状态干扰问题
 - [Decision₂₃] ✅ ⟶ 唤醒锁countTime计算使用内存数据结构而非数据库操作，通过AtomicInteger和@Volatile确保线程安全，保证实时准确的统计
 - [Decision₁] ✅ ⟶ Adopt RIPER framework for project organization, To improve development efficiency and knowledge management
 - [Decision₁₆] ✅ ⟶ Use SavedStateHandle for managing screen parameters, Provides automatic state restoration during configuration changes
@@ -86,6 +92,11 @@
 
 ## 📎 Context References
 - 📄 Active Files:
+  - [app/src/test/java/com/js/nowakelock/data/counter/WakelockCounterTest.kt] ⟶ WakelockCounter类的单元测试
+  - [app/src/test/java/com/js/nowakelock/data/counter/WakelockRegistryBasicTest.kt] ⟶ WakelockRegistry基本功能测试
+  - [app/src/test/java/com/js/nowakelock/data/counter/WakelockRegistryProblemTest.kt] ⟶ WakelockRegistry边缘情况测试
+  - [app/src/test/java/com/js/nowakelock/data/counter/TestUtils.kt] ⟶ 测试工具类，提供单例重置等功能
+  - [app/src/test/java/com/js/nowakelock/data/counter/WakelockTests.kt] ⟶ 测试套件，控制测试执行顺序
   - [app/src/main/java/com/js/nowakelock/data/counter/WakelockCounter.kt] ⟶ 计算单个唤醒锁非重叠时间的核心类
   - [app/src/main/java/com/js/nowakelock/data/counter/WakelockRegistry.kt] ⟶ 管理所有唤醒锁并提供统一接口
   - [app/src/main/java/com/js/nowakelock/data/provider/XProvider.kt] ⟶ 使用WakelockRegistry进行准确的countTime计算

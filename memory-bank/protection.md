@@ -1,8 +1,39 @@
 # σ₆: Protection Registry
-*v1.0 | Created: 2025-04-25 | Updated: 2025-04-29*
+*v1.0 | Created: 2025-04-25 | Updated: 2025-05-01*
 *Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
 
 ## 🛡️ Protected Regions
+
+### 测试基础设施
+- **[GUARDED]** `app/src/test/java/com/js/nowakelock/data/counter/TestUtils.kt` - 测试工具类
+  - 保护理由: 提供重置单例对象和模拟日志的核心测试功能，被多个测试类依赖
+  - 最后修改: 2025-05-01 (实现单例重置和反射访问功能)
+
+- **[GUARDED]** `app/src/test/java/com/js/nowakelock/data/counter/WakelockTests.kt` - 测试套件
+  - 保护理由: 控制测试执行顺序，确保测试间隔离，解决状态污染问题
+  - 最后修改: 2025-05-01 (创建测试套件)
+
+### 关键功能测试
+- **[GUARDED]** `app/src/test/java/com/js/nowakelock/data/counter/WakelockRegistryBasicTest.kt` - 注册表基础测试
+  - 保护理由: 验证WakelockRegistry核心功能的测试，确保单例模式和基本操作正确性
+  - 最后修改: 2025-05-01 (创建独立测试类)
+
+- **[GUARDED]** `app/src/test/java/com/js/nowakelock/data/counter/WakelockRegistryProblemTest.kt` - 注册表边缘情况测试
+  - 保护理由: 验证WakelockRegistry复杂情况的测试，确保状态维护和边界条件处理
+  - 最后修改: 2025-05-01 (创建独立测试类)
+
+- **[GUARDED]** `app/src/test/java/com/js/nowakelock/data/counter/WakelockCounterTest.kt` - 计数器测试
+  - 保护理由: 验证WakelockCounter非重叠持续时间计算的正确性，核心算法测试
+  - 最后修改: 2025-05-01 (实现计数器功能测试)
+
+### 计时系统核心组件
+- **[CRITICAL]** `app/src/main/java/com/js/nowakelock/data/counter/WakelockRegistry.kt` - 唤醒锁注册表
+  - 保护理由: 核心单例类，管理所有唤醒锁计数器并提供统一接口，全应用共享实例
+  - 最后修改: 2025-04-30 (实现非重叠计时系统)
+
+- **[CRITICAL]** `app/src/main/java/com/js/nowakelock/data/counter/WakelockCounter.kt` - 唤醒锁计数器
+  - 保护理由: 核心计时算法实现，确保非重叠持续时间计算准确
+  - 最后修改: 2025-04-30 (实现非重叠持续时间计算)
 
 ### Critical Infrastructure
 - **[CRITICAL]** `app/src/main/java/com/js/nowakelock/KoinDSL.kt` - 依赖注入配置
@@ -60,6 +91,8 @@
   - 最后修改: 2025-04-29 (修复语言切换后用户切换无限循环问题，采用单向同步方案3)
 
 ## 📜 Protection History
+- 2025-05-01 ⟶ 添加测试基础设施(TestUtils, WakelockTests)和关键功能测试到保护列表
+- 2025-05-01 ⟶ 将WakelockRegistry和WakelockCounter核心计时系统组件提升为CRITICAL保护级别
 - 2025-04-29 ⟶ AppsScreen.kt 加入保护列表，修复语言切换后用户切换无限循环问题，采用单向同步方案3
 - 2025-04-27 ⟶ 添加 AppDetailScreen 到保护列表，实现了 Tab 内容集成
 - 2025-04-27 ⟶ 更新 TopAppBars.kt 的保护记录，添加最新修改

@@ -1,5 +1,5 @@
 # σ₂: System Patterns
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-26*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🏛️ Architecture Overview
@@ -106,6 +106,163 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
 - [Set₁₀] Settings Categorization ⟶ Logical grouping of related settings
 - [Set₁₁] Search Functionality ⟶ Dynamic filtering of settings for improved discovery
 - [Set₁₂] Conditional Dependencies ⟶ Settings that show/hide based on other setting values 
+
+## 🧪 Testing Architecture Patterns
+
+### 单例测试挑战与解决方案
+- [Test₁] **单例重置模式** ⟶ 使用反射技术在测试间重置单例状态，确保测试隔离
+  ```kotlin
+  // TestUtils.kt
+  fun resetWakelockRegistry() {
+      // 使用反射访问和修改单例字段
+      val registryClass = WakelockRegistry::class.java
+      val instanceField = registryClass.getDeclaredField("instance")
+      instanceField.isAccessible = true
+      
+      // 移除final修饰符
+      val modifiersField = Field::class.java.getDeclaredField("modifiers")
+      modifiersField.isAccessible = true
+      modifiersField.setInt(instanceField, instanceField.modifiers and Modifier.FINAL.inv())
+      
+      // 设置单例为null，强制重新创建
+      instanceField.set(null, null)
+  }
+  ```
+
+- [Test₂] **测试类拆分策略** ⟶ 将大型测试类拆分为小型、聚焦的测试类，提高测试可维护性和隔离性
+  ```
+  原始结构:
+  WakelockRegistryTest
+  ├── 基本功能测试
+  └── 复杂边缘情况测试
+  
+  优化结构:
+  ├── WakelockRegistryBasicTest (基本功能)
+  └── WakelockRegistryProblemTest (复杂边缘情况)
+  ```
+
+- [Test₃] **测试套件组织** ⟶ 使用JUnit Suite控制测试执行顺序，解决测试间依赖问题
+  ```kotlin
+  @RunWith(Suite::class)
+  @Suite.SuiteClasses(
+      WakelockCounterTest::class,
+      WakelockRegistryBasicTest::class,
+      WakelockRegistryProblemTest::class
+  )
+  class WakelockTests {}
+  ```
+
+### 测试生命周期模式
+- [Test₄] **测试环境准备与清理** ⟶ 使用@Before和@After确保测试环境一致性
+  ```kotlin
+  @Before
+  fun setUp() {
+      // 在每个测试前重置单例状态
+      TestUtils.resetWakelockRegistry()
+  }
+  
+  @After
+  fun tearDown() {
+      // 在每个测试后清理状态
+      TestUtils.resetWakelockRegistry()
+  }
+  ```
+
+- [Test₅] **显式状态重置** ⟶ 在测试方法内部显式重置状态，确保测试独立性
+  ```kotlin
+  @Test
+  fun someTest() {
+      // 显式重置确保干净的测试环境
+      TestUtils.resetWakelockRegistry()
+      
+      // 测试逻辑...
+  }
+  ```
+
+### 断言模式
+- [Test₆] **流畅断言语法** ⟶ 使用Truth库提供更具可读性的断言
+  ```kotlin
+  // 传统JUnit断言
+  assertEquals(1, activeStats.size)
+  assertEquals("test_wl", activeStats[0].tag)
+  
+  // Truth流畅断言
+  assertThat(activeStats).hasSize(1)
+  assertThat(activeStats[0].tag).isEqualTo("test_wl")
+  ```
+
+- [Test₇] **多重断言分组** ⟶ 对相关属性进行分组断言，提高测试可读性
+  ```kotlin
+  @Test
+  fun handleAcquire_firstAcquisition_shouldReturnZero() {
+      val registry = WakelockRegistry.getInstance()
+      val duration = registry.handleAcquire("com.test", "test_wl", Type.WAKELOCK)
+      
+      // 分组断言相关状态
+      assertThat(duration).isEqualTo(0L)
+      assertThat(registry.getActiveWakelockStats()).hasSize(1)
+      assertThat(registry.getTotalTrackedWakelocks()).isEqualTo(1)
+  }
+  ```
+
+### 测试命名与组织模式
+- [Test₈] **BDD风格命名** ⟶ 使用given_when_then或feature_scenario_expected结构命名测试方法
+  ```kotlin
+  // 方法命名: 功能_条件_预期结果
+  @Test
+  fun handleAcquire_firstAcquisition_shouldReturnZero() { ... }
+  
+  @Test
+  fun getActiveWakelockStats_shouldReturnActiveWakelocks() { ... }
+  ```
+
+- [Test₉] **测试分类与归类** ⟶ 将相关测试归类到专门的测试类中
+  ```
+  测试类组织:
+  ├── WakelockCounterTest (单个计数器功能)
+  ├── WakelockRegistryBasicTest (注册表基本功能)
+  └── WakelockRegistryProblemTest (注册表边缘情况)
+  ```
+
+### 时间依赖测试模式
+- [Test₁₀] **时间依赖隔离** ⟶ 使用可控时间源代替System.currentTimeMillis()
+  ```kotlin
+  // 定义时间提供者接口
+  interface TimeProvider {
+      fun currentTimeMillis(): Long
+  }
+  
+  // 测试实现
+  class TestTimeProvider : TimeProvider {
+      var currentTime: Long = 0
+      
+      override fun currentTimeMillis(): Long = currentTime
+      
+      fun advanceBy(millis: Long) {
+          currentTime += millis
+      }
+  }
+  ```
+
+- [Test₁₁] **时间跳转测试** ⟶ 通过控制时间跳转测试与时间相关的功能
+  ```kotlin
+  @Test
+  fun wakelockDuration_shouldCalculateCorrectly() {
+      val timeProvider = TestTimeProvider()
+      val counter = WakelockCounter(timeProvider)
+      
+      // 设置初始时间
+      timeProvider.currentTime = 1000L
+      counter.increment()
+      
+      // 时间跳转
+      timeProvider.advanceBy(5000L)
+      counter.decrement()
+      
+      // 验证持续时间计算
+      assertThat(counter.getTotalDuration()).isEqualTo(5000L)
+  }
+  ```
 
 ## 🧩 Component Design Patterns
 
