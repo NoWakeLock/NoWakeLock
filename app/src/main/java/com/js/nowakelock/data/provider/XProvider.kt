@@ -5,9 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.provider.Settings
+import android.util.Log
 import com.js.nowakelock.BuildConfig
 import com.js.nowakelock.base.infoToBundle
 import com.js.nowakelock.base.stringToType
+import com.js.nowakelock.data.counter.WakelockRegistry
 import com.js.nowakelock.data.db.InfoDatabase
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.InfoDao
@@ -51,7 +53,9 @@ class XProvider(
     private var db: InfoDatabase = InfoDatabase.getInstance(context)
     private var dao: InfoDao = db.infoDao()
     private var eventDao: InfoEventDao = db.infoEventDao()
-   private var unixTimeBoot = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+    private var unixTimeBoot = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+    private val wakelockRegistry = WakelockRegistry.getInstance()
+    private val TAG = "XProvider"
 
     companion object {
         @Volatile
@@ -129,6 +133,20 @@ class XProvider(
                     dao.upBlockCountPO(name, type, userId)
                 } else {
                     dao.upCountPO(name, type, userId)
+                    
+                    // For non-blocked wakelocks, calculate accurate duration using WakelockRegistry
+                    if (type == Type.Wakelock) {
+                        try {
+                            val durationToAdd = wakelockRegistry.handleAcquire(
+                                name, packageName, type, userId, startTime
+                            )
+                            if (durationToAdd > 0) {
+                                dao.upCountTime(durationToAdd, name, type, userId)
+                            }
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Error updating countTime on acquire: ${e.message}")
+                        }
+                    }
                 }
             } else {
                 dao.insert(
@@ -141,6 +159,15 @@ class XProvider(
                         blockCount = if (isBlocked) 1 else 0
                     )
                 )
+                
+                // For first occurrence of a non-blocked wakelock, initialize registry
+                if (!isBlocked && type == Type.Wakelock) {
+                    try {
+                        wakelockRegistry.handleAcquire(name, packageName, type, userId, startTime)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error initializing wakelock counter: ${e.message}")
+                    }
+                }
             }
         }
 
@@ -198,15 +225,24 @@ class XProvider(
             val targetEvent = eventDao.loadEventByKey(eventKey)
 
             if (targetEvent != null && targetEvent.endTime == null && !targetEvent.isBlocked) {
-                // Calculate duration
-                val duration = endTime - targetEvent.startTime
-
-                // Update event end time
+                // Update event end time in database
                 targetEvent.endTime = endTime
                 eventDao.insert(targetEvent)
 
-                // Update duration statistics
-                dao.upCountTime(duration, name, type, userId)
+                // Calculate accurate duration using WakelockRegistry instead of simple subtraction
+                try {
+                    val durationToAdd = wakelockRegistry.handleRelease(
+                        name, packageName, type, userId, endTime
+                    )
+                    if (durationToAdd > 0) {
+                        dao.upCountTime(durationToAdd, name, type, userId)
+                    }
+                } catch (e: Exception) {
+                    // Fallback to simple duration calculation in case of registry error
+                    Log.e(TAG, "Error using registry for duration, falling back: ${e.message}")
+                    val simpleDuration = endTime - targetEvent.startTime
+                    dao.upCountTime(simpleDuration, name, type, userId)
+                }
             }
         }
 
@@ -302,10 +338,14 @@ class XProvider(
             if (clearAll) {
                 dao.clearAll()
                 eventDao.clearAll()
+                // Also clear the wakelock registry
+                wakelockRegistry.clearAll()
             } else {
                 dao.rstAllCount()
                 dao.rstAllCountTime()
                 eventDao.clearAll()
+                // Also clear the wakelock registry
+                wakelockRegistry.clearAll()
             }
         }
         return Bundle()
