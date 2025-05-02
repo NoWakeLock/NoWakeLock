@@ -1,11 +1,12 @@
 # σ₅: Progress Tracker
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-30*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 41%
+Completion: 42%
 
 ## ✅ Completed Features
+- [Feature₂₇] 2025-05-01 ⟶ 唤醒锁计算系统单元测试实现：为WakelockCounter和WakelockRegistry类创建了全面的单元测试，通过测试套件确保正确的时间计算和非重叠持续时间追踪
 - [Feature₂₆] 2025-04-30 ⟶ 唤醒锁的countTime计算重构：实现了高性能、非重叠计时的唤醒锁统计系统，使用WakelockCounter和WakelockRegistry类，解决了重叠间隔问题
 - [Feature₂₅] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题修复：采用单向同步方案3，仅在 UI 为默认值(0)且 ViewModel 有非默认值时同步，避免循环，保证用户选择能正确恢复
 - [Feature₂₄] 2025-04-29 ⟶ AppTabContent设置UI实现，创建了符合Material Design 3的AppSt设置界面，支持全局阻止开关和正则表达式模式管理
@@ -44,6 +45,7 @@ Completion: 41%
 - [WIP₇] 25% ⟶ Database migration implementation, Version issues identified and migration strategy planned
 - [WIP₈] 20% ⟶ UI components standardization, MD3 badge design principles established
 - [WIP₁₀] 65% ⟶ Navigation system improvement, Type-safe navigation implemented with SavedStateHandle integration
+- [WIP₁₁] 15% ⟶ 核心功能单元测试覆盖，已实现唤醒锁计算系统测试，其他关键组件测试计划进行中
 
 ## 📝 To Do
 - [Todo₁₅] Medium ⟶ 解决唤醒锁countTime与util显示时间计算不一致问题
@@ -113,6 +115,7 @@ Completion: 41%
   - Database Migration: 10% complete
   - MD3 UI Standards: 35% complete
   - AppDetailScreen: 70% complete
+  - Testing Infrastructure: 20% complete
 
 - 📈 Feature Implementation:
   - MD3 UI: 40% complete
@@ -130,7 +133,7 @@ Completion: 41%
   - AppDetailScreen: 70% complete
 
 - 🧪 Testing Status:
-  - Unit Tests: 5% coverage
+  - Unit Tests: 15% coverage
   - UI Tests: 0% coverage
   - Integration Tests: 0% coverage
   - Compatibility Tests: 0% coverage
