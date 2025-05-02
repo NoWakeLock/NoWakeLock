@@ -31,19 +31,12 @@ interface InfoEventDao : BaseDao<InfoEvent> {
 
     @Query("SELECT * FROM info_event WHERE packageName_event = :packageName AND type_event = :type AND startTime >= :startTime AND startTime <= :endTime AND userId_event = :userId")
     suspend fun loadEventsInTimeRange(
-        packageName: String,
-        type: Type,
-        startTime: Long,
-        endTime: Long,
-        userId: Int = 0
+        packageName: String, type: Type, startTime: Long, endTime: Long, userId: Int = 0
     ): List<InfoEvent>
 
     @Query("SELECT * FROM info_event WHERE packageName_event = :packageName AND startTime >= :startTime AND startTime <= :endTime AND userId_event = :userId")
     suspend fun loadEventsInTimeRange(
-        packageName: String,
-        startTime: Long,
-        endTime: Long,
-        userId: Int = 0
+        packageName: String, startTime: Long, endTime: Long, userId: Int = 0
     ): List<InfoEvent>
 
     @Query("SELECT * FROM info_event WHERE eventKey = :eventKey")
@@ -65,15 +58,10 @@ interface InfoEventDao : BaseDao<InfoEvent> {
      * @return Flow of list of InfoEvent sorted by start time (descending)
      */
     @Query(
-        "SELECT * FROM info_event WHERE name_event = :name AND type_event = :type " +
-                "AND userId_event = :userId AND startTime >= :startTime ORDER BY startTime DESC LIMIT :limit"
+        "SELECT * FROM info_event WHERE name_event = :name AND type_event = :type " + "AND userId_event = :userId AND startTime >= :startTime ORDER BY startTime DESC LIMIT :limit"
     )
     fun getRecentEvents(
-        name: String,
-        type: Type,
-        userId: Int,
-        startTime: Long,
-        limit: Int
+        name: String, type: Type, userId: Int, startTime: Long, limit: Int
     ): Flow<List<InfoEvent>>
 
     /**
@@ -85,13 +73,19 @@ interface InfoEventDao : BaseDao<InfoEvent> {
      * @return Flow of list of InfoEvent within the specified time range
      */
     @Query(
-        "SELECT * FROM info_event WHERE name_event = :name AND type_event = :type " +
-                "AND userId_event = :userId AND startTime >= :startTime"
+        "SELECT * FROM info_event WHERE name_event = :name AND type_event = :type " + "AND userId_event = :userId AND startTime >= :startTime"
     )
     fun getEventsInTimeRange(
-        name: String,
-        type: Type,
-        userId: Int,
-        startTime: Long
+        name: String, type: Type, userId: Int, startTime: Long
     ): Flow<List<InfoEvent>>
-} 
+
+    @Query("SELECT * FROM info_event WHERE packageName_event = :packageName AND type_event = :type AND userId_event = :userId ORDER BY startTime ASC")
+    fun getEventsByApp(
+        packageName: String, type: Type, userId: Int
+    ): Flow<List<InfoEvent>>
+
+    @Query("SELECT * FROM info_event WHERE name_event = :name AND type_event = :type AND userId_event = :userId ORDER BY startTime ASC")
+    fun getEventsByName(
+        name: String, type: Type, userId: Int
+    ): Flow<List<InfoEvent>>
+}

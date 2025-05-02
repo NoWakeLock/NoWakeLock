@@ -3,7 +3,6 @@ package com.js.nowakelock.data.repository.daDetail
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.dao.InfoEventDao
-import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
@@ -43,8 +42,10 @@ class DADetailRepositoryImpl(
     override fun getDAItem(name: String, type: Type, userId: Int): Flow<DAItem> {
         val infoFlow = daDao.loadInfo(name, type, userId)
         val stFlow = daDao.loadSt(name, type, userId)
-        return infoFlow.combine(stFlow) { info, st ->
-            DAItem.fromEntities(info, st)
+        val eventsFlow = infoEventDao.getEventsByName(name, type, userId)
+
+        return combine(infoFlow, stFlow, eventsFlow) { info, st, events ->
+            DAItem.fromThree(info, st, events)
         }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 

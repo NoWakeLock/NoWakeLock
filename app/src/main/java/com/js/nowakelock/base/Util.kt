@@ -15,9 +15,11 @@ import com.js.nowakelock.BasicApp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.entity.Info
+import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.provider.getURI
 import java.util.*
+import kotlin.math.max
 
 //Long to Time
 @SuppressLint("SimpleDateFormat")
@@ -223,4 +225,45 @@ fun isModuleActive(): Boolean {
         LogUtil.e("ModuleCheck", "Error checking module status: ${e.message}")
         false
     }
+}
+
+fun calculateTime(
+    events: List<InfoEvent>
+): Long {
+    if (events.isEmpty() || events[0].type != Type.Wakelock) {
+        return 0L
+    }
+
+    val now = System.currentTimeMillis() // Get the current time for ongoing events.
+    var totalDuration = 0L // Accumulator for the total duration.
+
+    var currentStart = events[0].startTime
+    var currentEnd = events[0].endTime ?: now
+
+    if (events[0].endTime == null) {
+        return now - currentStart
+    }
+
+    // Loop through the rest of the events, starting from the second one (index 1).
+    for (i in 1 until events.size) {
+        val event = events[i]
+        val eventStart = event.startTime
+        val eventEnd = event.endTime ?: now
+        val isOngoing = event.endTime == null
+
+        if (eventStart < currentEnd) {
+            currentEnd = max(currentEnd, eventEnd)
+        } else {
+            totalDuration += (currentEnd - currentStart)
+            currentStart = eventStart
+            currentEnd = eventEnd
+        }
+
+        if (isOngoing) {
+            totalDuration += (now - currentStart)
+            return totalDuration
+        }
+    }
+    totalDuration += (currentEnd - currentStart)
+    return totalDuration
 }
