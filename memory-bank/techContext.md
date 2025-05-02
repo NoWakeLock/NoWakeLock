@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-25*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-30*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -115,6 +115,86 @@
 - [UI₅] Section Headers ⟶ For grouping related settings
 - [UI₆] Search Field ⟶ For filtering settings
 - [UI₇] Validation Messages ⟶ For input feedback
+
+## ⏱️ Wakelock Timing Implementation
+
+### Core Components
+- [WC₁] WakelockCounter ⟶ Tracks individual wakelock activity and calculates non-overlapping duration
+- [WC₂] WakelockRegistry ⟶ Manages all wakelocks and provides a unified interface
+- [WC₃] XProvider Integration ⟶ Modified to use Registry for accurate calculations
+
+### Thread Safety Approach
+- [TS₁] AtomicInteger ⟶ For thread-safe counter operations
+- [TS₂] @Volatile annotation ⟶ For ensuring visibility of timestamp changes across threads
+- [TS₃] ConcurrentHashMap ⟶ For thread-safe wakelock registry storage
+
+### Timing Algorithm
+- [TA₁] State Tracking ⟶ Counter represents currently active instances of a wakelock
+- [TA₂] Timestamp Management ⟶ Updates on transitions from 0→1 and 1→0
+- [TA₃] Accumulation Logic ⟶ Duration added only when all instances are released
+- [TA₄] Overlapping Prevention ⟶ Single timestamp for acquisition, regardless of count
+- [TA₅] Edge Cases ⟶ Handles invalid states like negative counts
+
+### Performance Considerations
+- [PC₁] In-Memory Data Structure ⟶ Avoids database operations for timing
+- [PC₂] Low Overhead Operations ⟶ Minimal impact on system performance
+- [PC₃] No Serialization ⟶ Registry data is transient, not persisted across reboots
+- [PC₄] Minimal Synchronization ⟶ Atomics and volatile references instead of locks
+
+### Implementation Pattern
+```kotlin
+class WakelockCounter {
+    // Thread-safe counter for active wakelocks
+    private val activeCount = AtomicInteger(0)
+    
+    // Timestamp of when the counter transitioned from 0 to positive
+    @Volatile
+    private var activeTimestamp: Long = 0
+    
+    // Total accumulated non-overlapping time
+    @Volatile
+    private var accumulatedDuration: Long = 0
+    
+    // Called when a wakelock is acquired
+    fun increment(): Int {
+        val newCount = activeCount.incrementAndGet()
+        
+        // Only update timestamp on transition from 0 to 1
+        if (newCount == 1) {
+            activeTimestamp = System.currentTimeMillis()
+        }
+        
+        return newCount
+    }
+    
+    // Called when a wakelock is released
+    fun decrement(): Int {
+        // Get current timestamp before decrementing to ensure accurate duration
+        val currentTime = System.currentTimeMillis()
+        val newCount = activeCount.decrementAndGet()
+        
+        // When count drops to 0, add duration to accumulated total
+        if (newCount == 0 && activeTimestamp > 0) {
+            accumulatedDuration += (currentTime - activeTimestamp)
+        }
+        
+        return newCount
+    }
+    
+    // Get total duration (accumulated + ongoing if active)
+    fun getTotalDuration(): Long {
+        val currentCount = activeCount.get()
+        
+        // Return accumulated duration if no active wakelocks
+        if (currentCount <= 0 || activeTimestamp <= 0) {
+            return accumulatedDuration
+        }
+        
+        // Add current active duration to accumulated total
+        return accumulatedDuration + (System.currentTimeMillis() - activeTimestamp)
+    }
+}
+```
 
 ## 🖥️ UI Architecture Insights
 

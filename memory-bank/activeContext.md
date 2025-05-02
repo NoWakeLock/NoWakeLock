@@ -1,11 +1,14 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-29*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-30*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🔮 Current Focus
-实现了 AppTabContent 的设置界面，为 AppSt 创建了符合 Material Design 3 的 UI 组件，包括全局阻止开关和正则表达式模式管理。设置界面完美集成到现有的应用详情页面，保持一致的设计语言和用户体验。下一步将进一步优化标签页内容的 UI，改进视觉细节和交互体验。
+完成了唤醒锁的countTime计算重构，解决了重叠间隔问题。实现了WakelockCounter和WakelockRegistry类，使用内存数据结构而非数据库操作，通过AtomicInteger和@Volatile确保线程安全，实现了高效准确的唤醒锁使用时间统计。目前发现countTime计算与util显示时间计算存在不一致问题，需要在未来解决，但核心功能已经完成并符合设计目标。
 
 ## 🔄 Recent Changes
+- [Change₃₁] 2025-04-30 ⟶ 实现了WakelockCounter类，用于追踪单个唤醒锁的活跃实例并计算非重叠持续时间
+- [Change₃₂] 2025-04-30 ⟶ 实现了WakelockRegistry类，管理所有唤醒锁计数器并提供统一接口
+- [Change₃₃] 2025-04-30 ⟶ 修改XProvider类，使用WakelockRegistry计算准确的countTime
 - [Change₃₀] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题修复：采用方案3，仅在 UI 为默认值(0)且 ViewModel 有非默认值时同步，避免循环，保证用户选择能正确恢复
 - [Change₂₉] 2025-04-29 ⟶ 修复 AppsScreen 语言切换后用户切换无限循环问题：采用方案3，仅在 UI 为默认值(0)且 ViewModel 有非默认值时同步，避免循环，保证用户选择能正确恢复
 - [Change₂₈] 2025-04-29 ⟶ 实现 AppTabContent 的 AppSt 设置 UI，包括全局阻止开关和正则表达式模式管理
@@ -38,6 +41,7 @@
 - [Change₂₂] 2025-04-26 ⟶ 完成TopAppBars.kt重构，使用组件拆分、状态集中管理和更好的代码组织方式
 
 ## 🚶 Next Steps
+- [Step₁₇] 解决唤醒锁countTime与util显示时间计算不一致问题，Medium
 - [Step₁₆] 优化 AppDetailScreen Tab 内容的 UI，移除不必要的元素，Medium
 - [Step₁₅] Fix navigation system TopAppBar issues by updating route detection logic, High
 - [Step₁] Fix JSON parsing error in DAInfoRepositoryImpl by implementing multi-language support, High
@@ -56,6 +60,7 @@
 - [Step₁₄] Design collapsible header pattern for AppDetailScreen following MD3 principles, Medium
 
 ## 🤔 Active Decisions
+- [Decision₂₃] ✅ ⟶ 唤醒锁countTime计算使用内存数据结构而非数据库操作，通过AtomicInteger和@Volatile确保线程安全，保证实时准确的统计
 - [Decision₁] ✅ ⟶ Adopt RIPER framework for project organization, To improve development efficiency and knowledge management
 - [Decision₁₆] ✅ ⟶ Use SavedStateHandle for managing screen parameters, Provides automatic state restoration during configuration changes
 - [Decision₁₇] ✅ ⟶ Create parameter constant classes for type safety, Makes parameter access more robust and prevents typos
@@ -81,5 +86,8 @@
 
 ## 📎 Context References
 - 📄 Active Files:
+  - [app/src/main/java/com/js/nowakelock/data/counter/WakelockCounter.kt] ⟶ 计算单个唤醒锁非重叠时间的核心类
+  - [app/src/main/java/com/js/nowakelock/data/counter/WakelockRegistry.kt] ⟶ 管理所有唤醒锁并提供统一接口
+  - [app/src/main/java/com/js/nowakelock/data/provider/XProvider.kt] ⟶ 使用WakelockRegistry进行准确的countTime计算
   - [app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsScreen.kt] ⟶ AppsScreen 语言切换后用户切换无限循环问题修复，采用单向同步方案3
   - ...（其余略）

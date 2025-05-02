@@ -1,11 +1,12 @@
 # σ₅: Progress Tracker
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-29*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-04-30*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 40%
+Completion: 41%
 
 ## ✅ Completed Features
+- [Feature₂₆] 2025-04-30 ⟶ 唤醒锁的countTime计算重构：实现了高性能、非重叠计时的唤醒锁统计系统，使用WakelockCounter和WakelockRegistry类，解决了重叠间隔问题
 - [Feature₂₅] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题修复：采用单向同步方案3，仅在 UI 为默认值(0)且 ViewModel 有非默认值时同步，避免循环，保证用户选择能正确恢复
 - [Feature₂₄] 2025-04-29 ⟶ AppTabContent设置UI实现，创建了符合Material Design 3的AppSt设置界面，支持全局阻止开关和正则表达式模式管理
 - [Feature₂₃] 2025-04-28 ⟶ AppDetailScreen 标签页懒加载问题修复，通过 derivedStateOf 优化确保首次点击 Tab 即显示内容
@@ -35,7 +36,7 @@ Completion: 40%
 ## 🚧 In Progress
 - [WIP₁] 40% ⟶ Material Design 3 UI reconstruction, Component styling standards established and initial components created
 - [WIP₉] 70% ⟶ AppDetailScreen implementation, Tab 集成、懒加载优化和设置 UI 已完成，其他 UI 细节仍需改进
-- [WIP₂] 15% ⟶ Complete wakelock/alarm/service support, Core functionality analyzed and enhancement plan drafted
+- [WIP₂] 20% ⟶ Complete wakelock/alarm/service support, 实现了唤醒锁的重叠计时算法，闹钟和服务支持仍需改进
 - [WIP₃] 20% ⟶ Multi-user support, Initial implementation identified and architecture planned
 - [WIP₄] 35% ⟶ DADetailScreen UI improvements, Header card combined and styling issues identified
 - [WIP₅] 50% ⟶ JSON parsing error resolution, Internal JSON model design completed, implementation plan established
@@ -45,6 +46,7 @@ Completion: 40%
 - [WIP₁₀] 65% ⟶ Navigation system improvement, Type-safe navigation implemented with SavedStateHandle integration
 
 ## 📝 To Do
+- [Todo₁₅] Medium ⟶ 解决唤醒锁countTime与util显示时间计算不一致问题
 - [Todo₁₄] Medium ⟶ 优化 AppDetailScreen Tab 内容的 UI，移除不必要的元素
 - [Todo₁] High ⟶ Implement internal JSON parsing model in DAInfoRepositoryImpl
 - [Todo₁₃] Medium ⟶ Fix navigation system issues with mixed string and type-based routes
@@ -61,6 +63,7 @@ Completion: 40%
 - [Todo₁₂] Medium ⟶ Add android:enableOnBackInvokedCallback="true" to manifest for Android 13+ back handling
 
 ## ⚠️ Known Issues
+- [Issue₁₃] Medium ⟶ 唤醒锁countTime与util显示时间计算存在不一致，需要进一步调查和修复
 - [Issue₁] Medium ⟶ Different hooking mechanisms needed for various Android versions, Must maintain compatibility
 - [Issue₁₂] High ⟶ Mixed navigation method causing TopAppBar and related UI elements to disappear when using type-based navigation, Need consistent approach to route detection
 - [Issue₂] Medium ⟶ Root access requirement limits user base, Consider limited functionality for non-rooted devices
@@ -75,6 +78,7 @@ Completion: 40%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₂₄] 2025-04-30 ⟶ 唤醒锁countTime计算使用内存数据结构而非数据库操作，通过AtomicInteger和volatile变量确保线程安全，保证实时性能, Status: ✅ Accepted
 - [Decision₂₃] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题采用方案3修复：单向同步，避免循环，保证用户选择恢复，Status: ✅ Accepted
 - [Decision₂₂] 2025-04-29 ⟶ 使用Kotlin和Compose最佳实践实现AppSt设置UI，包括视觉层次结构、状态管理和用户交互模式, Status: ✅ Accepted
 - [Decision₁₄] 2025-04-28 ⟶ 使用 derivedStateOf 优化标签页懒加载，解决首次点击不显示问题，Status: ✅ Accepted
@@ -100,10 +104,10 @@ Completion: 40%
   - Navigation System: 65% complete
   - Data Models: 80% complete (existing functionality)
   - Database Access: 75% complete (existing functionality)
-  - Xposed Integration: 90% complete (existing functionality)
+  - Xposed Integration: 92% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
-  - Battery Optimization: 25% complete
+  - Battery Optimization: 30% complete
   - Multi-language Support: 15% complete
   - Data Visualization: 30% complete
   - Database Migration: 10% complete
@@ -112,14 +116,14 @@ Completion: 40%
 
 - 📈 Feature Implementation:
   - MD3 UI: 40% complete
-  - Wakelock Monitoring: 90% complete
+  - Wakelock Monitoring: 95% complete
   - Alarm Monitoring: 85% complete
   - Service Monitoring: 85% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
   - Explanations System: 0% complete
-  - Statistics Enhancement: 30% complete
-  - Battery Impact Visualization: 25% complete
+  - Statistics Enhancement: 35% complete
+  - Battery Impact Visualization: 30% complete
   - TimelineChart: 40% complete
   - Database Migrations: 15% complete
   - Badge System Design: 40% complete
@@ -132,6 +136,7 @@ Completion: 40%
   - Compatibility Tests: 0% coverage
 
 ## 🔮 Next Milestones
+- [Milestone₁₂] 唤醒锁计时与util显示时间计算一致性修复 (Target: +2 days)
 - [Milestone₁₁] AppDetailScreen Tab UI 优化 (Target: +1 week)
 - [Milestone₁] DAInfoRepositoryImpl multi-language support implementation (Target: +1 week)
 - [Milestone₁₀] Fix navigation system TopAppBar issues (Target: +3 days)
@@ -145,6 +150,7 @@ Completion: 40%
 - [Milestone₉] AppDetailScreen implementation with tabs and statistics (Target: +2 weeks)
 
 ## 📝 Technical Debt Items
+- [TechDebt₉] 解决唤醒锁countTime与UI显示时间计算一致性问题，Medium priority
 - [TechDebt₁] Migration from Gson to Kotlinx.serialization for JSON parsing, Medium priority
 - [TechDebt₈] Address inconsistent navigation approach mixing string routes and type-safe routes, High priority
 - [TechDebt₂] Implementation of proper multi-language support throughout the app, Medium priority
