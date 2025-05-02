@@ -1,7 +1,9 @@
 package com.js.nowakelock.data.model
 
+import com.js.nowakelock.base.calculateTime
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.entity.Info
+import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.db.entity.St
 import java.util.concurrent.TimeUnit
 
@@ -46,9 +48,9 @@ data class DAItem(
      */
     fun isSameItemAs(other: DAItem): Boolean {
         return name == other.name &&
-               packageName == other.packageName &&
-               userId == other.userId &&
-               type == other.type
+                packageName == other.packageName &&
+                userId == other.userId &&
+                type == other.type
     }
 
     /**
@@ -152,5 +154,32 @@ data class DAItem(
                 countTime = daItem.countTime
             )
         }
+
+        fun fromThree(info: Info, st: St?, events: List<InfoEvent>?): DAItem {
+
+            if (!events.isNullOrEmpty()) {
+                info.countTime = calculateTime(events)
+            }
+
+            if (info.count != 0) // calculate blockCountTime
+                info.blockCountTime = info.blockCount * (info.countTime / info.count)
+
+            return DAItem(
+                name = info.name,
+                packageName = info.packageName,
+                userId = info.userId,
+                type = info.type,
+                count = info.count,
+                blockCount = info.blockCount,
+                countTime = info.countTime,
+                blockCountTime = info.blockCountTime,
+                fullBlocked = st?.fullBlock ?: false,
+                screenOffBlock = st?.screenOffBlock ?: false,
+                timeWindowSec = st?.timeWindowMs?.let {
+                    TimeUnit.MILLISECONDS.toSeconds(it).toInt()
+                } ?: 0
+            )
+        }
+
     }
 } 
