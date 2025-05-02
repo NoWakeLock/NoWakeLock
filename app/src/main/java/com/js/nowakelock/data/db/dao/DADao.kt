@@ -2,8 +2,8 @@ package com.js.nowakelock.data.db.dao
 
 import androidx.room.*
 import com.js.nowakelock.data.db.Type
-import com.js.nowakelock.data.db.entity.DA
 import com.js.nowakelock.data.db.entity.Info
+import com.js.nowakelock.data.db.entity.InfoWithSt
 import com.js.nowakelock.data.db.entity.St
 import kotlinx.coroutines.flow.Flow
 
@@ -20,14 +20,43 @@ interface DADao : BaseDao<St> {
         "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
                 "where type_info = :type"
     )
-    fun loadISs(type: Type): Flow<Map<Info, St?>>
+    fun loadISs(type: Type): Flow<List<InfoWithSt>>
 
     @Transaction
     @Query(
         "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
                 "where type_info = :type and packageName_info = :packageName and userid_info = :userId"
     )
-    fun loadISs(packageName: String, type: Type, userId: Int = 0): Flow<Map<Info, St?>>
+    fun loadISs(packageName: String, type: Type, userId: Int = 0): Flow<List<InfoWithSt>>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
+                "where type_info = :type ORDER BY LOWER(info.name_info) ASC"
+    )
+    fun loadISsSortedByName(type: Type): Flow<List<InfoWithSt>>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
+                "where type_info = :type and packageName_info = :packageName and userid_info = :userId ORDER BY LOWER(info.name_info) ASC"
+    )
+    fun loadISsSortedByName(packageName: String, type: Type, userId: Int = 0): Flow<List<InfoWithSt>>
+
+
+    @Transaction
+    @Query(
+        "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
+                "where type_info = :type ORDER BY info.count DESC"
+    )
+    fun loadISsSortedByCount(type: Type): Flow<List<InfoWithSt>>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
+                "where type_info = :type and packageName_info = :packageName and userid_info = :userId ORDER BY info.count DESC"
+    )
+    fun loadISsSortedByCount(packageName: String, type: Type, userId: Int = 0): Flow<List<InfoWithSt>>
 
     @Query("select * from info where name_info = :name and type_info = :type and userid_info = :userId")
     fun loadInfo(name: String, type: Type, userId: Int = 0): Flow<Info>

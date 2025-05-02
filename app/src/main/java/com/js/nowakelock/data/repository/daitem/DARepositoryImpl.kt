@@ -9,6 +9,7 @@ import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.InfoEvent
+import com.js.nowakelock.data.db.entity.InfoWithSt
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.provider.ProviderMethod
@@ -27,9 +28,9 @@ open class DARepositoryImpl(
     /**
      * Maps the database entities to DAItem domain model
      */
-    private fun mapToDAItems(infoToStMap: Map<Info, St?>): List<DAItem> {
-        return infoToStMap.map { (info, st) ->
-            DAItem.fromEntities(info, st)
+    private fun mapToDAItems(infoWithSts: List<InfoWithSt>): List<DAItem> {
+        return infoWithSts.map {
+            DAItem.fromEntities(it.info, it.st)
         }
     }
 
@@ -37,15 +38,17 @@ open class DARepositoryImpl(
         packageName: String, userId: Int
     ): Flow<List<DAItem>> = withContext(Dispatchers.IO) {
         if (packageName != "" && userId != -1) {
-            return@withContext daDao.loadISs(packageName, type, userId).distinctUntilChanged()
+            return@withContext daDao.loadISsSortedByName(packageName, type, userId)
+                .distinctUntilChanged()
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                    mapToDAItems(infoToStMap)
                 }
         }
 
-        return@withContext daDao.loadISs(type).distinctUntilChanged().map { infoToStMap ->
-            mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
-        }
+        return@withContext daDao.loadISsSortedByName(type).distinctUntilChanged()
+            .map { infoToStMap ->
+                mapToDAItems(infoToStMap)
+            }
     }
 
     override suspend fun getDAItemsSortedByCount(
@@ -54,15 +57,17 @@ open class DARepositoryImpl(
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
             if (packageName != "" && userId != -1) {
-                return@withContext daDao.loadISs(packageName, type, userId).distinctUntilChanged()
+                return@withContext daDao.loadISsSortedByCount(packageName, type, userId)
+                    .distinctUntilChanged()
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                        mapToDAItems(infoToStMap)
                     }
             }
 
-            return@withContext daDao.loadISs(type).distinctUntilChanged().map { infoToStMap ->
-                mapToDAItems(infoToStMap).sortedByDescending { it.count }
-            }
+            return@withContext daDao.loadISsSortedByCount(type).distinctUntilChanged()
+                .map { infoToStMap ->
+                    mapToDAItems(infoToStMap)
+                }
         }
 
     override suspend fun getDAItemsSortedByTime(
