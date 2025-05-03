@@ -1,9 +1,9 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
-*Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-03*
+*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🔮 Current Focus
-为核心功能添加单元测试，特别是为新开发的唤醒锁计时系统创建了全面的测试套件。实现了WakelockCounter和WakelockRegistry类的单元测试，验证了非重叠计时算法的准确性。使用JUnit测试框架，测试了各种场景，包括初始状态、增减计数操作、边界条件和状态维护。通过测试套件和测试类拆分解决了测试间干扰问题。完成了唤醒锁重叠时间计算功能的测试验证。仍需解决countTime计算与util显示时间计算存在的不一致问题。
+XPosed设置与日志控制问题研究，唤醒锁系统重构，UI组件标准化
 
 ## 🔄 Recent Changes
 - [Change₃₄] 2025-05-01 ⟶ 创建 WakelockCounterTest 类，验证单个唤醒锁计数器的功能和非重叠持续时间计算
@@ -101,4 +101,120 @@
   - [app/src/main/java/com/js/nowakelock/data/counter/WakelockRegistry.kt] ⟶ 管理所有唤醒锁并提供统一接口
   - [app/src/main/java/com/js/nowakelock/data/provider/XProvider.kt] ⟶ 使用WakelockRegistry进行准确的countTime计算
   - [app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsScreen.kt] ⟶ AppsScreen 语言切换后用户切换无限循环问题修复，采用单向同步方案3
-  - ...（其余略）
+  - [app/src/main/java/com/js/nowakelock/xposedhook/XpUtil.kt]
+  - [app/src/main/java/com/js/nowakelock/xposedhook/model/XpNSP.kt]
+  - [app/src/main/java/com/js/nowakelock/ui/screens/settings/SettingsViewModel.kt]
+  - [app/src/main/java/com/js/nowakelock/base/SPTools.kt]
+- 💻 Active Code: XPosed模块对宿主应用设置的读取流程，唤醒锁计算系统实现
+- 📚 Active Docs: 
+  - memory-bank/progress.md
+  - memory-bank/techContext.md
+- 📁 Active Folders: 
+  - app/src/main/java/com/js/nowakelock/xposedhook/
+  - app/src/main/java/com/js/nowakelock/data/counter/
+- 🔄 Git References: 最新提交中对唤醒锁计算系统的优化
+
+## 📡 Context Status
+- 🟢 Active: XPosed设置问题分析，唤醒锁计数系统优化
+- 🟡 Partially Relevant: 数据库迁移问题
+- 🟣 Essential: 核心业务逻辑保护，Xposed集成
+- 🔴 Deprecated: 旧的唤醒锁计时方法
+
+## 🔬 Research Findings
+
+### XPosed模块设置问题
+1. **问题描述**：设置中的debug模式切换不能控制XPosed日志输出；重启应用后设置未被保存
+2. **根本原因**：
+   - XpUtil.log = BuildConfig.DEBUG 静态初始化，缺乏动态更新机制
+   - XSharedPreferences在Android高版本中加载受限，需要重启系统才能正确读取新设置
+   - MODE_WORLD_READABLE权限在新版Android中导致SecurityException
+   - SPTools错误处理方式导致失败时静默返回，没有错误提示
+3. **核心问题链**：
+   - 宿主应用中通过SPTools保存设置
+   - Xposed模块通过XSharedPreferences读取设置
+   - 由于权限限制，模块无法读取新安装后的设置文件
+   - 需要重启系统才能解决权限问题
+4. **决策**：采用文档指导方案，在设置界面添加提示，告知用户重新安装后需要重启系统
+
+### 唤醒锁计数系统优化
+1. **问题描述**：原有计时系统无法正确处理重叠的唤醒锁
+2. **新实现**：
+   - 使用WakelockCounter和WakelockRegistry两层结构
+   - 通过AtomicInteger和volatile变量确保线程安全
+   - 实现非重叠计时算法，只有0→1和最后一个1→0转换时更新时间
+3. **性能考虑**：
+   - 使用内存数据结构而非数据库操作，降低性能损耗
+   - 最小化同步开销，使用原子变量而非锁
+4. **进一步优化**：
+   - 添加实例ID跟踪，防止重复计数
+   - 使用ConcurrentHashMap.newKeySet确保线程安全的集合操作
+
+## 📝 Code Insights
+
+### XPosed设置读取流程
+```kotlin
+// 宿主应用中设置debug模式
+fun updateDebugMode(enabled: Boolean) {
+    SPTools.setBoolean("debug", enabled)
+    _debugMode.value = enabled
+}
+
+// XSharedPreferences在Xposed模块中读取设置
+fun makePref(): XSharedPreferences? {
+    val p = XSharedPreferences(BuildConfig.APPLICATION_ID, SPTools.SP_NAME)
+    pref = if (p.file.canRead()) p else null
+    return pref
+}
+```
+
+### 唤醒锁计数器实现
+```kotlin
+// 唤醒锁计数器实现，确保线程安全
+class WakelockCounter {
+    private val activeCount = AtomicInteger(0)
+    
+    @Volatile
+    private var intervalStartTime: Long = 0
+    
+    private val trackedInstances = ConcurrentHashMap.newKeySet<String>()
+    
+    // 增加计数，仅在首次调用时计时
+    fun increment(now: Long, instanceId: String): Long {
+        if (!trackedInstances.add(instanceId)) {
+            return 0 // 已跟踪的实例不再计数
+        }
+        
+        if (activeCount.compareAndSet(0, 1)) {
+            intervalStartTime = now
+            return 0
+        }
+        
+        val duration = max(0, now - intervalStartTime)
+        intervalStartTime = now
+        activeCount.incrementAndGet()
+        return duration
+    }
+}
+```
+
+## 🔍 Insights & Patterns
+
+1. **Xposed模块限制**：需要适应Android版本限制，特别是在高版本系统上
+2. **跨进程通信挑战**：宿主应用与Xposed模块间通信需要考虑权限和同步问题
+3. **线程安全性**：处理系统级钩子需要全面考虑线程安全，使用适当的原子操作
+4. **错误处理**：在Android系统集成中，完善的错误处理和日志记录至关重要
+5. **用户体验**：技术限制难以克服时，清晰的用户指导和文档可以提高用户体验
+
+## 🎯 Next Actions
+
+1. 在设置页面添加关于XPosed设置需要重启系统的提示
+2. 完善唤醒锁计数系统的实例跟踪机制
+3. 改进错误处理，添加更详细的日志记录
+4. 研究长期解决方案，如ContentProvider替代XSharedPreferences
+
+## 🧩 Related Context Items
+
+- Xposed模块和Android权限模型
+- 线程安全编程模式
+- Android跨进程通信机制
+- 电池优化和唤醒锁管理

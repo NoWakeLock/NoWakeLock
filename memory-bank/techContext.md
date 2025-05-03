@@ -465,4 +465,67 @@ class WakelockRegistryProblemTest {
         assertThat(activeStats[0].tag).isEqualTo("test_wl")
     }
 }
-``` 
+```
+
+## 🔄 XPosed设置与日志控制机制
+
+### 问题分析
+- [XP₁] **静态初始化问题** ⟶ XpUtil.log在初始化时设置为BuildConfig.DEBUG，之后没有动态更新
+- [XP₂] **XSharedPreferences限制** ⟶ Android高版本对XSharedPreferences权限限制更严格
+- [XP₃] **不同进程间通信挑战** ⟶ 宿主应用和Xposed模块运行在不同进程空间
+- [XP₄] **调试模式切换无效** ⟶ 设置切换后模块无法实时读取新设置
+
+### 技术根源
+- **SharedPreferences权限变更** ⟶ 从Android 7.0开始，跨进程文件访问受到限制
+- **文件系统权限** ⟶ MODE_WORLD_READABLE标记在新版本Android中可能导致SecurityException
+- **加载时机问题** ⟶ XSharedPreferences在模块加载时读取，之后需要显式刷新
+- **错误处理不足** ⟶ SPTools中的异常被捕获但未记录，导致问题难以诊断
+
+### XPosed设置读取流程
+```kotlin
+// 宿主应用中设置debug模式
+fun updateDebugMode(enabled: Boolean) {
+    SPTools.setBoolean("debug", enabled)
+    _debugMode.value = enabled
+}
+
+// SPTools在宿主应用中保存设置
+fun setBoolean(key: String, value: Boolean) {
+    with(prefs?.edit() ?: return) {
+        putBoolean(key, value)
+        commit()
+    }
+}
+
+// Xposed模块中读取设置
+fun getDebug(): Boolean {
+    return getBool("debug")
+}
+
+// XSharedPreferences实现
+fun makePref(): XSharedPreferences? {
+    return pref ?: synchronized(this) {
+        val p = XSharedPreferences(BuildConfig.APPLICATION_ID, SPTools.SP_NAME)
+        pref = if (p.file.canRead()) p else null
+        pref
+    }
+}
+```
+
+### 解决方案
+- [XPS₁] **用户指导** ⟶ 告知用户在重新安装应用后需要重启设备
+- [XPS₂] **手动重载机制** ⟶ 添加主动重载XSharedPreferences的功能
+- [XPS₃] **动态日志控制** ⟶ 修改XpUtil.log为动态检查而非静态初始化
+- [XPS₄] **增强错误报告** ⟶ 改进错误处理以便识别设置加载失败
+- [XPS₅] **提高刷新频率** ⟶ 降低XSharedPreferences的刷新间隔
+
+### 最终决策
+基于对问题的分析，决定采用文档引导方法而非对代码进行大幅改动：
+1. 在设置页面添加提示，告知用户重新安装后需要重启系统
+2. 在故障排除文档中添加这一限制的说明
+3. 保留当前的XSharedPreferences机制，接受其局限性
+
+这一决策基于以下考虑：
+- 现代Android系统对XSharedPreferences本身的限制难以绕过
+- 实现更复杂的跨进程通信机制（如ContentProvider）工作量大
+- 大多数用户不会频繁重新安装应用，仅需重启一次即可解决问题
