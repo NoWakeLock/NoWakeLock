@@ -38,10 +38,10 @@
     <string name="BlockCountTime">BlockCountTime</string>
     <string name="search_title">Rechercher</string>
     <string name="menu_filter">filtre</string>
-    <string name="menu_filter_user">afficher applications utilisateur</string>
-    <string name="menu_filter_system">afficher applications système</string>
+    <string name="menu_filter_user_app">afficher applications utilisateur</string>
+    <string name="menu_filter_system_app">afficher applications système</string>
     <string name="menu_filter_modified">afficher applications modifiées</string>
-    <string name="menu_filter_all">afficher toutes les applications</string>
+    <string name="menu_filter_all_app">afficher toutes les applications</string>
     <string name="menu_filter_count">trier par compteur</string>
     <string name="menu_filter_name">trier par nom</string>
     <string name="menu_filter_countime">ordre par temps de comptage</string>
@@ -159,5 +159,16 @@
     <string name="total_time">Temps total</string>
     <string name="saved_time">Temps économisé</string>
     <string name="allowed">Autorisé</string>
-    
+    <string name="sort_by">Trier par:</string>
+    <string name="count">Compteur</string>
+    <string name="sort_name">Nom</string>
+    <string name="sort_count">Compteur</string>
+    <string name="sort_time">Temps</string>
+    <string name="menu_filter_all">Tout</string>
+    <string name="menu_filter_blocked">Bloqué</string>
+    <string name="menu_filter_allowed">Autorisé</string>
+    <string name="allow">Autoriser</string>
+    <string name="screen_off">Éteindre l\'écran</string>
+    <string name="timeout">Temps</string>
+
 </resources>

@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.ui.theme.AllowedGreen
@@ -380,7 +382,7 @@ private fun ControlSection(
         // Block section
         // Full block label and switch
         Text(
-            text = "Allow",
+            text = stringResource(R.string.allow),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(blockLabel) {
@@ -412,7 +414,7 @@ private fun ControlSection(
 
         // Screen off label and switch
         Text(
-            text = "Screen Off",
+            text = stringResource(R.string.screen_off),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(screenOffLabel) {
@@ -435,7 +437,7 @@ private fun ControlSection(
 
         // Timeout section
         Text(
-            text = "Time",
+            text = stringResource(R.string.timeout),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(timeLabel) {
