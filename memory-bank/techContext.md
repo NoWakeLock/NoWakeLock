@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-04*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -280,6 +280,68 @@ class WakelockCounter {
 - Content caching needed to avoid recomposition when switching tabs
 - State management for each tab must be handled appropriately
 - LaunchedEffect with derivedStateOf ensures smooth tab transitions
+
+### Material Design 3 Component Implementations
+
+#### PatternSettingsSection 改进
+- **组件定位**：应用详情页中的设置部分，用于正则表达式模式管理
+- **主要改进**：
+  - 布局层次改进，使用适当的内边距和间距遵循 MD3 规范
+  - 实现充分利用 ElevatedCard 和 Column 的嵌套结构
+  - 增加组件边缘明显性，改善视觉层次结构
+  - 为可点击元素增加涟漪效果，提高交互反馈
+  - 使用语义化色彩系统，确保在各种主题下保持一致性
+  - 优化不同内容密度下的显示效果
+- **状态管理**：
+  - 采用 remember 和 mutableStateOf 进行本地状态管理
+  - rememberSaveable 保存对话框状态，防止配置更改丢失
+  - 将状态变更通过回调函数传递给父组件
+- **交互模式**：
+  - 为长文本项目添加省略和展开功能
+  - 使用图标辅助表达操作含义
+  - 增加触摸目标大小，提高可用性
+  - 为关键操作提供确认对话框
+
+#### 正则表达式模式管理实现
+```kotlin
+// 模式列表实现使用 LazyColumn 优化性能
+LazyColumn(
+    modifier = Modifier.fillMaxWidth(),
+    contentPadding = PaddingValues(vertical = 8.dp),
+    verticalArrangement = Arrangement.spacedBy(8.dp)
+) {
+    items(patterns) { pattern ->
+        PatternItem(
+            pattern = pattern,
+            onEdit = { editPattern(it) },
+            onDelete = { showDeleteDialog = it }
+        )
+    }
+}
+
+// 模式项使用 ElevatedCard 提供视觉层次
+@Composable
+fun PatternItem(
+    pattern: Pattern,
+    onEdit: (Pattern) -> Unit,
+    onDelete: (Pattern) -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.elevatedCardElevation()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 内容和操作按钮
+        }
+    }
+}
+```
 
 ## 📱 Mobile-Specific Considerations
 
