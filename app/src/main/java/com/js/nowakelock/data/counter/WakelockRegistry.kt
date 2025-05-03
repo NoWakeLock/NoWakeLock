@@ -48,6 +48,7 @@ class WakelockRegistry private constructor() {
      * @param type Event type (should be Wakelock)
      * @param userId User ID
      * @param startTime Event start time
+     * @param instanceId Unique identifier for this specific wakelock instance
      * @return Duration to add to countTime (0 for first activation of this wakelock)
      */
     fun handleAcquire(
@@ -55,7 +56,8 @@ class WakelockRegistry private constructor() {
         packageName: String,
         type: Type,
         userId: Int,
-        startTime: Long
+        startTime: Long,
+        instanceId: String
     ): Long {
         if (type != Type.Wakelock) {
             return 0L
@@ -64,7 +66,7 @@ class WakelockRegistry private constructor() {
         try {
             val key = generateKey(name, packageName, type, userId)
             val counter = getOrCreateCounter(key)
-            return counter.increment(startTime)
+            return counter.increment(startTime, instanceId)
         } catch (e: Exception) {
             Log.e(TAG, "Error handling wakelock acquire: ${e.message}")
             return 0L
@@ -79,6 +81,7 @@ class WakelockRegistry private constructor() {
      * @param type Event type (should be Wakelock)
      * @param userId User ID
      * @param endTime Event end time
+     * @param instanceId Unique identifier for this specific wakelock instance
      * @return Duration to add to countTime
      */
     fun handleRelease(
@@ -86,7 +89,8 @@ class WakelockRegistry private constructor() {
         packageName: String,
         type: Type,
         userId: Int,
-        endTime: Long
+        endTime: Long,
+        instanceId: String
     ): Long {
         if (type != Type.Wakelock) {
             return 0L
@@ -96,7 +100,7 @@ class WakelockRegistry private constructor() {
             val key = generateKey(name, packageName, type, userId)
             val counter = counters[key] ?: return 0L
             
-            val (duration, remaining) = counter.decrement(endTime)
+            val (duration, remaining) = counter.decrement(endTime, instanceId)
             return duration
         } catch (e: Exception) {
             Log.e(TAG, "Error handling wakelock release: ${e.message}")

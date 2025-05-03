@@ -7,7 +7,6 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import com.js.nowakelock.BuildConfig
-import com.js.nowakelock.base.infoToBundle
 import com.js.nowakelock.base.stringToType
 import com.js.nowakelock.data.counter.WakelockRegistry
 import com.js.nowakelock.data.db.InfoDatabase
@@ -16,6 +15,7 @@ import com.js.nowakelock.data.db.dao.InfoDao
 import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.InfoEvent
+import com.js.nowakelock.xposedhook.XpUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
@@ -31,8 +31,8 @@ fun getURI(): Uri {
  */
 enum class ProviderMethod(var value: String) {
     // Event-related methods
-    RecordEvent("RecordEvent"),     // Record event start/block with statistics update
-    EndEvent("EndEvent"),           // Record end time for events (primarily for wakelock)
+    NewEvent("NewEvent"),     // Record event start/block with statistics update
+    EndEvent("EndEvent"),        // Record end time for events (primarily for wakelock)
 
     // Data access methods
     LoadInfos("LoadInfos"),         // Load statistics summaries
@@ -50,7 +50,8 @@ enum class ProviderMethod(var value: String) {
 class XProvider(
     context: Context
 ) {
-    private var db: InfoDatabase = InfoDatabase.getInstance(context)
+    private var db: InfoDatabase =
+        InfoDatabase.getInstance(context).also { it.clearAllTables() } // clear every time
     private var dao: InfoDao = db.infoDao()
     private var eventDao: InfoEventDao = db.infoEventDao()
     private var unixTimeBoot = System.currentTimeMillis() - SystemClock.elapsedRealtime()
@@ -74,7 +75,7 @@ class XProvider(
      */
     fun getMethod(methodName: String, bundle: Bundle): Bundle? {
         return when (methodName) {
-            ProviderMethod.RecordEvent.value -> recordEvent(bundle)
+            ProviderMethod.NewEvent.value -> newEvent(bundle)
             ProviderMethod.EndEvent.value -> endEvent(bundle)
             ProviderMethod.LoadInfos.value -> loadInfos(bundle)
             ProviderMethod.LoadEvents.value -> loadEvents(bundle)
@@ -95,88 +96,87 @@ class XProvider(
      *   - userId: User ID
      *   - startTime: Event start time
      *   - isBlocked: Whether the event is blocked (default false)
+     *   - instanceId: Unique instance ID based on IBinder hash
      * @return Bundle containing eventKey for normal events
      */
-    private fun recordEvent(bundle: Bundle): Bundle {
-        val name: String = bundle.getString("name") ?: ""
-        val type: Type = stringToType(bundle.getString("type") ?: "")
+    private fun newEvent(bundle: Bundle): Bundle {
+        val name = bundle.getString("name") ?: ""
+        val type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
-        val userId: Int = bundle.getInt("userId", 0)
+        val userId = bundle.getInt("userId", 0)
         var startTime = bundle.getLong("startTime", System.currentTimeMillis())
         val isBlocked = bundle.getBoolean("isBlocked", false)
 
-        // Ignore events before 2000-01-01
-        // no idea why..
-       if (startTime < 946684800000) {
-           startTime = unixTimeBoot + startTime
-       }
+        // Get instanceId
+        val instanceId = bundle.getString("instanceId") ?: run {
+            Log.e(TAG, "Instance ID is null")
+            return Bundle()
+        }
 
-        // Generate unique event key
-        val eventKey = InfoEvent.generateEventKey(name, packageName, type, userId, startTime)
+        // Adjust timestamps before 2000-01-01
+        if (startTime < 946684800000) {
+            startTime += unixTimeBoot
+        }
+
+        XpUtil.log("CP newEvent: $name, $packageName, $type, $userId, $startTime, $isBlocked, $instanceId")
 
         runBlocking(Dispatchers.IO) {
+            // Create and insert event record
             val infoEvent = InfoEvent(
+                instanceId = instanceId,  // primary key
                 name = name,
                 type = type,
                 packageName = packageName,
                 userId = userId,
                 startTime = startTime,
-                isBlocked = isBlocked,
-                eventKey = eventKey
+                isBlocked = isBlocked
             )
             eventDao.insert(infoEvent)
 
             // Update statistics
             val info = dao.loadInfo(name, type, userId)
-            if (info != null) {
-                if (isBlocked) {
-                    dao.upBlockCountPO(name, type, userId)
-                } else {
-                    dao.upCountPO(name, type, userId)
-                    
-                    // For non-blocked wakelocks, calculate accurate duration using WakelockRegistry
-                    if (type == Type.Wakelock) {
-                        try {
-                            val durationToAdd = wakelockRegistry.handleAcquire(
-                                name, packageName, type, userId, startTime
-                            )
-                            if (durationToAdd > 0) {
-                                dao.upCountTime(durationToAdd, name, type, userId)
-                            }
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Error updating countTime on acquire: ${e.message}")
-                        }
-                    }
-                }
-            } else {
-                dao.insert(
-                    Info(
-                        name = name,
-                        type = type,
-                        packageName = packageName,
-                        userId = userId,
-                        count = if (!isBlocked) 1 else 0,
-                        blockCount = if (isBlocked) 1 else 0
+
+            when {
+                info == null -> {
+                    // Create new statistics record if none exists
+                    dao.insert(
+                        Info(
+                            name = name,
+                            type = type,
+                            packageName = packageName,
+                            userId = userId,
+                            count = if (!isBlocked) 1 else 0,
+                            blockCount = if (isBlocked) 1 else 0
+                        )
                     )
-                )
-                
-                // For first occurrence of a non-blocked wakelock, initialize registry
-                if (!isBlocked && type == Type.Wakelock) {
-                    try {
-                        wakelockRegistry.handleAcquire(name, packageName, type, userId, startTime)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Error initializing wakelock counter: ${e.message}")
-                    }
+                }
+
+                isBlocked -> {
+                    // Just increment block count and return early
+                    dao.upBlockCountPO(name, type, userId)
+                    return@runBlocking
+                }
+
+                else -> {
+                    // Increment normal event count
+                    dao.upCountPO(name, type, userId)
+                }
+            }
+
+            // Special handling for Wakelock type events
+            if (type == Type.Wakelock) {
+                try {
+                    wakelockRegistry.handleAcquire(name, packageName, type, userId, startTime, instanceId)
+                        .takeIf { it > 0 }?.let { durationToAdd ->
+                            dao.upCountTime(durationToAdd, name, type, userId)
+                        }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error updating countTime on acquire: ${e.message}")
                 }
             }
         }
 
-        // Return event key for later reference
-        return Bundle().apply {
-            if (!isBlocked) {
-                putString("eventKey", eventKey)
-            }
-        }
+        return Bundle()
     }
 
     /**
@@ -189,61 +189,63 @@ class XProvider(
      *   - packageName: Package name
      *   - userId: User ID
      *   - endTime: Event end time
-     *   - startTime: Optional start time for rebuilding eventKey
-     *   - eventKey: Optional direct event key for faster lookup
+     *   - instanceId: Unique instance ID based on IBinder hash
      * @return Empty bundle
      */
     private fun endEvent(bundle: Bundle): Bundle {
-        val name: String = bundle.getString("name") ?: ""
-        val type: Type = stringToType(bundle.getString("type") ?: "")
+        val name = bundle.getString("name") ?: ""
+        val type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
-        val userId: Int = bundle.getInt("userId", 0)
-        var endTime = bundle.getLong("endTime", System.currentTimeMillis())
-        val startTime = bundle.getLong("startTime", 0)  // For rebuilding eventKey
+        val userId = bundle.getInt("userId", 0)
+        val instanceId = bundle.getString("instanceId") ?: run {
+            Log.e(TAG, "Instance ID is null")
+            return Bundle()
+        }
 
+        // Only wakelock events are supported
         if (type != Type.Wakelock) {
             return Bundle()
         }
 
-        // Ignore events before 2000-01-01
-        // no idea why..
-       if (endTime < 946684800000) {
-           endTime = unixTimeBoot + endTime
-       }
+        // Normalize timestamp
+        var endTime = bundle.getLong("endTime", System.currentTimeMillis())
+        if (endTime < 946684800000) { // Before 2000-01-01
+            endTime += unixTimeBoot
+        }
+        var startTime = bundle.getLong("startTime", -1)
+        if (startTime in 1..946684799999) { // Before 2000-01-01
+            startTime += unixTimeBoot
+        }
 
-        // Get event key from parameters or rebuild it
-        val eventKey = bundle.getString("eventKey") ?: InfoEvent.generateEventKey(
-            name,
-            packageName,
-            type,
-            userId,
-            startTime
-        )
+        XpUtil.log("CP endEvent: $name, $packageName, $type, $userId, $startTime, $endTime, $instanceId")
 
         runBlocking(Dispatchers.IO) {
-            // Find event by key for efficient lookup
-            val targetEvent = eventDao.loadEventByKey(eventKey)
-
-            if (targetEvent != null && targetEvent.endTime == null && !targetEvent.isBlocked) {
-                // Update event end time in database
-                targetEvent.endTime = endTime
-                eventDao.insert(targetEvent)
-
-                // Calculate accurate duration using WakelockRegistry instead of simple subtraction
-                try {
-                    val durationToAdd = wakelockRegistry.handleRelease(
-                        name, packageName, type, userId, endTime
-                    )
-                    if (durationToAdd > 0) {
-                        dao.upCountTime(durationToAdd, name, type, userId)
-                    }
-                } catch (e: Exception) {
-                    // Fallback to simple duration calculation in case of registry error
-                    Log.e(TAG, "Error using registry for duration, falling back: ${e.message}")
-                    val simpleDuration = endTime - targetEvent.startTime
-                    dao.upCountTime(simpleDuration, name, type, userId)
-                }
+            // Verify event record exists
+            val event = eventDao.loadEventById(instanceId) ?: run {
+                Log.e(TAG, "Event not found for instanceId: $instanceId")
+                return@runBlocking
             }
+
+            // Update event end time
+            event.endTime = endTime
+            if (startTime > 0) {
+                event.startTime = startTime
+            }
+
+            eventDao.insert(event)
+
+            // Calculate duration using WakelockRegistry
+            try {
+                val durationToAdd = wakelockRegistry.handleRelease(
+                    name, packageName, type, userId, endTime, instanceId
+                )
+                if (durationToAdd > 0) {
+                    dao.upCountTime(durationToAdd, name, type, userId)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error calculating duration: ${e.message}")
+            }
+
         }
 
         return Bundle()

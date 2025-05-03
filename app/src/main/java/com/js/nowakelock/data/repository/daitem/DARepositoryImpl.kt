@@ -1,8 +1,10 @@
 package com.js.nowakelock.data.repository.daitem
 
 import android.os.Bundle
+import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.BasicApp
 import com.js.nowakelock.base.LogUtil
+import com.js.nowakelock.base.SPTools
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
@@ -17,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 open class DARepositoryImpl(
@@ -76,19 +79,23 @@ open class DARepositoryImpl(
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
             if (packageName != "" && userId != -1) {
-                return@withContext daDao.loadISs(packageName, type, userId).distinctUntilChanged()
+                return@withContext daDao.loadISsSortedByTime(packageName, type, userId).distinctUntilChanged()
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                        mapToDAItems(infoToStMap)
                     }
             }
 
-            return@withContext daDao.loadISs(type).distinctUntilChanged().map { infoToStMap ->
-                mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+            return@withContext daDao.loadISsSortedByTime(type).distinctUntilChanged().map { infoToStMap ->
+                mapToDAItems(infoToStMap)
             }
         }
 
     override suspend fun updateDAItemSettings(setting: St) = withContext(Dispatchers.IO) {
         daDao.insert(setting)
+    }
+
+    override fun getSTs(type: Type): Flow<List<St>> {
+        return daDao.loadSts(type)
     }
 
     override suspend fun syncDB(packageName: String, userId: Int) = withContext(Dispatchers.IO) {

@@ -1,5 +1,6 @@
 package com.js.nowakelock.data.repository.daitem
 
+import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
@@ -29,6 +30,8 @@ interface DARepository {
         packageName: String = "",
         userId: Int = -1
     ): Flow<List<DAItem>>
+
+    fun getSTs(type: Type): Flow<List<St>>
 
     /**
      * Updates DAItem settings (block status and time window)
