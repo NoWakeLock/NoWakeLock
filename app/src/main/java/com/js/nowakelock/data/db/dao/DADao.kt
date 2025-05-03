@@ -58,6 +58,21 @@ interface DADao : BaseDao<St> {
     )
     fun loadISsSortedByCount(packageName: String, type: Type, userId: Int = 0): Flow<List<InfoWithSt>>
 
+
+    @Transaction
+    @Query(
+        "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
+                "where type_info = :type ORDER BY info.countTime DESC"
+    )
+    fun loadISsSortedByTime(type: Type): Flow<List<InfoWithSt>>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM info left outer join st on info.userid_info = st.userId_st and info.name_info = st.name_st " +
+                "where type_info = :type and packageName_info = :packageName and userid_info = :userId ORDER BY info.countTime DESC"
+    )
+    fun loadISsSortedByTime(packageName: String, type: Type, userId: Int = 0): Flow<List<InfoWithSt>>
+
     @Query("select * from info where name_info = :name and type_info = :type and userid_info = :userId")
     fun loadInfo(name: String, type: Type, userId: Int = 0): Flow<Info>
 
@@ -75,6 +90,9 @@ interface DADao : BaseDao<St> {
 
     @Query("select * from st")
     suspend fun loadAllSts(): List<St>
+
+    @Query("select * from st")
+    fun loadAllStsFw(): Flow<List<St>>
 
     @Transaction
     @Query(

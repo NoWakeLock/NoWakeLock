@@ -39,8 +39,8 @@ interface InfoEventDao : BaseDao<InfoEvent> {
         packageName: String, startTime: Long, endTime: Long, userId: Int = 0
     ): List<InfoEvent>
 
-    @Query("SELECT * FROM info_event WHERE eventKey = :eventKey")
-    suspend fun loadEventByKey(eventKey: String): InfoEvent?
+    @Query("SELECT * FROM info_event WHERE instanceId = :instanceId")
+    suspend fun loadEventById(instanceId: String): InfoEvent?
 
     @Query("DELETE FROM info_event WHERE startTime < :timestamp")
     suspend fun deleteEventsOlderThan(timestamp: Long)
