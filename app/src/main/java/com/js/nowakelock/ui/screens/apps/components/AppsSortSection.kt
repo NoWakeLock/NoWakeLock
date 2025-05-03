@@ -9,8 +9,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.R
 import com.js.nowakelock.ui.screens.apps.SortOption
 
 /**
@@ -40,7 +42,7 @@ fun AppsSortSection(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Sort by:",
+                text = stringResource(R.string.sort_by),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -57,9 +59,9 @@ fun AppsSortSection(
             SortOption.entries.forEach { option ->
                 val selected = currentSort == option
                 val label = when (option) {
-                    SortOption.NAME -> "Name"
-                    SortOption.COUNT -> "Count"
-                    SortOption.TIME -> "Time"
+                    SortOption.NAME -> stringResource(R.string.sort_name)
+                    SortOption.COUNT -> stringResource(R.string.sort_count)
+                    SortOption.TIME -> stringResource(R.string.sort_time)
                 }
                 
                 // Simple text with optional checkmark for selected option

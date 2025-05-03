@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.ui.screens.das.DASortOption
 
@@ -69,14 +71,14 @@ fun DAsSortSection(
         ) {
             // Name sort option
             SortOption(
-                text = "Name",
+                text = stringResource(R.string.sort_name),
                 selected = currentSort == DASortOption.NAME,
                 onClick = { onSortChanged(DASortOption.NAME) }
             )
             
             // Count sort option
             SortOption(
-                text = "Count",
+                text = stringResource(R.string.sort_count),
                 selected = currentSort == DASortOption.COUNT,
                 onClick = { onSortChanged(DASortOption.COUNT) }
             )
@@ -84,7 +86,7 @@ fun DAsSortSection(
             // Time sort option - only show for Wakelock type
             if (type == Type.Wakelock) {
                 SortOption(
-                    text = "Time",
+                    text = stringResource(R.string.sort_time),
                     selected = currentSort == DASortOption.TIME,
                     onClick = { onSortChanged(DASortOption.TIME) }
                 )

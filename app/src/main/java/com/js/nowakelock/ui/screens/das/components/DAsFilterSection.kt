@@ -8,11 +8,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.R
 import com.js.nowakelock.ui.screens.das.DAFilterOption
 
 /**
@@ -35,7 +37,7 @@ fun DAFilterSection(
     ) {
         // All filter
         FilterButton(
-            text = "All",
+            text = stringResource(R.string.menu_filter_all),
             isSelected = currentFilter == DAFilterOption.ALL,
             onClick = { onFilterChanged(DAFilterOption.ALL) },
             modifier = Modifier.weight(1f)
@@ -43,7 +45,7 @@ fun DAFilterSection(
         
         // Blocked filter
         FilterButton(
-            text = "Blocked",
+            text = stringResource(R.string.menu_filter_blocked),
             isSelected = currentFilter == DAFilterOption.BLOCKED,
             onClick = { onFilterChanged(DAFilterOption.BLOCKED) },
             modifier = Modifier.weight(1f),
@@ -53,7 +55,7 @@ fun DAFilterSection(
         
         // Allowed filter
         FilterButton(
-            text = "Allowed",
+            text = stringResource(R.string.menu_filter_allowed),
             isSelected = currentFilter == DAFilterOption.ALLOWED,
             onClick = { onFilterChanged(DAFilterOption.ALLOWED) },
             modifier = Modifier.weight(1f),

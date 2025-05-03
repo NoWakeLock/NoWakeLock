@@ -36,10 +36,10 @@
     <string name="BlockCountTime">阻止时间</string>
     <string name="search_title">搜索</string>
     <string name="menu_filter">显示</string>
-    <string name="menu_filter_user">用户应用</string>
-    <string name="menu_filter_system">系统应用</string>
+    <string name="menu_filter_user_app">用户应用</string>
+    <string name="menu_filter_system_app">系统应用</string>
     <string name="menu_filter_modified">已修改应用</string>
-    <string name="menu_filter_all">所有应用</string>
+    <string name="menu_filter_all_app">所有应用</string>
     <string name="menu_filter_count">累计次数排序</string>
     <string name="menu_filter_name">名称排序</string>
     <string name="menu_filter_countime">累计时间排序</string>
@@ -188,4 +188,14 @@
     <string name="invalid_regex">无效的正则表达式</string>
     <string name="add">添加</string>
     <string name="remove">移除</string>
+    <string name="sort_by">排序:</string>
+    <string name="sort_name">名称</string>
+    <string name="sort_count">次数</string>
+    <string name="sort_time">时间</string>
+    <string name="menu_filter_all">全部</string>
+    <string name="menu_filter_blocked">已阻止</string>
+    <string name="menu_filter_allowed">已允许</string>
+    <string name="allow">允许</string>
+    <string name="screen_off">屏幕关闭</string>
+    <string name="timeout">时间</string>
 </resources>

@@ -62,9 +62,9 @@ fun AppsFilterSection(
                 ) {
                     Text(
                         text = when (filter) {
-                            FilterOption.ALL -> stringResource(R.string.menu_filter_all)
-                            FilterOption.USER -> stringResource(R.string.menu_filter_user)
-                            FilterOption.SYSTEM -> stringResource(R.string.menu_filter_system)
+                            FilterOption.ALL -> stringResource(R.string.menu_filter_all_app)
+                            FilterOption.USER -> stringResource(R.string.menu_filter_user_app)
+                            FilterOption.SYSTEM -> stringResource(R.string.menu_filter_system_app)
                             FilterOption.MODIFIED -> stringResource(R.string.menu_filter_modified)
                         },
                         style = MaterialTheme.typography.labelMedium, // Slightly smaller text
