@@ -3,7 +3,6 @@ package com.js.nowakelock.xposedhook.hook
 import android.app.AndroidAppHelper
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
@@ -11,7 +10,6 @@ import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.xposedhook.XpUtil
 import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
-import com.js.nowakelock.xposedhook.registerReceiver
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findClass
@@ -69,7 +67,8 @@ class ServiceHook {
         // android 14 15
         // https://cs.android.com/android/platform/superproject/+/android-14.0.0_r59:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=909
         private fun serviceHook34to35(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.am.ActiveServices",
                 lpparam.classLoader,
                 "startServiceLocked",
                 "android.app.IApplicationThread",
@@ -102,7 +101,8 @@ class ServiceHook {
         // https://cs.android.com/android/platform/superproject/+/android-12.1.0_r27:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=621
         private fun serviceHook31to33(lpparam: XC_LoadPackage.LoadPackageParam) {
 
-            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.am.ActiveServices",
                 lpparam.classLoader,
                 "startServiceLocked",
                 "android.app.IApplicationThread",
@@ -134,7 +134,8 @@ class ServiceHook {
         private fun serviceHook30(lpparam: XC_LoadPackage.LoadPackageParam) {
             XpUtil.log("Hooking Service for API levels 30")
 
-            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.am.ActiveServices",
                 lpparam.classLoader,
                 "startServiceLocked",
                 "android.app.IApplicationThread",
@@ -190,7 +191,8 @@ class ServiceHook {
         }
 
         private fun serviceHook26to28(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.am.ActiveServices",
                 lpparam.classLoader,
                 "startServiceLocked",
                 "android.app.IApplicationThread",
@@ -216,7 +218,8 @@ class ServiceHook {
         }
 
         private fun serviceHook24to25(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod("com.android.server.am.ActiveServices",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.am.ActiveServices",
                 lpparam.classLoader,
                 "startServiceLocked",
                 "android.app.IApplicationThread",
@@ -250,7 +253,6 @@ class ServiceHook {
             if (service == null || packageName == null) return
             val serviceName = service.component?.flattenToShortString() ?: return
 
-
 //            XpUtil.log("$packageName service: $serviceName userid:$userId")
             val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
             val block = block(serviceName, packageName, userId, booted and !pm.isInteractive)
@@ -260,18 +262,18 @@ class ServiceHook {
 
                 XpUtil.log("$packageName service: $serviceName block $booted ${pm.isInteractive}")
                 XpRecord.blockEvent(
-                    serviceName, 
-                    packageName, 
+                    serviceName,
+                    packageName,
                     type,
-                    context, 
+                    context,
                     userId
                 )
             } else {
-                XpRecord.addEvent(
-                    serviceName, 
-                    packageName, 
-                    type, 
-                    context, 
+                XpRecord.newEvent(
+                    serviceName,
+                    packageName,
+                    type,
+                    context,
                     userId
                 )
             }

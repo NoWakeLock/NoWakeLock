@@ -41,7 +41,8 @@ class AlarmHook {
         * https://cs.android.com/android/platform/superproject/+/master:frameworks/base/apex/jobscheduler/service/java/com/android/server/alarm/AlarmManagerService.java;l=171;bpv=0;bpt=1?hl=zh-cn
         * */
         private fun alarmHook31to32(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod("com.android.server.alarm.AlarmManagerService",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.alarm.AlarmManagerService",
                 lpparam.classLoader,
                 "triggerAlarmsLocked",
                 ArrayList::class.java, Long::class.javaPrimitiveType,
@@ -61,7 +62,8 @@ class AlarmHook {
 
         private fun alarmHook29to30(lpparam: XC_LoadPackage.LoadPackageParam) {
 
-            XposedHelpers.findAndHookMethod("com.android.server.AlarmManagerService",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.AlarmManagerService",
                 lpparam.classLoader,
                 "triggerAlarmsLocked",
                 ArrayList::class.java, Long::class.javaPrimitiveType,
@@ -80,7 +82,8 @@ class AlarmHook {
         }
 
         private fun alarmHook24to28(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod("com.android.server.AlarmManagerService",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.AlarmManagerService",
                 lpparam.classLoader,
                 "triggerAlarmsLocked",
                 ArrayList::class.java, Long::class.javaPrimitiveType, Long::class.javaPrimitiveType,
@@ -106,62 +109,70 @@ class AlarmHook {
             triggerList: ArrayList<*>,
             context: Context
         ) {
-            var alarmName: String
-            var packageName: String
-            var uid: Int
-
-            for (i in 0 until triggerList.size) {
-
-                try {
-                    val tmp = triggerList[i]
-                    val tmp2 = tmp.javaClass.getDeclaredField("statsTag").get(tmp) as String
-                    alarmName = tmp2.replace(Regex("\\*.*\\*:"), "")
-                    packageName = tmp.javaClass.getDeclaredField("packageName").get(tmp) as String
-                    uid = tmp.javaClass.getDeclaredField("uid").get(tmp) as Int
-                } catch (e: Exception) {
-                    XpUtil.log(" alarm: hookAlarmsLocked err:$e")
-                    continue
-                }
-
+            // Process alarms in reverse order to safely remove items
+            for (i in triggerList.size - 1 downTo 0) {
+                val alarmInfo = extractAlarmInfo(triggerList[i]) ?: continue
+                val (alarmName, packageName, uid) = alarmInfo
+                
                 val userId = getUserId(uid)
-
 //                XpUtil.log("$packageName alarm: $alarmName uid:$uid userid:$userId")
 
-                val now = SystemClock.elapsedRealtime() //current time
+                val now = SystemClock.elapsedRealtime()
                 val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                val isScreenOff = booted and !pm.isInteractive
+                
+                // Determine if alarm should be blocked
+                val shouldBlock = block(
+                    alarmName,
+                    packageName,
+                    userId,
+                    lastAllowTime[alarmName] ?: 0,
+                    now,
+                    isScreenOff
+                )
 
-                // block or not
-                val block =
-                    block(alarmName, packageName, userId, lastAllowTime[alarmName] ?: 0, now, booted and !pm.isInteractive)
-
-                if (block) {//block alarm
+                if (shouldBlock) {
+                    // Remove alarm from trigger list
                     triggerList.removeAt(i)
-
                     XpUtil.log("$packageName alarm: $alarmName block $booted ${pm.isInteractive}")
-                    //update blockCount
+                    
+                    // Record blocked event
                     XpRecord.blockEvent(
-                        alarmName,
-                        packageName,
-                        type,
-                        context,
-                        userId
+                        alarmName, packageName, type,
+                        context, userId
                     )
-
-                } else {//allow alarm
+                } else {
+                    // Update last allowed time and record event
                     lastAllowTime[alarmName] = now
-                    XpRecord.addEvent(
-                        alarmName,
-                        packageName,
-                        type,
-                        context,
-                        userId
+                    XpRecord.newEvent(
+                        alarmName, packageName, type,
+                        context, userId
                     )
                 }
             }
         }
+        
+        private fun extractAlarmInfo(alarm: Any?): Triple<String, String, Int>? {
+            return try {
+                val statsTag = alarm?.javaClass?.getDeclaredField("statsTag")?.get(alarm) as String
+                val alarmName = statsTag.replace(Regex("\\*.*\\*:"), "")
+                val packageName = alarm.javaClass.getDeclaredField("packageName").get(alarm) as String
+                val uid = alarm.javaClass.getDeclaredField("uid").get(alarm) as Int
+                
+                Triple(alarmName, packageName, uid)
+            } catch (e: Exception) {
+                XpUtil.log(" alarm: hookAlarmsLocked err:$e")
+                null
+            }
+        }
 
         private fun block(
-            name: String, packageName: String, userId: Int, lastActive: Long, now: Long, isLocked: Boolean
+            name: String,
+            packageName: String,
+            userId: Int,
+            lastActive: Long,
+            now: Long,
+            isLocked: Boolean
         ): Boolean {
             val xpNSP = XpNSP.getInstance()
             return xpNSP.flag(name, packageName, type, userId)
