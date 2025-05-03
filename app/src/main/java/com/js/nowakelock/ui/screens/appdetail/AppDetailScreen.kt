@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -75,6 +76,13 @@ import com.js.nowakelock.data.db.entity.AppInfo
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.js.nowakelock.data.db.entity.AppSt
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.material3.Button
+import androidx.compose.material3.TextButton
 
 /**
  * App Detail Screen - Entry point composable for the app details
@@ -423,180 +431,151 @@ fun AppTabContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Statistics Section
-        Text(
-            text = stringResource(R.string.app_statistics),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-        // Count card
-        Surface(
+        // Statistics Card - Using ElevatedCard to match DADetailScreen style
+        ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
-//            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            color = MaterialTheme.colorScheme.surface,
-            border = BorderStroke(
-                0.5.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
             ),
-            shape = RoundedCornerShape(16.dp),
-            tonalElevation = 0.5.dp, // Very subtle tonal elevation for depth
-            shadowElevation = 1.dp, // Minimal shadow for the floating effect
+            shape = MaterialTheme.shapes.medium
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 8.dp)
+                    .padding(16.dp)
             ) {
-                // Wakelock statistics
+                // Card title inside the card - Using titleLarge with color onSurface and bottom padding 12dp
+                Text(
+                    text = stringResource(R.string.app_statistics),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                
+                // Statistics content
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Wakelock count row
+                    // Wakelock statistics
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // Wakelock count row
+                        StatisticRowWithIcon(
+                            icon = Icons.Outlined.Lock,
+                            leftLabel = stringResource(R.string.total_wakelocks),
+                            leftValue = appInfo.wakelockCount.toString(),
+                            rightLabel = stringResource(R.string.blocked_wakelocks),
+                            rightValue = appInfo.wakelockBlockedCount.toString()
+                        )
+
+                        // Wakelock time row
+                        StatisticRowWithIcon(
+                            icon = null,
+                            leftLabel = stringResource(R.string.total_time),
+                            leftValue = appInfo.getFormattedTime(),
+                            rightLabel = stringResource(R.string.saved_time),
+                            rightValue = appInfo.getFormattedBlockedTime()
+                        )
+                    }
+
+                    // Alarm statistics
                     StatisticRowWithIcon(
-                        icon = Icons.Outlined.Lock,
-                        leftLabel = stringResource(R.string.total_wakelocks),
-                        leftValue = appInfo.wakelockCount.toString(),
-                        rightLabel = stringResource(R.string.blocked_wakelocks),
-                        rightValue = appInfo.wakelockBlockedCount.toString()
+                        icon = Icons.Outlined.AccessTime,
+                        leftLabel = stringResource(R.string.total_alarms),
+                        leftValue = appInfo.alarmCount.toString(),
+                        rightLabel = stringResource(R.string.blocked_alarms),
+                        rightValue = appInfo.alarmBlockedCount.toString(),
+                        useAlternateBackground = true
                     )
 
-                    // Wakelock time row
+                    // Service statistics
                     StatisticRowWithIcon(
-                        icon = null,
-                        leftLabel = stringResource(R.string.total_time),
-                        leftValue = appInfo.getFormattedTime(),
-                        rightLabel = stringResource(R.string.saved_time),
-                        rightValue = appInfo.getFormattedBlockedTime()
+                        icon = Icons.Outlined.Build,
+                        leftLabel = stringResource(R.string.total_services),
+                        leftValue = appInfo.serviceCount.toString(),
+                        rightLabel = stringResource(R.string.blocked_services),
+                        rightValue = appInfo.serviceBlockedCount.toString(),
+                        useAlternateBackground = true
                     )
                 }
-
-                // Alarm statistics
-                StatisticRowWithIcon(
-                    icon = Icons.Outlined.AccessTime,
-                    leftLabel = stringResource(R.string.total_alarms),
-                    leftValue = appInfo.alarmCount.toString(),
-                    rightLabel = stringResource(R.string.blocked_alarms),
-                    rightValue = appInfo.alarmBlockedCount.toString(),
-                    useAlternateBackground = true
-                )
-
-                // Service statistics
-                StatisticRowWithIcon(
-                    icon = Icons.Outlined.Build,
-                    leftLabel = stringResource(R.string.total_services),
-                    leftValue = appInfo.serviceCount.toString(),
-                    rightLabel = stringResource(R.string.blocked_services),
-                    rightValue = appInfo.serviceBlockedCount.toString(),
-                    useAlternateBackground = true
-                )
             }
         }
 
-        // Settings Section
-        Text(
-            text = stringResource(R.string.app_settings),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-        // Settings Card
-        SettingsCard(
-            appSt = appSt,
-            onUpdateWakelockBlock = onUpdateWakelockBlock,
-            onUpdateAlarmBlock = onUpdateAlarmBlock,
-            onUpdateServiceBlock = onUpdateServiceBlock,
-            onAddWakelockPattern = onAddWakelockPattern,
-            onRemoveWakelockPattern = onRemoveWakelockPattern,
-            onAddAlarmPattern = onAddAlarmPattern,
-            onRemoveAlarmPattern = onRemoveAlarmPattern,
-            onAddServicePattern = onAddServicePattern,
-            onRemoveServicePattern = onRemoveServicePattern,
-            validateRegexPattern = validateRegexPattern
-        )
-    }
-}
-
-/**
- * Settings Card component that displays app settings
- * Contains block toggles and pattern management sections
- */
-@Composable
-private fun SettingsCard(
-    appSt: AppSt,
-    onUpdateWakelockBlock: (Boolean) -> Unit,
-    onUpdateAlarmBlock: (Boolean) -> Unit,
-    onUpdateServiceBlock: (Boolean) -> Unit,
-    onAddWakelockPattern: (String) -> Unit,
-    onRemoveWakelockPattern: (String) -> Unit,
-    onAddAlarmPattern: (String) -> Unit,
-    onRemoveAlarmPattern: (String) -> Unit,
-    onAddServicePattern: (String) -> Unit,
-    onRemoveServicePattern: (String) -> Unit,
-    validateRegexPattern: (String) -> Boolean
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(16.dp),
-        tonalElevation = 0.5.dp, // Very subtle tonal elevation for depth
-        shadowElevation = 1.dp // Minimal shadow for the floating effect
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 0.dp)
+        // Settings Card - Using ElevatedCard to match DADetailScreen style
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            shape = MaterialTheme.shapes.medium
         ) {
-            // Block Settings Section
-            BlockSettingsSection(
-                appSt = appSt,
-                onUpdateWakelockBlock = onUpdateWakelockBlock,
-                onUpdateAlarmBlock = onUpdateAlarmBlock,
-                onUpdateServiceBlock = onUpdateServiceBlock
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Card title inside the card - Using titleLarge with color onSurface and bottom padding 12dp
+                Text(
+                    text = stringResource(R.string.app_settings),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                
+                // Block Settings Section
+                BlockSettingsSection(
+                    appSt = appSt,
+                    onUpdateWakelockBlock = onUpdateWakelockBlock,
+                    onUpdateAlarmBlock = onUpdateAlarmBlock,
+                    onUpdateServiceBlock = onUpdateServiceBlock
+                )
 
-            // Add divider between sections
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-            )
+                // Add divider between sections
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
-            // Pattern Settings Section
-            PatternSettingsSection(
-                title = stringResource(R.string.wakelock_patterns),
-                patterns = appSt.rE_Wakelock,
-                onAddPattern = onAddWakelockPattern,
-                onRemovePattern = onRemoveWakelockPattern,
-                validateRegexPattern = validateRegexPattern
-            )
+                // Pattern Settings Section
+                PatternSettingsSection(
+                    title = stringResource(R.string.wakelock_patterns),
+                    patterns = appSt.rE_Wakelock,
+                    onAddPattern = onAddWakelockPattern,
+                    onRemovePattern = onRemoveWakelockPattern,
+                    validateRegexPattern = validateRegexPattern
+                )
 
-            // Add divider between pattern sections
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-            )
+                // Add divider between pattern sections
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
-            PatternSettingsSection(
-                title = stringResource(R.string.alarm_patterns),
-                patterns = appSt.rE_Alarm,
-                onAddPattern = onAddAlarmPattern,
-                onRemovePattern = onRemoveAlarmPattern,
-                validateRegexPattern = validateRegexPattern
-            )
+                PatternSettingsSection(
+                    title = stringResource(R.string.alarm_patterns),
+                    patterns = appSt.rE_Alarm,
+                    onAddPattern = onAddAlarmPattern,
+                    onRemovePattern = onRemoveAlarmPattern,
+                    validateRegexPattern = validateRegexPattern
+                )
 
-            // Add divider between pattern sections
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-            )
+                // Add divider between pattern sections
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
-            PatternSettingsSection(
-                title = stringResource(R.string.service_patterns),
-                patterns = appSt.rE_Service,
-                onAddPattern = onAddServicePattern,
-                onRemovePattern = onRemoveServicePattern,
-                validateRegexPattern = validateRegexPattern
-            )
+                PatternSettingsSection(
+                    title = stringResource(R.string.service_patterns),
+                    patterns = appSt.rE_Service,
+                    onAddPattern = onAddServicePattern,
+                    onRemovePattern = onRemoveServicePattern,
+                    validateRegexPattern = validateRegexPattern
+                )
+            }
         }
     }
 }
@@ -604,6 +583,7 @@ private fun SettingsCard(
 /**
  * Block Settings Section component
  * Displays global block toggles for wakelock, alarm, and service
+ * Updated to match DASettingsCard style
  */
 @Composable
 private fun BlockSettingsSection(
@@ -613,96 +593,84 @@ private fun BlockSettingsSection(
     onUpdateServiceBlock: (Boolean) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-
-        // Toggles container with background
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                // Wakelock Toggle
-                SettingToggle(
-                    title = stringResource(R.string.allow_wakelocks),
-                    checked = !appSt.wakelock,
-                    onCheckedChange = onUpdateWakelockBlock
-                )
-
-                // Divider between toggles
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
-
-                // Alarm Toggle
-                SettingToggle(
-                    title = stringResource(R.string.allow_alarms),
-                    checked = !appSt.alarm,
-                    onCheckedChange = onUpdateAlarmBlock
-                )
-
-                // Divider between toggles
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
-
-                // Service Toggle
-                SettingToggle(
-                    title = stringResource(R.string.allow_services),
-                    checked = !appSt.service,
-                    onCheckedChange = onUpdateServiceBlock
-                )
-            }
-        }
+        // Wakelock Toggle with subtitle
+        SettingToggleWithSubtitle(
+            title = stringResource(R.string.allow_wakelocks),
+            subtitle = stringResource(R.string.allow_wakelocks_description),
+            checked = !appSt.wakelock,
+            onCheckedChange = onUpdateWakelockBlock,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        
+        // Alarm Toggle with subtitle
+        SettingToggleWithSubtitle(
+            title = stringResource(R.string.allow_alarms),
+            subtitle = stringResource(R.string.allow_alarms_description),
+            checked = !appSt.alarm,
+            onCheckedChange = onUpdateAlarmBlock,
+            modifier = Modifier.padding(vertical = 4.dp)
+        )
+        
+        // Service Toggle with subtitle
+        SettingToggleWithSubtitle(
+            title = stringResource(R.string.allow_services),
+            subtitle = stringResource(R.string.allow_services_description),
+            checked = !appSt.service,
+            onCheckedChange = onUpdateServiceBlock,
+            modifier = Modifier.padding(top = 4.dp)
+        )
     }
 }
 
 /**
- * Setting Toggle component for block settings
- * Displays a toggle switch with a title
+ * Setting Toggle with Subtitle component
+ * Displays a toggle switch with title and subtitle, matching MD3 pattern
+ * Updated to match DASettingsCard's SwitchItem component
  */
 @Composable
-private fun SettingToggle(
+private fun SettingToggleWithSubtitle(
     title: String,
+    subtitle: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = Color.Transparent // Transparent background
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
     ) {
-        Row(
+        // Title and subtitle column
+        Column(
             modifier = Modifier
-                .clickable { onCheckedChange(checked) }
-                .padding(horizontal = 0.dp, vertical = 0.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .weight(1f)
+                .padding(end = 16.dp)
         ) {
+            // Main title - using titleMedium instead of bodyLarge
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.titleMedium,
+                color = if (enabled) MaterialTheme.colorScheme.onSurface 
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
-
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                modifier = Modifier.padding(start = 0.dp),
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primary,
-                    checkedBorderColor = MaterialTheme.colorScheme.primary,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    uncheckedBorderColor = MaterialTheme.colorScheme.outline
-                )
+            
+            // Descriptive subtitle - using bodySmall instead of bodyMedium
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant 
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
         }
+
+        // Switch control - no additional modifiers
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            enabled = enabled
+        )
     }
 }
 
@@ -812,6 +780,7 @@ private fun StatisticRowWithIcon(
 /**
  * Pattern Settings Section component
  * Displays and manages regex patterns for blocking
+ * Updated to follow MD3 design style and match DADetailScreen components
  */
 @Composable
 private fun PatternSettingsSection(
@@ -828,20 +797,20 @@ private fun PatternSettingsSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 0.dp)
+            .padding(vertical = 4.dp)
     ) {
         // Section Title Row with Add Button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             // Add Button
@@ -874,38 +843,40 @@ private fun PatternSettingsSection(
                 }
             }
         } else if (!showInput) {
-            // Empty state hint
+            // Empty state message
             Text(
                 text = stringResource(R.string.add_pattern),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
         }
 
-        // Pattern Input Form
-        if (showInput) {
+        // Pattern Input Form with animation
+        AnimatedVisibility(
+            visible = showInput,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-                shape = RoundedCornerShape(8.dp)
+                shape = MaterialTheme.shapes.small
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(16.dp)
                 ) {
                     OutlinedTextField(
                         value = inputValue,
                         onValueChange = {
                             inputValue = it
-                            isValidPattern = true // Reset validation on input change
+                            isValidPattern = true
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(R.string.pattern)) },
                         isError = !isValidPattern,
                         supportingText = {
@@ -922,11 +893,29 @@ private fun PatternSettingsSection(
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         )
                     )
-
-                    Column {
-                        IconButton(
+                    
+                    // Action buttons
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Cancel button
+                        TextButton(
                             onClick = {
-                                // Validate and add pattern
+                                inputValue = ""
+                                showInput = false
+                                isValidPattern = true
+                            }
+                        ) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                        
+                        // Add button
+                        Button(
+                            onClick = {
                                 if (validateRegexPattern(inputValue)) {
                                     onAddPattern(inputValue)
                                     inputValue = ""
@@ -934,28 +923,10 @@ private fun PatternSettingsSection(
                                 } else {
                                     isValidPattern = false
                                 }
-                            }
+                            },
+                            modifier = Modifier.padding(start = 8.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = stringResource(R.string.add),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-
-                        IconButton(
-                            onClick = {
-                                // Cancel input
-                                inputValue = ""
-                                showInput = false
-                                isValidPattern = true
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = stringResource(R.string.cancel),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Text(stringResource(R.string.add))
                         }
                     }
                 }
@@ -967,6 +938,7 @@ private fun PatternSettingsSection(
 /**
  * Pattern Chip component
  * Displays a regex pattern with delete button
+ * Updated with Material Design 3 styling to match DADetailScreen components
  */
 @Composable
 private fun PatternChip(
@@ -974,32 +946,33 @@ private fun PatternChip(
     onRemove: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-        modifier = Modifier.height(36.dp)
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        modifier = Modifier.height(32.dp)
     ) {
         Row(
-            modifier = Modifier.padding(start = 12.dp, end = 4.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = pattern,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(end = 4.dp)
             )
 
+            // Compact delete button
             IconButton(
                 onClick = onRemove,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(20.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.remove),
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    modifier = Modifier.size(14.dp),
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
         }
