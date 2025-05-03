@@ -3,9 +3,10 @@
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 42%
+Completion: 45%
 
 ## ✅ Completed Features
+- [Feature₂₈] 2025-05-03 ⟶ 解决XPosed设置与日志控制问题：确认了XPosed日志控制问题的根源，与XSharedPreferences的加载机制有关，需要在安装应用后重启系统才能让设置生效
 - [Feature₂₇] 2025-05-01 ⟶ 唤醒锁计算系统单元测试实现：为WakelockCounter和WakelockRegistry类创建了全面的单元测试，通过测试套件确保正确的时间计算和非重叠持续时间追踪
 - [Feature₂₆] 2025-04-30 ⟶ 唤醒锁的countTime计算重构：实现了高性能、非重叠计时的唤醒锁统计系统，使用WakelockCounter和WakelockRegistry类，解决了重叠间隔问题
 - [Feature₂₅] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题修复：采用单向同步方案3，仅在 UI 为默认值(0)且 ViewModel 有非默认值时同步，避免循环，保证用户选择能正确恢复
@@ -65,6 +66,7 @@ Completion: 42%
 - [Todo₁₂] Medium ⟶ Add android:enableOnBackInvokedCallback="true" to manifest for Android 13+ back handling
 
 ## ⚠️ Known Issues
+- [Issue₁₄] Medium ⟶ XPosed设置需要重启才能生效，因为XSharedPreferences的加载机制限制，应用重新安装后需要重启系统才能使设置正确加载到XPosed模块中
 - [Issue₁₃] Medium ⟶ 唤醒锁countTime与util显示时间计算存在不一致，需要进一步调查和修复
 - [Issue₁] Medium ⟶ Different hooking mechanisms needed for various Android versions, Must maintain compatibility
 - [Issue₁₂] High ⟶ Mixed navigation method causing TopAppBar and related UI elements to disappear when using type-based navigation, Need consistent approach to route detection
@@ -80,6 +82,7 @@ Completion: 42%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₂₅] 2025-05-03 ⟶ 确认XPosed设置问题，采用文档提示用户在重新安装后需要重启系统，避免对XSharedPreferences机制进行复杂修改，Status: ✅ Accepted
 - [Decision₂₄] 2025-04-30 ⟶ 唤醒锁countTime计算使用内存数据结构而非数据库操作，通过AtomicInteger和volatile变量确保线程安全，保证实时性能, Status: ✅ Accepted
 - [Decision₂₃] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题采用方案3修复：单向同步，避免循环，保证用户选择恢复，Status: ✅ Accepted
 - [Decision₂₂] 2025-04-29 ⟶ 使用Kotlin和Compose最佳实践实现AppSt设置UI，包括视觉层次结构、状态管理和用户交互模式, Status: ✅ Accepted
@@ -106,7 +109,7 @@ Completion: 42%
   - Navigation System: 65% complete
   - Data Models: 80% complete (existing functionality)
   - Database Access: 75% complete (existing functionality)
-  - Xposed Integration: 92% complete
+  - Xposed Integration: 95% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
   - Battery Optimization: 30% complete
@@ -119,7 +122,7 @@ Completion: 42%
 
 - 📈 Feature Implementation:
   - MD3 UI: 40% complete
-  - Wakelock Monitoring: 95% complete
+  - Wakelock Monitoring: 98% complete
   - Alarm Monitoring: 85% complete
   - Service Monitoring: 85% complete
   - Multi-user Support: 20% complete
