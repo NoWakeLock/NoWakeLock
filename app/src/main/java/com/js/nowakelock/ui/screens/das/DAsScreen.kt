@@ -132,7 +132,14 @@ fun DAsScreen(
                     // DA list items
                     items<DAItem>(
                         items = dasList,
-                        key = { "${it.name}_${it.packageName}_${it.userId}" },
+                        // Use a comprehensive key that includes all fields affecting UI appearance
+                        // This prevents unnecessary recompositions when only settings change
+                        key = { daItem -> 
+                            // Create a stable key containing all identity and state information
+                            "${daItem.name}_${daItem.packageName}_${daItem.userId}_" +
+                            "${daItem.fullBlocked}_${daItem.screenOffBlock}_${daItem.timeWindowSec}_" +
+                            "${daItem.count}"
+                        },
                         contentType = { daItem ->
                             when {
                                 daItem.fullBlocked -> "blocked"
@@ -142,42 +149,42 @@ fun DAsScreen(
                             }
                         }
                     ) { daItem ->
-                        key(daItem.fullBlocked, daItem.screenOffBlock, daItem.timeWindowSec) {
-                            when (type) {
-                                Type.Service -> ServiceListItem(
-                                    daItem = daItem,
-                                    onToggleFullBlock = { enable ->
-                                        viewModel.updateDAFullBlockState(
-                                            daItem = daItem, isBlocked = !enable
-                                        )
-                                    },
-                                    onItemClick = {
-                                        navigateToDADetail(it.name, it.packageName)
-                                    }
-                                )
+                        // Remove nested key() wrapper which causes additional recompositions
+                        // Directly render the appropriate list item
+                        when (type) {
+                            Type.Service -> ServiceListItem(
+                                daItem = daItem,
+                                onToggleFullBlock = { enable ->
+                                    viewModel.updateDAFullBlockState(
+                                        daItem = daItem, isBlocked = !enable
+                                    )
+                                },
+                                onItemClick = {
+                                    navigateToDADetail(it.name, it.packageName)
+                                }
+                            )
 
-                                else -> DAListItem(
-                                    daItem = daItem,
-                                    onToggleFullBlock = { enable ->
-                                        viewModel.updateDAFullBlockState(
-                                            daItem = daItem, isBlocked = !enable
-                                        )
-                                    },
-                                    onToggleScreenOffBlock = { enable ->
-                                        viewModel.updateDAScreenOffBlockState(
-                                            daItem = daItem, isBlocked = !enable
-                                        )
-                                    },
-                                    onTimeWindowChange = { timeWindow ->
-                                        viewModel.updateDATimeWindow(
-                                            daItem = daItem, timeWindow = timeWindow
-                                        )
-                                    },
-                                    onItemClick = {
-                                        navigateToDADetail(it.name, it.packageName)
-                                    }
-                                )
-                            }
+                            else -> DAListItem(
+                                daItem = daItem,
+                                onToggleFullBlock = { enable ->
+                                    viewModel.updateDAFullBlockState(
+                                        daItem = daItem, isBlocked = !enable
+                                    )
+                                },
+                                onToggleScreenOffBlock = { enable ->
+                                    viewModel.updateDAScreenOffBlockState(
+                                        daItem = daItem, isBlocked = !enable
+                                    )
+                                },
+                                onTimeWindowChange = { timeWindow ->
+                                    viewModel.updateDATimeWindow(
+                                        daItem = daItem, timeWindow = timeWindow
+                                    )
+                                },
+                                onItemClick = {
+                                    navigateToDADetail(it.name, it.packageName)
+                                }
+                            )
                         }
                     }
 

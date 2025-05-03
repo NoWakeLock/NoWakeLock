@@ -37,18 +37,42 @@ open class DARepositoryImpl(
         }
     }
 
+    /**
+     * Helper function to compare two InfoWithSt lists for settings equality
+     * Only compares fields that affect UI rendering to prevent unnecessary UI refreshes
+     * @param list1 First list of InfoWithSt objects
+     * @param list2 Second list of InfoWithSt objects
+     * @return true if the settings fields are equal across both lists
+     */
+    private fun areInfoWithStsSettingsEqual(list1: List<InfoWithSt>, list2: List<InfoWithSt>): Boolean {
+        if (list1.size != list2.size) return false
+        
+        return list1.zip(list2).all { (item1, item2) ->
+            // Only compare fields that affect UI settings rendering
+            item1.info.name == item2.info.name &&
+            item1.info.packageName == item2.info.packageName &&
+            item1.info.userId == item2.info.userId &&
+            item1.st?.fullBlock == item2.st?.fullBlock &&
+            item1.st?.screenOffBlock == item2.st?.screenOffBlock &&
+            item1.st?.timeWindowMs == item2.st?.timeWindowMs
+        }
+    }
+
     override suspend fun getDAItemsSortedByName(
         packageName: String, userId: Int
     ): Flow<List<DAItem>> = withContext(Dispatchers.IO) {
         if (packageName != "" && userId != -1) {
             return@withContext daDao.loadISs(packageName, type, userId)
-                .distinctUntilChanged()
+                // Use custom comparator to detect only relevant changes
+                .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
                     mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
                 }
         }
 
-        return@withContext daDao.loadISs(type).distinctUntilChanged()
+        return@withContext daDao.loadISs(type)
+            // Use custom comparator to detect only relevant changes
+            .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
             .map { infoToStMap ->
                 mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
             }
@@ -61,13 +85,16 @@ open class DARepositoryImpl(
         withContext(Dispatchers.IO) {
             if (packageName != "" && userId != -1) {
                 return@withContext daDao.loadISs(packageName, type, userId)
-                    .distinctUntilChanged()
+                    // Use custom comparator to detect only relevant changes
+                    .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
                         mapToDAItems(infoToStMap).sortedBy { it.count }
                     }
             }
 
-            return@withContext daDao.loadISs(type).distinctUntilChanged()
+            return@withContext daDao.loadISs(type)
+                // Use custom comparator to detect only relevant changes
+                .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
                     mapToDAItems(infoToStMap).sortedBy { it.count }
                 }
@@ -79,15 +106,20 @@ open class DARepositoryImpl(
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
             if (packageName != "" && userId != -1) {
-                return@withContext daDao.loadISs(packageName, type, userId).distinctUntilChanged()
+                return@withContext daDao.loadISs(packageName, type, userId)
+                    // Use custom comparator to detect only relevant changes
+                    .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
                         mapToDAItems(infoToStMap).sortedBy { it.countTime }
                     }
             }
 
-            return@withContext daDao.loadISs(type).distinctUntilChanged().map { infoToStMap ->
-                mapToDAItems(infoToStMap).sortedBy { it.countTime }
-            }
+            return@withContext daDao.loadISs(type)
+                // Use custom comparator to detect only relevant changes
+                .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
+                .map { infoToStMap ->
+                    mapToDAItems(infoToStMap).sortedBy { it.countTime }
+                }
         }
 
     override suspend fun updateDAItemSettings(setting: St) = withContext(Dispatchers.IO) {
