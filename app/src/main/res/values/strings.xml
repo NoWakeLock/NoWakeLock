@@ -211,7 +211,7 @@
     <string name="total_services">Count</string>
     <string name="blocked_services">Blocked</string>
     <string name="total_time">Time</string>
-    <string name="saved_time">Saved Time</string>
+    <string name="saved_time">Saved</string>
     <string name="allowed">Allowed</string>
     <string name="unknown_error">Unknown Error</string>
     <string name="error_loading_app_detail">Test</string>
@@ -223,8 +223,11 @@
     <string name="alarm_patterns">Alarm Patterns</string>
     <string name="service_patterns">Service Patterns</string>
     <string name="allow_wakelocks">Allow Wakelocks</string>
+    <string name="allow_wakelocks_description">Allow this app to acquire wakelocks</string>
     <string name="allow_alarms">Allow Alarms</string>
+    <string name="allow_alarms_description">Allow this app to schedule alarms</string>
     <string name="allow_services">Allow Services</string>
+    <string name="allow_services_description">Allow this app to start services</string>
     <string name="add_pattern">Add Pattern</string>
     <string name="pattern">Pattern</string>
     <string name="invalid_regex">Invalid Regex</string>
