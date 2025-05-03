@@ -42,10 +42,9 @@ class DADetailRepositoryImpl(
     override fun getDAItem(name: String, type: Type, userId: Int): Flow<DAItem> {
         val infoFlow = daDao.loadInfo(name, type, userId)
         val stFlow = daDao.loadSt(name, type, userId)
-        val eventsFlow = infoEventDao.getEventsByName(name, type, userId)
 
-        return combine(infoFlow, stFlow, eventsFlow) { info, st, events ->
-            DAItem.fromThree(info, st, events)
+        return combine(infoFlow, stFlow) { info, st ->
+            DAItem.fromEntities(info, st)
         }.distinctUntilChanged().flowOn(Dispatchers.IO)
     }
 

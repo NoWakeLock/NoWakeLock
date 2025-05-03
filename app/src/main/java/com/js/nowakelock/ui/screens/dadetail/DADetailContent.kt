@@ -80,13 +80,13 @@ fun DADetailContent(
             )
         }
 
-        // Recent activities card
-        item {
-            DARecentActivitiesCard(
-                activities = state.recentEvents,
-                type = state.daItem.type
-            )
-        }
+        //TODO(Recent activities not work good)
+//        item {
+//            DARecentActivitiesCard(
+//                activities = state.recentEvents,
+//                type = state.daItem.type
+//            )
+//        }
     }
 }
 

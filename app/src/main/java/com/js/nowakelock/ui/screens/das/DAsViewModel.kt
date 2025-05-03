@@ -4,6 +4,10 @@ package com.js.nowakelock.ui.screens.das
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.js.nowakelock.base.LogUtil
+import com.js.nowakelock.base.SPTools
+import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.repository.daitem.DARepository
 import com.js.nowakelock.ui.navigation.params.DAsScreenParams
@@ -18,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 /**
@@ -139,6 +144,7 @@ open class DAsViewModel(
         viewModelScope.launch {
             delay(300) // Short delay to let UI render first
             refreshData(LoadingSource.INITIAL)
+            // Sync settings from DB to ST
         }
     }
 
@@ -391,6 +397,31 @@ open class DAsViewModel(
                     it.copy(
                         message = "Error updating da: ${daItem.type.value} ${daItem.name} ${daItem.packageName}" + " ${e.message}"
                     )
+                }
+            }
+        }
+    }
+
+    private fun saveSt(st: St) {
+        SPTools.setBoolean(
+            "${st.name}_${st.type}_${st.packageName}_${st.userId}_flag",
+            st.fullBlock
+        )
+        SPTools.setBoolean(
+            "${st.name}_${st.type}_${st.packageName}_${st.userId}_flag_lock",
+            st.screenOffBlock ?: false
+        )
+        SPTools.setLong(
+            "${st.name}_${st.type}_${st.packageName}_${st.userId}_aTI", st.timeWindowMs
+        )
+    }
+
+    fun syncSt(type: Type) {
+        viewModelScope.launch(Dispatchers.IO) {
+            daRepository.getSTs(type).collect { list ->
+//                LogUtil.d("sync", "${list.size}")
+                list.map {
+                    saveSt(it)
                 }
             }
         }
