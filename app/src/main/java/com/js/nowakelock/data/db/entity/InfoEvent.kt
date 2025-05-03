@@ -22,50 +22,48 @@ import java.io.Serializable
         Index(
             value = ["name_event", "type_event", "userId_event", "startTime"],
             name = "index_info_event_name_type_userId_time"
-        ),
-        Index(
-            value = ["eventKey"],
-            name = "index_info_event_key",
-            unique = true
         )
     ]
 )
 data class InfoEvent(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @PrimaryKey
+    @ColumnInfo(name = "instanceId", defaultValue = "")
+    var instanceId: String = "",  // IBinder hash + timestamp
+    
     @ColumnInfo(name = "name_event")
     var name: String = "",
+    
     @ColumnInfo(name = "type_event")
     var type: Type = Type.UnKnow,
+    
     @ColumnInfo(name = "packageName_event")
     var packageName: String = "",
+    
     @ColumnInfo(name = "userId_event", defaultValue = "0")
     var userId: Int = 0,
+    
     @ColumnInfo(name = "startTime")
     var startTime: Long = 0,
+    
     @ColumnInfo(name = "endTime")
     var endTime: Long? = null,
+    
     @ColumnInfo(name = "isBlocked")
     var isBlocked: Boolean = false,
-    @ColumnInfo(name = "eventKey", defaultValue = "")
-    var eventKey: String = ""
 ) : Serializable {
     companion object {
         @JvmStatic
-        private val serialVersionUID = 2356751629234196467L
+        private val serialVersionUID = 2356751629234196468L  // for Serializable
 
         /**
-         * 生成事件唯一键
+         * generate instance id
          */
         @JvmStatic
-        fun generateEventKey(
-            name: String,
-            packageName: String,
-            type: Type,
-            userId: Int,
-            startTime: Long
+        fun generateInstanceId(
+            iBinderHash: String,
+            timestamp: Long
         ): String {
-            return "${packageName}_${name}_${type.value}_${userId}_${startTime}"
+            return "${iBinderHash}_${timestamp}"
         }
     }
 } 
