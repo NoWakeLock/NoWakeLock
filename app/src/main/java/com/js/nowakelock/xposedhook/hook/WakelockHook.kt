@@ -2,19 +2,16 @@ package com.js.nowakelock.xposedhook.hook
 
 import android.app.AndroidAppHelper
 import android.content.Context
-import android.content.IntentFilter
-import android.content.LocusId
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
-import android.os.WorkSource
 import com.js.nowakelock.base.getUserId
 import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.xposedhook.XpUtil
 import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
-import com.js.nowakelock.xposedhook.registerReceiver
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -139,7 +136,8 @@ class WakelockHook {
                 )
             }
 
-            XposedHelpers.findAndHookMethod("com.android.server.power.PowerManagerService",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.power.PowerManagerService",
                 lpparam.classLoader,
                 "releaseWakeLockInternal",
                 IBinder::class.java,
@@ -208,7 +206,8 @@ class WakelockHook {
                 )
             }
 
-            XposedHelpers.findAndHookMethod("com.android.server.power.PowerManagerService",
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.power.PowerManagerService",
                 lpparam.classLoader,
                 "releaseWakeLockInternal",
                 IBinder::class.java,
@@ -224,6 +223,14 @@ class WakelockHook {
                 })
         }
 
+        /**
+         * get instance id
+         */
+        private fun generateInstanceId(lock: IBinder, timestamp: Long): String {
+            val iBinderHash = System.identityHashCode(lock).toString(16) // get iBinder hash
+            return InfoEvent.generateInstanceId(iBinderHash, timestamp)
+        }
+
         // PROTECTED - DO NOT MODIFY
         // handle wakelock acquire
         private fun handleWakeLockAcquire(
@@ -232,54 +239,69 @@ class WakelockHook {
             lock: IBinder, context: Context
         ) {
             val userId = getUserId(uid)
-
-//            XpUtil.log("$pN wakeLock:$wN uid:$uid userid:$userId")
-
-            val now = SystemClock.elapsedRealtime() //current time
+            val now = SystemClock.elapsedRealtime()
             val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            val instanceId = generateInstanceId(lock, now)
+            val isBlocked =
+                block(wN, pN, userId, lastAllowTime[wN] ?: 0, now, booted && !pm.isInteractive)
 
-            val block = block(wN, pN, userId, lastAllowTime[wN] ?: 0, now, booted and !pm.isInteractive)
-
-            if (block) {//block wakelock
-
+            if (isBlocked) {
                 XpUtil.log("$pN wakeLock:$wN block '${pm.isInteractive}' '$booted'")
                 param.result = null
-
                 // Record blocked event
-                XpRecord.blockEvent(wN, pN, Type.Wakelock, context, userId, now)
-            } else { // allow wakelock
-                lastAllowTime[wN] = now //update last allow time
-
-                // Record start event and get event key
-                val bundle = XpRecord.addEvent(wN, pN, Type.Wakelock, context, userId, now)
-                
-                // Create or update WLT with event key
-                val eventKey = bundle?.getString("eventKey") ?: ""
-                wlTs[lock] = WLT(wN, pN, userId, now, eventKey)
+                XpRecord.blockEvent(wN, pN, Type.Wakelock, context, userId, now, instanceId)
+                return
             }
+
+            // Allow wakelock
+            lastAllowTime[wN] = now
+            wlTs[lock] = WLT(
+                wakelockName = wN, packageName = pN, userId = userId,
+                startTime = now, instanceId = instanceId
+            )
+            // new event
+            XpRecord.newEvent(
+                name = wN,
+                packageName = pN,
+                type = Type.Wakelock,
+                context = context,
+                userId = userId,
+                startTime = now,
+                instanceId = instanceId
+            )
+
+            XpUtil.log("$pN wakeLock:$wN 新实例创建 instanceId=$instanceId")
         }
 
-        // PROTECTED - DO NOT MODIFY
-        //handle wakelock release
+        /**
+         * Handles the release of a wakelock
+         *
+         * @param lock The IBinder object representing the wakelock
+         * @param context Application context
+         */
         private fun handleWakeLockRelease(lock: IBinder, context: Context) {
-            val now = SystemClock.elapsedRealtime() //current time
-            val wlT: WLT = wlTs[lock] ?: return
-
-            // End event using appropriate method based on available data
-            if (wlT.eventKey.isNotEmpty()) {
-                XpRecord.endEventWithKey(
-                    wlT.wakelockName, wlT.packageName, 
-                    context, wlT.userId, now, wlT.eventKey
-                )
-            } else {
-                // Fallback for backward compatibility
-                XpRecord.endEvent(
-                    wlT.wakelockName, wlT.packageName,
-                    context, wlT.userId, now, wlT.startTime
-                )
+            // Get current time and wakelock tracking object
+            val wlT = wlTs[lock] ?: return
+            val now = SystemClock.elapsedRealtime()
+            if (wlT.instanceId.isNotEmpty()) {
+                wlT.instanceId = generateInstanceId(lock, wlT.startTime)
             }
 
+            XpRecord.endEvent(
+                name = wlT.wakelockName,
+                packageName = wlT.packageName,
+                type = type,
+                context = context,
+                userId = wlT.userId,
+                startTime = wlT.startTime,
+                endTime = now,
+                instanceId = wlT.instanceId
+            )
+
+            // Remove the wakelock from tracking
             wlTs.remove(lock)
+
+            XpUtil.log("${wlT.packageName} wakeLock:${wlT.wakelockName} 实例已移除 instanceId=${wlT.instanceId}")
         }
 
         // PROTECTED - DO NOT MODIFY
@@ -301,6 +323,6 @@ class WakelockHook {
         val packageName: String,
         var userId: Int = 0,
         var startTime: Long = 0,
-        var eventKey: String = ""
+        var instanceId: String = "",  // IBinder hash
     )
 }

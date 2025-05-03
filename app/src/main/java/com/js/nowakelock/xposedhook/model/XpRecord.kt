@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.provider.getURI
+import com.js.nowakelock.xposedhook.XpUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +15,34 @@ import kotlinx.coroutines.launch
  * to record events and statistics for tracked system activities.
  */
 object XpRecord {
+
+    private fun newEvent(
+        name: String,
+        packageName: String,
+        type: Type,
+        context: Context,
+        userId: Int = 0,
+        startTime: Long = System.currentTimeMillis(),
+        isBlocked: Boolean,
+        instanceId: String = ""
+    ) = CoroutineScope(Dispatchers.Default).launch {
+        val instanceIdKey = instanceId.ifEmpty {
+            "${name}_${startTime}"
+        }
+
+        val args = Bundle().apply {
+            putString("name", name)
+            putString("type", type.value)
+            putString("packageName", packageName)
+            putInt("userId", userId)
+            putLong("startTime", startTime)
+            putBoolean("isBlocked", isBlocked)
+            putString("instanceId", instanceIdKey)
+        }
+
+        getCPResult(context, ProviderMethod.NewEvent.value, args)
+    }
+
     /**
      * Record a new event (non-blocked)
      *
@@ -23,26 +52,33 @@ object XpRecord {
      * @param context Context
      * @param userId User ID
      * @param startTime Event start time
+     * @param instanceId Unique instance ID based on IBinder hash
      * @return Bundle containing the eventKey
      */
-    fun addEvent(
-        name: String, packageName: String, type: Type,
-        context: Context, userId: Int = 0, startTime: Long = System.currentTimeMillis()
-    ): Bundle? {
-        val args = Bundle().apply {
-            putString("name", name)
-            putString("type", type.value)
-            putString("packageName", packageName)
-            putInt("userId", userId)
-            putLong("startTime", startTime)
-            putBoolean("isBlocked", false)
-        }
-        
-        return getCPResult(context, ProviderMethod.RecordEvent.value, args)
+    fun newEvent(
+        name: String,
+        packageName: String,
+        type: Type,
+        context: Context,
+        userId: Int = 0,
+        startTime: Long = System.currentTimeMillis(),
+        instanceId: String = ""
+    ) {
+        XpUtil.log("newEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
+        newEvent(
+            name = name,
+            packageName = packageName,
+            type = type,
+            context = context,
+            userId = userId,
+            startTime = startTime,
+            isBlocked = false,
+            instanceId = instanceId
+        )
     }
-    
+
     /**
-     * Record a blocked event
+     * Record a new event (non-blocked)
      *
      * @param name Event name
      * @param packageName Package name
@@ -50,50 +86,31 @@ object XpRecord {
      * @param context Context
      * @param userId User ID
      * @param startTime Event start time
+     * @param instanceId Unique instance ID based on IBinder hash
+     * @return Bundle containing the eventKey
      */
     fun blockEvent(
-        name: String, packageName: String, type: Type,
-        context: Context, userId: Int = 0, startTime: Long = System.currentTimeMillis()
-    ) = CoroutineScope(Dispatchers.Default).launch {
-        val args = Bundle().apply {
-            putString("name", name)
-            putString("type", type.value)
-            putString("packageName", packageName)
-            putInt("userId", userId)
-            putLong("startTime", startTime)
-            putBoolean("isBlocked", true)
-        }
-        
-        getCPResult(context, ProviderMethod.RecordEvent.value, args)
+        name: String,
+        packageName: String,
+        type: Type,
+        context: Context,
+        userId: Int = 0,
+        startTime: Long = System.currentTimeMillis(),
+        instanceId: String = ""
+    ) {
+        XpUtil.log("blockEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
+        newEvent(
+            name = name,
+            packageName = packageName,
+            type = type,
+            context = context,
+            userId = userId,
+            startTime = startTime,
+            isBlocked = true,
+            instanceId = instanceId
+        )
     }
-    
-    /**
-     * Record event end using event key
-     *
-     * @param name Event name
-     * @param packageName Package name
-     * @param context Context
-     * @param userId User ID
-     * @param endTime Event end time
-     * @param eventKey Unique event key for direct lookup
-     */
-    fun endEventWithKey(
-        name: String, packageName: String,
-        context: Context, userId: Int = 0, endTime: Long = System.currentTimeMillis(),
-        eventKey: String
-    ) = CoroutineScope(Dispatchers.Default).launch {
-        val args = Bundle().apply {
-            putString("name", name)
-            putString("type", Type.Wakelock.value)
-            putString("packageName", packageName)
-            putInt("userId", userId)
-            putLong("endTime", endTime)
-            putString("eventKey", eventKey)
-        }
-        
-        getCPResult(context, ProviderMethod.EndEvent.value, args)
-    }
-    
+
     /**
      * Record event end by reconstructing the event key
      *
@@ -102,25 +119,36 @@ object XpRecord {
      * @param context Context
      * @param userId User ID
      * @param endTime Event end time
-     * @param startTime Original event start time
+     * @param instanceId Unique instance ID based on IBinder hash
      */
     fun endEvent(
-        name: String, packageName: String,
-        context: Context, userId: Int = 0, endTime: Long = System.currentTimeMillis(),
-        startTime: Long = 0
+        name: String,
+        packageName: String,
+        type: Type,
+        context: Context,
+        userId: Int = 0,
+        startTime: Long,
+        endTime: Long = System.currentTimeMillis(),
+        instanceId: String = ""
     ) = CoroutineScope(Dispatchers.Default).launch {
+        XpUtil.log("endEvent: $name, $packageName, $type, $userId, $startTime ,$endTime, $instanceId")
+        if (type != Type.Wakelock && instanceId.isEmpty()) {
+            return@launch
+        }
+
         val args = Bundle().apply {
             putString("name", name)
             putString("type", Type.Wakelock.value)
             putString("packageName", packageName)
             putInt("userId", userId)
-            putLong("endTime", endTime)
             putLong("startTime", startTime)
+            putLong("endTime", endTime)
+            putString("instanceId", instanceId)
         }
-        
+
         getCPResult(context, ProviderMethod.EndEvent.value, args)
     }
-    
+
     /**
      * Clear all counts and event data
      *
@@ -133,10 +161,10 @@ object XpRecord {
         val args = Bundle().apply {
             putBoolean("clearAll", clearAll)
         }
-        
+
         getCPResult(context, ProviderMethod.ClearData.value, args)
     }
-    
+
     /**
      * Check if hook is active
      *
