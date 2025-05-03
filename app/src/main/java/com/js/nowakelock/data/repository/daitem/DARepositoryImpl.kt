@@ -41,16 +41,16 @@ open class DARepositoryImpl(
         packageName: String, userId: Int
     ): Flow<List<DAItem>> = withContext(Dispatchers.IO) {
         if (packageName != "" && userId != -1) {
-            return@withContext daDao.loadISsSortedByName(packageName, type, userId)
+            return@withContext daDao.loadISs(packageName, type, userId)
                 .distinctUntilChanged()
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap)
+                    mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
                 }
         }
 
-        return@withContext daDao.loadISsSortedByName(type).distinctUntilChanged()
+        return@withContext daDao.loadISs(type).distinctUntilChanged()
             .map { infoToStMap ->
-                mapToDAItems(infoToStMap)
+                mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
             }
     }
 
@@ -60,16 +60,16 @@ open class DARepositoryImpl(
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
             if (packageName != "" && userId != -1) {
-                return@withContext daDao.loadISsSortedByCount(packageName, type, userId)
+                return@withContext daDao.loadISs(packageName, type, userId)
                     .distinctUntilChanged()
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap)
+                        mapToDAItems(infoToStMap).sortedBy { it.count }
                     }
             }
 
-            return@withContext daDao.loadISsSortedByCount(type).distinctUntilChanged()
+            return@withContext daDao.loadISs(type).distinctUntilChanged()
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap)
+                    mapToDAItems(infoToStMap).sortedBy { it.count }
                 }
         }
 
@@ -79,14 +79,14 @@ open class DARepositoryImpl(
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
             if (packageName != "" && userId != -1) {
-                return@withContext daDao.loadISsSortedByTime(packageName, type, userId).distinctUntilChanged()
+                return@withContext daDao.loadISs(packageName, type, userId).distinctUntilChanged()
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap)
+                        mapToDAItems(infoToStMap).sortedBy { it.countTime }
                     }
             }
 
-            return@withContext daDao.loadISsSortedByTime(type).distinctUntilChanged().map { infoToStMap ->
-                mapToDAItems(infoToStMap)
+            return@withContext daDao.loadISs(type).distinctUntilChanged().map { infoToStMap ->
+                mapToDAItems(infoToStMap).sortedBy { it.countTime }
             }
         }
 
