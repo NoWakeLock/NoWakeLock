@@ -529,200 +529,70 @@ class WakelockRegistryProblemTest {
 }
 ```
 
-## 🔄 XPosed设置与日志控制机制
-
-### 问题分析
-- [XP₁] **静态初始化问题** ⟶ XpUtil.log在初始化时设置为BuildConfig.DEBUG，之后没有动态更新
-- [XP₂] **XSharedPreferences限制** ⟶ Android高版本对XSharedPreferences权限限制更严格
-- [XP₃] **不同进程间通信挑战** ⟶ 宿主应用和Xposed模块运行在不同进程空间
-- [XP₄] **调试模式切换无效** ⟶ 设置切换后模块无法实时读取新设置
-
-### 技术根源
-- **SharedPreferences权限变更** ⟶ 从Android 7.0开始，跨进程文件访问受到限制
-- **文件系统权限** ⟶ MODE_WORLD_READABLE标记在新版本Android中可能导致SecurityException
-- **加载时机问题** ⟶ XSharedPreferences在模块加载时读取，之后需要显式刷新
-- **错误处理不足** ⟶ SPTools中的异常被捕获但未记录，导致问题难以诊断
-
-### XPosed设置读取流程
-```kotlin
-// 宿主应用中设置debug模式
-fun updateDebugMode(enabled: Boolean) {
-    SPTools.setBoolean("debug", enabled)
-    _debugMode.value = enabled
-}
-
-// SPTools在宿主应用中保存设置
-fun setBoolean(key: String, value: Boolean) {
-    with(prefs?.edit() ?: return) {
-        putBoolean(key, value)
-        commit()
-    }
-}
-
-// Xposed模块中读取设置
-fun getDebug(): Boolean {
-    return getBool("debug")
-}
-
-// XSharedPreferences实现
-fun makePref(): XSharedPreferences? {
-    return pref ?: synchronized(this) {
-        val p = XSharedPreferences(BuildConfig.APPLICATION_ID, SPTools.SP_NAME)
-        pref = if (p.file.canRead()) p else null
-        pref
-    }
-}
-```
-
-### 解决方案
-- [XPS₁] **用户指导** ⟶ 告知用户在重新安装应用后需要重启设备
-- [XPS₂] **手动重载机制** ⟶ 添加主动重载XSharedPreferences的功能
-- [XPS₃] **动态日志控制** ⟶ 修改XpUtil.log为动态检查而非静态初始化
-- [XPS₄] **增强错误报告** ⟶ 改进错误处理以便识别设置加载失败
-- [XPS₅] **提高刷新频率** ⟶ 降低XSharedPreferences的刷新间隔
-
-### 最终决策
-基于对问题的分析，决定采用文档引导方法而非对代码进行大幅改动：
-1. 在设置页面添加提示，告知用户重新安装后需要重启系统
-2. 在故障排除文档中添加这一限制的说明
-3. 保留当前的XSharedPreferences机制，接受其局限性
-
-这一决策基于以下考虑：
-- 现代Android系统对XSharedPreferences本身的限制难以绕过
-- 实现更复杂的跨进程通信机制（如ContentProvider）工作量大
-- 大多数用户不会频繁重新安装应用，仅需重启一次即可解决问题
-
-## 🛠️ Flexible ServiceHook Architecture
+## 🔄 Boot Detection and Database Reset
 
 ### Core Components
-- [SC₁] FlexibleServiceHooks ⟶ 主协调器，管理startServiceLocked和bindServiceLocked的Hook
-- [SC₂] FlexibleStartServiceHook ⟶ 处理所有startServiceLocked方法的Hook
-- [SC₃] FlexibleBindServiceHook ⟶ 处理所有bindServiceLocked方法的Hook
-- [SC₄] 参数提取策略 ⟶ 基于位置和类型的参数识别方法
-
-### Architecture Pattern
-- 模块化设计：将Hook逻辑拆分为独立、可维护的单元
-- 自适应参数提取：支持不同Android版本的API变化
-- 降级处理：当主要策略失败时，提供备选提取策略
-- 丰富的日志记录：跟踪参数提取的每个步骤，便于调试
+- [BC₁] BootResetManager ⟶ Detects device reboots and resets database tables
+- [BC₂] UserPreferencesRepository ⟶ Stores boot-related preferences using DataStore
+- [BC₃] SystemClock.elapsedRealtime() ⟶ Provides reliable boot time reference
 
 ### Implementation Approach
-- 反射发现：使用反射API查找目标方法，无需硬编码的完整方法签名
-- 多种提取策略：尝试多种已知的参数位置模式，适应不同Android版本
-- 类型匹配：当位置策略失败时，基于参数类型进行智能匹配
-- 统一Hook接口：不同方法的Hook都使用相同的hookStartServiceLocked实现
+- [BA₁] Boot Detection Logic ⟶ Current elapsedRealtime smaller than last recorded value indicates reboot
+- [BA₂] First Launch Handling ⟶ Zero lastBootTime indicates first app run scenario
+- [BA₃] Single Reset Guarantee ⟶ resetDoneForCurrentBoot flag prevents multiple resets
+- [BA₄] Early Execution ⟶ Reset logic runs during app initialization after Koin setup
+- [BA₅] Targeted Reset ⟶ Only info and info_event tables are cleared, preserving other data
 
-### Key Strategies
-- [KS₁] 针对startServiceLocked的提取策略：
-  ```kotlin
-  val strategies = listOf(
-      Triple(1, 6, 8),  // Common in recent versions
-      Triple(1, 6, 7),  // Common in some older versions
-      Triple(1, 5, 6)   // Common in even older versions
-  )
-  ```
+### Preference Management
+- [BP₁] lastBootTime ⟶ Stores last known elapsedRealtime value
+- [BP₂] resetDoneForCurrentBoot ⟶ Boolean flag indicating reset status for current boot cycle
+- [BP₃] DataStore Integration ⟶ Preferences stored using modern DataStore API
 
-- [KS₂] 针对bindServiceLocked的提取策略：
-  ```kotlin
-  val strategies = listOf(
-      Triple(2, 11, 12),  // Android 14+
-      Triple(2, 7, 8)     // Android 12 and below
-  )
-  ```
-
-### Implementation Example
+### Implementation Pattern
 ```kotlin
-/**
- * Flexible service hooks that handle both startServiceLocked and bindServiceLocked methods
- */
-private fun flexibleServiceHooks(lpparam: XC_LoadPackage.LoadPackageParam) {
-    // Hook startServiceLocked methods
-    flexibleStartServiceHook(lpparam)
-    
-    // Hook bindServiceLocked methods
-    flexibleBindServiceHook(lpparam)
-}
+class BootResetManager(
+    private val context: Context,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    fun checkAndResetIfNeeded(): Boolean {
+        // Get current boot time
+        val currentBootTime = SystemClock.elapsedRealtime()
+        var resetPerformed = false
 
-/**
- * Flexible hook approach that hooks all methods named "startServiceLocked"
- * and extracts parameters based on common positions observed across Android versions.
- */
-private fun flexibleStartServiceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
-    try {
-        // Get the ActiveServices class
-        val activeServicesClass =
-            findClass("com.android.server.am.ActiveServices", lpparam.classLoader)
+        try {
+            runBlocking {
+                // Get preferences
+                val lastRecordedTime = userPreferencesRepository.lastBootTime.first()
+                val resetDone = userPreferencesRepository.resetDoneForCurrentBoot.first()
 
-        // Find all methods named startServiceLocked
-        val methods =
-            activeServicesClass.declaredMethods.filter { it.name == "startServiceLocked" }
+                // Device has been restarted if currentBootTime is less than lastRecordedTime
+                // or if this is the first run (lastRecordedTime = 0)
+                val isAfterReboot = currentBootTime < lastRecordedTime || lastRecordedTime == 0L
 
-        XpUtil.log("Found ${methods.size} startServiceLocked methods")
+                // Reset tables if needed
+                if (isAfterReboot || !resetDone) {
+                    // Reset database tables
+                    val db = AppDatabase.getInstance(context)
+                    db.infoDao().clearAll()
+                    db.infoEventDao().clearAll()
+                    
+                    resetPerformed = true
 
-        if (methods.isEmpty()) {
-            XpUtil.log("No startServiceLocked methods found! Trying to discover methods...")
-            discoverPotentialServiceMethods(activeServicesClass)
-            return
-        }
-
-        // Hook each method found
-        for (method in methods) {
-            hookStartServiceLockedMethod(method, lpparam)
-        }
-    } catch (e: Throwable) {
-        XpUtil.log("Error in flexible startServiceLocked hook: ${e.message}")
-        e.printStackTrace()
-    }
-}
-
-/**
- * Attempts to extract the required parameters using various strategies
- */
-private fun tryExtractParameters(args: Array<Any?>): Triple<Intent, String, Int>? {
-    // Common parameter positions observed across Android versions
-    val strategies = listOf(
-        Triple(1, 6, 8),  // Common in recent versions
-        Triple(1, 6, 7),  // Common in some older versions
-        Triple(1, 5, 6)   // Common in even older versions
-    )
-
-    // Try each position strategy
-    for ((servicePos, packagePos, userIdPos) in strategies) {
-        if (args.size > maxOf(servicePos, packagePos, userIdPos)) {
-            try {
-                val service = args[servicePos] as? Intent
-                val callingPackage = args[packagePos] as? String
-                val userId = args[userIdPos] as? Int
-
-                if (service != null && callingPackage != null && userId != null) {
-                    XpUtil.log("Successfully extracted parameters using positions: $servicePos, $packagePos, $userIdPos")
-                    return Triple(service, callingPackage, userId)
+                    // Update preferences
+                    userPreferencesRepository.setLastBootTime(currentBootTime)
+                    userPreferencesRepository.setResetDone(true)
                 }
-            } catch (e: Exception) {
-                // This strategy failed, try the next one
-                continue
             }
+        } catch (e: Exception) {
+            // Handle errors
+            return false
         }
-    }
 
-    // If position-based strategies failed, try type-based extraction
-    return tryExtractParametersByType(args)
+        return resetPerformed
+    }
 }
 ```
 
-### Advantages
-- [Adv₁] 适应性：无需预先知道确切的方法签名，可以适应未公开的Android版本
-- [Adv₂] 可维护性：分离的代码单元更易于理解和修改
-- [Adv₃] 可扩展性：新的参数提取策略可以轻松添加
-- [Adv₄] 故障恢复：当主要提取策略失败时，提供备选方案
+## 🖥️ UI Architecture Insights
 
-### Limitations
-- [Lim₁] 性能开销：反射和多重尝试可能带来轻微的性能成本
-- [Lim₂] 不确定性：复杂的提取策略可能在特定条件下失败
-- [Lim₃] 维护复杂性：需要持续更新知识库以支持新版本的Android
-
-### Future Improvements
-- [Imp₁] 发现策略完善：添加更多启发式方法以找到可能被重命名的方法
-- [Imp₂] 参数缓存：为成功的提取策略实现缓存，避免重复尝试
-- [Imp₃] 自适应学习：基于成功率动态调整尝试策略的顺序
-- [Imp₄] 添加单元测试：为复杂的提取逻辑创建全面的测试套件
+// ... rest of existing content ...
