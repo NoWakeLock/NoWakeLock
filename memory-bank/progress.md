@@ -1,11 +1,12 @@
 # σ₅: Progress Tracker
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-04*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-05*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 46%
+Completion: 48%
 
 ## ✅ Completed Features
+- [Feature₃₁] 2025-05-06 ⟶ 实现启动重置功能：添加设备重启检测和数据库表重置机制，确保在设备重启后应用首次启动时自动清空info和info_event表
 - [Feature₃₀] 2025-05-05 ⟶ 重构ServiceHook实现：将灵活Hook机制拆分为独立的startServiceLocked和bindServiceLocked处理模块，提高模块化和可维护性，支持Android 16及更高版本
 - [Feature₂₉] 2025-05-04 ⟶ 改进 PatternSettingsSection 组件：使组件更符合 Material Design 3 原则，改进布局、状态管理和用户交互模式，提高了视觉层次和可读性
 - [Feature₂₈] 2025-05-03 ⟶ 解决XPosed设置与日志控制问题：确认了XPosed日志控制问题的根源，与XSharedPreferences的加载机制有关，需要在安装应用后重启系统才能让设置生效
@@ -84,6 +85,7 @@ Completion: 46%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₂₇] 2025-05-06 ⟶ 采用 SystemClock.elapsedRealtime() 检测设备重启，并使用 DataStore 存储偏好设置，通过同步执行确保数据库表在应用启动时可靠重置，Status: ✅ Accepted
 - [Decision₂₆] 2025-05-05 ⟶ 对ServiceHook进行重构，将单一的flexibleServiceHook方法拆分为flexibleServiceHooks、flexibleStartServiceHook和flexibleBindServiceHook三个独立方法，提高代码可维护性并更好地支持Android 16+, Status: ✅ Accepted
 - [Decision₂₅] 2025-05-03 ⟶ 确认XPosed设置问题，采用文档提示用户在重新安装后需要重启系统，避免对XSharedPreferences机制进行复杂修改，Status: ✅ Accepted
 - [Decision₂₄] 2025-04-30 ⟶ 唤醒锁countTime计算使用内存数据结构而非数据库操作，通过AtomicInteger和volatile变量确保线程安全，保证实时性能, Status: ✅ Accepted
@@ -122,6 +124,7 @@ Completion: 46%
   - MD3 UI Standards: 38% complete
   - AppDetailScreen: 70% complete
   - Testing Infrastructure: 20% complete
+  - Boot Detection & Reset: 100% complete
 
 - 📈 Feature Implementation:
   - MD3 UI: 45% complete
@@ -137,6 +140,7 @@ Completion: 46%
   - Database Migrations: 15% complete
   - Badge System Design: 40% complete
   - AppDetailScreen: 70% complete
+  - Boot Reset Feature: 100% complete
 
 - 🧪 Testing Status:
   - Unit Tests: 15% coverage
