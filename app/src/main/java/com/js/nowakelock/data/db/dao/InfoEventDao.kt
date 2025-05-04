@@ -80,9 +80,14 @@ interface InfoEventDao : BaseDao<InfoEvent> {
     ): Flow<List<InfoEvent>>
 
     @Query("SELECT * FROM info_event WHERE packageName_event = :packageName AND type_event = :type AND userId_event = :userId ORDER BY startTime ASC")
-    fun getEventsByApp(
+    fun getEventsByAppFw(
         packageName: String, type: Type, userId: Int
     ): Flow<List<InfoEvent>>
+
+    @Query("SELECT * FROM info_event WHERE packageName_event = :packageName AND type_event = :type AND userId_event = :userId ORDER BY startTime ASC")
+    suspend fun getEventsByApp(
+        packageName: String, type: Type, userId: Int
+    ): List<InfoEvent>
 
     @Query("SELECT * FROM info_event WHERE name_event = :name AND type_event = :type AND userId_event = :userId ORDER BY startTime ASC")
     fun getEventsByName(
