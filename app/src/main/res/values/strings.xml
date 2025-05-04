@@ -29,7 +29,7 @@
     <string name="system_theme_name">Follow System</string>
     <string name="channel_name">Background Services</string>
     <string name="channel_description">Just ignore this notification or hiding it</string>
-    <string name="channel_id" translatable="false">nowakelock</string>
+    <string name="channel_id">nowakelock</string>
     <string name="notofication_title">Background Services</string>
     <string name="notofication_text">NoWakeLock need a service to meantain database.Just ignore this notification or hiding it</string>
     <string name="Count">Count</string>
@@ -46,7 +46,6 @@
     <string name="menu_filter_name">order by name</string>
     <string name="menu_filter_countime">order by count time</string>
 
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="WakeLock">WakeLock</string>
     <string name="Alarm">Alarm</string>
     <string name="Service">Service</string>
@@ -65,7 +64,6 @@
         JasperHale: ljy087621@gmail.com</string>
     <string name="ATIText">Allow interval</string>
     <string name="FlagText">Allow</string>
-    <string name="FlagLockText">Allow while sleeping</string>
     <string name="wakelockFlagText">Allow wakelock</string>
     <string name="ATIUnit">sec</string>
     <string name="Re_Alarm">Alarm Block Regular expression</string>
@@ -98,7 +96,6 @@
         <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
-    <string name="title_activity_main2">MainActivity2</string>
 
     <!-- Add these new string resources to your existing strings.xml file -->
 

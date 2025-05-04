@@ -55,7 +55,7 @@ fun DAsSortSection(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Sort by:",
+                text = stringResource(R.string.sort_by),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
