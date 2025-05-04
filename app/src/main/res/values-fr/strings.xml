@@ -29,7 +29,7 @@
     <string name="system_theme_name">Identique au système</string>
     <string name="channel_name">Services d\’arrière-plan</string>
     <string name="channel_description">Ignorer simplement cette notification ou la masquer</string>
-    <string name="channel_id" translatable="false">aucun réveil</string>
+    <string name="channel_id" translatable="false">nowakelock</string>
     <string name="notofication_title">Services d\’arrière-plan</string>
     <string name="notofication_text">NoWakeLock a besoin d\’un service pour maintenir la base de données. Ignorez juste cette notification ou masquez la</string>
     <string name="Count">Compteur</string>
@@ -46,7 +46,6 @@
     <string name="menu_filter_name">trier par nom</string>
     <string name="menu_filter_countime">ordre par temps de comptage</string>
 
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="WakeLock">WakeLock</string>
     <string name="Alarm">Alarme</string>
     <string name="Service">Service</string>
@@ -97,6 +96,14 @@
     <string name="settings_interface">Interface</string>
     <string name="language">Langue</string>
     <string name="cancel">Annuler</string>
+    <string name="settings_data_management">Gestion des données</string>
+    <string name="settings_backup">Sauvegarde et restauration</string>
+    <string name="settings_experimental">Fonction expérimentale</string>
+    <string name="restore_success">Sauvegarde restaurée avec succès</string>
+    <string name="restore_failed">Échec de la restauration de la sauvegarde</string>
+    <string name="back">Back</string>
+    <string name="unknown_error">Erreur inconnue</string>
+    <string name="now">Maintenant</string>
     
     <!-- Paramètres de langue -->
     <string name="english_language_name">Anglais</string>
@@ -136,8 +143,11 @@
     <string name="alarm_patterns">Expressions régulières de blocage des alarmes</string>
     <string name="service_patterns">Expressions régulières de blocage des services</string>
     <string name="allow_wakelocks">Autoriser les réveils</string>
+    <string name="allow_wakelocks_description">Autoriser les applications à acquérir des réveils</string>
     <string name="allow_alarms">Autoriser les alarmes</string>
+    <string name="allow_alarms_description">Autoriser les applications à planifier des alarmes</string>
     <string name="allow_services">Autoriser les services</string>
+    <string name="allow_services_description">Autoriser les applications à lancer des services</string>
     <string name="add_pattern">Ajouter une expression régulière</string>
     <string name="pattern">Expression régulière</string>
     <string name="invalid_regex">Expression régulière invalide</string>
@@ -160,7 +170,6 @@
     <string name="saved_time">Temps économisé</string>
     <string name="allowed">Autorisé</string>
     <string name="sort_by">Trier par:</string>
-    <string name="count">Compteur</string>
     <string name="sort_name">Nom</string>
     <string name="sort_count">Compteur</string>
     <string name="sort_time">Temps</string>
@@ -170,5 +179,68 @@
     <string name="allow">Autoriser</string>
     <string name="screen_off">Éteindre l\'écran</string>
     <string name="timeout">Temps</string>
+
+
+    <!-- Basic navigation and titles -->
+    <string name="da_detail_title">Détails de l\'automatisation du périphérique</string>
+    <string name="navigate_back">Retour</string>
+    <string name="more_options">Plus d\'options</string>
+
+    <!-- Statistics card -->
+    <string name="stat_total_count">Compteur</string>
+    <string name="stat_blocked_count">Bloqué</string>
+    <string name="stat_total_time">Temps total</string>
+    <string name="stat_saved_time">Temps économisé</string>
+
+    <!-- Info card -->
+    <string name="about_this_item">À propos de cet élément</string>
+    <string name="no_info_wakelock">Aucune information supplémentaire disponible pour ce réveil.</string>
+    <string name="no_info_alarm">Aucune information supplémentaire disponible pour cette alarme.</string>
+    <string name="no_info_service">Aucune information supplémentaire disponible pour ce service.</string>
+    <string name="no_info_unknown">Aucune information supplémentaire disponible.</string>
+    <string name="recommendations">Recommandations</string>
+
+    <!-- Settings card -->
+    <string name="settings_title">Paramètres</string>
+    <string name="allow_this_item">Autoriser cet élément</string>
+    <string name="allow_this_item_desc">Empêcher cet élément de déclencher</string>
+    <string name="block_during_sleep">Bloquer uniquement lorsque le périphérique est en veille</string>
+    <string name="block_during_screen_off">Bloquer uniquement lorsque l\'écran est éteint</string>
+    <string name="allowed_time_interval">Intervalle de temps autorisé</string>
+    <string name="allowed_time_interval_desc">Temps autorisé pour cet élément à s\'exécuter</string>
+    <string name="seconds">s</string>
+
+    <!-- Timeline card -->
+    <string name="activity_timeline">Chronologie des activités</string>
+    <string name="past_24_hours">Les 24 dernières heures</string>
+    <string name="total">Total</string>
+    <string name="blocked">Bloqué</string>
+
+    <!-- Activity list card -->
+    <string name="recent_activities">Activités récentes</string>
+    <string name="no_recent_wakelock_activities">Aucune activité de réveil récente.</string>
+    <string name="no_recent_alarm_activities">Aucune activité d\'alarme récente.</string>
+    <string name="no_recent_service_activities">Aucune activité de service récente.</string>
+    <string name="no_recent_activities">Aucune activité récente.</string>
+    <string name="status_allowed">Autorisé</string>
+    <string name="status_blocked">Bloqué</string>
+    <string name="duration_separator"> • Durée: %s</string>
+
+
+        <!-- Error handling -->
+    <string name="error_loading_data">Erreur lors du chargement des données. Veuillez réessayer.</string>
+    <string name="allow_wakelock">Autoriser le réveil</string>
+    <string name="allow_wakelock_desc">Autoriser ce réveil à déclencher</string>
+    <string name="allow_alarm">Autoriser l\'alarme</string>
+    <string name="allow_alarm_desc">Autoriser cette alarme à déclencher</string>
+    <string name="allow_service">Autoriser le service</string>
+    <string name="allow_service_desc">Autoriser ce service à démarrer</string>
+
+    <string name="allow_screenOff_wakelock">Autoriser le réveil lorsque l\'écran est éteint</string>
+    <string name="allow_screenOff_wakelock_desc">Autoriser ce réveil à déclencher lorsque l\'écran est éteint</string>
+    <string name="allow_screenOff_alarm">Autoriser l\'alarme lorsque l\'écran est éteint</string>
+    <string name="allow_screenOff_alarm_desc">Autoriser cette alarme à déclencher lorsque l\'écran est éteint</string>
+    <string name="allow_screenOff_service">Autoriser le service</string>
+    <string name="allow_screenOff_service_desc">Autoriser ce service à démarrer lorsque l\'écran est éteint</string>
 
 </resources>

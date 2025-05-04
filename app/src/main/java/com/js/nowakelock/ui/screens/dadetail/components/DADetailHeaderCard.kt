@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.DAInfo
 import com.js.nowakelock.data.model.DAItem
@@ -98,26 +100,26 @@ private fun DAStatisticsRow(
         // Count statistic
         StatisticItem(
             value = daItem.count.toString(),
-            label = "Count"
+            label = stringResource(id = R.string.stat_total_count)
         )
 
         // Blocked statistic
         StatisticItem(
             value = daItem.blockCount.toString(),
-            label = "Blocked"
+            label = stringResource(id = R.string.stat_blocked_count)
         )
 
         if (daItem.type == Type.Wakelock) {
             // Total time statistic
             StatisticItem(
                 value = daItem.getCountTimeFormat(),
-                label = "Total time"
+                label = stringResource(id = R.string.stat_total_time)
             )
 
             // Saved time statistic
             StatisticItem(
                 value = daItem.getBlockCountTimeFormat(),
-                label = "Saved time"
+                label = stringResource(id = R.string.stat_saved_time)
             )
         }
     }

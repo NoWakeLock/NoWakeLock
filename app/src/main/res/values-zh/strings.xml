@@ -28,6 +28,7 @@
     <string name="system_theme_name">跟随系统</string>
     <string name="channel_name">后台服务</string>
     <string name="channel_description">请忽略通知,或者将其隐藏</string>
+    <string name="channel_id">nowakelock</string>
     <string name="notofication_title">后台服务</string>
     <string name="notofication_text">NoWakeLock 需要使用后台服务来维护数据库,请忽略或隐藏这条通知.</string>
     <string name="Count">计数</string>
@@ -129,6 +130,9 @@
     <string name="settings_interface">界面</string>
     <string name="language">语言</string>
     <string name="cancel">取消</string>
+    <string name="settings_data_management">数据管理</string>
+    <string name="settings_backup">备份与恢复</string>
+    <string name="settings_experimental">实验功能</string>
     
     <!-- 语言设置 -->
     <string name="english_language_name">英语</string>
@@ -181,8 +185,11 @@
     <string name="alarm_patterns">闹钟正则匹配</string>
     <string name="service_patterns">服务正则匹配</string>
     <string name="allow_wakelocks">允许唤醒锁</string>
+    <string name="allow_wakelocks_description">允许应用申请唤醒锁</string>
     <string name="allow_alarms">允许闹钟</string>
+    <string name="allow_alarms_description">允许应用申请闹钟</string>
     <string name="allow_services">允许服务</string>
+    <string name="allow_services_description">允许应用启动服务</string>
     <string name="add_pattern">添加匹配模式</string>
     <string name="pattern">正则表达式</string>
     <string name="invalid_regex">无效的正则表达式</string>
@@ -198,4 +205,20 @@
     <string name="allow">允许</string>
     <string name="screen_off">屏幕关闭</string>
     <string name="timeout">时间</string>
+
+
+        <!-- Error handling -->
+    <string name="allow_wakelock">允许唤醒锁</string>
+    <string name="allow_wakelock_desc">允许此唤醒锁触发</string>
+    <string name="allow_alarm">允许闹钟</string>
+    <string name="allow_alarm_desc">允许此闹钟触发</string>
+    <string name="allow_service">允许服务</string>
+    <string name="allow_service_desc">允许此服务启动</string>
+
+    <string name="allow_screenOff_wakelock">允许唤醒锁屏幕关闭</string>
+    <string name="allow_screenOff_wakelock_desc">允许此唤醒锁在屏幕关闭时触发</string>
+    <string name="allow_screenOff_alarm">允许闹钟屏幕关闭</string>
+    <string name="allow_screenOff_alarm_desc">允许此闹钟在屏幕关闭时触发</string>
+    <string name="allow_screenOff_service">允许服务屏幕关闭</string>
+    <string name="allow_screenOff_service_desc">允许此服务在屏幕关闭时启动</string>
 </resources>
