@@ -270,7 +270,7 @@ class WakelockHook {
                 instanceId = instanceId
             )
 
-            XpUtil.log("$pN wakeLock:$wN 新实例创建 instanceId=$instanceId")
+//            XpUtil.log("$pN wakeLock:$wN 新实例创建 instanceId=$instanceId")
         }
 
         /**
@@ -301,7 +301,7 @@ class WakelockHook {
             // Remove the wakelock from tracking
             wlTs.remove(lock)
 
-            XpUtil.log("${wlT.packageName} wakeLock:${wlT.wakelockName} 实例已移除 instanceId=${wlT.instanceId}")
+//            XpUtil.log("${wlT.packageName} wakeLock:${wlT.wakelockName} 实例已移除 instanceId=${wlT.instanceId}")
         }
 
         // PROTECTED - DO NOT MODIFY

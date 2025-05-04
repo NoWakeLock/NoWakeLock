@@ -118,7 +118,7 @@ class XProvider(
             startTime += unixTimeBoot
         }
 
-        XpUtil.log("CP newEvent: $name, $packageName, $type, $userId, $startTime, $isBlocked, $instanceId")
+//        XpUtil.log("CP newEvent: $name, $packageName, $type, $userId, $startTime, $isBlocked, $instanceId")
 
         runBlocking(Dispatchers.IO) {
             // Create and insert event record
@@ -217,7 +217,7 @@ class XProvider(
             startTime += unixTimeBoot
         }
 
-        XpUtil.log("CP endEvent: $name, $packageName, $type, $userId, $startTime, $endTime, $instanceId")
+//        XpUtil.log("CP endEvent: $name, $packageName, $type, $userId, $startTime, $endTime, $instanceId")
 
         runBlocking(Dispatchers.IO) {
             // Verify event record exists
