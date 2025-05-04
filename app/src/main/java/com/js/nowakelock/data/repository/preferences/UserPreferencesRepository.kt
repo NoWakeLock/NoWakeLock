@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,9 @@ class UserPreferencesRepository(private val context: Context) {
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val POWER_FLAG_KEY = booleanPreferencesKey("power_flag")
         val CLEAR_FLAG_KEY = booleanPreferencesKey("clear_flag")
+        // Keys for boot reset functionality
+        val LAST_BOOT_TIME_KEY = longPreferencesKey("last_boot_time")
+        val RESET_DONE_KEY = booleanPreferencesKey("reset_done_for_current_boot")
     }
 
     // Possible theme values
@@ -89,6 +93,18 @@ class UserPreferencesRepository(private val context: Context) {
         .map { preferences ->
             preferences[CLEAR_FLAG_KEY] ?: false
         }
+        
+    // Get last boot time flow - default to 0 if not set
+    val lastBootTime: Flow<Long> = context.dataStore.data
+        .map { preferences -> 
+            preferences[LAST_BOOT_TIME_KEY] ?: 0L 
+        }
+    
+    // Get reset done flag flow - default to false if not set
+    val resetDoneForCurrentBoot: Flow<Boolean> = context.dataStore.data
+        .map { preferences -> 
+            preferences[RESET_DONE_KEY] ?: false 
+        }
 
     // Save theme preference
     suspend fun setThemeMode(mode: ThemeMode) {
@@ -115,6 +131,20 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setClearFlag(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[CLEAR_FLAG_KEY] = enabled
+        }
+    }
+    
+    // Save last boot time preference
+    suspend fun setLastBootTime(timestamp: Long) {
+        context.dataStore.edit { preferences ->
+            preferences[LAST_BOOT_TIME_KEY] = timestamp
+        }
+    }
+    
+    // Save reset done preference
+    suspend fun setResetDone(done: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[RESET_DONE_KEY] = done
         }
     }
 } 
