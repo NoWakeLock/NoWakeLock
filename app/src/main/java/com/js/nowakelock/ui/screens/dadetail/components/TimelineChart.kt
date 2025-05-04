@@ -43,8 +43,8 @@ fun TimelineChart(
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
 
-    // Key hours to display labels for (0, 4, 8, 12, 16, 20, 23)
-    val keyHours = remember { listOf(0, 4, 8, 12, 16, 20, 23) }
+    // Key hours to display labels for (0, 4, 8, 12, 16, 20)
+    val keyHours = remember { listOf(0, 4, 8, 12, 16, 20) }
 
     // Cache max value for scaling
     val maxValue = remember(data) {
