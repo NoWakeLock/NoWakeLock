@@ -151,10 +151,10 @@ class ServiceHook {
                             val context: Context =
                                 AndroidAppHelper.currentApplication().applicationContext
 
-                            XpUtil.log(
-                                "Successfully extracted startService parameters: service=${service.component}, " +
-                                        "package=$callingPackage, userId=$userId"
-                            )
+                            // XpUtil.log(
+                            //     "Successfully extracted startService parameters: service=${service.component}, " +
+                            //             "package=$callingPackage, userId=$userId"
+                            // )
 
                             hookStartServiceLocked(param, service, callingPackage, context, userId)
                         } else {
@@ -185,10 +185,10 @@ class ServiceHook {
                             val (service, callingPackage, userId) = extractionResult
                             val context: Context = AndroidAppHelper.currentApplication().applicationContext
                             
-                            XpUtil.log(
-                                "Successfully extracted bindService parameters: service=${service.component}, " +
-                                "package=$callingPackage, userId=$userId"
-                            )
+                            // XpUtil.log(
+                            //     "Successfully extracted bindService parameters: service=${service.component}, " +
+                            //     "package=$callingPackage, userId=$userId"
+                            // )
                             
                             hookStartServiceLocked(param, service, callingPackage, context, userId)
                         } else {
