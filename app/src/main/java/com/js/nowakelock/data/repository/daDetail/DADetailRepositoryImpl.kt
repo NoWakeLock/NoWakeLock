@@ -132,7 +132,6 @@ class DADetailRepositoryImpl(
         val hourlyData = mutableMapOf<Int, HourData>()
         val calendar = Calendar.getInstance()
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-        SimpleDateFormat("ha", Locale.getDefault())
 
         // Initialize data for all hours with zero counts
         for (i in 0 until hours) {
@@ -144,18 +143,11 @@ class DADetailRepositoryImpl(
                 set(Calendar.MILLISECOND, 0)
             }.time
 
-            val label = if (hour == 0) {
-                "12AM"
-            } else if (hour == 12) {
-                "12PM"
-            } else if (hour < 12) {
-                "${hour}AM"
-            } else {
-                "${hour - 12}PM"
-            }
-
             hourlyData[hour] = HourData(
-                hour = hour, label = label, total = 0, blocked = 0
+                hour = hour, 
+                label = formatHourLabel(hour), 
+                total = 0, 
+                blocked = 0
             )
         }
 
@@ -173,10 +165,23 @@ class DADetailRepositoryImpl(
             }
         }
 
-        // Convert to ordered list
+        // Convert to ordered list - chronological order (past to present)
         return (0 until hours).map { i ->
-            val hour = (currentHour - i + 24) % 24
-            hourlyData[hour] ?: HourData(hour = hour, label = "${hour}h", total = 0, blocked = 0)
-        }.reversed()
+            // Start from oldest time (current hour - (hours-1)) and move forward
+            val hour = (currentHour - (hours - 1) + i + 24) % 24
+            hourlyData[hour] ?: HourData(hour = hour, label = formatHourLabel(hour), total = 0, blocked = 0)
+        }
+    }
+
+    /**
+     * Format hour to AM/PM label
+     */
+    private fun formatHourLabel(hour: Int): String {
+        return when (hour) {
+            0 -> "12AM"
+            12 -> "12PM"
+            in 1..11 -> "${hour}AM"
+            else -> "${hour - 12}PM"
+        }
     }
 }
