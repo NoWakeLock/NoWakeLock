@@ -3,8 +3,8 @@
     android:autoMirrored="true"
     android:viewportHeight="1024"
     android:viewportWidth="1024"
-    android:width="81dp"
-    android:height="81dp"
+    android:width="64dp"
+    android:height="64dp"
     android:tint="?attr/colorControlNormal">
 
     <path
