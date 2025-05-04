@@ -88,7 +88,7 @@ open class DARepositoryImpl(
                     // Use custom comparator to detect only relevant changes
                     .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap).sortedBy { it.count }
+                        mapToDAItems(infoToStMap).sortedByDescending { it.count }
                     }
             }
 
@@ -96,7 +96,7 @@ open class DARepositoryImpl(
                 // Use custom comparator to detect only relevant changes
                 .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap).sortedBy { it.count }
+                    mapToDAItems(infoToStMap).sortedByDescending { it.count }
                 }
         }
 
@@ -110,7 +110,7 @@ open class DARepositoryImpl(
                     // Use custom comparator to detect only relevant changes
                     .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap).sortedBy { it.countTime }
+                        mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
                     }
             }
 
@@ -118,7 +118,7 @@ open class DARepositoryImpl(
                 // Use custom comparator to detect only relevant changes
                 .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap).sortedBy { it.countTime }
+                    mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
                 }
         }
 
