@@ -6,6 +6,7 @@
 Completion: 46%
 
 ## ✅ Completed Features
+- [Feature₃₀] 2025-05-05 ⟶ 重构ServiceHook实现：将灵活Hook机制拆分为独立的startServiceLocked和bindServiceLocked处理模块，提高模块化和可维护性，支持Android 16及更高版本
 - [Feature₂₉] 2025-05-04 ⟶ 改进 PatternSettingsSection 组件：使组件更符合 Material Design 3 原则，改进布局、状态管理和用户交互模式，提高了视觉层次和可读性
 - [Feature₂₈] 2025-05-03 ⟶ 解决XPosed设置与日志控制问题：确认了XPosed日志控制问题的根源，与XSharedPreferences的加载机制有关，需要在安装应用后重启系统才能让设置生效
 - [Feature₂₇] 2025-05-01 ⟶ 唤醒锁计算系统单元测试实现：为WakelockCounter和WakelockRegistry类创建了全面的单元测试，通过测试套件确保正确的时间计算和非重叠持续时间追踪
@@ -83,6 +84,7 @@ Completion: 46%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₂₆] 2025-05-05 ⟶ 对ServiceHook进行重构，将单一的flexibleServiceHook方法拆分为flexibleServiceHooks、flexibleStartServiceHook和flexibleBindServiceHook三个独立方法，提高代码可维护性并更好地支持Android 16+, Status: ✅ Accepted
 - [Decision₂₅] 2025-05-03 ⟶ 确认XPosed设置问题，采用文档提示用户在重新安装后需要重启系统，避免对XSharedPreferences机制进行复杂修改，Status: ✅ Accepted
 - [Decision₂₄] 2025-04-30 ⟶ 唤醒锁countTime计算使用内存数据结构而非数据库操作，通过AtomicInteger和volatile变量确保线程安全，保证实时性能, Status: ✅ Accepted
 - [Decision₂₃] 2025-04-29 ⟶ AppsScreen 语言切换后用户切换无限循环问题采用方案3修复：单向同步，避免循环，保证用户选择恢复，Status: ✅ Accepted
@@ -110,7 +112,7 @@ Completion: 46%
   - Navigation System: 65% complete
   - Data Models: 80% complete (existing functionality)
   - Database Access: 75% complete (existing functionality)
-  - Xposed Integration: 95% complete
+  - Xposed Integration: 98% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
   - Battery Optimization: 30% complete
@@ -125,7 +127,7 @@ Completion: 46%
   - MD3 UI: 45% complete
   - Wakelock Monitoring: 98% complete
   - Alarm Monitoring: 85% complete
-  - Service Monitoring: 85% complete
+  - Service Monitoring: 90% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
   - Explanations System: 0% complete

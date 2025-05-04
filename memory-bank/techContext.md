@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-04*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-05*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -591,3 +591,138 @@ fun makePref(): XSharedPreferences? {
 - 现代Android系统对XSharedPreferences本身的限制难以绕过
 - 实现更复杂的跨进程通信机制（如ContentProvider）工作量大
 - 大多数用户不会频繁重新安装应用，仅需重启一次即可解决问题
+
+## 🛠️ Flexible ServiceHook Architecture
+
+### Core Components
+- [SC₁] FlexibleServiceHooks ⟶ 主协调器，管理startServiceLocked和bindServiceLocked的Hook
+- [SC₂] FlexibleStartServiceHook ⟶ 处理所有startServiceLocked方法的Hook
+- [SC₃] FlexibleBindServiceHook ⟶ 处理所有bindServiceLocked方法的Hook
+- [SC₄] 参数提取策略 ⟶ 基于位置和类型的参数识别方法
+
+### Architecture Pattern
+- 模块化设计：将Hook逻辑拆分为独立、可维护的单元
+- 自适应参数提取：支持不同Android版本的API变化
+- 降级处理：当主要策略失败时，提供备选提取策略
+- 丰富的日志记录：跟踪参数提取的每个步骤，便于调试
+
+### Implementation Approach
+- 反射发现：使用反射API查找目标方法，无需硬编码的完整方法签名
+- 多种提取策略：尝试多种已知的参数位置模式，适应不同Android版本
+- 类型匹配：当位置策略失败时，基于参数类型进行智能匹配
+- 统一Hook接口：不同方法的Hook都使用相同的hookStartServiceLocked实现
+
+### Key Strategies
+- [KS₁] 针对startServiceLocked的提取策略：
+  ```kotlin
+  val strategies = listOf(
+      Triple(1, 6, 8),  // Common in recent versions
+      Triple(1, 6, 7),  // Common in some older versions
+      Triple(1, 5, 6)   // Common in even older versions
+  )
+  ```
+
+- [KS₂] 针对bindServiceLocked的提取策略：
+  ```kotlin
+  val strategies = listOf(
+      Triple(2, 11, 12),  // Android 14+
+      Triple(2, 7, 8)     // Android 12 and below
+  )
+  ```
+
+### Implementation Example
+```kotlin
+/**
+ * Flexible service hooks that handle both startServiceLocked and bindServiceLocked methods
+ */
+private fun flexibleServiceHooks(lpparam: XC_LoadPackage.LoadPackageParam) {
+    // Hook startServiceLocked methods
+    flexibleStartServiceHook(lpparam)
+    
+    // Hook bindServiceLocked methods
+    flexibleBindServiceHook(lpparam)
+}
+
+/**
+ * Flexible hook approach that hooks all methods named "startServiceLocked"
+ * and extracts parameters based on common positions observed across Android versions.
+ */
+private fun flexibleStartServiceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+    try {
+        // Get the ActiveServices class
+        val activeServicesClass =
+            findClass("com.android.server.am.ActiveServices", lpparam.classLoader)
+
+        // Find all methods named startServiceLocked
+        val methods =
+            activeServicesClass.declaredMethods.filter { it.name == "startServiceLocked" }
+
+        XpUtil.log("Found ${methods.size} startServiceLocked methods")
+
+        if (methods.isEmpty()) {
+            XpUtil.log("No startServiceLocked methods found! Trying to discover methods...")
+            discoverPotentialServiceMethods(activeServicesClass)
+            return
+        }
+
+        // Hook each method found
+        for (method in methods) {
+            hookStartServiceLockedMethod(method, lpparam)
+        }
+    } catch (e: Throwable) {
+        XpUtil.log("Error in flexible startServiceLocked hook: ${e.message}")
+        e.printStackTrace()
+    }
+}
+
+/**
+ * Attempts to extract the required parameters using various strategies
+ */
+private fun tryExtractParameters(args: Array<Any?>): Triple<Intent, String, Int>? {
+    // Common parameter positions observed across Android versions
+    val strategies = listOf(
+        Triple(1, 6, 8),  // Common in recent versions
+        Triple(1, 6, 7),  // Common in some older versions
+        Triple(1, 5, 6)   // Common in even older versions
+    )
+
+    // Try each position strategy
+    for ((servicePos, packagePos, userIdPos) in strategies) {
+        if (args.size > maxOf(servicePos, packagePos, userIdPos)) {
+            try {
+                val service = args[servicePos] as? Intent
+                val callingPackage = args[packagePos] as? String
+                val userId = args[userIdPos] as? Int
+
+                if (service != null && callingPackage != null && userId != null) {
+                    XpUtil.log("Successfully extracted parameters using positions: $servicePos, $packagePos, $userIdPos")
+                    return Triple(service, callingPackage, userId)
+                }
+            } catch (e: Exception) {
+                // This strategy failed, try the next one
+                continue
+            }
+        }
+    }
+
+    // If position-based strategies failed, try type-based extraction
+    return tryExtractParametersByType(args)
+}
+```
+
+### Advantages
+- [Adv₁] 适应性：无需预先知道确切的方法签名，可以适应未公开的Android版本
+- [Adv₂] 可维护性：分离的代码单元更易于理解和修改
+- [Adv₃] 可扩展性：新的参数提取策略可以轻松添加
+- [Adv₄] 故障恢复：当主要提取策略失败时，提供备选方案
+
+### Limitations
+- [Lim₁] 性能开销：反射和多重尝试可能带来轻微的性能成本
+- [Lim₂] 不确定性：复杂的提取策略可能在特定条件下失败
+- [Lim₃] 维护复杂性：需要持续更新知识库以支持新版本的Android
+
+### Future Improvements
+- [Imp₁] 发现策略完善：添加更多启发式方法以找到可能被重命名的方法
+- [Imp₂] 参数缓存：为成功的提取策略实现缓存，避免重复尝试
+- [Imp₃] 自适应学习：基于成功率动态调整尝试策略的顺序
+- [Imp₄] 添加单元测试：为复杂的提取逻辑创建全面的测试套件
