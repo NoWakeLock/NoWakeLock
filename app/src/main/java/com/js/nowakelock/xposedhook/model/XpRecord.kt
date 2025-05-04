@@ -64,7 +64,7 @@ object XpRecord {
         startTime: Long = System.currentTimeMillis(),
         instanceId: String = ""
     ) {
-        XpUtil.log("newEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
+//        XpUtil.log("newEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
         newEvent(
             name = name,
             packageName = packageName,
@@ -98,7 +98,7 @@ object XpRecord {
         startTime: Long = System.currentTimeMillis(),
         instanceId: String = ""
     ) {
-        XpUtil.log("blockEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
+//        XpUtil.log("blockEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
         newEvent(
             name = name,
             packageName = packageName,
@@ -131,7 +131,7 @@ object XpRecord {
         endTime: Long = System.currentTimeMillis(),
         instanceId: String = ""
     ) = CoroutineScope(Dispatchers.Default).launch {
-        XpUtil.log("endEvent: $name, $packageName, $type, $userId, $startTime ,$endTime, $instanceId")
+//        XpUtil.log("endEvent: $name, $packageName, $type, $userId, $startTime ,$endTime, $instanceId")
         if (type != Type.Wakelock && instanceId.isEmpty()) {
             return@launch
         }
