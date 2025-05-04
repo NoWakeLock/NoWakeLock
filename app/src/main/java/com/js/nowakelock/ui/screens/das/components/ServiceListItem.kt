@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.ui.theme.AllowedGreen
@@ -145,9 +147,10 @@ private fun getStatusColor(daItem: DAItem): Color {
 private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
     ConstraintLayout(
         modifier = Modifier
-            .padding(8.dp)
+            .fillMaxWidth()
+//            .padding(8.dp)
     ) {
-        val (icon, name, packageName, count, block) = createRefs()
+        val (icon, name, packageName, count, blockLabel, block) = createRefs()
 
         // Icon
         Box(
@@ -231,13 +234,25 @@ private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
 
         // Switch - isolate with key to avoid unnecessary recompositions
         key(daItem.fullBlocked) {
+
+            Text(
+                text = stringResource(R.string.allow),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.constrainAs(blockLabel) {
+                    end.linkTo(block.start, 4.dp)
+                    top.linkTo(count.top)
+                    bottom.linkTo(count.bottom)
+                },
+            )
+
             Switch(
                 checked = !daItem.fullBlocked,
                 onCheckedChange = onToggleFullBlock,
                 modifier = Modifier
                     .scale(0.75f)
                     .constrainAs(block) {
-                        start.linkTo(count.end, 160.dp)
+                        end.linkTo(name.end, 16.dp)
                         top.linkTo(count.top)
                         bottom.linkTo(count.bottom)
                     },
@@ -426,7 +441,7 @@ private fun formatTime(timeInMillis: Long): String {
 fun PreviewServiceListItem() {
     // Sample for preview
     val dAItem = DAItem(
-        name = "KEEP_SCREEN_ON_FLAG",
+        name = "KEEP_SCREEN_ON_FLAGTTTTTTTTTTTT",
         packageName = "com.facebook.katana",
         count = 47,
         blockCount = 12,
