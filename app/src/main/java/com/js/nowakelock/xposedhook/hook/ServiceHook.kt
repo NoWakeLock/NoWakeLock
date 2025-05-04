@@ -222,7 +222,7 @@ class ServiceHook {
                         val userId = args[userIdPos] as? Int
 
                         if (service != null && callingPackage != null && userId != null) {
-                            XpUtil.log("Successfully extracted startService parameters using positions: $servicePos, $packagePos, $userIdPos")
+//                            XpUtil.log("Successfully extracted startService parameters using positions: $servicePos, $packagePos, $userIdPos")
                             return Triple(service, callingPackage, userId)
                         }
                     } catch (e: Exception) {
@@ -255,7 +255,7 @@ class ServiceHook {
                         val userId = args[userIdPos] as? Int
                         
                         if (service != null && callingPackage != null && userId != null) {
-                            XpUtil.log("Successfully extracted bindService parameters using positions: $servicePos, $packagePos, $userIdPos")
+//                            XpUtil.log("Successfully extracted bindService parameters using positions: $servicePos, $packagePos, $userIdPos")
                             return Triple(service, callingPackage, userId)
                         }
                     } catch (e: Exception) {
