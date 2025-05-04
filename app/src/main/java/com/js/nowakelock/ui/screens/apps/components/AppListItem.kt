@@ -164,7 +164,7 @@ fun AppListItem(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "${appWithStats.wakelockCount}",
+                                text = "${appWithStats.wakelockCount + appWithStats.alarmCount + appWithStats.serviceCount}",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -219,7 +219,7 @@ fun PreviewAppListItem() {
                     wakelockTime = 3600L // 1 hour in seconds
                 )
                 AppListItem(appWithStats) {}
-                
+
                 // System app
                 val systemAppWithStats = AppWithStats(
                     appInfo = AppInfo(

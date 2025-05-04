@@ -15,7 +15,6 @@ data class AppWithStats(
     val alarmBlockedCount: Int = 0,
     val serviceCount: Int = 0,
     val serviceBlockedCount: Int = 0,
-    val wakelockNames: List<String> = emptyList()
 ) {
     /**
      * Returns formatted time string from milliseconds

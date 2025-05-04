@@ -10,14 +10,15 @@ import android.os.UserHandle
 import android.os.UserManager
 import androidx.collection.ArrayMap
 import androidx.core.content.getSystemService
-import com.js.nowakelock.BasicApp
 import com.js.nowakelock.BasicApp.Companion.context
 import com.js.nowakelock.base.LogUtil
+import com.js.nowakelock.base.calculateTime
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.base.getUserId
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.AppInfoDao
 import com.js.nowakelock.data.db.dao.DADao
+import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.*
 import com.js.nowakelock.data.model.AppWithStats
 import com.js.nowakelock.data.model.UserInfo
@@ -26,7 +27,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
-class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : AppDasRepo {
+class AppDasAR(
+    private val appInfoDao: AppInfoDao,
+    private val daDao: DADao,
+    private val infoEventDao: InfoEventDao
+) : AppDasRepo {
 
     private val pm: PackageManager = context.packageManager
     private val um = context.getSystemService(Context.USER_SERVICE) as UserManager
@@ -69,10 +74,10 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
                 infos?.toList()?.let {
                     daDao.insert(it)
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 getCPResult(context, ProviderMethod.ClearData.value, Bundle())
                 LogUtil.d("AppDasAR", "getSerializable err: $e")
-            }finally {
+            } finally {
                 LogUtil.d("AppDasAR", "getSerializable err clearAll")
             }
         }
@@ -147,28 +152,40 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
     /**
      * Helper method to convert AppInfo to AppWithStats by querying wakelock data
      */
-    private suspend fun appInfoToAppWithStats(appInfo: AppInfo): AppWithStats = withContext(Dispatchers.IO) {
-        // Get all wake lock infos for this app
-        val wakelockInfos = daDao.getInfosByPackageAndType(
-            appInfo.packageName,
-            Type.Wakelock,
-            appInfo.userId
-        )
-        
-        // Calculate statistics
-        val wakelockCount = wakelockInfos.sumOf { it.count }
-        val wakelockBlockedCount = wakelockInfos.sumOf { it.blockCount }
-        val wakelockTime = wakelockInfos.sumOf { it.countTime }
-        val wakelockNames = wakelockInfos.map { it.name }
-        
-        return@withContext AppWithStats(
-            appInfo = appInfo,
-            wakelockCount = wakelockCount,
-            wakelockBlockedCount = wakelockBlockedCount,
-            wakelockTime = wakelockTime,
-            wakelockNames = wakelockNames
-        )
-    }
+    private suspend fun appInfoToAppWithStats(appInfo: AppInfo): AppWithStats =
+        withContext(Dispatchers.IO) {
+            // Get all data for this app with the same package and user ID
+            val packageName = appInfo.packageName
+            val userId = appInfo.userId
+
+            // Fetch all relevant data types
+            val wakelockInfos = daDao.getInfosByPackageAndType(packageName, Type.Wakelock, userId)
+            val wakelockEvents = infoEventDao.getEventsByApp(packageName, Type.Wakelock, userId)
+            val alarmInfos = daDao.getInfosByPackageAndType(packageName, Type.Alarm, userId)
+            val serviceInfos = daDao.getInfosByPackageAndType(packageName, Type.Service, userId)
+
+            // Calculate statistics for each data type
+            val wakelockCount = wakelockInfos.sumOf { it.count }
+            val wakelockBlockedCount = wakelockInfos.sumOf { it.blockCount }
+            val wakelockTime = calculateTime(wakelockEvents)
+
+            val alarmCount = alarmInfos.sumOf { it.count }
+            val alarmBlockedCount = alarmInfos.sumOf { it.blockCount }
+
+            val serviceCount = serviceInfos.sumOf { it.count }
+            val serviceBlockedCount = serviceInfos.sumOf { it.blockCount }
+
+            AppWithStats(
+                appInfo = appInfo,
+                wakelockCount = wakelockCount,
+                wakelockBlockedCount = wakelockBlockedCount,
+                wakelockTime = wakelockTime,
+                alarmCount = alarmCount,
+                alarmBlockedCount = alarmBlockedCount,
+                serviceCount = serviceCount,
+                serviceBlockedCount = serviceBlockedCount
+            )
+        }
 
     // insert all new appinfos
     private suspend fun insertAll(
@@ -257,12 +274,12 @@ class AppDasAR(private val appInfoDao: AppInfoDao, private val daDao: DADao) : A
         try {
             // get all userid
             val userIds = appInfoDao.getDistinctUserIds()
-            
+
             // if no user, return primary user
             if (userIds.isEmpty()) {
                 return@withContext listOf(UserInfo.createPrimaryUser())
             }
-            
+
             // convert userid to UserInfo object
             return@withContext userIds.map { userId ->
                 UserInfo.fromUserId(userId)

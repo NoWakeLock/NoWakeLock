@@ -1,6 +1,7 @@
 package com.js.nowakelock.data.repository.appDetail
 
 import com.js.nowakelock.base.LogUtil
+import com.js.nowakelock.base.calculateTime
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.AppDaDao
 import com.js.nowakelock.data.db.dao.AppInfoDao
@@ -59,45 +60,41 @@ class AppDetailRepositoryImpl(
     /**
      * Helper method to convert AppInfo to AppWithStats by querying wakelock data
      */
-    private suspend fun appInfoToAppWithStats(appInfo: AppInfo): AppWithStats = withContext(
-        Dispatchers.IO
-    ) {
-        // Get all wake lock infos for this app
-        val wakelockInfos = daDao.getInfosByPackageAndType(
-            appInfo.packageName, Type.Wakelock, appInfo.userId
-        )
+    /**
+     * Helper method to convert AppInfo to AppWithStats by querying wakelock data
+     */
+    private suspend fun appInfoToAppWithStats(appInfo: AppInfo): AppWithStats =
+        withContext(Dispatchers.IO) {
+            // Get all data for this app with the same package and user ID
+            val packageName = appInfo.packageName
+            val userId = appInfo.userId
 
-        val alarmInfos = daDao.getInfosByPackageAndType(
-            appInfo.packageName, Type.Alarm, appInfo.userId
-        )
+            // Fetch all relevant data types
+            val wakelockInfos = daDao.getInfosByPackageAndType(packageName, Type.Wakelock, userId)
+            val wakelockEvents = infoEventDao.getEventsByApp(packageName, Type.Wakelock, userId)
+            val alarmInfos = daDao.getInfosByPackageAndType(packageName, Type.Alarm, userId)
+            val serviceInfos = daDao.getInfosByPackageAndType(packageName, Type.Service, userId)
 
-        val serviceInfos = daDao.getInfosByPackageAndType(
-            appInfo.packageName, Type.Service, appInfo.userId
-        )
+            // Calculate statistics for each data type
+            val wakelockCount = wakelockInfos.sumOf { it.count }
+            val wakelockBlockedCount = wakelockInfos.sumOf { it.blockCount }
+            val wakelockTime = calculateTime(wakelockEvents)
 
-        // Calculate statistics
-        val wakelockCount = wakelockInfos.sumOf { it.count }
-        val wakelockBlockedCount = wakelockInfos.sumOf { it.blockCount }
-        val wakelockTime = wakelockInfos.sumOf { it.countTime }
-        val wakelockNames = wakelockInfos.map { it.name }
+            val alarmCount = alarmInfos.sumOf { it.count }
+            val alarmBlockedCount = alarmInfos.sumOf { it.blockCount }
 
-        val alarmCount = alarmInfos.sumOf { it.count }
-        val alarmBlockedCount = alarmInfos.sumOf { it.blockCount }
+            val serviceCount = serviceInfos.sumOf { it.count }
+            val serviceBlockedCount = serviceInfos.sumOf { it.blockCount }
 
-        val serviceCount = serviceInfos.sumOf { it.count }
-        val serviceBlockedCount = serviceInfos.sumOf { it.blockCount }
-
-
-        return@withContext AppWithStats(
-            appInfo = appInfo,
-            wakelockCount = wakelockCount,
-            wakelockBlockedCount = wakelockBlockedCount,
-            wakelockTime = wakelockTime,
-            wakelockNames = wakelockNames,
-            alarmCount = alarmCount,
-            alarmBlockedCount = alarmBlockedCount,
-            serviceCount = serviceCount,
-            serviceBlockedCount = serviceBlockedCount
-        )
-    }
+            AppWithStats(
+                appInfo = appInfo,
+                wakelockCount = wakelockCount,
+                wakelockBlockedCount = wakelockBlockedCount,
+                wakelockTime = wakelockTime,
+                alarmCount = alarmCount,
+                alarmBlockedCount = alarmBlockedCount,
+                serviceCount = serviceCount,
+                serviceBlockedCount = serviceBlockedCount
+            )
+        }
 }
