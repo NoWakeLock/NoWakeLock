@@ -247,7 +247,7 @@ private fun InfoSection(daItem: DAItem) {
         ) {
             Text(
                 text = daItem.packageName,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -291,7 +291,7 @@ private fun InfoSection(daItem: DAItem) {
                         Text(
                             text = displayUserId,
                             fontSize = fontSize,
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.labelMedium,
                             color = textColor,
                         )
                     }
@@ -322,7 +322,7 @@ private fun InfoSection(daItem: DAItem) {
                 Spacer(Modifier.width(2.dp))
                 Text(
                     text = "${daItem.count}",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
@@ -352,7 +352,7 @@ private fun InfoSection(daItem: DAItem) {
                     Spacer(Modifier.width(2.dp))
                     Text(
                         text = formatTime(daItem.countTime),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                 }
@@ -383,7 +383,7 @@ private fun ControlSection(
         // Full block label and switch
         Text(
             text = stringResource(R.string.allow),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(blockLabel) {
                 start.linkTo(parent.start, 16.dp)
@@ -415,7 +415,7 @@ private fun ControlSection(
         // Screen off label and switch
         Text(
             text = stringResource(R.string.screen_off),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(screenOffLabel) {
                 start.linkTo(block.end, 8.dp)
@@ -438,7 +438,7 @@ private fun ControlSection(
         // Timeout section
         Text(
             text = stringResource(R.string.timeout),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.constrainAs(timeLabel) {
                 start.linkTo(screenOffBlock.end, 8.dp)
