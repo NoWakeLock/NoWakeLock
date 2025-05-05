@@ -65,9 +65,8 @@ fun AppsFilterSection(
                             FilterOption.ALL -> stringResource(R.string.menu_filter_all_app)
                             FilterOption.USER -> stringResource(R.string.menu_filter_user_app)
                             FilterOption.SYSTEM -> stringResource(R.string.menu_filter_system_app)
-                            FilterOption.MODIFIED -> stringResource(R.string.menu_filter_modified)
                         },
-                        style = MaterialTheme.typography.labelMedium, // Slightly smaller text
+                        style = MaterialTheme.typography.labelLarge, // Slightly smaller text
                         textAlign = TextAlign.Center
                     )
                 }

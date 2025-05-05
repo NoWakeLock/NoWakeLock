@@ -56,7 +56,7 @@ fun DAsSortSection(
             )
             Text(
                 text = stringResource(R.string.sort_by),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -123,7 +123,7 @@ private fun SortOption(
         
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = if (selected) 
                 MaterialTheme.colorScheme.primary 
             else 
