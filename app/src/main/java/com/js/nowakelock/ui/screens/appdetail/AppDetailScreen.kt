@@ -651,7 +651,7 @@ private fun SettingToggleWithSubtitle(
             // Main title - using titleMedium instead of bodyLarge
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = if (enabled) MaterialTheme.colorScheme.onSurface 
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
@@ -659,7 +659,7 @@ private fun SettingToggleWithSubtitle(
             // Descriptive subtitle - using bodySmall instead of bodyMedium
             Text(
                 text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant 
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
@@ -846,7 +846,7 @@ private fun PatternSettingsSection(
             // Empty state message
             Text(
                 text = stringResource(R.string.add_pattern),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
