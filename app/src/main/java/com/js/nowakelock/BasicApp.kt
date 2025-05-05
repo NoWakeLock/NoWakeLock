@@ -34,7 +34,7 @@ class BasicApp : Application() {
         startKoin {
             androidContext(this@BasicApp)
             modules(appModule())
-            androidLogger(Level.DEBUG)
+//            androidLogger(Level.DEBUG)
         }
         
         // Get UserPreferencesRepository from Koin
