@@ -11,6 +11,7 @@ import com.js.nowakelock.ui.navigation.params.AppsScreenParams
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 /**
  * Loading source for apps screen
@@ -43,6 +44,7 @@ data class AppsUiState(
 /**
  * Sort options for app listing
  */
+@Serializable
 enum class SortOption {
     NAME, COUNT, TIME
 }
@@ -50,6 +52,7 @@ enum class SortOption {
 /**
  * Filter options for app listing
  */
+@Serializable
 enum class FilterOption {
     ALL, USER, SYSTEM, MODIFIED
 }
