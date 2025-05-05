@@ -136,7 +136,7 @@ private fun FilterButton(
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelMedium, // Slightly smaller text
+                style = MaterialTheme.typography.labelLarge, // Slightly smaller text
                 textAlign = TextAlign.Center
             )
         }

@@ -43,7 +43,7 @@ fun AppsSortSection(
             )
             Text(
                 text = stringResource(R.string.sort_by),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -84,7 +84,7 @@ fun AppsSortSection(
                     
                     Text(
                         text = label,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = if (selected) 
                             MaterialTheme.colorScheme.primary 
                         else 

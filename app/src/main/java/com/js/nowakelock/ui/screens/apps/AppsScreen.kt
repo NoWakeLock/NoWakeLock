@@ -208,7 +208,6 @@ private fun EmptyAppsContent(
                     FilterOption.ALL -> "No applications found"
                     FilterOption.USER -> "No user applications found"
                     FilterOption.SYSTEM -> "No system applications found"
-                    FilterOption.MODIFIED -> "No applications with wakelock activity"
                 }
             },
             style = MaterialTheme.typography.titleMedium
@@ -224,7 +223,6 @@ private fun EmptyAppsContent(
                     FilterOption.ALL -> "Try syncing your application data"
                     FilterOption.USER -> "Try changing to a different filter"
                     FilterOption.SYSTEM -> "Try changing to a different filter"
-                    FilterOption.MODIFIED -> "No applications have used wakelocks yet"
                 }
             },
             style = MaterialTheme.typography.bodyMedium,

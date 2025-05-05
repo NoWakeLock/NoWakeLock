@@ -54,7 +54,7 @@ enum class SortOption {
  */
 @Serializable
 enum class FilterOption {
-    ALL, USER, SYSTEM, MODIFIED
+    ALL, USER, SYSTEM
 }
 
 /**
@@ -148,7 +148,6 @@ class AppsViewModel(
                         FilterOption.ALL -> userFilteredApps
                         FilterOption.USER -> userFilteredApps.filter { !it.appInfo.system }
                         FilterOption.SYSTEM -> userFilteredApps.filter { it.appInfo.system }
-                        FilterOption.MODIFIED -> userFilteredApps.filter { it.wakelockCount > 0 }
                     }
                     
                     // Then apply search filter if needed
