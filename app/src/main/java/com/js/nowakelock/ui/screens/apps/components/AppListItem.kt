@@ -135,7 +135,7 @@ fun AppListItem(
                 // Package name
                 Text(
                     text = appWithStats.appInfo.packageName,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -165,7 +165,7 @@ fun AppListItem(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "${appWithStats.wakelockCount + appWithStats.alarmCount + appWithStats.serviceCount}",
-                                style = MaterialTheme.typography.labelMedium,
+                                style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
@@ -190,7 +190,7 @@ fun AppListItem(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = appWithStats.getFormattedTime(),
-                                style = MaterialTheme.typography.labelMedium,
+                                style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
