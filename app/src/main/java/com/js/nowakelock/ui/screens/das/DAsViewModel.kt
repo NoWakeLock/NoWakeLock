@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.util.concurrent.TimeUnit
 
 /**
@@ -40,6 +41,7 @@ enum class LoadingSource {
 /**
  * Sort options for DA listing
  */
+@Serializable
 enum class DASortOption {
     NAME, COUNT, TIME
 }
@@ -47,6 +49,7 @@ enum class DASortOption {
 /**
  * Filter options for DA listing
  */
+@Serializable
 enum class DAFilterOption {
     ALL, BLOCKED, ALLOWED
 }
