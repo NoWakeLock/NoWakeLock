@@ -132,7 +132,7 @@ fun SwitchItem(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
                     alpha = 0.6f
                 )
@@ -140,7 +140,7 @@ fun SwitchItem(
             if (subtitle != null) {
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = if (enabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant.copy(
                         alpha = 0.6f
                     )
@@ -187,7 +187,7 @@ fun TimeIntervalItem(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
                     alpha = 0.6f
                 )

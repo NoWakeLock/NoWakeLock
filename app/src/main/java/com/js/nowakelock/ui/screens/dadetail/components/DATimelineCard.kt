@@ -42,7 +42,7 @@ fun DATimelineCard(
             // Left side: Past 24 hours text
             Text(
                 text = stringResource(R.string.past_24_hours),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
@@ -61,7 +61,7 @@ fun DATimelineCard(
                     ) {}
                     Text(
                         text = stringResource(R.string.total),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 4.dp)
                     )
@@ -77,7 +77,7 @@ fun DATimelineCard(
                     ) {}
                     Text(
                         text = stringResource(R.string.blocked),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 4.dp)
                     )
