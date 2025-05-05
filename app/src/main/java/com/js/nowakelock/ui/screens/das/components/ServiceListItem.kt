@@ -194,7 +194,7 @@ private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
         // Package name
         Text(
             text = daItem.packageName,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -226,7 +226,7 @@ private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
                 Spacer(Modifier.width(2.dp))
                 Text(
                     text = "${daItem.count}",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
@@ -237,7 +237,7 @@ private fun InfoSection(daItem: DAItem, onToggleFullBlock: (Boolean) -> Unit) {
 
             Text(
                 text = stringResource(R.string.allow),
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.constrainAs(blockLabel) {
                     end.linkTo(block.start, 4.dp)
