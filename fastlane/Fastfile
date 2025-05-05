@@ -155,8 +155,7 @@ lane :build_flavor do |params|
         name: "v#{version} Build #{versionCode}",
         tag_name: tag,
         description: changelog,
-        upload_assets: Dir.glob(File.join(dist_path, "*.apk")),
-        is_prerelease: options[:release_status] == 'prerelease'
+        upload_assets: Dir.glob(File.join(dist_path, "*.apk"))
       )
     # when 'fdroid'
     #   if (fastlaneOptions['sftp'])
