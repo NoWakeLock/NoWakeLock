@@ -19,7 +19,7 @@ android {
         minSdkVersion 24
         compileSdk 35
         targetSdk 35
-        versionCode 72
+        versionCode 73
         versionName "3.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -36,7 +36,7 @@ android {
 
     android.applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "${buildType.name}-${versionName}.apk"
+            outputFileName = "${buildType.name}-${versionName}-${versionCode}.apk"
         }
     }
     //room test
@@ -55,6 +55,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -95,18 +96,18 @@ class RoomSchemaArgProvider implements CommandLineArgumentProvider {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20'
 
     //ktx
     implementation 'androidx.core:core-ktx:1.16.0'
     debugImplementation 'androidx.compose.ui:ui-tooling'
-    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest:1.8.0'
     // xposed
     compileOnly files('libs/api-82.jar')
     compileOnly files('libs/api-82-sources.jar')
 
     // Immutable collections for better performance
-    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7'
+    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8'
 
     //compose
     implementation 'androidx.appcompat:appcompat:1.7.0'
@@ -122,7 +123,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
 
 
-    implementation "androidx.datastore:datastore-preferences:1.1.4"
+    implementation 'androidx.datastore:datastore-preferences:1.1.4'
     implementation 'androidx.compose.material:material-icons-extended' // 更多图标
     // SystemUiController已弃用，已改用官方的enableEdgeToEdge() API
     // implementation "com.google.accompanist:accompanist-systemuicontroller:0.34.0" // 系统 UI 控制
@@ -130,13 +131,13 @@ dependencies {
 
     // Test dependencies
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:4.11.0'
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
+    testImplementation 'org.mockito:mockito-core:5.17.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
-    testImplementation 'org.robolectric:robolectric:4.11.1'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
     testImplementation 'androidx.test:core:1.6.1'
     
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
@@ -170,7 +171,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.9.1'
 
     //gson
-    implementation 'com.google.code.gson:gson:2.12.1'
+    implementation 'com.google.code.gson:gson:2.13.1'
     //Klaxon for json
     implementation 'com.beust:klaxon:5.6'
 
@@ -180,5 +181,5 @@ dependencies {
     implementation "androidx.core:core-splashscreen:1.0.1" // splash screen
 
     // Kotlin Serialization for type-safe navigation
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1'
 }
