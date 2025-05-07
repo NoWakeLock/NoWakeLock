@@ -234,36 +234,34 @@ fun calculateTime(
         return 0L
     }
 
-    val now = System.currentTimeMillis() // Get the current time for ongoing events.
-    var totalDuration = 0L // Accumulator for the total duration.
-
-    var currentStart = events[0].startTime
-    var currentEnd = events[0].endTime ?: now
-
-    if (events[0].endTime == null) {
-        return now - currentStart
+    // filter completed events
+    val completedEvents = events.filter { it.endTime != null }
+    
+    if (completedEvents.isEmpty()) {
+        return 0L
     }
 
-    // Loop through the rest of the events, starting from the second one (index 1).
-    for (i in 1 until events.size) {
-        val event = events[i]
+    var totalDuration = 0L
+    var currentStart = completedEvents[0].startTime
+    var currentEnd = completedEvents[0].endTime!!
+
+    for (i in 1 until completedEvents.size) {
+        val event = completedEvents[i]
         val eventStart = event.startTime
-        val eventEnd = event.endTime ?: now
-        val isOngoing = event.endTime == null
+        val eventEnd = event.endTime!!
 
         if (eventStart < currentEnd) {
+            // event overlap, update current end time
             currentEnd = max(currentEnd, eventEnd)
         } else {
+            // event not overlap, calculate current segment duration and start new segment
             totalDuration += (currentEnd - currentStart)
             currentStart = eventStart
             currentEnd = eventEnd
         }
-
-        if (isOngoing) {
-            totalDuration += (now - currentStart)
-            return totalDuration
-        }
     }
+    
+    // add last segment duration
     totalDuration += (currentEnd - currentStart)
     return totalDuration
 }
