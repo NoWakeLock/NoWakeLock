@@ -145,18 +145,18 @@ class DAInfoRepositoryImpl(private val context: Context) : DAInfoRepository {
 
     /**
      * Find the best matching entry based on ID and optional package name
-     * @param id The ID to match
+     * @param name The ID to match
      * @param packageName Optional package name for more precise matching
      * @return The best matching DAInfoEntry or null if none found
      */
-    private fun findBestMatch(id: String, packageName: String?): DAInfoEntry? {
+    private fun findBestMatch(name: String, packageName: String?): DAInfoEntry? {
         // Return null if infoData is null
         val jsonData = infoData ?: return null
         
         // Try exact match (ID + packageName)
         if (packageName != null) {
             val exactMatch = jsonData.items.find {
-                it.id.equals(id, ignoreCase = true) &&
+                it.name.equals(name, ignoreCase = true) &&
                         it.package_name.equals(packageName, ignoreCase = true)
             }
 
@@ -166,7 +166,7 @@ class DAInfoRepositoryImpl(private val context: Context) : DAInfoRepository {
         }
 
         // Try ID match only
-        val idMatch = jsonData.items.find { it.id.equals(id, ignoreCase = true) }
+        val idMatch = jsonData.items.find { it.name.equals(name, ignoreCase = true) }
         if (idMatch != null) {
             return idMatch.toDAInfoEntry()
         }
@@ -174,7 +174,7 @@ class DAInfoRepositoryImpl(private val context: Context) : DAInfoRepository {
         // Try pattern match (for future implementation)
         val patternMatch = jsonData.items.find { entry ->
             entry.pattern?.let { pattern ->
-                id.matches(Regex(pattern))
+                name.matches(Regex(pattern))
             } ?: false
         }
 
