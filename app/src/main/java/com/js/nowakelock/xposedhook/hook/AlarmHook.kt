@@ -11,9 +11,12 @@ import com.js.nowakelock.xposedhook.XpUtil
 import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import java.lang.reflect.Method
 import java.util.*
+import java.util.concurrent.atomic.AtomicReference
 
 
 class AlarmHook {
@@ -25,83 +28,226 @@ class AlarmHook {
         @Volatile
         private var lastAllowTime = HashMap<String, Long>()//last allow time
 
-        fun hookAlarm(lpparam: XC_LoadPackage.LoadPackageParam) {
+        // Data class to store valid parameter positions
+        private data class AlarmParamPositions(
+            val triggerListPos: Int      // Position of triggerList parameter
+        )
 
-            when (Build.VERSION.SDK_INT) {
-                //Try for alarm hooks for API levels >= 31 (S)
-                in Build.VERSION_CODES.S..40 -> alarmHook31to32(lpparam)
-                //Try for alarm hooks for API levels 29-30 (Q R)
-                in Build.VERSION_CODES.Q..Build.VERSION_CODES.R -> alarmHook29to30(lpparam)
-                //Try for alarm hooks for API levels < 29 > 24.(N ~ P)
-                in Build.VERSION_CODES.N..Build.VERSION_CODES.P -> alarmHook24to28(lpparam)
+        // Cache for parameter positions using AtomicReference for thread safety
+        @Volatile
+        private var alarmPositionsRef: AtomicReference<AlarmParamPositions?> =
+            AtomicReference(null)
+
+        // Flag to indicate if all extraction attempts have failed
+        @Volatile
+        private var alarmHookFailed = false
+
+        // Predefined parameter positions for different Android versions
+        private val alarmPositionStrategies = listOf(
+            // Android 12+ (API 31+)
+            AlarmParamPositions(0),
+            // Android 10-11 (API 29-30)
+            AlarmParamPositions(0),
+            // Android 7-9 (API 24-28)
+            AlarmParamPositions(0)
+        )
+
+        fun hookAlarm(lpparam: XC_LoadPackage.LoadPackageParam) {
+            XpUtil.log("Hooking Alarm ${Build.VERSION.SDK_INT}")
+
+            // Use unified hook approach for all Android versions
+            unifiedAlarmHook(lpparam)
+        }
+
+        /**
+         * Unified alarm hook approach that works across all Android versions
+         */
+        private fun unifiedAlarmHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+            try {
+                // Get the AlarmManagerService class based on Android version
+                val alarmManagerServiceClass = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // Android 12+ (API 31+)
+                    XposedHelpers.findClass("com.android.server.alarm.AlarmManagerService", lpparam.classLoader)
+                } else {
+                    // Android 11 and below (API <= 30)
+                    XposedHelpers.findClass("com.android.server.AlarmManagerService", lpparam.classLoader)
+                }
+
+                // Hook triggerAlarmsLocked methods
+                hookAlarmMethods(alarmManagerServiceClass, lpparam)
+            } catch (e: Throwable) {
+                XpUtil.log("Error in unified alarm hook: ${e.message}")
+                e.printStackTrace()
             }
         }
 
-        /*
-        * https://cs.android.com/android/platform/superproject/+/master:frameworks/base/apex/jobscheduler/service/java/com/android/server/alarm/AlarmManagerService.java;l=171;bpv=0;bpt=1?hl=zh-cn
-        * */
-        private fun alarmHook31to32(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.alarm.AlarmManagerService",
-                lpparam.classLoader,
-                "triggerAlarmsLocked",
-                ArrayList::class.java, Long::class.javaPrimitiveType,
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        val triggerList = param.args[0] as ArrayList<*>
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookAlarmsLocked(
-//                            param,
-                            triggerList, context
-                        )
-                    }
-                })
+        /**
+         * Hook all triggerAlarmsLocked methods
+         */
+        private fun hookAlarmMethods(
+            alarmManagerServiceClass: Class<*>,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ) {
+            try {
+                // Find all methods named triggerAlarmsLocked
+                val methods =
+                    alarmManagerServiceClass.declaredMethods.filter { it.name == "triggerAlarmsLocked" }
+
+                XpUtil.log("Found ${methods.size} triggerAlarmsLocked methods")
+
+                if (methods.isEmpty()) {
+                    XpUtil.log("No triggerAlarmsLocked methods found!")
+                    return
+                }
+
+                // Hook each method found
+                for (method in methods) {
+                    hookAlarmMethod(method, lpparam)
+                }
+            } catch (e: Throwable) {
+                XpUtil.log("Error hooking triggerAlarmsLocked methods: ${e.message}")
+                e.printStackTrace()
+            }
         }
 
-        private fun alarmHook29to30(lpparam: XC_LoadPackage.LoadPackageParam) {
+        /**
+         * Hook a specific triggerAlarmsLocked method with parameter caching
+         */
+        private fun hookAlarmMethod(
+            method: Method,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ) {
+            XpUtil.log("Hooking triggerAlarmsLocked method with signature: ${method.parameterTypes.joinToString()}")
 
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.AlarmManagerService",
-                lpparam.classLoader,
-                "triggerAlarmsLocked",
-                ArrayList::class.java, Long::class.javaPrimitiveType,
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        val triggerList = param.args[0] as ArrayList<*>
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookAlarmsLocked(
-//                            param,
-                            triggerList, context
-                        )
+            XposedBridge.hookMethod(method, object : XC_MethodHook() {
+                @Throws(Throwable::class)
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    try {
+                        // Check if we have cached positions
+                        val positions = alarmPositionsRef.get()
+
+                        if (positions != null) {
+                            if(XpNSP.getInstance().getDebug()){
+                                XpUtil.log("Using cached positions for triggerAlarmsLocked on Android ${Build.VERSION.SDK_INT}")
+                            }
+                            // Use cached positions to extract parameters
+                            extractParametersFromCache(param, positions)
+                        } else if (!alarmHookFailed) {
+                            if (XpNSP.getInstance().getDebug()){
+                                XpUtil.log("No cached positions for triggerAlarmsLocked, trying to extract parameters")
+                            }
+                            // Try to extract parameters using strategies
+                            extractAndCacheAlarmParameters(param)
+                        }
+                    } catch (e: Exception) {
+                        XpUtil.log("Error in triggerAlarmsLocked hook callback: ${e.message}")
+                        e.printStackTrace()
                     }
-                })
+                }
+            })
         }
 
-        private fun alarmHook24to28(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.AlarmManagerService",
-                lpparam.classLoader,
-                "triggerAlarmsLocked",
-                ArrayList::class.java, Long::class.javaPrimitiveType, Long::class.javaPrimitiveType,
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        val triggerList = param.args[0] as ArrayList<*>
-//                        val nowELAPSED = param.args[1] as Long
-//                        val nowRTC = param.args[2] as Long
-//                            log("Alarm N ${triggerList.size} $nowELAPSED $nowRTC")
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookAlarmsLocked(
-//                            param,
-                            triggerList, context
-                        )
-                    }
-                })
+        /**
+         * Extract parameters using cached positions
+         */
+        private fun extractParametersFromCache(
+            param: XC_MethodHook.MethodHookParam,
+            positions: AlarmParamPositions
+        ) {
+            try {
+                val args = param.args
+
+                // Extract parameters using cached position
+                val triggerList = args[positions.triggerListPos] as? ArrayList<*>
+
+                // Process the alarm list if parameters are valid
+                if (triggerList != null) {
+                    val context: Context = AndroidAppHelper.currentApplication().applicationContext
+                    hookAlarmsLocked(triggerList, context)
+                }
+            } catch (e: Exception) {
+                XpUtil.log("Error extracting parameters from cache: ${e.message}")
+            }
+        }
+
+        /**
+         * Try to extract and cache parameters for triggerAlarmsLocked
+         */
+        private fun extractAndCacheAlarmParameters(param: XC_MethodHook.MethodHookParam) {
+            val args = param.args
+
+            // First try the strategy for current Android version
+            val androidVersionIndex = when (Build.VERSION.SDK_INT) {
+                in Build.VERSION_CODES.S..Int.MAX_VALUE -> 0 // Android 12+
+                in Build.VERSION_CODES.Q..Build.VERSION_CODES.R -> 1 // Android 10-11
+                in Build.VERSION_CODES.N..Build.VERSION_CODES.P -> 2 // Android 7-9
+                else -> 0 // Default to newest version strategy
+            }
+
+            // Try the expected strategy for current version first
+            if (androidVersionIndex < alarmPositionStrategies.size) {
+                val positions = alarmPositionStrategies[androidVersionIndex]
+                if (tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    alarmPositionsRef.set(positions)
+                    XpUtil.log("Successfully extracted parameters for triggerAlarmsLocked on Android ${Build.VERSION.SDK_INT}")
+                    return
+                } else {
+                    // Log that the expected strategy failed
+                    XpUtil.log("Expected triggerAlarmsLocked parameter positions for Android ${Build.VERSION.SDK_INT} failed")
+                }
+            }
+
+            // Try all strategies if the expected one failed
+            XpUtil.log("Trying all strategies for triggerAlarmsLocked on Android ${Build.VERSION.SDK_INT}")
+            for ((index, positions) in alarmPositionStrategies.withIndex()) {
+                if (index != androidVersionIndex && tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    alarmPositionsRef.set(positions)
+
+                    // Log warning that we're using different positions than expected
+                    XpUtil.log("Warning: Using unexpected parameter positions for triggerAlarmsLocked on Android ${Build.VERSION.SDK_INT}")
+                    XpUtil.log("Expected index: $androidVersionIndex, Actual index: $index")
+                    return
+                }
+            }
+
+            // If all strategies failed, mark as failed
+            alarmHookFailed = true
+            XpUtil.log("All triggerAlarmsLocked parameter extraction strategies failed")
+        }
+
+        /**
+         * Try to extract parameters using specific positions
+         */
+        private fun tryExtractWithPositions(
+            param: XC_MethodHook.MethodHookParam,
+            positions: AlarmParamPositions
+        ): Boolean {
+            val args = param.args
+
+            // Check if positions are valid for this args array
+            if (args.size <= positions.triggerListPos) {
+                return false
+            }
+
+            try {
+                // Extract parameters
+                val triggerList = args[positions.triggerListPos] as? ArrayList<*>
+
+                // Validate parameters
+                if (triggerList != null) {
+                    // Parameters are valid, process the alarm list
+                    val context: Context = AndroidAppHelper.currentApplication().applicationContext
+                    hookAlarmsLocked(triggerList, context)
+                    return true
+                }
+            } catch (e: Exception) {
+                // This positions strategy failed
+                return false
+            }
+
+            return false
         }
 
         // handle alarm
