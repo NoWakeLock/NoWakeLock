@@ -18,6 +18,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.lang.reflect.Method
 import com.js.nowakelock.xposedhook.hook.findMethod
 import com.js.nowakelock.xposedhook.hook.MethodCondition
+import java.util.concurrent.atomic.AtomicReference
 
 class ServiceHook {
     companion object {
@@ -25,60 +26,90 @@ class ServiceHook {
         private val type = Type.Service
         var booted = false
 
-        fun hookService(lpparam: XC_LoadPackage.LoadPackageParam) {
+        // Data class to store valid parameter positions
+        private data class ServiceParamPositions(
+            val servicePos: Int,      // Position of Intent parameter
+            val packagePos: Int,      // Position of callingPackage parameter
+            val userIdPos: Int        // Position of userId parameter
+        )
 
+        // Cache for parameter positions using AtomicReference for thread safety
+        @Volatile
+        private var startServicePositionsRef: AtomicReference<ServiceParamPositions?> =
+            AtomicReference(null)
+
+        @Volatile
+        private var bindServicePositionsRef: AtomicReference<ServiceParamPositions?> =
+            AtomicReference(null)
+
+        // Flags to indicate if all extraction attempts have failed
+        @Volatile
+        private var startServiceHookFailed = false
+
+        @Volatile
+        private var bindServiceHookFailed = false
+
+        // Predefined parameter positions for different Android versions
+        private val startServicePositionStrategies = listOf(
+            // Android 14-15 (API 34-35)
+            ServiceParamPositions(1, 6, 8),
+            // Android 12-13 (API 31-33) 
+            ServiceParamPositions(1, 6, 8),
+            // Android 11 (API 30)
+            ServiceParamPositions(1, 6, 8),
+            // Android 10 (API 29)
+            ServiceParamPositions(1, 6, 7),
+            // Android 8-9 (API 26-28)
+            ServiceParamPositions(1, 6, 7),
+            // Android 7 (API 24-25)
+            ServiceParamPositions(1, 5, 6)
+        )
+
+        // Predefined parameter positions for bindServiceLocked
+        private val bindServicePositionStrategies = listOf(
+            // Android 14+ (API 34+)
+            ServiceParamPositions(2, 11, 12),
+            // Android 12-13 (API 31-33)
+            ServiceParamPositions(2, 7, 8),
+            // Older versions
+            ServiceParamPositions(2, 7, 8)
+        )
+
+        fun hookService(lpparam: XC_LoadPackage.LoadPackageParam) {
             XpUtil.log("Hooking Service ${Build.VERSION.SDK_INT}")
 
-            when (Build.VERSION.SDK_INT) {
-                //Try for service hooks for API levels > 35 (Android 16+)
-                in (Build.VERSION_CODES.VANILLA_ICE_CREAM)..Int.MAX_VALUE -> {
-                    XpUtil.log("Using flexible hook for Android 16+")
-                    flexibleServiceHooks(lpparam)
-                }
-                //Try for service hooks for API levels 34 ~ 35 (U), Android 14 15
-//                Build.VERSION_CODES.VANILLA_ICE_CREAM -> serviceHook34to35(lpparam)
-                Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> serviceHook34to35(lpparam)
-                //Try for service hooks for API 31 ~ 33 (T), Android 12 13
-                Build.VERSION_CODES.TIRAMISU -> serviceHook31to33(lpparam)
-                Build.VERSION_CODES.S_V2 -> serviceHook31to33(lpparam)
-                Build.VERSION_CODES.S -> serviceHook31to33(lpparam)
-                //Try for service hooks for API levels = 30 (R)
-                Build.VERSION_CODES.R -> serviceHook30(lpparam)
-                //Try for service hooks for API levels = 29 (Q)
-                Build.VERSION_CODES.Q -> serviceHook29(lpparam)
-                //Try for service hooks for API levels 26 ~ 28 (O ~ P)
-                in Build.VERSION_CODES.O..Build.VERSION_CODES.P -> serviceHook26to28(lpparam)
-                //Try for service hooks for API levels 24 ~ 25 (N)
-                in Build.VERSION_CODES.N..Build.VERSION_CODES.N_MR1 -> serviceHook24to25(lpparam)
-                //For unknown versions, try flexible hook as fallback
-                else -> {
-                    XpUtil.log("Unknown Android version, trying flexible hook as fallback")
-                    flexibleServiceHooks(lpparam)
-                }
-            }
+            // Use unified hook approach for all Android versions
+            unifiedServiceHook(lpparam)
         }
 
         /**
-         * Flexible service hooks that handle both startServiceLocked and bindServiceLocked methods
+         * Unified service hook approach that works across all Android versions
          */
-        private fun flexibleServiceHooks(lpparam: XC_LoadPackage.LoadPackageParam) {
-            // Hook startServiceLocked methods
-            flexibleStartServiceHook(lpparam)
-            
-            // Hook bindServiceLocked methods
-            flexibleBindServiceHook(lpparam)
-        }
-
-        /**
-         * Flexible hook approach that hooks all methods named "startServiceLocked"
-         * and extracts parameters based on common positions observed across Android versions.
-         */
-        private fun flexibleStartServiceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun unifiedServiceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
             try {
                 // Get the ActiveServices class
                 val activeServicesClass =
                     findClass("com.android.server.am.ActiveServices", lpparam.classLoader)
 
+                // Hook startServiceLocked methods
+                hookStartServiceMethods(activeServicesClass, lpparam)
+
+                // Hook bindServiceLocked methods
+                hookBindServiceMethods(activeServicesClass, lpparam)
+            } catch (e: Throwable) {
+                XpUtil.log("Error in unified service hook: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+
+        /**
+         * Hook all startServiceLocked methods
+         */
+        private fun hookStartServiceMethods(
+            activeServicesClass: Class<*>,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ) {
+            try {
                 // Find all methods named startServiceLocked
                 val methods =
                     activeServicesClass.declaredMethods.filter { it.name == "startServiceLocked" }
@@ -86,8 +117,7 @@ class ServiceHook {
                 XpUtil.log("Found ${methods.size} startServiceLocked methods")
 
                 if (methods.isEmpty()) {
-                    XpUtil.log("No startServiceLocked methods found! Trying to discover methods...")
-                    discoverPotentialServiceMethods(activeServicesClass)
+                    XpUtil.log("No startServiceLocked methods found!")
                     return
                 }
 
@@ -96,42 +126,42 @@ class ServiceHook {
                     hookStartServiceLockedMethod(method, lpparam)
                 }
             } catch (e: Throwable) {
-                XpUtil.log("Error in flexible startServiceLocked hook: ${e.message}")
+                XpUtil.log("Error hooking startServiceLocked methods: ${e.message}")
                 e.printStackTrace()
             }
         }
 
         /**
-         * Flexible hook approach that hooks all methods named "bindServiceLocked"
-         * and extracts parameters based on common positions observed across Android versions.
+         * Hook all bindServiceLocked methods
          */
-        private fun flexibleBindServiceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun hookBindServiceMethods(
+            activeServicesClass: Class<*>,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ) {
             try {
-                // Get the ActiveServices class
-                val activeServicesClass = findClass("com.android.server.am.ActiveServices", lpparam.classLoader)
-                
                 // Find all methods named bindServiceLocked
-                val methods = activeServicesClass.declaredMethods.filter { it.name == "bindServiceLocked" }
-                
+                val methods =
+                    activeServicesClass.declaredMethods.filter { it.name == "bindServiceLocked" }
+
                 XpUtil.log("Found ${methods.size} bindServiceLocked methods")
-                
+
                 if (methods.isEmpty()) {
                     XpUtil.log("No bindServiceLocked methods found!")
                     return
                 }
-                
+
                 // Hook each method found
                 for (method in methods) {
                     hookBindServiceLockedMethod(method, lpparam)
                 }
             } catch (e: Throwable) {
-                XpUtil.log("Error in flexible bindServiceLocked hook: ${e.message}")
+                XpUtil.log("Error hooking bindServiceLocked methods: ${e.message}")
                 e.printStackTrace()
             }
         }
 
         /**
-         * Hooks a specific startServiceLocked method and tries to extract parameters
+         * Hook a specific startServiceLocked method with parameter caching
          */
         private fun hookStartServiceLockedMethod(
             method: Method,
@@ -143,22 +173,21 @@ class ServiceHook {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     try {
-                        // Extract parameters with adaptive strategy
-                        val extractionResult = tryExtractParameters(param.args)
+                        // Check if we have cached positions
+                        val positions = startServicePositionsRef.get()
 
-                        if (extractionResult != null) {
-                            val (service, callingPackage, userId) = extractionResult
-                            val context: Context =
-                                AndroidAppHelper.currentApplication().applicationContext
-
-                            // XpUtil.log(
-                            //     "Successfully extracted startService parameters: service=${service.component}, " +
-                            //             "package=$callingPackage, userId=$userId"
-                            // )
-
-                            hookStartServiceLocked(param, service, callingPackage, context, userId)
-                        } else {
-                            XpUtil.log("Failed to extract required startService parameters from args: ${param.args.joinToString { it?.javaClass?.simpleName ?: "null" }}")
+                        if (positions != null) {
+                            if(XpNSP.getInstance().getDebug()){
+                                XpUtil.log("Using cached positions for startServiceLocked on Android ${Build.VERSION.SDK_INT}")
+                            }
+                            // Use cached positions to extract parameters
+                            extractParametersFromCache(param, positions)
+                        } else if (!startServiceHookFailed) {
+                            if (XpNSP.getInstance().getDebug()){
+                                XpUtil.log("No cached positions for startServiceLocked, trying to extract parameters")
+                            }
+                            // Try to extract parameters using strategies
+                            extractAndCacheStartServiceParameters(param)
                         }
                     } catch (e: Exception) {
                         XpUtil.log("Error in startServiceLocked hook callback: ${e.message}")
@@ -169,30 +198,33 @@ class ServiceHook {
         }
 
         /**
-         * Hooks a specific bindServiceLocked method and tries to extract parameters
+         * Hook a specific bindServiceLocked method with parameter caching
          */
-        private fun hookBindServiceLockedMethod(method: Method, lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun hookBindServiceLockedMethod(
+            method: Method,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ) {
             XpUtil.log("Hooking bindServiceLocked method with signature: ${method.parameterTypes.joinToString()}")
-            
+
             XposedBridge.hookMethod(method, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     try {
-                        // Extract parameters with adaptive strategy
-                        val extractionResult = tryExtractBindParameters(param.args)
-                        
-                        if (extractionResult != null) {
-                            val (service, callingPackage, userId) = extractionResult
-                            val context: Context = AndroidAppHelper.currentApplication().applicationContext
-                            
-                            // XpUtil.log(
-                            //     "Successfully extracted bindService parameters: service=${service.component}, " +
-                            //     "package=$callingPackage, userId=$userId"
-                            // )
-                            
-                            hookStartServiceLocked(param, service, callingPackage, context, userId)
-                        } else {
-                            XpUtil.log("Failed to extract required bindService parameters from args: ${param.args.joinToString { it?.javaClass?.simpleName ?: "null" }}")
+                        // Check if we have cached positions
+                        val positions = bindServicePositionsRef.get()
+
+                        if (positions != null) {
+                            if(XpNSP.getInstance().getDebug()){
+                                XpUtil.log("Using cached positions for bindServiceLocked on Android ${Build.VERSION.SDK_INT}")
+                            }
+                            // Use cached positions to extract parameters
+                            extractParametersFromCache(param, positions)
+                        } else if (!bindServiceHookFailed) {
+                            if (XpNSP.getInstance().getDebug()){
+                                XpUtil.log("No cached positions for bindServiceLocked, trying to extract parameters")
+                            }
+                            // Try to extract parameters using strategies
+                            extractAndCacheBindServiceParameters(param)
                         }
                     } catch (e: Exception) {
                         XpUtil.log("Error in bindServiceLocked hook callback: ${e.message}")
@@ -203,494 +235,164 @@ class ServiceHook {
         }
 
         /**
-         * Attempts to extract the required parameters for startServiceLocked using various strategies
+         * Extract parameters using cached positions
          */
-        private fun tryExtractParameters(args: Array<Any?>): Triple<Intent, String, Int>? {
-            // Common parameter positions observed across Android versions
-            val strategies = listOf(
-                Triple(1, 6, 8),  // Common in recent versions
-                Triple(1, 6, 7),  // Common in some older versions
-                Triple(1, 5, 6)   // Common in even older versions
-            )
+        private fun extractParametersFromCache(
+            param: XC_MethodHook.MethodHookParam,
+            positions: ServiceParamPositions
+        ) {
+            try {
+                val args = param.args
 
-            // Try each position strategy
-            for ((servicePos, packagePos, userIdPos) in strategies) {
-                if (args.size > maxOf(servicePos, packagePos, userIdPos)) {
-                    try {
-                        val service = args[servicePos] as? Intent
-                        val callingPackage = args[packagePos] as? String
-                        val userId = args[userIdPos] as? Int
+                // Extract parameters using cached positions
+                val service = args[positions.servicePos] as? Intent
+                val callingPackage = args[positions.packagePos] as? String
+                val userId = args[positions.userIdPos] as? Int
 
-                        if (service != null && callingPackage != null && userId != null) {
-//                            XpUtil.log("Successfully extracted startService parameters using positions: $servicePos, $packagePos, $userIdPos")
-                            return Triple(service, callingPackage, userId)
-                        }
-                    } catch (e: Exception) {
-                        // This strategy failed, try the next one
-                        continue
-                    }
+                // Process the service request if parameters are valid
+                if (service != null && callingPackage != null && userId != null) {
+                    val context: Context = AndroidAppHelper.currentApplication().applicationContext
+                    hookStartServiceLocked(param, service, callingPackage, context, userId)
                 }
-            }
-
-            // If position-based strategies failed, try type-based extraction
-            return tryExtractParametersByType(args)
-        }
-
-        /**
-         * Attempts to extract the required parameters for bindServiceLocked using various strategies
-         */
-        private fun tryExtractBindParameters(args: Array<Any?>): Triple<Intent, String, Int>? {
-            // Common parameter positions observed across Android versions for bindServiceLocked
-            val strategies = listOf(
-                Triple(2, 11, 12),  // Android 14+
-                Triple(2, 7, 8)     // Android 12 and below
-            )
-            
-            // Try each position strategy
-            for ((servicePos, packagePos, userIdPos) in strategies) {
-                if (args.size > maxOf(servicePos, packagePos, userIdPos)) {
-                    try {
-                        val service = args[servicePos] as? Intent
-                        val callingPackage = args[packagePos] as? String
-                        val userId = args[userIdPos] as? Int
-                        
-                        if (service != null && callingPackage != null && userId != null) {
-//                            XpUtil.log("Successfully extracted bindService parameters using positions: $servicePos, $packagePos, $userIdPos")
-                            return Triple(service, callingPackage, userId)
-                        }
-                    } catch (e: Exception) {
-                        // This strategy failed, try the next one
-                        continue
-                    }
-                }
-            }
-            
-            // If position-based strategies failed, try type-based extraction
-            return tryExtractBindParametersByType(args)
-        }
-
-        /**
-         * Attempts to extract parameters for startServiceLocked based on their types
-         */
-        private fun tryExtractParametersByType(args: Array<Any?>): Triple<Intent, String, Int>? {
-            var service: Intent? = null
-            var callingPackage: String? = null
-            var userId: Int? = null
-            val stringParams = mutableListOf<Pair<Int, String>>()
-            val intParams = mutableListOf<Pair<Int, Int>>()
-
-            // First pass: identify all parameters by type
-            for (i in args.indices) {
-                when (val arg = args[i]) {
-                    is Intent -> service = arg
-                    is String -> stringParams.add(Pair(i, arg))
-                    is Int -> intParams.add(Pair(i, arg))
-                }
-            }
-
-            // If we have an Intent, look for the likely package name and userId
-            if (service != null) {
-                // For package name: typically it's after the 5th parameter
-                // and is one of the first few Strings after the Intent
-                val packageCandidates = stringParams.filter { it.first > 3 }
-                if (packageCandidates.isNotEmpty()) {
-                    // Take the first or second String after initial params, depending on API pattern
-                    callingPackage =
-                        if (packageCandidates.size > 1) packageCandidates[1].second else packageCandidates[0].second
-                }
-
-                // For userId: typically it's an Int parameter after the 6th position
-                val userIdCandidates = intParams.filter { it.first > 5 }
-                if (userIdCandidates.isNotEmpty()) {
-                    // Usually the first Int that could represent a userId (small positive number)
-                    userId = userIdCandidates.firstOrNull { it.second in 0..1000 }?.second
-                        ?: userIdCandidates[0].second
-                }
-            }
-
-            return if (service != null && callingPackage != null && userId != null) {
-                XpUtil.log("Extracted startService parameters by type analysis")
-                Triple(service, callingPackage, userId)
-            } else {
-                null
+            } catch (e: Exception) {
+                XpUtil.log("Error extracting parameters from cache: ${e.message}")
             }
         }
 
         /**
-         * Attempts to extract parameters for bindServiceLocked based on their types
+         * Try to extract and cache parameters for startServiceLocked
          */
-        private fun tryExtractBindParametersByType(args: Array<Any?>): Triple<Intent, String, Int>? {
-            var service: Intent? = null
-            var callingPackage: String? = null
-            var userId: Int? = null
-            val stringParams = mutableListOf<Pair<Int, String>>()
-            val intParams = mutableListOf<Pair<Int, Int>>()
-            
-            // First pass: identify all parameters by type
-            for (i in args.indices) {
-                when (val arg = args[i]) {
-                    is Intent -> service = arg
-                    is String -> stringParams.add(Pair(i, arg))
-                    is Int -> intParams.add(Pair(i, arg))
+        private fun extractAndCacheStartServiceParameters(param: XC_MethodHook.MethodHookParam) {
+            val args = param.args
+
+            // First try the strategy for current Android version
+            val androidVersionIndex = when (Build.VERSION.SDK_INT) {
+                in Build.VERSION_CODES.UPSIDE_DOWN_CAKE..Int.MAX_VALUE -> 0 // Android 14+
+                in Build.VERSION_CODES.S..Build.VERSION_CODES.TIRAMISU -> 1 // Android 12-13
+                Build.VERSION_CODES.R -> 2 // Android 11
+                Build.VERSION_CODES.Q -> 3 // Android 10
+                in Build.VERSION_CODES.O..Build.VERSION_CODES.P -> 4 // Android 8-9
+                in Build.VERSION_CODES.N..Build.VERSION_CODES.N_MR1 -> 5 // Android 7
+                else -> 0 // Default to newest version strategy
+            }
+
+            // Try the expected strategy for current version first
+            if (androidVersionIndex < startServicePositionStrategies.size) {
+                val positions = startServicePositionStrategies[androidVersionIndex]
+                if (tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    startServicePositionsRef.set(positions)
+                    XpUtil.log("Successfully extracted parameters for startServiceLocked on Android ${Build.VERSION.SDK_INT}")
+                    return
+                } else {
+                    // Log that the expected strategy failed
+                    XpUtil.log("Expected startServiceLocked parameter positions for Android ${Build.VERSION.SDK_INT} failed")
                 }
             }
-            
-            // If we have an Intent, look for the likely package name and userId
-            if (service != null) {
-                // For package name in bindServiceLocked: typically it's after the 5th parameter
-                // and is one of the later Strings
-                val packageCandidates = stringParams.filter { it.first > 3 }
-                if (packageCandidates.isNotEmpty()) {
-                    // For bindServiceLocked, often one of the later String parameters
-                    callingPackage = packageCandidates.lastOrNull()?.second ?: packageCandidates[0].second
-                }
-                
-                // For userId: typically it's a later Int parameter
-                val userIdCandidates = intParams.filter { it.first > 5 }
-                if (userIdCandidates.isNotEmpty()) {
-                    // Usually the first Int that could represent a userId (small positive number)
-                    userId = userIdCandidates.firstOrNull { it.second in 0..1000 }?.second
-                        ?: userIdCandidates.lastOrNull()?.second
+
+            // Try all strategies if the expected one failed
+            XpUtil.log("Trying all strategies for startServiceLocked on Android ${Build.VERSION.SDK_INT}")
+            for ((index, positions) in startServicePositionStrategies.withIndex()) {
+                if (index != androidVersionIndex && tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    startServicePositionsRef.set(positions)
+
+                    // Log warning that we're using different positions than expected
+                    XpUtil.log("Warning: Using unexpected parameter positions for startServiceLocked on Android ${Build.VERSION.SDK_INT}")
+                    XpUtil.log("Expected index: $androidVersionIndex, Actual index: $index")
+                    return
                 }
             }
-            
-            return if (service != null && callingPackage != null && userId != null) {
-                XpUtil.log("Extracted bindService parameters by type analysis")
-                Triple(service, callingPackage, userId)
-            } else {
-                null
-            }
+
+            // If all strategies failed, mark as failed
+            startServiceHookFailed = true
+            XpUtil.log("All startServiceLocked parameter extraction strategies failed")
         }
 
         /**
-         * Discovers potential service-related methods when startServiceLocked cannot be found
+         * Try to extract and cache parameters for bindServiceLocked
          */
-        private fun discoverPotentialServiceMethods(activeServicesClass: Class<*>) {
-            val serviceMethods = activeServicesClass.declaredMethods.filter {
-                it.name.contains("service", ignoreCase = true) ||
-                        it.name.contains("Service", ignoreCase = true)
+        private fun extractAndCacheBindServiceParameters(param: XC_MethodHook.MethodHookParam) {
+            val args = param.args
+
+            // First try the strategy for current Android version
+            val androidVersionIndex = when (Build.VERSION.SDK_INT) {
+                in Build.VERSION_CODES.UPSIDE_DOWN_CAKE..Int.MAX_VALUE -> 0 // Android 14+
+                in Build.VERSION_CODES.S..Build.VERSION_CODES.TIRAMISU -> 1 // Android 12-13
+                else -> 2 // Older versions
             }
 
-            XpUtil.log("Potential service methods: ${serviceMethods.joinToString { it.name }}")
-
-            // Look specifically for methods that might be renamed versions of startServiceLocked
-            val potentialStartMethods = serviceMethods.filter {
-                it.name.contains("start", ignoreCase = true) &&
-                        it.parameterTypes.any { param -> param == Intent::class.java }
+            // Try the expected strategy for current version first
+            if (androidVersionIndex < bindServicePositionStrategies.size) {
+                val positions = bindServicePositionStrategies[androidVersionIndex]
+                if (tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    bindServicePositionsRef.set(positions)
+                    XpUtil.log("Successfully extracted parameters for bindServiceLocked on Android ${Build.VERSION.SDK_INT}")
+                    return
+                } else {
+                    // Log that the expected strategy failed
+                    XpUtil.log("Expected bindServiceLocked parameter positions for Android ${Build.VERSION.SDK_INT} failed")
+                }
             }
 
-            if (potentialStartMethods.isNotEmpty()) {
-                XpUtil.log(
-                    "Potential start service methods: ${
-                        potentialStartMethods.joinToString {
-                            "${it.name}(${it.parameterTypes.joinToString { param -> param.simpleName }})"
-                        }
-                    }"
-                )
+            // Try all strategies if the expected one failed
+            XpUtil.log("Trying all strategies for bindServiceLocked on Android ${Build.VERSION.SDK_INT}")
+            for ((index, positions) in bindServicePositionStrategies.withIndex()) {
+                if (index != androidVersionIndex && tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    bindServicePositionsRef.set(positions)
+
+                    // Log warning that we're using different positions than expected
+                    XpUtil.log("Warning: Using unexpected parameter positions for bindServiceLocked on Android ${Build.VERSION.SDK_INT}")
+                    XpUtil.log("Expected index: $androidVersionIndex, Actual index: $index")
+                    return
+                }
             }
+
+            // If all strategies failed, mark as failed
+            bindServiceHookFailed = true
+            XpUtil.log("All bindServiceLocked parameter extraction strategies failed")
         }
 
-        private fun serviceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
+        /**
+         * Try to extract parameters using specific positions
+         */
+        private fun tryExtractWithPositions(
+            param: XC_MethodHook.MethodHookParam,
+            positions: ServiceParamPositions
+        ): Boolean {
+            val args = param.args
+
+            // Check if positions are valid for this args array
+            if (args.size <= maxOf(
+                    positions.servicePos,
+                    positions.packagePos,
+                    positions.userIdPos
                 )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[11] as String
-                    val userId: Int = it.args[12] as Int
-//                    XpUtil.log("bindServiceLocked " + service + " " + callingPackage + " " + userId)
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
+            ) {
+                return false
+            }
+
+            try {
+                // Extract parameters
+                val service = args[positions.servicePos] as? Intent
+                val callingPackage = args[positions.packagePos] as? String
+                val userId = args[positions.userIdPos] as? Int
+
+                // Validate parameters
+                if (service != null && callingPackage != null && userId != null && userId >= 0 && userId <= 1000) {
+                    // Parameters are valid, process the service request
+                    val context: Context = AndroidAppHelper.currentApplication().applicationContext
+                    hookStartServiceLocked(param, service, callingPackage, context, userId)
+                    return true
                 }
-        }
+            } catch (e: Exception) {
+                // This positions strategy failed
+                return false
+            }
 
-        // android 14 15
-        // https://cs.android.com/android/platform/superproject/+/android-14.0.0_r59:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=909
-        private fun serviceHook34to35(lpparam: XC_LoadPackage.LoadPackageParam) {
-
-            // bindServiceLocked
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
-                )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[11] as String
-                    val userId: Int = it.args[12] as Int
-//                    XpUtil.log("bindServiceLocked " + service + " " + callingPackage + " " + userId)
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
-                }
-
-            // startServiceLocked
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.am.ActiveServices",
-                lpparam.classLoader,
-                "startServiceLocked",
-                "android.app.IApplicationThread",
-                Intent::class.java,//service
-                String::class.java,//resolvedType
-                Int::class.javaPrimitiveType,//callingPid
-                Int::class.javaPrimitiveType,//callingUid
-                Boolean::class.java,//fgRequired
-                String::class.java,//callingPackage
-                String::class.java,//callingFeatureId
-                Int::class.javaPrimitiveType,//userId
-                Int::class.javaPrimitiveType,//sdkSandboxClientAppUid
-                String::class.java,//sdkSandboxClientAppPackage
-                String::class.java,//instanceName
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-//                        XpUtil.log("serviceHook31to32")
-                        val service = param.args[1] as Intent?
-                        val callingPackage = param.args[6] as String
-                        val userId: Int = param.args[8] as Int
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-                    }
-                })
-        }
-
-        // android 12-13
-        // https://cs.android.com/android/platform/superproject/+/android-12.1.0_r27:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=621
-        private fun serviceHook31to33(lpparam: XC_LoadPackage.LoadPackageParam) {
-
-            // bindServiceLocked
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
-                )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[7] as String
-                    val userId: Int = it.args[8] as Int
-//                    XpUtil.log("bindServiceLocked " + service + " " + callingPackage + " " + userId)
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
-                }
-
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.am.ActiveServices",
-                lpparam.classLoader,
-                "startServiceLocked",
-                "android.app.IApplicationThread",
-                Intent::class.java,//service
-                String::class.java,//resolvedType
-                Int::class.javaPrimitiveType,//callingPid
-                Int::class.javaPrimitiveType,//callingUid
-                Boolean::class.java,//fgRequired
-                String::class.java,//callingPackage
-                String::class.java,//callingFeatureId
-                Int::class.javaPrimitiveType,//userId
-                Boolean::class.java,//allowBackgroundActivityStarts
-                IBinder::class.java,
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-//                        XpUtil.log("serviceHook31to32")
-                        val service = param.args[1] as Intent?
-                        val callingPackage = param.args[6] as String
-                        val userId: Int = param.args[8] as Int
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-                    }
-                })
-        }
-
-        //https://cs.android.com/android/platform/superproject/+/android-10.0.0_r1:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java;l=408?q=ActiveServices&ss=android%2Fplatform%2Fsuperproject
-        private fun serviceHook30(lpparam: XC_LoadPackage.LoadPackageParam) {
-            XpUtil.log("Hooking Service for API levels 30")
-
-            // bindServiceLocked
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
-                )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[7] as String
-                    val userId: Int = it.args[8] as Int
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
-                }
-
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.am.ActiveServices",
-                lpparam.classLoader,
-                "startServiceLocked",
-                "android.app.IApplicationThread",
-                Intent::class.java,//service
-                String::class.java,//resolvedType
-                Int::class.javaPrimitiveType,//callingPid
-                Int::class.javaPrimitiveType,//callingUid
-                Boolean::class.java,//fgRequired
-                String::class.java,//callingPackage
-                String::class.java,//callingFeatureId
-                Int::class.javaPrimitiveType,//userId
-                Boolean::class.java,//allowBackgroundActivityStarts
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-//                        XpUtil.log("serviceHook30")
-                        val service = param.args[1] as Intent?
-                        val callingPackage = param.args[6] as String
-                        val userId: Int = param.args[8] as Int
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-                    }
-                })
-        }
-
-        private fun serviceHook29(lpparam: XC_LoadPackage.LoadPackageParam) {
-
-            //https://cs.android.com/android/platform/superproject/+/android-9.0.0_r61:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java
-            // bindServiceLocked
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
-                )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[7] as String
-                    val userId: Int = it.args[8] as Int
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
-                }
-
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.am.ActiveServices",
-                lpparam.classLoader,
-                "startServiceLocked",
-                "android.app.IApplicationThread",
-                Intent::class.java,//service
-                String::class.java,//resolvedType
-                Int::class.javaPrimitiveType,//callingPid
-                Int::class.javaPrimitiveType,//callingUid
-                Boolean::class.java,//fgRequired
-                String::class.java,//callingPackage
-                Int::class.javaPrimitiveType,//userId
-                Boolean::class.java,//allowBackgroundActivityStarts
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-//                        XpUtil.log("serviceHook29")
-                        val service = param.args[1] as Intent?
-                        val callingPackage = param.args[6] as String
-                        val userId: Int = param.args[7] as Int
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-                    }
-                })
-        }
-
-        private fun serviceHook26to28(lpparam: XC_LoadPackage.LoadPackageParam) {
-
-            //https://cs.android.com/android/platform/superproject/+/android-8.1.0_r81:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java
-
-            // bindServiceLocked
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
-                )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[7] as String
-                    val userId: Int = it.args[8] as Int
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
-                }
-
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.am.ActiveServices",
-                lpparam.classLoader,
-                "startServiceLocked",
-                "android.app.IApplicationThread",
-                Intent::class.java,//service
-                String::class.java,//resolvedType
-                Int::class.javaPrimitiveType,//callingPid
-                Int::class.javaPrimitiveType,//callingUid
-                Boolean::class.java,//fgRequired
-                String::class.java,//callingPackage
-                Int::class.javaPrimitiveType,//userId
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-//                        XpUtil.log("serviceHook26to28")
-                        val service = param.args[1] as Intent?
-                        val callingPackage = param.args[6] as String
-                        val userId: Int = param.args[7] as Int
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-                    }
-                })
-        }
-
-        private fun serviceHook24to25(lpparam: XC_LoadPackage.LoadPackageParam) {
-            //https://cs.android.com/android/platform/superproject/+/android-7.1.1_r59:frameworks/base/services/core/java/com/android/server/am/ActiveServices.java
-            findMethod(
-                findClass(
-                    "com.android.server.am.ActiveServices",
-                    lpparam.classLoader
-                )
-            ) { name == "bindServiceLocked" }
-                .hookBefore {
-                    val service = it.args[2] as Intent?
-                    val callingPackage = it.args[7] as String
-                    val userId: Int = it.args[8] as Int
-                    val context: Context =
-                        AndroidAppHelper.currentApplication().applicationContext
-                    hookStartServiceLocked(it, service, callingPackage, context, userId)
-                }
-
-
-            XposedHelpers.findAndHookMethod(
-                "com.android.server.am.ActiveServices",
-                lpparam.classLoader,
-                "startServiceLocked",
-                "android.app.IApplicationThread",
-                Intent::class.java,//service
-                String::class.java,//resolvedType
-                Int::class.javaPrimitiveType,//callingPid
-                Int::class.javaPrimitiveType,//callingUid
-                String::class.java,//callingPackage
-                Int::class.javaPrimitiveType,//userId
-                object : XC_MethodHook() {
-                    @Throws(Throwable::class)
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-//                        XpUtil.log("serviceHook24to25")
-                        val service = param.args[1] as Intent?
-                        val callingPackage = param.args[5] as String
-                        val userId: Int = param.args[6] as Int
-                        val context: Context =
-                            AndroidAppHelper.currentApplication().applicationContext
-                        hookStartServiceLocked(param, service, callingPackage, context, userId)
-                    }
-                })
+            return false
         }
 
         private fun hookStartServiceLocked(
@@ -739,6 +441,5 @@ class ServiceHook {
             return xpNSP.flag(name, packageName, type, userId)
                     || isLocked && xpNSP.flag(name, packageName, type, userId)
         }
-
     }
 }
