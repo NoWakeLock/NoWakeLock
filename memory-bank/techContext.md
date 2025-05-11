@@ -593,6 +593,25 @@ class BootResetManager(
 }
 ```
 
+## 🧩 Core Components
+
+### 🔹 Xposed Hooks
+
+The app utilizes several Xposed hooks to intercept system operations:
+
+#### Service Hook
+Intercepts service start/bind operations to prevent certain services from running when the device screen is off.
+
+**Implementation Notes:**
+- Located in `ServiceHook.kt`
+- Uses a unified hook approach that works across all Android versions (API 24+)
+- Implements parameter caching to eliminate repeated extraction attempts:
+  - `startServicePositionsRef` and `bindServicePositionsRef` store successful parameter positions
+  - Only extracts parameters once per device boot using thread-safe `AtomicReference`
+  - Falls back to alternative strategies if the initial strategy fails
+- Supports various Android versions through predefined parameter extraction strategies
+- Optimized for performance through static position caching
+
 ## 🖥️ UI Architecture Insights
 
 // ... rest of existing content ...

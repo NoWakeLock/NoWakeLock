@@ -318,3 +318,33 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
 - **主题一致性**:
   - 组件使用MaterialTheme属性而非硬编码值
   - 通过样式函数确保跨组件视觉一致性 
+
+## 🧠 Performance Optimization Patterns
+
+### 🔄 Initialization-Time Caching
+
+**Pattern**: Perform expensive operations once at initialization and cache the results for future use.
+
+**Application in NoWakeLock**:
+- **ServiceHook Parameter Caching**: The app caches parameter positions for hooked methods after first successful extraction
+  - Implemented with `AtomicReference<ServiceParamPositions?>` for thread safety
+  - Performs parameter extraction only once per device boot
+  - Significantly reduces CPU usage for frequently called service operations
+
+**Implementation Example**:
+```kotlin
+// Check cached positions before attempting extraction
+val positions = startServicePositionsRef.get()
+if (positions != null) {
+    // Use cached positions to extract parameters
+    extractParametersFromCache(param, positions)
+} else if (!startServiceHookFailed) {
+    // First-time extraction and caching
+    extractAndCacheStartServiceParameters(param)
+}
+```
+
+**Benefits**:
+- Reduces repeated computation overhead
+- Improves response time for frequent operations
+- Decreases battery consumption 
