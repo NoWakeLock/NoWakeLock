@@ -21,4 +21,5 @@
 #    public static <1> INSTANCE;
 #    kotlinx.serialization.KSerializer serializer(...);
 #}
+#https://github.com/Kotlin/kotlinx.serialization/issues/2861
 -keep @kotlinx.serialization.Serializable class * {*;}
