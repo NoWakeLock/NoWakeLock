@@ -40,6 +40,10 @@
   - 保护理由: 核心依赖注入模块，影响整个应用的组件实例化
   - 最后修改: 2025-04-25 (添加SavedStateHandle注入)
 
+- **[CRITICAL]** `app/src/main/java/com/js/nowakelock/xposedhook/hook/ServiceHook.kt` - 服务Hook实现
+  - 保护理由: 核心Xposed Hook组件，使用参数位置缓存优化，影响整个应用的性能
+  - 最后修改: 2025-10-20 (实现参数位置缓存优化)
+
 ### 导航系统
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/navigation/NavRoutes.kt` - 路由定义
   - 保护理由: 定义应用导航结构，需谨慎修改
@@ -91,6 +95,7 @@
   - 最后修改: 2025-04-29 (修复语言切换后用户切换无限循环问题，采用单向同步方案3)
 
 ## 📜 Protection History
+- 2025-10-20 ⟶ 添加ServiceHook.kt到关键保护列表，完成参数位置缓存优化实现
 - 2025-05-01 ⟶ 添加测试基础设施(TestUtils, WakelockTests)和关键功能测试到保护列表
 - 2025-05-01 ⟶ 将WakelockRegistry和WakelockCounter核心计时系统组件提升为CRITICAL保护级别
 - 2025-04-29 ⟶ AppsScreen.kt 加入保护列表，修复语言切换后用户切换无限循环问题，采用单向同步方案3
