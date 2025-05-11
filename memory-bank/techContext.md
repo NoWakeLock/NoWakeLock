@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-05*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-07*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -611,6 +611,100 @@ Intercepts service start/bind operations to prevent certain services from runnin
   - Falls back to alternative strategies if the initial strategy fails
 - Supports various Android versions through predefined parameter extraction strategies
 - Optimized for performance through static position caching
+
+## 🧰 Technical Patterns
+
+### 统一钩子策略模式 (Unified Hook Strategy Pattern)
+
+我们在 ServiceHook 和 AlarmHook 中实现了一种统一钩子策略模式，用于解决 Android 版本分散问题：
+
+#### 问题背景
+
+- Android 系统 API 随版本变化，导致钩子实现需要分散为多个版本
+- 传统方法是为每个 Android 版本实现单独的钩子方法，导致代码重复和维护困难
+- 硬编码的方法参数位置和类型使得钩子在系统更新后容易失效
+
+#### 模式结构
+
+1. **统一钩子入口**：
+   - 单一的入口方法，根据 Android 版本选择正确的类路径
+   - 使用反射查找所有目标方法，避免硬编码方法签名
+
+2. **参数位置缓存**：
+   - 定义参数位置数据类，存储关键参数在方法参数列表中的位置
+   - 使用 `AtomicReference` 缓存成功的参数位置，确保线程安全
+   - 一旦参数位置确定，后续调用直接使用缓存提取参数
+
+3. **自适应参数提取**：
+   - 先按当前 Android 版本尝试预期的参数位置
+   - 如果失败，尝试所有已知的参数位置策略
+   - 遇到边缘情况时仍能找到正确的参数位置
+
+4. **错误处理与日志**：
+   - 详细的日志记录参数提取过程和结果
+   - 优雅的失败处理，避免影响系统稳定性
+
+#### 实现示例
+
+```kotlin
+// 1. 参数位置数据类
+private data class AlarmParamPositions(
+    val triggerListPos: Int      // Position of triggerList parameter
+)
+
+// 2. 参数位置缓存
+@Volatile
+private var alarmPositionsRef: AtomicReference<AlarmParamPositions?> =
+    AtomicReference(null)
+
+// 3. 统一钩子入口
+private fun unifiedAlarmHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+    try {
+        // 根据Android版本获取正确的类
+        val alarmManagerServiceClass = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            XposedHelpers.findClass("com.android.server.alarm.AlarmManagerService", lpparam.classLoader)
+        } else {
+            XposedHelpers.findClass("com.android.server.AlarmManagerService", lpparam.classLoader)
+        }
+
+        // 查找并钩住所有匹配的方法
+        hookAlarmMethods(alarmManagerServiceClass, lpparam)
+    } catch (e: Throwable) {
+        XpUtil.log("Error in unified alarm hook: ${e.message}")
+        e.printStackTrace()
+    }
+}
+
+// 4. 参数提取与缓存
+private fun extractAndCacheAlarmParameters(param: XC_MethodHook.MethodHookParam) {
+    // 选择当前Android版本的预期策略
+    val androidVersionIndex = when (Build.VERSION.SDK_INT) {
+        in Build.VERSION_CODES.S..Int.MAX_VALUE -> 0 // Android 12+
+        in Build.VERSION_CODES.Q..Build.VERSION_CODES.R -> 1 // Android 10-11
+        in Build.VERSION_CODES.N..Build.VERSION_CODES.P -> 2 // Android 7-9
+        else -> 0 // 默认使用最新版本策略
+    }
+    
+    // 尝试提取参数并缓存成功的位置
+    if (tryExtractWithPositions(param, positions)) {
+        alarmPositionsRef.set(positions)
+    }
+}
+```
+
+#### 应用场景
+
+该模式已成功应用于：
+- **ServiceHook**：统一处理 Android 16+ 的服务启动和绑定钩子
+- **AlarmHook**：统一处理 Android 7-14+ 的闹钟触发钩子
+
+#### 优势
+
+- **代码精简**：消除版本特定的重复代码
+- **维护性提高**：集中的逻辑更易于维护和调试
+- **适应性增强**：更好地适应 Android 版本变化和自定义 ROM
+- **性能优化**：参数缓存减少重复提取的开销
+- **可扩展性**：易于支持新的 Android 版本和系统变体
 
 ## 🖥️ UI Architecture Insights
 
