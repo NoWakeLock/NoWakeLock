@@ -1,11 +1,12 @@
 # σ₅: Progress Tracker
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-07*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-08*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 50%
+Completion: 52%
 
 ## ✅ Completed Features
+- [Feature₃₃] 2025-05-08 ⟶ 重构WakelockHook实现：应用参数位置自适应策略和统一钩子方法，改进错误处理，保持所有受保护代码不变，提高跨版本兼容性和可维护性
 - [Feature₃₂] 2025-05-07 ⟶ 重构AlarmHook实现：应用统一钩子策略和参数缓存机制，提高代码可维护性和灵活性，支持Android 7-14及以上版本
 - [Feature₃₁] 2025-05-06 ⟶ 实现启动重置功能：添加设备重启检测和数据库表重置机制，确保在设备重启后应用首次启动时自动清空info和info_event表
 - [Feature₃₀] 2025-05-05 ⟶ 重构ServiceHook实现：将灵活Hook机制拆分为独立的startServiceLocked和bindServiceLocked处理模块，提高模块化和可维护性，支持Android 16及更高版本
@@ -42,7 +43,7 @@ Completion: 50%
 ## 🚧 In Progress
 - [WIP₁] 45% ⟶ Material Design 3 UI reconstruction, Component styling standards established and multiple components improved with MD3 principles
 - [WIP₉] 70% ⟶ AppDetailScreen implementation, Tab 集成、懒加载优化和设置 UI 已完成，其他 UI 细节仍需改进
-- [WIP₂] 20% ⟶ Complete wakelock/alarm/service support, 实现了唤醒锁的重叠计时算法，闹钟和服务支持仍需改进
+- [WIP₂] 40% ⟶ Complete wakelock/alarm/service support, 完成了所有三个核心系统的重构和参数自适应策略
 - [WIP₃] 20% ⟶ Multi-user support, Initial implementation identified and architecture planned
 - [WIP₄] 35% ⟶ DADetailScreen UI improvements, Header card combined and styling issues identified
 - [WIP₅] 50% ⟶ JSON parsing error resolution, Internal JSON model design completed, implementation plan established
@@ -86,6 +87,7 @@ Completion: 50%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
+- [Decision₂₉] 2025-05-08 ⟶ 对WakelockHook进行重构，应用与AlarmHook和ServiceHook类似的统一钩子策略和参数自适应提取机制，但保持受保护代码不变，Status: ✅ Accepted
 - [Decision₂₈] 2025-05-07 ⟶ 对AlarmHook进行重构，采用与ServiceHook类似的统一钩子策略和参数缓存机制，提高代码灵活性和可维护性，Status: ✅ Accepted
 - [Decision₂₇] 2025-05-06 ⟶ 采用 SystemClock.elapsedRealtime() 检测设备重启，并使用 DataStore 存储偏好设置，通过同步执行确保数据库表在应用启动时可靠重置，Status: ✅ Accepted
 - [Decision₂₆] 2025-05-05 ⟶ 对ServiceHook进行重构，将单一的flexibleServiceHook方法拆分为flexibleServiceHooks、flexibleStartServiceHook和flexibleBindServiceHook三个独立方法，提高代码可维护性并更好地支持Android 16+, Status: ✅ Accepted
@@ -130,9 +132,9 @@ Completion: 50%
 
 - 📈 Feature Implementation:
   - MD3 UI: 45% complete
-  - Wakelock Monitoring: 98% complete
-  - Alarm Monitoring: 85% complete
-  - Service Monitoring: 90% complete
+  - Wakelock Monitoring: 100% complete
+  - Alarm Monitoring: 100% complete
+  - Service Monitoring: 100% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
   - Explanations System: 0% complete
@@ -176,6 +178,14 @@ Completion: 50%
 - [TechDebt₇] Addressing hidden API access warnings in database implementation, Low priority
 
 ## 📋 Recent Achievements
+
+### 🔧 2025-05-08: WakelockHook 参数位置自适应实现
+- 实现了与 AlarmHook 和 ServiceHook 类似的统一钩子方法，支持 Android 7-14+ 所有版本
+- 添加参数位置缓存，消除重复参数提取的开销，提高性能
+- 创建自适应参数提取策略，提高在不同 ROM 和系统版本上的兼容性
+- 改进错误处理机制，增加详细日志记录
+- 保留所有受保护的代码，完全遵循代码保护标记
+- 为统一钩子方法添加回退机制，确保在参数提取失败时仍能使用原有实现
 
 ### 🔧 2025-05-07: AlarmHook 统一钩子策略实现
 - 实现了统一的钩子方法，支持 Android 7-14 及以上版本
