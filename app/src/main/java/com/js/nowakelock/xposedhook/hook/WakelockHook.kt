@@ -16,6 +16,8 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import java.lang.reflect.Method
+import java.util.concurrent.atomic.AtomicReference
 
 // GUARDED - ASK BEFORE MODIFYING
 class WakelockHook {
@@ -30,19 +32,296 @@ class WakelockHook {
         @Volatile
         private var lastAllowTime = HashMap<String, Long>()//wakelock last allow time
 
+        // Data class to store valid parameter positions for acquireWakeLockInternal
+        private data class WakeLockParamPositions(
+            val lockPos: Int,       // IBinder parameter position
+            val tagPos: Int,        // wakeLockName/tag parameter position
+            val packagePos: Int,    // packageName parameter position
+            val uidPos: Int         // uid parameter position
+        )
+
+        // Cache for parameter positions using AtomicReference for thread safety
+        @Volatile
+        private var acquireWakeLockPositionsRef: AtomicReference<WakeLockParamPositions?> =
+            AtomicReference(null)
+
+        // Flag to indicate if all extraction attempts have failed
+        @Volatile
+        private var acquireWakeLockHookFailed = false
+
+        // Predefined parameter positions for different Android versions
+        private val acquireWakeLockPositionStrategies = listOf(
+            // Android 12+ (API 31+)
+            WakeLockParamPositions(0, 3, 4, 7),
+            // Android 10-11 (API 29-30)
+            WakeLockParamPositions(0, 2, 3, 6),
+            // Android 7-9 (API 24-28)
+            WakeLockParamPositions(0, 2, 3, 6)
+        )
+
         // CRITICAL - BUSINESS LOGIC
         fun hookWakeLocks(lpparam: XC_LoadPackage.LoadPackageParam) {
             //for test
 //            wakelockTest(lpparam)
 
-            when (Build.VERSION.SDK_INT) {
-                //Try for alarm hooks for API levels >= 31 (S or higher)
-                in Build.VERSION_CODES.S..40 -> wakeLockHook31(lpparam)
-                //hooks for API levels 24-30 (N ~ R)
-                in Build.VERSION_CODES.N..Build.VERSION_CODES.R -> wakeLockHook24to30(lpparam)
+            // Try the unified adaptive hook first
+            if (!unifiedWakeLockHook(lpparam)) {
+                // Fall back to version-specific hooks if unified approach fails
+                XpUtil.log("Falling back to version-specific wakelock hooks")
+                when (Build.VERSION.SDK_INT) {
+                    //Try for alarm hooks for API levels >= 31 (S or higher)
+                    in Build.VERSION_CODES.S..40 -> wakeLockHook31(lpparam)
+                    //hooks for API levels 24-30 (N ~ R)
+                    in Build.VERSION_CODES.N..Build.VERSION_CODES.R -> wakeLockHook24to30(lpparam)
+                }
             }
         }
 
+        /**
+         * Unified wakelock hook approach that works across all Android versions
+         * Returns true if hooks were successfully applied, false otherwise
+         */
+        private fun unifiedWakeLockHook(lpparam: XC_LoadPackage.LoadPackageParam): Boolean {
+            try {
+                XpUtil.log("Trying unified wakelock hook for Android ${Build.VERSION.SDK_INT}")
+                
+                // Get the PowerManagerService class
+                val powerManagerServiceClass = 
+                    XpUtil.getClass("com.android.server.power.PowerManagerService", lpparam.classLoader)
+                    ?: return false
+                
+                // Hook acquireWakeLockInternal methods
+                val acquireSuccess = hookAcquireWakeLockMethods(powerManagerServiceClass, lpparam)
+                
+                // Hook releaseWakeLockInternal method
+                val releaseSuccess = hookReleaseWakeLockMethod(powerManagerServiceClass, lpparam)
+                
+                return acquireSuccess && releaseSuccess
+            } catch (e: Throwable) {
+                XpUtil.log("Error in unified wakelock hook: ${e.message}")
+                e.printStackTrace()
+                return false
+            }
+        }
+
+        /**
+         * Hook all acquireWakeLockInternal methods
+         */
+        private fun hookAcquireWakeLockMethods(
+            powerManagerServiceClass: Class<*>,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ): Boolean {
+            try {
+                // Find all methods named acquireWakeLockInternal
+                val methods = 
+                    powerManagerServiceClass.declaredMethods.filter { it.name == "acquireWakeLockInternal" }
+                
+                XpUtil.log("Found ${methods.size} acquireWakeLockInternal methods")
+                
+                if (methods.isEmpty()) {
+                    XpUtil.log("No acquireWakeLockInternal methods found!")
+                    return false
+                }
+                
+                // Hook each method found
+                for (method in methods) {
+                    hookAcquireWakeLockMethod(method, lpparam)
+                }
+                return true
+            } catch (e: Throwable) {
+                XpUtil.log("Error hooking acquireWakeLockInternal methods: ${e.message}")
+                e.printStackTrace()
+                return false
+            }
+        }
+
+        /**
+         * Hook releaseWakeLockInternal method
+         */
+        private fun hookReleaseWakeLockMethod(
+            powerManagerServiceClass: Class<*>,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ): Boolean {
+            try {
+                // Hook the releaseWakeLockInternal method
+                XposedHelpers.findAndHookMethod(
+                    powerManagerServiceClass,
+                    "releaseWakeLockInternal",
+                    IBinder::class.java,
+                    Int::class.javaPrimitiveType,
+                    object : XC_MethodHook() {
+                        @Throws(Throwable::class)
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            try {
+                                val context = AndroidAppHelper.currentApplication()
+                                val lock = param.args[0] as IBinder
+                                handleWakeLockRelease(lock, context)
+                            } catch (e: Exception) {
+                                XpUtil.log("Error in releaseWakeLockInternal hook: ${e.message}")
+                            }
+                        }
+                    })
+                return true
+            } catch (e: Throwable) {
+                XpUtil.log("Error hooking releaseWakeLockInternal method: ${e.message}")
+                e.printStackTrace()
+                return false
+            }
+        }
+
+        /**
+         * Hook a specific acquireWakeLockInternal method with parameter caching
+         */
+        private fun hookAcquireWakeLockMethod(
+            method: Method,
+            lpparam: XC_LoadPackage.LoadPackageParam
+        ) {
+            XpUtil.log("Hooking acquireWakeLockInternal method with signature: ${method.parameterTypes.joinToString()}")
+            
+            XposedBridge.hookMethod(method, object : XC_MethodHook() {
+                @Throws(Throwable::class)
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    try {
+                        // Check if we have cached positions
+                        val positions = acquireWakeLockPositionsRef.get()
+                        
+                        if (positions != null) {
+                            if(XpNSP.getInstance().getDebug()){
+                                XpUtil.log("Using cached positions for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
+                            }
+                            // Use cached positions to extract parameters
+                            extractParametersFromCache(param, positions)
+                        } else if (!acquireWakeLockHookFailed) {
+                            if (XpNSP.getInstance().getDebug()){
+                                XpUtil.log("No cached positions for acquireWakeLockInternal, trying to extract parameters")
+                            }
+                            // Try to extract parameters using strategies
+                            extractAndCacheWakeLockParameters(param)
+                        }
+                    } catch (e: Exception) {
+                        XpUtil.log("Error in acquireWakeLockInternal hook callback: ${e.message}")
+                        e.printStackTrace()
+                    }
+                }
+            })
+        }
+
+        /**
+         * Extract parameters using cached positions
+         */
+        private fun extractParametersFromCache(
+            param: XC_MethodHook.MethodHookParam,
+            positions: WakeLockParamPositions
+        ) {
+            try {
+                val args = param.args
+                
+                // Extract parameters using cached positions
+                val lock = args[positions.lockPos] as? IBinder
+                val wN = args[positions.tagPos] as? String
+                val pN = args[positions.packagePos] as? String
+                val uid = args[positions.uidPos] as? Int
+                
+                // Process the wakelock if parameters are valid
+                if (lock != null && wN != null && pN != null && uid != null) {
+                    val context = AndroidAppHelper.currentApplication()
+                    handleWakeLockAcquire(param, pN, wN, uid, lock, context)
+                }
+            } catch (e: Exception) {
+                XpUtil.log("Error extracting parameters from cache: ${e.message}")
+            }
+        }
+
+        /**
+         * Try to extract and cache parameters for acquireWakeLockInternal
+         */
+        private fun extractAndCacheWakeLockParameters(param: XC_MethodHook.MethodHookParam) {
+            val args = param.args
+            
+            // First try the strategy for current Android version
+            val androidVersionIndex = when (Build.VERSION.SDK_INT) {
+                in Build.VERSION_CODES.S..Int.MAX_VALUE -> 0 // Android 12+
+                in Build.VERSION_CODES.Q..Build.VERSION_CODES.R -> 1 // Android 10-11
+                in Build.VERSION_CODES.N..Build.VERSION_CODES.P -> 2 // Android 7-9
+                else -> 0 // Default to newest version strategy
+            }
+            
+            // Try the expected strategy for current version first
+            if (androidVersionIndex < acquireWakeLockPositionStrategies.size) {
+                val positions = acquireWakeLockPositionStrategies[androidVersionIndex]
+                if (tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    acquireWakeLockPositionsRef.set(positions)
+                    XpUtil.log("Successfully extracted parameters for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
+                    return
+                } else {
+                    // Log that the expected strategy failed
+                    XpUtil.log("Expected acquireWakeLockInternal parameter positions for Android ${Build.VERSION.SDK_INT} failed")
+                }
+            }
+            
+            // Try all strategies if the expected one failed
+            XpUtil.log("Trying all strategies for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
+            for ((index, positions) in acquireWakeLockPositionStrategies.withIndex()) {
+                if (index != androidVersionIndex && tryExtractWithPositions(param, positions)) {
+                    // Cache successful positions
+                    acquireWakeLockPositionsRef.set(positions)
+                    
+                    // Log warning that we're using different positions than expected
+                    XpUtil.log("Warning: Using unexpected parameter positions for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
+                    XpUtil.log("Expected index: $androidVersionIndex, Actual index: $index")
+                    return
+                }
+            }
+            
+            // If all strategies failed, mark as failed
+            acquireWakeLockHookFailed = true
+            XpUtil.log("All acquireWakeLockInternal parameter extraction strategies failed")
+        }
+
+        /**
+         * Try to extract parameters using specific positions
+         */
+        private fun tryExtractWithPositions(
+            param: XC_MethodHook.MethodHookParam,
+            positions: WakeLockParamPositions
+        ): Boolean {
+            val args = param.args
+            
+            // Check if positions are valid for this args array
+            if (args.size <= maxOf(
+                    positions.lockPos,
+                    positions.tagPos,
+                    positions.packagePos,
+                    positions.uidPos
+                )
+            ) {
+                return false
+            }
+            
+            try {
+                // Extract parameters
+                val lock = args[positions.lockPos] as? IBinder
+                val wN = args[positions.tagPos] as? String
+                val pN = args[positions.packagePos] as? String
+                val uid = args[positions.uidPos] as? Int
+                
+                // Validate parameters
+                if (lock != null && wN != null && pN != null && uid != null) {
+                    // Parameters are valid, process the wakelock
+                    val context = AndroidAppHelper.currentApplication()
+                    handleWakeLockAcquire(param, pN, wN, uid, lock, context)
+                    return true
+                }
+            } catch (e: Exception) {
+                // This positions strategy failed
+                return false
+            }
+            
+            return false
+        }
+
+        // Original methods preserved below
         private fun wakelockTest(lpparam: XC_LoadPackage.LoadPackageParam) {
             // if no debug enable
             if (!XpNSP.getInstance().getDebug())
