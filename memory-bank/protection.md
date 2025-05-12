@@ -1,6 +1,6 @@
 # σ₆: Protection Registry
-*v1.0 | Created: 2025-04-25 | Updated: 2025-05-01*
-*Π: 🏗️DEVELOPMENT | Ω: 🔎RV*
+*v1.0 | Created: 2025-04-25 | Updated: 2025-05-08*
+*Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🛡️ Protected Regions
 
@@ -43,6 +43,14 @@
 - **[CRITICAL]** `app/src/main/java/com/js/nowakelock/xposedhook/hook/ServiceHook.kt` - 服务Hook实现
   - 保护理由: 核心Xposed Hook组件，使用参数位置缓存优化，影响整个应用的性能
   - 最后修改: 2025-10-20 (实现参数位置缓存优化)
+
+- **[CRITICAL]** `app/src/main/java/com/js/nowakelock/xposedhook/hook/AlarmHook.kt` - 闹钟Hook实现
+  - 保护理由: 核心Xposed Hook组件，使用统一钩子策略和参数缓存优化，影响应用功能和性能
+  - 最后修改: 2025-05-07 (实现统一钩子策略和参数缓存优化)
+
+- **[CRITICAL]** `app/src/main/java/com/js/nowakelock/xposedhook/hook/WakelockHook.kt` - 唤醒锁Hook实现
+  - 保护理由: 核心Xposed Hook组件，包含handleWakeLockAcquire、handleWakeLockRelease和block等受保护方法，对系统唤醒锁监控至关重要
+  - 最后修改: 2025-05-08 (添加统一钩子方法和参数位置自适应功能，保持所有受保护代码不变)
 
 ### 导航系统
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/navigation/NavRoutes.kt` - 路由定义
@@ -95,7 +103,8 @@
   - 最后修改: 2025-04-29 (修复语言切换后用户切换无限循环问题，采用单向同步方案3)
 
 ## 📜 Protection History
-- 2025-10-20 ⟶ 添加ServiceHook.kt到关键保护列表，完成参数位置缓存优化实现
+- 2025-05-08 ⟶ 添加WakelockHook.kt到关键保护列表，实现统一钩子方法和参数位置自适应功能，同时保持所有受保护代码不变
+- 2025-05-07 ⟶ 添加AlarmHook.kt到关键保护列表，完成统一钩子策略和参数缓存优化实现
 - 2025-05-01 ⟶ 添加测试基础设施(TestUtils, WakelockTests)和关键功能测试到保护列表
 - 2025-05-01 ⟶ 将WakelockRegistry和WakelockCounter核心计时系统组件提升为CRITICAL保护级别
 - 2025-04-29 ⟶ AppsScreen.kt 加入保护列表，修复语言切换后用户切换无限循环问题，采用单向同步方案3
@@ -105,6 +114,7 @@
 - 2025-04-25 ⟶ 添加新创建的参数常量类到保护列表
 - 2025-04-25 ⟶ 更新导航相关组件的保护状态
 - 2025-04-25 ⟶ 将TopAppBars.kt标记为需要进一步调整的组件
+- 2025-10-20 ⟶ 添加ServiceHook.kt到关键保护列表，完成参数位置缓存优化实现
 
 ## ✅ Approvals
 *尚无修改批准记录*
