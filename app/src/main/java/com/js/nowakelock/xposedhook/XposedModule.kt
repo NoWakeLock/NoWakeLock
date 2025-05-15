@@ -28,26 +28,10 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         when (lpparam.packageName) {
             "android" -> {//hook Android system
-                try {
-                    XposedBridge.log("handleLoadPackage ${AndroidAppHelper.currentApplication()}")
+                XposedBridge.log("handleLoadPackage ${AndroidAppHelper.currentApplication()}")
 
-                    // PROTECTED - DO NOT MODIFY
-                    XposedHelpers.findAndHookMethod(
-                        "com.android.server.policy.keyguard.KeyguardServiceDelegate",
-                        lpparam.classLoader,
-                        "onBootCompleted",
-                        object : XC_MethodHook() {
-                            @Throws(Throwable::class)
-                            override fun beforeHookedMethod(param: MethodHookParam) {
-                                WakelockHook.booted = true
-                                ServiceHook.booted = true
-                                AlarmHook.booted = true
-                            }
-                        })
-                } catch (e: Exception) {
-                    XpUtil.log("${e.message}")
-                    XpUtil.log("${e.stackTrace}")
-                }
+                hookBootCompletedMethods(lpparam)
+
                 try {
                     WakelockHook.hookWakeLocks(lpparam)
                 } catch (e: Exception) {
@@ -70,6 +54,65 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
             "com.android.providers.settings" -> {//hook SettingsProvider
                 SettingsProviderHook.hook(lpparam)
+            }
+        }
+    }
+
+    private fun hookBootCompletedMethods(lpparam: LoadPackageParam) {
+        try {
+            // PROTECTED - DO NOT MODIFY
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.policy.keyguard.KeyguardServiceDelegate",
+                lpparam.classLoader,
+                "onBootCompleted",
+                object : XC_MethodHook() {
+                    @Throws(Throwable::class)
+                    override fun beforeHookedMethod(param: MethodHookParam) {
+                        WakelockHook.booted = true
+                        ServiceHook.booted = true
+                        AlarmHook.booted = true
+                    }
+                })
+        } catch (e: Exception) {
+            XpUtil.log("${e.message}")
+            XpUtil.log("${e.stackTrace}")
+
+            try {
+                // PROTECTED - DO NOT MODIFY
+                XposedHelpers.findAndHookMethod(
+                    "com.android.server.am.ActivityManagerService",
+                    lpparam.classLoader,
+                    "finishBooting",
+                    object : XC_MethodHook() {
+                        @Throws(Throwable::class)
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            WakelockHook.booted = true
+                            ServiceHook.booted = true
+                            AlarmHook.booted = true
+                        }
+                    })
+            } catch (e: Exception) {
+                XpUtil.log("${e.message}")
+                XpUtil.log("${e.stackTrace}")
+
+                try {
+                    // PROTECTED - DO NOT MODIFY
+                    XposedHelpers.findAndHookMethod(
+                        "com.android.server.wm.WindowManagerService",
+                        lpparam.classLoader,
+                        "systemReady",
+                        object : XC_MethodHook() {
+                            @Throws(Throwable::class)
+                            override fun beforeHookedMethod(param: MethodHookParam) {
+                                WakelockHook.booted = true
+                                ServiceHook.booted = true
+                                AlarmHook.booted = true
+                            }
+                        })
+                } catch (e: Exception) {
+                    XpUtil.log("${e.message}")
+                    XpUtil.log("${e.stackTrace}")
+                }
             }
         }
     }
