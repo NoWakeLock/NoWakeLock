@@ -10,6 +10,14 @@ This feature ensures that the `info` and `info_event` database tables are reset 
 - Resets the database tables when needed
 - Updates preferences to track reset status
 
+### XposedModule Boot Detection
+- Implements a multi-layer boot detection mechanism in `XposedModule.kt`
+- Uses a dedicated `hookBootCompletedMethods` method for better code organization
+- Attempts to hook three different system methods to ensure reliable boot detection:
+  1. `KeyguardServiceDelegate.onBootCompleted`
+  2. `ActivityManagerService.finishBooting`
+  3. `WindowManagerService.systemReady`
+
 ### UserPreferencesRepository Extensions
 - Stores boot-related preferences using DataStore
 - Manages lastBootTime and resetDoneForCurrentBoot flags
@@ -31,6 +39,78 @@ This approach works because:
 1. `SystemClock.elapsedRealtime()` returns milliseconds since boot
 2. When a device restarts, this counter resets to zero and starts incrementing
 3. If the current value is less than the previously stored value, it indicates a reboot has occurred
+
+### XposedModule Boot Detection Implementation
+```kotlin
+// In XposedModule.kt
+private fun hookBootCompletedMethods(lpparam: LoadPackageParam) {
+    try {
+        // First attempt: KeyguardServiceDelegate.onBootCompleted
+        XposedHelpers.findAndHookMethod(
+            "com.android.server.policy.keyguard.KeyguardServiceDelegate",
+            lpparam.classLoader,
+            "onBootCompleted",
+            object : XC_MethodHook() {
+                @Throws(Throwable::class)
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    WakelockHook.booted = true
+                    ServiceHook.booted = true
+                    AlarmHook.booted = true
+                }
+            })
+    } catch (e: Exception) {
+        XpUtil.log("${e.message}")
+        XpUtil.log("${e.stackTrace}")
+
+        try {
+            // Second attempt: ActivityManagerService.finishBooting
+            XposedHelpers.findAndHookMethod(
+                "com.android.server.am.ActivityManagerService",
+                lpparam.classLoader,
+                "finishBooting",
+                object : XC_MethodHook() {
+                    @Throws(Throwable::class)
+                    override fun beforeHookedMethod(param: MethodHookParam) {
+                        WakelockHook.booted = true
+                        ServiceHook.booted = true
+                        AlarmHook.booted = true
+                    }
+                })
+        } catch (e: Exception) {
+            XpUtil.log("${e.message}")
+            XpUtil.log("${e.stackTrace}")
+
+            try {
+                // Third attempt: WindowManagerService.systemReady
+                XposedHelpers.findAndHookMethod(
+                    "com.android.server.wm.WindowManagerService",
+                    lpparam.classLoader,
+                    "systemReady",
+                    object : XC_MethodHook() {
+                        @Throws(Throwable::class)
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            WakelockHook.booted = true
+                            ServiceHook.booted = true
+                            AlarmHook.booted = true
+                        }
+                    })
+            } catch (e: Exception) {
+                XpUtil.log("${e.message}")
+                XpUtil.log("${e.stackTrace}")
+            }
+        }
+    }
+}
+```
+
+The boot detection implementation:
+1. Attempts to hook `KeyguardServiceDelegate.onBootCompleted` first, which is called when the keyguard is ready after boot
+2. If that fails, tries `ActivityManagerService.finishBooting`, which is called when the core system services are initialized
+3. As a last resort, hooks `WindowManagerService.systemReady`, which indicates the window manager is ready to display UIs
+4. Sets the booted flags in all three core hook systems (WakelockHook, ServiceHook, AlarmHook) when any of these methods are called
+5. Provides comprehensive error logging to help diagnose issues on different device models
+
+This multi-layered approach ensures boot detection works reliably across different Android versions and manufacturer customizations.
 
 ### Single Reset Guarantee
 ```kotlin
@@ -114,3 +194,5 @@ Koin is used for dependency injection, ensuring that components are properly ini
 1. Add unit tests for the boot detection logic
 2. Consider async execution with UI blocking if performance becomes an issue
 3. Expand to support selective table clearing based on configuration 
+4. Add additional boot detection methods for Samsung and other manufacturer-specific Android versions
+5. Implement a fallback mechanism if all boot detection methods fail 
