@@ -23,9 +23,11 @@
 - **自适应参数提取**：创建适用于所有 Android 版本的灵活提取策略
 - **调试日志控制**：基于调试模式设置添加条件日志记录
 - **错误处理增强**：添加详细的错误处理和日志记录，提高稳定性
+- **Boot 检测重构**：重构系统启动检测逻辑，提高模块化和错误处理能力
 
 ### 最新进展
 
+- 已完成 XposedModule 中 Boot 检测逻辑重构，将其提取到专用方法中，保持了原有功能，提高了代码可维护性
 - 已完成Room数据库迁移策略优化，解决了版本跳跃问题和"no such column: eventKey"错误
 - 已完成 ServiceHook 重构，实现了灵活的参数提取策略
 - 已完成 AlarmHook 重构，添加了参数位置缓存和错误处理
@@ -34,6 +36,7 @@
 
 ### 相关文件
 
+- 💻 [XposedModule.kt](app/src/main/java/com/js/nowakelock/xposedhook/XposedModule.kt) - Xposed 模块主类，实现了启动检测和钩子初始化
 - 💻 [AppDatabase.kt](app/src/main/java/com/js/nowakelock/data/db/AppDatabase.kt) - 应用数据库类及多路径迁移实现
 - 💻 [InfoDatabase.kt](app/src/main/java/com/js/nowakelock/data/db/InfoDatabase.kt) - 信息数据库类及多路径迁移实现
 - 💻 [WakelockHook.kt](app/src/main/java/com/js/nowakelock/xposedhook/hook/WakelockHook.kt) - 唤醒锁钩子实现
@@ -51,6 +54,7 @@
 Material Design 3 UI 组件标准化，XPosed设置与日志控制问题研究，唤醒锁系统重构
 
 ## 🔄 Recent Changes
+- [Change₅₁] 2025-05-10 ⟶ 重构 XposedModule.kt 中的 Boot 检测逻辑，将代码提取到专用的 hookBootCompletedMethods 方法中，提高可维护性和模块化
 - [Change₄₈] 2025-05-09 ⟶ 为 AppDatabase 实现多路径迁移策略，添加 MIGRATION_10_13 和 MIGRATION_11_13，实现事务保护
 - [Change₄₉] 2025-05-09 ⟶ 为 InfoDatabase 实现多路径迁移策略，添加 MIGRATION_10_12，优化现有的 MIGRATION_11_12
 - [Change₅₀] 2025-05-09 ⟶ 为两个数据库类实现共享的表重建函数，确保迁移逻辑一致性
