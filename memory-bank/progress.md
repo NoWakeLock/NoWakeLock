@@ -3,9 +3,11 @@
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 57%
+Completion: 58%
 
 ## ✅ Completed Features
+- [Feature₃₇] 2025-05-11 ⟶ 修复模块检测页面导航栏重复问题：移除ModuleCheckScreen中的自定义TopAppBar，统一使用全局导航栏，并确保刷新功能正常
+- [Feature₃₆] 2025-05-11 ⟶ 实现模块检测功能：包括UI、ViewModel、Repository、Manager以及相关的ContentProvider方法和数据库查询，支持多语言
 - [Feature₃₅] 2025-05-10 ⟶ 重构XposedModule启动检测逻辑：将Boot检测相关代码提取到专用的hookBootCompletedMethods方法中，保持原有功能的同时提高代码可维护性和模块化
 - [Feature₃₄] 2025-05-09 ⟶ 实现Room数据库多路径迁移策略：为AppDatabase和InfoDatabase添加完整的迁移路径和事务保护，解决版本跳跃问题和"no such column: eventKey"错误
 - [Feature₃₃] 2025-05-08 ⟶ 重构WakelockHook实现：应用参数位置自适应策略和统一钩子方法，改进错误处理，保持所有受保护代码不变，提高跨版本兼容性和可维护性
@@ -45,7 +47,7 @@ Completion: 57%
 ## 🚧 In Progress
 - [WIP₁] 45% ⟶ Material Design 3 UI reconstruction, Component styling standards established and multiple components improved with MD3 principles
 - [WIP₉] 70% ⟶ AppDetailScreen implementation, Tab 集成、懒加载优化和设置 UI 已完成，其他 UI 细节仍需改进
-- [WIP₂] 45% ⟶ Complete wakelock/alarm/service support, 完成了所有三个核心系统的重构和参数自适应策略，Xposed模块启动检测逻辑优化
+- [WIP₂] 50% ⟶ Complete wakelock/alarm/service/module_check support, 完成了所有四个核心系统的重构和参数自适应策略，Xposed模块启动检测逻辑优化
 - [WIP₃] 20% ⟶ Multi-user support, Initial implementation identified and architecture planned
 - [WIP₄] 35% ⟶ DADetailScreen UI improvements, Header card combined and styling issues identified
 - [WIP₅] 50% ⟶ JSON parsing error resolution, Internal JSON model design completed, implementation plan established
@@ -71,6 +73,7 @@ Completion: 57%
 - [Todo₁₂] Medium ⟶ Add android:enableOnBackInvokedCallback="true" to manifest for Android 13+ back handling
 
 ## ⚠️ Known Issues
+- [Issue₁₅] Low ⟶ 模块检测页面的刷新按钮在全局TopAppBar中，依赖NavGraph传递ViewModel实例，可能存在耦合问题，待观察
 - [Issue₁₄] Medium ⟶ XPosed设置需要重启才能生效，因为XSharedPreferences的加载机制限制，应用重新安装后需要重启系统才能使设置正确加载到XPosed模块中
 - [Issue₁₃] Medium ⟶ 唤醒锁countTime与util显示时间计算存在不一致，需要进一步调查和修复
 - [Issue₁] Medium ⟶ Different hooking mechanisms needed for various Android versions, Must maintain compatibility
@@ -114,21 +117,22 @@ Completion: 57%
 
 ## 📊 Progress Metrics
 - 💻 Code Areas:
-  - UI Components: 38% complete
-  - Navigation System: 65% complete
-  - Data Models: 80% complete (existing functionality)
-  - Database Access: 90% complete
+  - UI Components: 40% complete
+  - Navigation System: 68% complete
+  - Data Models: 85% complete
+  - Database Access: 92% complete
   - Xposed Integration: 100% complete
   - Multi-user Support: 20% complete
   - Backup/Restore: 0% complete
   - Battery Optimization: 30% complete
-  - Multi-language Support: 15% complete
+  - Multi-language Support: 25% complete
   - Data Visualization: 30% complete
   - Database Migration: 95% complete
-  - MD3 UI Standards: 38% complete
+  - MD3 UI Standards: 40% complete
   - AppDetailScreen: 70% complete
   - Testing Infrastructure: 20% complete
   - Boot Detection & Reset: 100% complete
+  - Module Check Feature: 100% complete
 
 - 📈 Feature Implementation:
   - MD3 UI: 45% complete
@@ -145,6 +149,7 @@ Completion: 57%
   - Badge System Design: 40% complete
   - AppDetailScreen: 70% complete
   - Boot Reset Feature: 100% complete
+  - Module Check Feature: 100% complete
 
 - 🧪 Testing Status:
   - Unit Tests: 15% coverage
@@ -176,6 +181,15 @@ Completion: 57%
 - [TechDebt₇] Addressing hidden API access warnings in database implementation, Low priority
 
 ## 📋 Recent Achievements
+
+### ✨ 2025-05-11: 模块检测功能与导航栏修复
+- **模块状态检测功能**: 完整实现了模块激活状态、Hook工作状态和配置路径有效性的检测机制。包括创建了`ModuleCheckManager`进行核心逻辑处理，`ModuleCheckRepository`和`ModuleCheckRepositoryImpl`进行数据获取，`ModuleCheckViewModel`管理UI状态和逻辑，以及相应的`ModuleCheckScreen` Composable UI。
+- **ContentProvider扩展**: 在`XProvider`中添加了`CheckHookEffectiveness`和`CheckSharedPreferencesPath`等新方法，以支持模块检测所需的数据查询。
+- **数据库DAO更新**: 在`InfoDao`中增加了`getCountByType`方法，用于检查特定类型Hook的数据记录是否存在。
+- **多语言支持**: 为模块检测功能添加了英文、中文和法文的字符串资源。
+- **Koin依赖注入配置**: 更新了Koin的`appModule`，添加了新的Repository和ViewModel的依赖注入配置。
+- **应用启动逻辑**: 在`BasicApp`中初始化了`ModuleCheckManager`，以便在设备重启后自动执行模块检测。
+- **导航栏重复问题修复**: 解决了模块检测页面显示双重导航栏的问题。移除了`ModuleCheckScreen`内部的自定义`TopAppBar`，使其统一使用全局的`NoWakeLockTopAppBar`。同时，调整了`NavGraph.kt`和`TopAppBars.kt`以确保模块检测页面的刷新按钮在全局导航栏中正确显示和工作。
 
 ### 🔧 2025-05-10: XposedModule启动检测逻辑重构
 - 将Boot检测代码从handleLoadPackage方法提取到专用的hookBootCompletedMethods方法中
