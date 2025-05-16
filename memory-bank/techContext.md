@@ -1,5 +1,5 @@
 # σ₃: Technical Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-07*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-12*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🛠️ Technology Stack
@@ -708,4 +708,227 @@ private fun extractAndCacheAlarmParameters(param: XC_MethodHook.MethodHookParam)
 
 ## 🖥️ UI Architecture Insights
 
-// ... rest of existing content ...
+### Component Structure
+- **NoWakeLockApp.kt** serves as the main composition point, establishing theming and navigation
+- **Navigation system** uses Jetpack Navigation with type-safe route parameters
+- **Screen components** follow a standard pattern:
+  - `*Screen.kt` - Main container with business logic connections
+  - `*Content.kt` - UI structure and composition
+  - `*State.kt` - Data structures for UI state representation
+  - `components/` - Reusable UI elements specific to the screen
+- **DADetailScreen** represents a typical complex screen with multiple sections:
+  - Header with app/service information
+  - Statistics card with key metrics
+  - About section with description
+  - Settings section with toggles
+  - Activity timeline visualization
+- **AppDetailScreen** planned structure follows a tabbed design:
+  - App header with icon, name and core info
+  - Statistics summary row with key metrics
+  - TabRow with HorizontalPager for tab content
+  - Four tabs: App, Wakelocks, Alarms, Services
+  - Collapsible header that shrinks when scrolling
+- **Global TopAppBar** handles navigation and context-specific actions
+  - TopAppBarEvent system allows nested screens to modify title
+
+### Visual Language
+- **Material Design 3** principles guide UI design
+- **Card-based UI** groups related information
+  - ElevatedCard should be used instead of Card for consistent elevation
+- **Consistent spacing** uses 16dp between cards, 16dp internal padding
+- **MD3 color system** leverages dynamic themes and semantic colors
+- **Typography** follows MD3 type scale with appropriate weights
+
+### UI Challenges
+
+#### Card Styling Consistency
+- Current implementation has inconsistent card styling
+- Cards should use ElevatedCard with consistent elevation
+- Padding should be managed consistently - card manages internal padding, parent manages spacing
+- Dividers should be used sparingly, with proper alpha for subtlety
+
+#### Timeline Chart Improvements
+- Current implementation doesn't match design specifications
+- Chart needs rounded corners on bars, better axis layout
+- Time labels need optimization to avoid overlap
+- Canvas API limitations require manual positioning calculations
+
+#### Lazy Loading Tabs in Compose
+- Issue identified with current lazy loading implementation in tabbed interfaces
+- Original implementation showed loading indicator on first tab selection, actual content only on second selection
+- Problem root cause: LaunchedEffect executes after composition, creating a timing issue
+- Solution implemented using derivedStateOf to immediately include current tab in loaded tabs set:
+  ```kotlin
+  // Track persistent loaded tabs state
+  val loadedTabs = remember { mutableStateOf(setOf(0)) }
+  
+  // Use derivedStateOf to immediately include current tab in loaded set
+  val currentLoadedTabs by remember {
+      derivedStateOf { 
+          loadedTabs.value + selectedTabIndex 
+      }
+  }
+  
+  // Still persist loaded tabs for future recompositions
+  LaunchedEffect(selectedTabIndex) {
+      loadedTabs.value = loadedTabs.value + selectedTabIndex
+  }
+  ```
+- This pattern ensures immediate UI response while preserving lazy loading benefits
+- Important learning: Use derivedStateOf when UI needs to immediately react to state changes
+
+#### Collapsible Header Implementation in Compose
+- No direct equivalent to CollapsingToolbarLayout in Compose
+- Implementation requires custom NestedScrollConnection to track scroll state
+- TopAppBarScrollBehavior combined with graphicsLayer modifications can achieve collapsing effect
+- Material 3 approach uses LargeTopAppBar with exitUntilCollapsedScrollBehavior()
+- Animation timing and visual transitions need careful implementation
+
+#### Tab Navigation
+- Tabbed interfaces need coordination between TabRow selection and HorizontalPager
+- Tabs require consistent styling following Material 3 guidelines
+- Content caching needed to avoid recomposition when switching tabs
+- State management for each tab must be handled appropriately
+- LaunchedEffect with derivedStateOf ensures smooth tab transitions
+
+### Material Design 3 Component Implementations
+
+#### PatternSettingsSection 改进
+- **组件定位**：应用详情页中的设置部分，用于正则表达式模式管理
+- **主要改进**：
+  - 布局层次改进，使用适当的内边距和间距遵循 MD3 规范
+  - 实现充分利用 ElevatedCard 和 Column 的嵌套结构
+  - 增加组件边缘明显性，改善视觉层次结构
+  - 为可点击元素增加涟漪效果，提高交互反馈
+  - 使用语义化色彩系统，确保在各种主题下保持一致性
+  - 优化不同内容密度下的显示效果
+- **状态管理**：
+  - 采用 remember 和 mutableStateOf 进行本地状态管理
+  - rememberSaveable 保存对话框状态，防止配置更改丢失
+  - 将状态变更通过回调函数传递给父组件
+- **交互模式**：
+  - 为长文本项目添加省略和展开功能
+  - 使用图标辅助表达操作含义
+  - 增加触摸目标大小，提高可用性
+  - 为关键操作提供确认对话框
+
+#### 正则表达式模式管理实现
+```kotlin
+// 模式列表实现使用 LazyColumn 优化性能
+LazyColumn(
+    modifier = Modifier.fillMaxWidth(),
+    contentPadding = PaddingValues(vertical = 8.dp),
+    verticalArrangement = Arrangement.spacedBy(8.dp)
+) {
+    items(patterns) { pattern ->
+        PatternItem(
+            pattern = pattern,
+            onEdit = { editPattern(it) },
+            onDelete = { showDeleteDialog = it }
+        )
+    }
+}
+
+// 模式项使用 ElevatedCard 提供视觉层次
+@Composable
+fun PatternItem(
+    pattern: Pattern,
+    onEdit: (Pattern) -> Unit,
+    onDelete: (Pattern) -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.elevatedCardElevation()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 内容和操作按钮
+        }
+    }
+}
+```
+
+## 🧩 组件技术规范
+
+### ⛰️ UI组件
+
+#### 📏 Scaffold和窗口插图(Window Insets)处理
+
+**使用场景**：在嵌套Scaffold布局中（如主应用Scaffold包含屏幕级Scaffold）避免重复的padding和空白空间。
+
+**最佳实践**：
+1. **窗口插图设置**：
+   - 对于嵌套的Scaffold，内部Scaffold应明确定义窗口插图，通常设置为零：
+   ```kotlin
+   Scaffold(
+       contentWindowInsets = WindowInsets(0, 0, 0, 0),
+       // 其他参数...
+   ) { paddingValues -> 
+       // 内容...
+   }
+   ```
+
+2. **精确控制Padding**：
+   - 在嵌套Scaffold中，只应用必要的padding方向，而不是所有方向：
+   ```kotlin
+   Box(
+       modifier = Modifier
+           .fillMaxSize()
+           .padding(top = paddingValues.calculateTopPadding())  // 只应用顶部padding
+   ) {
+       // 内容...
+   }
+   ```
+
+3. **内容容器配置**：
+   - 为内容容器（如Column、LazyColumn等）设置合适的水平和垂直内边距：
+   ```kotlin
+   Column(
+       modifier = Modifier
+           .fillMaxSize()
+           .padding(horizontal = 16.dp, vertical = 8.dp)  // 确保内容与屏幕边缘有适当距离
+   ) {
+       // 内容项...
+   }
+   ```
+
+4. **导航组件与Scaffold协调**：
+   - 确保TopAppBar、BottomBar等导航组件与Scaffold的paddingValues正确配合
+   - 当使用全局导航组件时，屏幕级Scaffold应避免重复定义同类型的导航组件
+
+5. **常见问题排查**：
+   - TopAppBar下方出现空白：检查嵌套Scaffold的contentWindowInsets设置
+   - 内容边缘过于贴近屏幕：为内容容器添加适当的padding
+   - 屏幕内容被导航栏覆盖：确保正确应用了paddingValues.calculateBottomPadding()
+
+**代码示例**：ModuleCheckScreen.kt中的实现方式
+```kotlin
+@Composable
+fun ModuleCheckScreen(
+    // 参数...
+) {
+    // 设置windowInsets为零，避免与主Scaffold重复计算
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        // 其他参数...
+    ) { paddingValues ->
+        // 仅应用顶部padding，避免全方向padding
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+        ) {
+            // 内容组件，包含自己的适当padding
+            ModuleCheckContent(
+                // 参数...
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+    }
+}
+```
