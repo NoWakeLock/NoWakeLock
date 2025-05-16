@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,13 +58,11 @@ import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.T
 import com.js.nowakelock.ui.navigation.NavRoutes
 import com.js.nowakelock.ui.screens.settings.components.SettingsCard
 import com.js.nowakelock.ui.screens.settings.components.SettingsCategoryTitle
-import com.js.nowakelock.ui.screens.settings.components.SettingsDialogTitle
 import com.js.nowakelock.ui.screens.settings.components.SettingsSelectableItem
 import com.js.nowakelock.ui.screens.settings.components.SettingsSwitchItem
 import com.js.nowakelock.ui.screens.settings.components.SettingsValueItem
 import com.js.nowakelock.ui.screens.settings.components.SettingsActionItem
 import com.js.nowakelock.ui.theme.NoWakeLockTheme
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -321,12 +320,14 @@ private fun ExperimentalSettings(
             checked = debugMode,
             onCheckedChange = onDebugModeChanged
         )
-        
-        // Module Check Item
-        SettingsValueItem(
+        // module check operation
+        SettingsActionItem(
             title = stringResource(id = R.string.module_check),
             subtitle = stringResource(id = R.string.module_check_description),
-            value = stringResource(id = R.string.check),
+            actionText = stringResource(id = R.string.create_backup),
+            actionIcon = Icons.Default.CheckCircle,
+            isLoading = false,
+            enabled = true,
             onClick = {
                 navController?.navigate(NavRoutes.MODULE_CHECK)
             }
