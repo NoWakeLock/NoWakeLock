@@ -72,4 +72,11 @@ interface InfoDao : BaseDao<Info> {
 
     @Query("DELETE FROM info")
     suspend fun clearAll()
+
+    /**
+     * Get the count of records for a specific type
+     * Used by module check to determine if hooks are effective
+     */
+    @Query("SELECT COUNT(*) FROM info WHERE type_info = :type")
+    suspend fun getCountByType(type: Type): Int
 }

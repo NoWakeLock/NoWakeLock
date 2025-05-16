@@ -240,4 +240,36 @@
     <string name="allow">Allow</string>
     <string name="screen_off">Screen Off</string>
     <string name="timeout">Time</string>
+
+    <!-- Module check strings -->
+    <string name="module_check">Module Status Check</string>
+    <string name="module_check_description">Verify if module is active and working correctly</string>
+    <string name="check">Check</string>
+    <string name="refresh">Refresh</string>
+    <string name="module_status">Module Status</string>
+    <string name="hook_status">Hook Status</string>
+    <string name="config_path">Configuration Path</string>
+    <string name="overall_status">Overall Status</string>
+    <string name="normal_status">Normal</string>
+    <string name="warning_status">Warning</string>
+    <string name="error_status">Error</string>
+    <string name="module_active">Module is active</string>
+    <string name="module_inactive">Module is not active</string>
+    <string name="module_version">Version: %s</string>
+    <string name="wakelock_hook">Wakelock Hook</string>
+    <string name="alarm_hook">Alarm Hook</string>
+    <string name="service_hook">Service Hook</string>
+    <string name="hook_working">Working</string>
+    <string name="hook_not_working">Not working</string>
+    <string name="config_path_valid">Configuration path is valid</string>
+    <string name="config_path_invalid">Configuration path is invalid</string>
+    <string name="loading">Loading…</string>
+    <string name="error_checking_module">Error checking module status</string>
+    <string name="status_normal_description">All module components are working properly</string>
+    <string name="status_warning_description">Module is active but some hooks are not working</string>
+    <string name="status_error_description">Critical module components are not working</string>
+    <string name="fix_module_inactive">Activate the module in Xposed Manager and restart device</string>
+    <string name="fix_hook_not_working">Restart device to initialize hooks</string>
+    <string name="fix_config_path">Uninstall app, restart device, reinstall and activate</string>
+    <string name="experimental_features">Experimental Features</string>
 </resources>

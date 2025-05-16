@@ -45,12 +45,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.js.nowakelock.R
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.LanguageMode
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.ThemeMode
+import com.js.nowakelock.ui.navigation.NavRoutes
 import com.js.nowakelock.ui.screens.settings.components.SettingsCard
 import com.js.nowakelock.ui.screens.settings.components.SettingsCategoryTitle
 import com.js.nowakelock.ui.screens.settings.components.SettingsDialogTitle
@@ -68,6 +72,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    navController: NavController? = null,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -157,7 +162,8 @@ fun SettingsScreen(
                 // experimental function settings
                 ExperimentalSettings(
                     debugMode = debugMode,
-                    onDebugModeChanged = { viewModel.updateDebugMode(it) }
+                    onDebugModeChanged = { viewModel.updateDebugMode(it) },
+                    navController = navController
                 )
             }
         }
@@ -282,7 +288,8 @@ private fun BackupSettings(
 @Composable
 private fun ExperimentalSettings(
     debugMode: Boolean,
-    onDebugModeChanged: (Boolean) -> Unit
+    onDebugModeChanged: (Boolean) -> Unit,
+    navController: NavController? = null
 ) {
     Spacer(modifier = Modifier.height(16.dp))
     SettingsCategoryTitle(title = stringResource(id = R.string.settings_experimental))
@@ -313,6 +320,16 @@ private fun ExperimentalSettings(
             subtitle = stringResource(id = R.string.debug_mode_desc),
             checked = debugMode,
             onCheckedChange = onDebugModeChanged
+        )
+        
+        // Module Check Item
+        SettingsValueItem(
+            title = stringResource(id = R.string.module_check),
+            subtitle = stringResource(id = R.string.module_check_description),
+            value = stringResource(id = R.string.check),
+            onClick = {
+                navController?.navigate(NavRoutes.MODULE_CHECK)
+            }
         )
     }
 }
@@ -536,7 +553,8 @@ fun ExperimentalSettingsPreview() {
     NoWakeLockTheme {
         ExperimentalSettings(
             debugMode = false,
-            onDebugModeChanged = {}
+            onDebugModeChanged = {},
+            navController = null
         )
     }
 }

@@ -243,4 +243,36 @@
     <string name="allow_screenOff_service">Autoriser le service</string>
     <string name="allow_screenOff_service_desc">Autoriser ce service à démarrer lorsque l\'écran est éteint</string>
 
+    <!-- Module check strings -->
+    <string name="module_check">Vérification du Module</string>
+    <string name="module_check_description">Vérifier si le module est actif et fonctionne correctement</string>
+    <string name="check">Vérifier</string>
+    <string name="refresh">Actualiser</string>
+    <string name="module_status">État du Module</string>
+    <string name="hook_status">État des Hooks</string>
+    <string name="config_path">Chemin de Configuration</string>
+    <string name="overall_status">État Général</string>
+    <string name="normal_status">Normal</string>
+    <string name="warning_status">Avertissement</string>
+    <string name="error_status">Erreur</string>
+    <string name="module_active">Le module est actif</string>
+    <string name="module_inactive">Le module n\'est pas actif</string>
+    <string name="module_version">Version: %s</string>
+    <string name="wakelock_hook">Hook Wakelock</string>
+    <string name="alarm_hook">Hook Alarm</string>
+    <string name="service_hook">Hook Service</string>
+    <string name="hook_working">Fonctionnel</string>
+    <string name="hook_not_working">Non fonctionnel</string>
+    <string name="config_path_valid">Chemin de configuration valide</string>
+    <string name="config_path_invalid">Chemin de configuration invalide</string>
+    <string name="loading">Chargement…</string>
+    <string name="error_checking_module">Erreur lors de la vérification du module</string>
+    <string name="status_normal_description">Tous les composants du module fonctionnent correctement</string>
+    <string name="status_warning_description">Le module est actif mais certains hooks ne fonctionnent pas</string>
+    <string name="status_error_description">Des composants critiques du module ne fonctionnent pas</string>
+    <string name="fix_module_inactive">Activez le module dans Xposed Manager et redémarrez l\'appareil</string>
+    <string name="fix_hook_not_working">Redémarrez l\'appareil pour initialiser les hooks</string>
+    <string name="fix_config_path">Désinstallez l\'application, redémarrez l\'appareil, réinstallez et activez</string>
+    <string name="experimental_features">Fonctionnalités Expérimentales</string>
+
 </resources>

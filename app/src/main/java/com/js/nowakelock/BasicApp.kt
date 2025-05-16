@@ -9,6 +9,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.js.nowakelock.data.broadcastreceiver.PowerConnectionReceiver
 import com.js.nowakelock.data.manager.BootResetManager
+import com.js.nowakelock.data.manager.ModuleCheckManager
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -47,15 +48,24 @@ class BasicApp : Application() {
         if (resetPerformed) {
             Log.i(TAG, "Database tables (info and info_event) reset after device restart")
         }
+        
+        // Initialize and use ModuleCheckManager to check module status after device restart
+        val moduleCheckManager = ModuleCheckManager(context, userPreferencesRepository)
+        val checkPerformed = moduleCheckManager.checkIfNeeded()
+        
+        if (checkPerformed) {
+            Log.i(TAG, "Module check performed after device restart")
+        }
 
         // Register PowerConnectionReceiver
         registerPowerConnectionReceiver()
     }
 
     private fun registerPowerConnectionReceiver() {
-        val filter = IntentFilter()
-        filter.addAction(Intent.ACTION_POWER_CONNECTED)
-        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_POWER_CONNECTED)
+            addAction(Intent.ACTION_POWER_DISCONNECTED)
+        }
         registerReceiver(PowerConnectionReceiver(), filter)
     }
 }

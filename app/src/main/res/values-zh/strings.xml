@@ -221,4 +221,36 @@
     <string name="allow_screenOff_alarm_desc">允许此闹钟在屏幕关闭时触发</string>
     <string name="allow_screenOff_service">允许服务屏幕关闭</string>
     <string name="allow_screenOff_service_desc">允许此服务在屏幕关闭时启动</string>
+
+    <!-- Module check strings -->
+    <string name="module_check">模块状态检查</string>
+    <string name="module_check_description">验证模块是否激活并正常工作</string>
+    <string name="check">检查</string>
+    <string name="refresh">刷新</string>
+    <string name="module_status">模块状态</string>
+    <string name="hook_status">Hook状态</string>
+    <string name="config_path">配置路径</string>
+    <string name="overall_status">整体状态</string>
+    <string name="normal_status">正常</string>
+    <string name="warning_status">警告</string>
+    <string name="error_status">错误</string>
+    <string name="module_active">模块已激活</string>
+    <string name="module_inactive">模块未激活</string>
+    <string name="module_version">版本: %s</string>
+    <string name="wakelock_hook">Wakelock Hook</string>
+    <string name="alarm_hook">Alarm Hook</string>
+    <string name="service_hook">Service Hook</string>
+    <string name="hook_working">正常工作</string>
+    <string name="hook_not_working">未工作</string>
+    <string name="config_path_valid">配置路径有效</string>
+    <string name="config_path_invalid">配置路径无效</string>
+    <string name="loading">加载中…</string>
+    <string name="error_checking_module">检查模块状态时出错</string>
+    <string name="status_normal_description">所有模块组件工作正常</string>
+    <string name="status_warning_description">模块已激活但部分Hook未工作</string>
+    <string name="status_error_description">关键模块组件未工作</string>
+    <string name="fix_module_inactive">在Xposed管理器中激活模块并重启设备</string>
+    <string name="fix_hook_not_working">重启设备以初始化Hook</string>
+    <string name="fix_config_path">卸载应用，重启设备，重新安装并激活</string>
+    <string name="experimental_features">实验功能</string>
 </resources>
