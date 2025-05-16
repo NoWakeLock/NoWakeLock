@@ -18,6 +18,8 @@ import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.xposedhook.XpUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import java.io.File
+import java.util.regex.Pattern
 
 /**
  * Get the ContentProvider URI
@@ -40,7 +42,11 @@ enum class ProviderMethod(var value: String) {
 
     // Management methods
     ClearData("ClearData"),         // Clear statistics and events
-    CheckHookActive("CheckHookActive") // Verify hook is active
+    CheckHookActive("CheckHookActive"), // Verify hook is active
+    
+    // Module check methods
+    CheckHookEffectiveness("CheckHookEffectiveness"), // Check if hook has data
+    CheckSharedPreferencesPath("CheckSharedPreferencesPath") // Check config path
 }
 
 /**
@@ -81,6 +87,8 @@ class XProvider(
             ProviderMethod.LoadEvents.value -> loadEvents(bundle)
             ProviderMethod.ClearData.value -> clearData(bundle)
             ProviderMethod.CheckHookActive.value -> checkHookActive(bundle)
+            ProviderMethod.CheckHookEffectiveness.value -> checkHookEffectiveness(bundle)
+            ProviderMethod.CheckSharedPreferencesPath.value -> checkSharedPreferencesPath(bundle)
             else -> null
         }
     }
@@ -362,6 +370,65 @@ class XProvider(
         return Bundle().apply {
             putBoolean("active", true)
             putString("version", BuildConfig.VERSION_NAME)
+        }
+    }
+
+    /**
+     * Check if hook has data in the database for the specified type
+     * 
+     * @param bundle Parameters including:
+     *   - type: Event type to check (Wakelock, Alarm, Service)
+     * @return Bundle with hasData status
+     */
+    private fun checkHookEffectiveness(bundle: Bundle): Bundle {
+        val typeString = bundle.getString("type") ?: ""
+        val type = stringToType(typeString)
+        
+        var hasData = false
+        
+        // Check if there's any data for the given type
+        runBlocking(Dispatchers.IO) {
+            val count = dao.getCountByType(type)
+            hasData = count > 0
+        }
+        
+        return Bundle().apply {
+            putBoolean("hasData", hasData)
+            putString("type", type.value)
+        }
+    }
+
+    /**
+     * Check if the shared preferences path exists
+     * This path is typically: /data/misc/{uuid}/com.js.nowakelock
+     * 
+     * @return Bundle with pathExists status
+     */
+    private fun checkSharedPreferencesPath(bundle: Bundle): Bundle {
+        val pathExists = try {
+            // Look for directories matching the UUID pattern in /data/misc
+            val miscDir = File("/data/misc/")
+            val uuidPattern = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            
+            // Check if any of these directories contains our package folder
+            val found = miscDir.listFiles()?.any { uuidDir ->
+                if (uuidDir.isDirectory && uuidPattern.matches(uuidDir.name)) {
+                    val prefsDir = File(uuidDir, "prefs")
+                    val packageDir = File(prefsDir, BuildConfig.APPLICATION_ID)
+                    packageDir.exists() && packageDir.isDirectory
+                } else {
+                    false
+                }
+            } ?: false
+            
+            found
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking shared preferences path: ${e.message}")
+            false
+        }
+        
+        return Bundle().apply {
+            putBoolean("pathExists", pathExists)
         }
     }
 }

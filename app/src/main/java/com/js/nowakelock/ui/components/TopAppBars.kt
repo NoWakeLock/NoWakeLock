@@ -38,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import com.js.nowakelock.R
 import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.data.model.UserInfo
+import com.js.nowakelock.ui.components.RouteUtils.isRouteOf
 import com.js.nowakelock.ui.navigation.NavRoutes
 import com.js.nowakelock.ui.theme.NoWakeLockTheme
 
@@ -95,7 +96,9 @@ private object RouteUtils {
      * Determine if the current route is a detail screen
      */
     fun isDetailScreen(route: String): Boolean {
-        return isRouteOf(route, NavRoutes.DADETAIL) || isRouteOf(route, NavRoutes.APPDETAIL)
+        return isRouteOf(route, NavRoutes.DADETAIL) || 
+               isRouteOf(route, NavRoutes.APPDETAIL) ||
+               isRouteOf(route, NavRoutes.MODULE_CHECK)
     }
     
     /**
@@ -163,7 +166,8 @@ private fun rememberTopAppBarUiState(
             showUserSwitcher = screenType == ScreenType.APPS,
             showRefreshButton = screenType == ScreenType.WAKELOCKS || 
                                 screenType == ScreenType.ALARMS || 
-                                screenType == ScreenType.SERVICES
+                                screenType == ScreenType.SERVICES ||
+                                isRouteOf(route, NavRoutes.MODULE_CHECK)
         )
     }
 }

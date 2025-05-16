@@ -16,6 +16,7 @@ object NavRoutes {
     const val ALARMS = "Alarms"
     const val SERVICES = "Services"
     const val SETTINGS = "Settings"
+    const val MODULE_CHECK = "ModuleCheck"
 
     const val DADETAIL = "DADetail"
     const val APPDETAIL = "AppDetail"

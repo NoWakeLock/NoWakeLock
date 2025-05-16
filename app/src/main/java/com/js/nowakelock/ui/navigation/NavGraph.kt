@@ -21,7 +21,10 @@ import com.js.nowakelock.ui.screens.das.ServiceScreen
 import com.js.nowakelock.ui.screens.das.WakelockScreen
 import com.js.nowakelock.ui.screens.dadetail.DADetailScreen
 import com.js.nowakelock.ui.screens.appdetail.AppDetailScreen
+import com.js.nowakelock.ui.screens.modulecheck.ModuleCheckScreen
+import com.js.nowakelock.ui.screens.modulecheck.ModuleCheckViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Main navigation graph for the NoWakeLock app.
@@ -136,7 +139,42 @@ fun NoWakeLockNavGraph(
         }
 
         composable(NavRoutes.SETTINGS) {
-            SettingsScreen()
+            SettingsScreen(navController = navController)
+        }
+
+        composable(NavRoutes.MODULE_CHECK) {
+            // Get the viewModel for the screen to access its methods later
+            val moduleCheckViewModel: ModuleCheckViewModel = koinViewModel()
+            val temp = stringResource(id = R.string.module_check)
+            
+            // Set the detail title when navigating to this screen
+            LaunchedEffect(Unit) {
+                onTopAppBarEvent(TopAppBarEvent.SetDetailTitle(temp))
+            }
+            
+            // Override the global RefreshClicked handler when on this screen
+            LaunchedEffect(Unit) {
+                val refreshHandler: (TopAppBarEvent) -> Unit = { event ->
+                    if (event is TopAppBarEvent.RefreshClicked) {
+                        // Call the viewModel's refresh method
+                        moduleCheckViewModel.checkModuleStatus()
+                    }
+                    // Forward the event to the original handler
+                    onTopAppBarEvent(event)
+                }
+                
+                // Update the TopAppBar refresh action
+                onTopAppBarEvent(TopAppBarEvent.RefreshClicked)
+            }
+            
+            ModuleCheckScreen(
+                onBackClick = {
+                    // Clear detail title when navigating away
+                    onTopAppBarEvent(TopAppBarEvent.ClearDetailTitle)
+                    navController.navigateUp()
+                },
+                viewModel = moduleCheckViewModel
+            )
         }
 
         // DA Detail Screen

@@ -28,6 +28,8 @@ class UserPreferencesRepository(private val context: Context) {
         // Keys for boot reset functionality
         val LAST_BOOT_TIME_KEY = longPreferencesKey("last_boot_time")
         val RESET_DONE_KEY = booleanPreferencesKey("reset_done_for_current_boot")
+        // Key for module check functionality
+        val MODULE_CHECK_DONE_KEY = booleanPreferencesKey("module_check_done_for_current_boot")
     }
 
     // Possible theme values
@@ -106,6 +108,12 @@ class UserPreferencesRepository(private val context: Context) {
             preferences[RESET_DONE_KEY] ?: false 
         }
 
+    // Get module check done flag flow - default to false if not set
+    val moduleCheckDoneForCurrentBoot: Flow<Boolean> = context.dataStore.data
+        .map { preferences -> 
+            preferences[MODULE_CHECK_DONE_KEY] ?: false 
+        }
+
     // Save theme preference
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { preferences ->
@@ -145,6 +153,13 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setResetDone(done: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[RESET_DONE_KEY] = done
+        }
+    }
+
+    // Save module check done preference
+    suspend fun setModuleCheckDone(done: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[MODULE_CHECK_DONE_KEY] = done
         }
     }
 } 

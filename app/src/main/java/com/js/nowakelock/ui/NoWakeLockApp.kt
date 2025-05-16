@@ -101,7 +101,8 @@ fun NoWakeLockApp(
                     }
 
                     is TopAppBarEvent.RefreshClicked -> {
-                        // Handle refresh
+                        // RefreshClicked is now handled by individual screens
+                        // This is a global handler that can be overridden
                     }
 
                     is TopAppBarEvent.SetDetailTitle -> {

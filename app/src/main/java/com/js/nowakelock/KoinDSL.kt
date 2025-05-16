@@ -17,8 +17,11 @@ import com.js.nowakelock.data.repository.daDetail.DAInfoRepository
 import com.js.nowakelock.data.repository.daDetail.DAInfoRepositoryImpl
 import com.js.nowakelock.data.repository.daDetail.DADetailRepository
 import com.js.nowakelock.data.repository.daDetail.DADetailRepositoryImpl
+import com.js.nowakelock.data.repository.modulecheck.ModuleCheckRepository
+import com.js.nowakelock.data.repository.modulecheck.ModuleCheckRepositoryImpl
 import com.js.nowakelock.ui.screens.dadetail.DADetailViewModel
 import com.js.nowakelock.ui.screens.appdetail.AppDetailViewModel
+import com.js.nowakelock.ui.screens.modulecheck.ModuleCheckViewModel
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -53,6 +56,9 @@ fun appModule() = module {
     //
     singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
     singleOf(::DADetailRepositoryImpl) { bind<DADetailRepository>() }
+    
+    // Module check repository
+    single<ModuleCheckRepository> { ModuleCheckRepositoryImpl(get(), get()) }
 
     // ViewModel
     viewModel(named("WakelockViewModel")) {
@@ -101,4 +107,7 @@ fun appModule() = module {
     }
 
     viewModel { SettingsViewModel(get<UserPreferencesRepository>(), get<BackupManager>()) }
+
+    // Module check ViewModel
+    viewModel { ModuleCheckViewModel(get()) }
 }
