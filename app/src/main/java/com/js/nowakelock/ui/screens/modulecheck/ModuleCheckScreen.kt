@@ -3,6 +3,7 @@ package com.js.nowakelock.ui.screens.modulecheck
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
@@ -14,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.js.nowakelock.R
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.CheckStatus
 import com.js.nowakelock.data.model.ModuleCheckResult
+import com.js.nowakelock.ui.theme.NoWakeLockTheme
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -32,11 +35,13 @@ fun ModuleCheckScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    Scaffold { paddingValues ->
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             when {
                 uiState.isLoading -> {
@@ -81,7 +86,7 @@ fun ModuleCheckScreen(
                         result = uiState.result!!,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
+                            .padding(horizontal = 16.dp, vertical = 16.dp)
                     )
                 }
             }
@@ -481,4 +486,68 @@ fun ConfigPathCard(
             }
         }
     }
-} 
+}
+
+/**
+ * Preview for ModuleCheckContent with various states
+ */
+@Composable
+@Preview(showBackground = true)
+fun ModuleCheckContentPreview() {
+    // Create a sample result with error status (similar to the screenshot)
+    val hookStatus = mapOf(
+        Type.Wakelock to true,
+        Type.Alarm to true,
+        Type.Service to true
+    )
+    
+    val sampleResult = ModuleCheckResult(
+        moduleActive = true,
+        moduleVersion = "3.0.1",
+        hookStatus = hookStatus,
+        configPathValid = false,
+        overallStatus = CheckStatus.ERROR
+    )
+    
+    NoWakeLockTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+            ModuleCheckContent(
+                result = sampleResult,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
+    }
+}
+
+// You could add more previews for different states if needed
+@Composable
+@Preview(showBackground = true)
+fun ModuleCheckContentNormalPreview() {
+    // Create a sample result with normal status
+    val hookStatus = mapOf(
+        Type.Wakelock to true,
+        Type.Alarm to true,
+        Type.Service to true
+    )
+    
+    val sampleResult = ModuleCheckResult(
+        moduleActive = true,
+        moduleVersion = "3.0.1",
+        hookStatus = hookStatus,
+        configPathValid = true,
+        overallStatus = CheckStatus.NORMAL
+    )
+    
+    NoWakeLockTheme {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+            ModuleCheckContent(
+                result = sampleResult,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
+    }
+}
