@@ -227,9 +227,9 @@
     <string name="module_check_description">验证模块是否激活并正常工作</string>
     <string name="check">检查</string>
     <string name="refresh">刷新</string>
-    <string name="module_status">模块状态</string>
+    <string name="module_status">Xposed 状态</string>
     <string name="hook_status">Hook状态</string>
-    <string name="config_path">配置路径</string>
+    <string name="config_path">New XSharedPreferences</string>
     <string name="overall_status">整体状态</string>
     <string name="normal_status">正常</string>
     <string name="warning_status">警告</string>

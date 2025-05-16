@@ -248,9 +248,9 @@
     <string name="module_check_description">Vérifier si le module est actif et fonctionne correctement</string>
     <string name="check">Vérifier</string>
     <string name="refresh">Actualiser</string>
-    <string name="module_status">État du Module</string>
+    <string name="module_status">État du Xposed</string>
     <string name="hook_status">État des Hooks</string>
-    <string name="config_path">Chemin de Configuration</string>
+    <string name="config_path">New XSharedPreferences</string>
     <string name="overall_status">État Général</string>
     <string name="normal_status">Normal</string>
     <string name="warning_status">Avertissement</string>
