@@ -1,5 +1,5 @@
 # σ₆: Protection Registry
-*v1.0 | Created: 2025-04-25 | Updated: 2025-05-08*
+*v1.0 | Created: 2025-04-25 | Updated: 2025-05-17*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🛡️ Protected Regions
@@ -59,7 +59,7 @@
 
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/navigation/NavGraph.kt` - 导航图
   - 保护理由: 核心导航实现，影响所有页面跳转
-  - 最后修改: 2025-04-25 (支持类型导航)
+  - 最后修改: 2025-05-17 (为AppDetail路由添加launchSingleTop和restoreState配置，改善状态保留)
 
 ### UI组件
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/components/TopAppBars.kt` - 顶部应用栏
@@ -74,7 +74,7 @@
 ### 屏幕实现
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/screens/appdetail/AppDetailScreen.kt` - 应用详情屏幕
   - 保护理由: 复杂的标签页界面实现，集成多个功能组件
-  - 最后修改: 2025-04-27 (实现 Tab 内容集成和懒加载)
+  - 最后修改: 2025-05-17 (使用rememberSaveable替代remember，改善导航状态持久性)
 
 - **[GUARDED]** `app/src/main/java/com/js/nowakelock/ui/screens/das/DAsScreen.kt` - 设备自动化列表屏幕
   - 保护理由: 核心功能屏幕，被多处复用
@@ -103,6 +103,7 @@
   - 最后修改: 2025-04-29 (修复语言切换后用户切换无限循环问题，采用单向同步方案3)
 
 ## 📜 Protection History
+- 2025-05-17 ⟶ 更新AppDetailScreen和NavGraph，修复页面状态持久性问题，使用rememberSaveable和导航配置改进
 - 2025-05-08 ⟶ 添加WakelockHook.kt到关键保护列表，实现统一钩子方法和参数位置自适应功能，同时保持所有受保护代码不变
 - 2025-05-07 ⟶ 添加AlarmHook.kt到关键保护列表，完成统一钩子策略和参数缓存优化实现
 - 2025-05-01 ⟶ 添加测试基础设施(TestUtils, WakelockTests)和关键功能测试到保护列表

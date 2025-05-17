@@ -1,11 +1,12 @@
 # σ₅: Progress Tracker
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-12*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-17*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 📈 Project Status
-Completion: 59%
+Completion: 60%
 
 ## ✅ Completed Features
+- [Feature₃₉] 2025-05-17 ⟶ 修复AppDetailScreen页面状态持久性问题：使用rememberSaveable替代remember，确保从DADetail页面返回时保留选项卡状态，避免页面重新刷新
 - [Feature₃₈] 2025-05-12 ⟶ 修复ModuleCheckScreen中TopAppBar下方空白问题：通过设置contentWindowInsets和优化padding应用方式，解决了Scaffold嵌套导致的双重空白问题
 - [Feature₃₇] 2025-05-11 ⟶ 修复模块检测页面导航栏重复问题：移除ModuleCheckScreen中的自定义TopAppBar，统一使用全局导航栏，并确保刷新功能正常
 - [Feature₃₆] 2025-05-11 ⟶ 实现模块检测功能：包括UI、ViewModel、Repository、Manager以及相关的ContentProvider方法和数据库查询，支持多语言
@@ -47,7 +48,7 @@ Completion: 59%
 
 ## 🚧 In Progress
 - [WIP₁] 45% ⟶ Material Design 3 UI reconstruction, Component styling standards established and multiple components improved with MD3 principles
-- [WIP₉] 70% ⟶ AppDetailScreen implementation, Tab 集成、懒加载优化和设置 UI 已完成，其他 UI 细节仍需改进
+- [WIP₉] 75% ⟶ AppDetailScreen implementation, Tab 集成、懒加载优化、设置 UI 和状态持久性问题已完成，其他 UI 细节仍需改进
 - [WIP₂] 50% ⟶ Complete wakelock/alarm/service/module_check support, 完成了所有四个核心系统的重构和参数自适应策略，Xposed模块启动检测逻辑优化
 - [WIP₃] 20% ⟶ Multi-user support, Initial implementation identified and architecture planned
 - [WIP₄] 35% ⟶ DADetailScreen UI improvements, Header card combined and styling issues identified
@@ -90,7 +91,10 @@ Completion: 59%
 - [Issue₁₁] Low ⟶ Hidden API access warnings from Room database implementation, May cause future compatibility issues
 
 ## 🔄 Decision Evolution
-- [Decision₃₀] 2025-05-09 ⟶ 对Room数据库迁移采用多路径重建策略，使用事务保护确保原子性操作，彻底解决版本跳跃问题和索引创建错误，Status: ✅ Accepted
+- [Decision₃₃] 2025-05-17 ⟶ 对于AppDetailScreen状态持久性问题，采用rememberSaveable并结合导航配置改进(launchSingleTop=true, restoreState=true)的解决方案，确保从DADetail页面返回时保留用户选择的标签，Status: ✅ Accepted
+- [Decision₃₂] 2025-05-12 ⟶ 修复ModuleCheckScreen中TopAppBar下方空白问题：通过设置contentWindowInsets=WindowInsets(0,0,0,0)，并优化padding应用方式，解决Scaffold嵌套导致的双重空白
+- [Decision₃₁] ✅ ⟶ 修复模块检测页面导航栏重复问题，采用移除局部TopAppBar，统一使用全局导航栏的方案
+- [Decision₃₀] ✅ ⟶ 实现完整的模块检测功能，覆盖模块激活、Hook有效性、配置路径检查，并提供多语言UI和清晰的用户指引
 - [Decision₂₉] 2025-05-08 ⟶ 对WakelockHook进行重构，应用与AlarmHook和ServiceHook类似的统一钩子策略和参数自适应提取机制，但保持受保护代码不变，Status: ✅ Accepted
 - [Decision₂₈] 2025-05-07 ⟶ 对AlarmHook进行重构，采用与ServiceHook类似的统一钩子策略和参数缓存机制，提高代码灵活性和可维护性，Status: ✅ Accepted
 - [Decision₂₇] 2025-05-06 ⟶ 采用 SystemClock.elapsedRealtime() 检测设备重启，并使用 DataStore 存储偏好设置，通过同步执行确保数据库表在应用启动时可靠重置，Status: ✅ Accepted
@@ -123,8 +127,8 @@ Completion: 59%
 
 ## 📊 Progress Metrics
 - 💻 Code Areas:
-  - UI Components: 40% complete
-  - Navigation System: 68% complete
+  - UI Components: 45% complete
+  - Navigation System: 70% complete
   - Data Models: 85% complete
   - Database Access: 92% complete
   - Xposed Integration: 100% complete
@@ -135,7 +139,7 @@ Completion: 59%
   - Data Visualization: 30% complete
   - Database Migration: 95% complete
   - MD3 UI Standards: 40% complete
-  - AppDetailScreen: 70% complete
+  - AppDetailScreen: 75% complete
   - Testing Infrastructure: 20% complete
   - Boot Detection & Reset: 100% complete
   - Module Check Feature: 100% complete
@@ -153,7 +157,7 @@ Completion: 59%
   - TimelineChart: 40% complete
   - Database Migrations: 95% complete
   - Badge System Design: 40% complete
-  - AppDetailScreen: 70% complete
+  - AppDetailScreen: 75% complete
   - Boot Reset Feature: 100% complete
   - Module Check Feature: 100% complete
 
@@ -188,56 +192,19 @@ Completion: 59%
 
 ## 📋 Recent Achievements
 
+### ✨ 2025-05-17: AppDetailScreen状态持久性优化
+- **问题分析**: 发现从DADetail页面返回到AppDetailScreen时无法保持原有状态，每次导致整个页面重新刷新
+- **原因识别**: 确定页面在导航时状态未被保留，选项卡状态使用普通remember声明导致导航返回时丢失
+- **优化方案**: 
+  1. 将关键UI状态`selectedTabIndex`和`loadedTabs`从`remember`改为`rememberSaveable`
+  2. 派生状态`currentLoadedTabs`保留使用`remember`，避免序列化错误
+  3. 在导航配置中为AppDetail路由添加`launchSingleTop=true`和`restoreState=true`
+- **实现结果**: 成功解决了页面状态丢失问题，用户从子页面返回时能保持原有的选项卡状态和已加载内容
+- **代码质量**: 遵循Compose最佳实践，对状态管理和导航配置进行了有针对性的改进，避免了过度设计
+
 ### ✨ 2025-05-12: ModuleCheckScreen布局优化
 - **问题分析**: 识别出ModuleCheckScreen中TopAppBar下方出现空白的原因是由于Scaffold嵌套和窗口插图(Window Insets)处理不当
 - **Scaffold优化**: 通过设置`contentWindowInsets = WindowInsets(0, 0, 0, 0)`禁用默认窗口插图，避免空间重复计算
 - **精确Padding控制**: 修改了padding应用方式，只对Box容器应用顶部padding: `.padding(top = paddingValues.calculateTopPadding())`，避免全方向padding
 - **内容布局优化**: 为ModuleCheckContent添加了适当的水平和垂直内边距，确保内容与屏幕边缘保持合理距离
 - **一致性提升**: 确保了ModuleCheckScreen的布局风格与应用的其他部分保持一致，遵循Material Design 3的设计原则
-
-### ✨ 2025-05-11: 模块检测功能与导航栏修复
-- **模块状态检测功能**: 完整实现了模块激活状态、Hook工作状态和配置路径有效性的检测机制。包括创建了`ModuleCheckManager`进行核心逻辑处理，`ModuleCheckRepository`和`ModuleCheckRepositoryImpl`进行数据获取，`ModuleCheckViewModel`管理UI状态和逻辑，以及相应的`ModuleCheckScreen` Composable UI。
-- **ContentProvider扩展**: 在`XProvider`中添加了`CheckHookEffectiveness`和`CheckSharedPreferencesPath`等新方法，以支持模块检测所需的数据查询。
-- **数据库DAO更新**: 在`InfoDao`中增加了`getCountByType`方法，用于检查特定类型Hook的数据记录是否存在。
-- **多语言支持**: 为模块检测功能添加了英文、中文和法文的字符串资源。
-- **Koin依赖注入配置**: 更新了Koin的`appModule`，添加了新的Repository和ViewModel的依赖注入配置。
-- **应用启动逻辑**: 在`BasicApp`中初始化了`ModuleCheckManager`，以便在设备重启后自动执行模块检测。
-- **导航栏重复问题修复**: 解决了模块检测页面显示双重导航栏的问题。移除了`ModuleCheckScreen`内部的自定义`TopAppBar`，使其统一使用全局的`NoWakeLockTopAppBar`。同时，调整了`NavGraph.kt`和`TopAppBars.kt`以确保模块检测页面的刷新按钮在全局导航栏中正确显示和工作。
-
-### 🔧 2025-05-10: XposedModule启动检测逻辑重构
-- 将Boot检测代码从handleLoadPackage方法提取到专用的hookBootCompletedMethods方法中
-- 保持了原有的三重备份检测逻辑，确保在各种设备上的兼容性
-- 保留了所有必要的错误处理和日志记录，确保代码的健壮性
-- 遵循了代码保护标记，确保关键业务逻辑不受影响
-- 提高了模块的可维护性和可读性，使代码结构更加清晰
-- 简化了主要的handleLoadPackage方法，使其逻辑更加集中
-
-### 🔧 2025-05-09: Room数据库迁移策略全面修复
-- 为AppDatabase和InfoDatabase添加了多路径迁移策略，解决了版本跳跃(10→13)导致的崩溃问题
-- 实现了完整的事务保护机制，确保迁移过程的原子性，避免数据库处于不一致状态
-- 采用彻底重建表的策略，解决了"no such column: eventKey"错误问题
-- 增加全面的日志记录，便于诊断和追踪迁移过程
-- 使用共享实现函数提高代码复用性，确保迁移逻辑一致性
-- 为所有可能的迁移路径(10→13, 11→13, 12→13, 10→12, 11→12)提供明确定义的处理
-
-### 🔧 2025-05-08: WakelockHook 参数位置自适应实现
-- 实现了与 AlarmHook 和 ServiceHook 类似的统一钩子方法，支持 Android 7-14+ 所有版本
-- 添加参数位置缓存，消除重复参数提取的开销，提高性能
-- 创建自适应参数提取策略，提高在不同 ROM 和系统版本上的兼容性
-- 改进错误处理机制，增加详细日志记录
-- 保留所有受保护的代码，完全遵循代码保护标记
-- 为统一钩子方法添加回退机制，确保在参数提取失败时仍能使用原有实现
-
-### 🔧 2025-05-07: AlarmHook 统一钩子策略实现
-- 实现了统一的钩子方法，支持 Android 7-14 及以上版本
-- 添加参数位置缓存，消除重复参数提取的开销
-- 创建了自适应参数提取策略，适用于各种 ROM 的系统版本
-- 根据调试模式状态优化日志记录，减少生产环境中的噪音
-- 保留原有业务逻辑，确保闹钟阻断功能正常工作
-
-### 🔧 2023-10-20: ServiceHook Parameter Caching Optimization
-- Implemented unified hook approach for all Android versions, replacing version-specific methods
-- Added parameter position caching to eliminate repeated parameter extraction 
-- Created adaptive strategy for parameter extraction that works with custom ROMs
-- Improved logging with debug mode check to reduce noise in production
-- Significantly reduced CPU usage for apps that frequently use services
