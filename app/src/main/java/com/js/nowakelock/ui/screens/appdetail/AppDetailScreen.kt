@@ -83,6 +83,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.saveable.rememberSaveable
 
 /**
  * App Detail Screen - Entry point composable for the app details
@@ -172,11 +173,11 @@ fun AppDetailContent(
     isSearchActive: Boolean = false,
     searchQuery: String = ""
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val tabs = listOf("App", "Wakelocks", "Alarms", "Services")
 
     // Track which tabs have been loaded for lazy loading
-    val loadedTabs = remember { mutableStateOf(setOf(0)) }
+    val loadedTabs = rememberSaveable { mutableStateOf(setOf(0)) }
 
     // when selectedTabIndex changes, immediately include the new tab index
     val currentLoadedTabs by remember {
