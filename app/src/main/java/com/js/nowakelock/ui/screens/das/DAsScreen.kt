@@ -55,8 +55,11 @@ fun DAsScreen(
     LaunchedEffect(packageName, userId) {
         viewModel.setAppFilter(packageName, userId)
     }
-    // set ST
-    viewModel.syncSt(type)
+    
+    // Move syncSt call to LaunchedEffect to prevent calling it on every recomposition
+    LaunchedEffect(type) {
+        viewModel.syncSt(type)
+    }
 
     // Top app bar scrolling behavior 
     // We keep the scrolling behavior for content padding
