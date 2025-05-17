@@ -1,6 +1,6 @@
 # σ₂: System Patterns
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-01*
-*Π: 🏗️DEVELOPMENT | Ω: 🔍R*
+*v1.0 | Created: 2025-04-15 | Updated: 2025-05-20*
+*Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🏛️ Architecture Overview
 NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compose UI框架、Koin依赖注入和Room数据库。项目关注点分离清晰，上层UI通过ViewModel与底层数据源交互，同时通过Xposed框架实现系统级钩子功能。
@@ -27,8 +27,6 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
 - [P₈] Composition Pattern ⟶ Building complex UI components from smaller specialized components
 - [P₉] Provider Pattern ⟶ Context-based state management for settings
 - [P₁₀] Reducer Pattern ⟶ Structured state updates for complex settings
-- [P₁₁] Hook Pattern ⟶ Custom hooks for simplified state access
-- [P₁₂] Command Pattern ⟶ Action creators for settings state modifications
 
 ## 🔌 Key Interfaces
 - [I₁] XposedModule ⟶ Entry point for Xposed framework integration
@@ -40,9 +38,6 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
 - [I₇] UI Components ⟶ Reusable UI elements for consistency
 - [I₈] Visualization Components ⟶ Chart and data display interfaces
 - [I₉] Settings Provider ⟶ Context provider for settings management
-- [I₁₀] Settings Hook ⟶ Custom hook for accessing settings state
-- [I₁₁] Settings Reducer ⟶ Action-based state management
-- [I₁₂] Settings UI Components ⟶ Reusable settings controls
 
 ## 🔐 Critical Implementation Paths
 - [Path₁] Wakelock Detection ⟶ WakelockHook → Record → Repository → Database
@@ -53,64 +48,42 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
 - [Path₆] User Switching ⟶ UI → ViewModel → Repositories → Database Queries
 - [Path₇] Data Backup ⟶ UI → ViewModel → Repository → Serialization → Storage
 - [Path₈] Activity Visualization ⟶ Database → Repository → ViewModel → TimelineChart → Canvas
-- [Path₉] Settings Management ⟶ UI → Settings Hook → Settings Reducer → Context Provider → LocalStorage
 
-## 🧩 Architectural Insights
-- [Insight₁] The application uses different hook implementations based on Android version to maintain compatibility across devices
-- [Insight₂] The UI is being reconstructed with Material Design 3 while preserving core functionality
-- [Insight₃] Multi-user support is implemented through userId parameters in database queries
-- [Insight₄] The app uses Koin for dependency injection with modular organization
-- [Insight₅] Edge-to-edge UI implementation uses the new enableEdgeToEdge() API instead of deprecated SystemUiController
-- [Insight₆] The architecture follows modern Android development patterns with Compose and viewModels
-- [Insight₇] Data visualization components use Canvas API instead of third-party libraries to minimize dependencies
-- [Insight₈] Settings management uses a Context API approach for global state access
-- [Insight₉] The app uses LocalStorage for persistent settings with JSON serialization
-- [Insight₁₀] Settings UI is built through component composition for flexibility and maintenance
+## 🧩 Core Architectural Insights
+- [Insight₁] The application uses different hook implementations based on Android version for compatibility
+- [Insight₂] Multi-user support is implemented through userId parameters in database queries
+- [Insight₃] The app uses Koin for dependency injection with modular organization
+- [Insight₄] Edge-to-edge UI implementation uses the new enableEdgeToEdge() API
+- [Insight₅] Data visualization components use Canvas API for minimal dependencies
+- [Insight₆] Settings management uses a Context API approach for global state access
+- [Insight₇] The app uses LocalStorage for persistent settings with JSON serialization
 
 ## 🖼️ UI Architecture
-- [UI₁] Screen Organization ⟶ UI is organized by feature in separate screen packages (apps, wakelocks, alarms, services, settings)
-- [UI₂] Component Library ⟶ Reusable components in dedicated components package (UserSwitcher, BottomNavBar, EmptyView, etc.)
-- [UI₃] Type-Safe Navigation ⟶ Uses Kotlin serialization for passing complex data between screens
-- [UI₄] Nested Components ⟶ Complex screens are built from smaller composable components in screen-specific packages
-- [UI₅] Material 3 Integration ⟶ Uses Material 3 components with system theming
-- [UI₆] Screen State Management ⟶ Uses collectAsState with Flow for reactive UI updates
-- [UI₇] Card-Based Organization ⟶ Information is grouped into distinct ElevatedCard components for clear visual hierarchy
+### Screen Organization
+- Feature-based organization in separate screen packages
+- Shared component library in dedicated components package
+- Type-safe navigation using Kotlin serialization
+- Material 3 component integration with system theming
+- Screen state management using collectAsState with Flow
 
-## 🧭 Navigation System
-- [Nav₁] Bottom Navigation ⟶ Main app navigation with tab-based structure
-- [Nav₂] Central NavHost ⟶ Single NavHost in main app composable manages all navigation
-- [Nav₃] Type-Safe Parameters ⟶ Serializable data classes for passing complex data between screens
-- [Nav₄] Detail Navigation ⟶ Detail screens with back navigation and shared data
-- [Nav₅] State Preservation ⟶ Navigation preserves state during tab switching
-- [Nav₆] Multi-level Navigation ⟶ Supports navigation to detail screens while maintaining tab structure 
+### Navigation System
+- Bottom Navigation for main app navigation with tab-based structure
+- Central NavHost in main app composable manages all navigation
+- Type-Safe Parameters using serializable data classes
+- Detail Navigation with back navigation and shared data
+- State Preservation during tab switching
 
-## 📊 Data Visualization Patterns
-- [Viz₁] Canvas-Based Charts ⟶ Custom drawing with Compose Canvas API instead of third-party libraries
-- [Viz₂] Material Design 3 Styling ⟶ Charts follow MD3 color scheme and design principles
-- [Viz₃] Responsive Layout ⟶ Visualizations adapt to different screen sizes and orientations
-- [Viz₄] Data Transformation ⟶ Raw data is transformed in ViewModel before visualization
-- [Viz₅] Remember Optimization ⟶ Calculations are cached using remember to improve performance
-- [Viz₆] Component Encapsulation ⟶ Visualization logic is encapsulated in dedicated components
-- [Viz₇] State-Driven Rendering ⟶ Chart appearance dynamically responds to data state changes 
+### Data Visualization
+- Canvas-Based Charts using Compose Canvas API
+- Material Design 3 Styling for visual consistency
+- Responsive Layout adapting to different screen sizes
+- Data Transformation in ViewModel before visualization
+- Remember Optimization caching calculations
 
-## ⚙️ Settings Architecture Patterns
-- [Set₁] Context Provider ⟶ Top-level state container using React Context API pattern
-- [Set₂] Settings Hook ⟶ Custom hook for accessing settings state throughout the application
-- [Set₃] Reducer Pattern ⟶ Action-based state updates for structured management
-- [Set₄] JSON Serialization ⟶ Settings stored as JSON in LocalStorage
-- [Set₅] Versioned Storage ⟶ Schema versioning for handling format changes
-- [Set₆] Nested Access ⟶ Path-based access to nested settings (e.g., "appearance.theme.mode")
-- [Set₇] Default Fallback ⟶ Default settings provided when storage is empty or corrupted
-- [Set₈] UI Component Library ⟶ Reusable settings control components (Input, Switch, Select, etc.)
-- [Set₉] Validation System ⟶ Type-specific validation rules for settings values
-- [Set₁₀] Settings Categorization ⟶ Logical grouping of related settings
-- [Set₁₁] Search Functionality ⟶ Dynamic filtering of settings for improved discovery
-- [Set₁₂] Conditional Dependencies ⟶ Settings that show/hide based on other setting values 
-
-## 🧪 Testing Architecture Patterns
+## 🧪 Testing Architecture
 
 ### 单例测试挑战与解决方案
-- [Test₁] **单例重置模式** ⟶ 使用反射技术在测试间重置单例状态，确保测试隔离
+- **单例重置模式**：使用反射技术在测试间重置单例状态，确保测试隔离
   ```kotlin
   // TestUtils.kt
   fun resetWakelockRegistry() {
@@ -129,19 +102,14 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
   }
   ```
 
-- [Test₂] **测试类拆分策略** ⟶ 将大型测试类拆分为小型、聚焦的测试类，提高测试可维护性和隔离性
+- **测试类拆分策略**：将大型测试类拆分为小型、聚焦的测试类，提高可维护性
   ```
-  原始结构:
-  WakelockRegistryTest
-  ├── 基本功能测试
-  └── 复杂边缘情况测试
-  
   优化结构:
   ├── WakelockRegistryBasicTest (基本功能)
   └── WakelockRegistryProblemTest (复杂边缘情况)
   ```
 
-- [Test₃] **测试套件组织** ⟶ 使用JUnit Suite控制测试执行顺序，解决测试间依赖问题
+- **测试套件组织**：使用JUnit Suite控制测试执行顺序，解决测试间依赖
   ```kotlin
   @RunWith(Suite::class)
   @Suite.SuiteClasses(
@@ -153,116 +121,9 @@ NoWakeLock采用现代化Android应用架构，整合了MVVM架构模式、Compo
   ```
 
 ### 测试生命周期模式
-- [Test₄] **测试环境准备与清理** ⟶ 使用@Before和@After确保测试环境一致性
-  ```kotlin
-  @Before
-  fun setUp() {
-      // 在每个测试前重置单例状态
-      TestUtils.resetWakelockRegistry()
-  }
-  
-  @After
-  fun tearDown() {
-      // 在每个测试后清理状态
-      TestUtils.resetWakelockRegistry()
-  }
-  ```
-
-- [Test₅] **显式状态重置** ⟶ 在测试方法内部显式重置状态，确保测试独立性
-  ```kotlin
-  @Test
-  fun someTest() {
-      // 显式重置确保干净的测试环境
-      TestUtils.resetWakelockRegistry()
-      
-      // 测试逻辑...
-  }
-  ```
-
-### 断言模式
-- [Test₆] **流畅断言语法** ⟶ 使用Truth库提供更具可读性的断言
-  ```kotlin
-  // 传统JUnit断言
-  assertEquals(1, activeStats.size)
-  assertEquals("test_wl", activeStats[0].tag)
-  
-  // Truth流畅断言
-  assertThat(activeStats).hasSize(1)
-  assertThat(activeStats[0].tag).isEqualTo("test_wl")
-  ```
-
-- [Test₇] **多重断言分组** ⟶ 对相关属性进行分组断言，提高测试可读性
-  ```kotlin
-  @Test
-  fun handleAcquire_firstAcquisition_shouldReturnZero() {
-      val registry = WakelockRegistry.getInstance()
-      val duration = registry.handleAcquire("com.test", "test_wl", Type.WAKELOCK)
-      
-      // 分组断言相关状态
-      assertThat(duration).isEqualTo(0L)
-      assertThat(registry.getActiveWakelockStats()).hasSize(1)
-      assertThat(registry.getTotalTrackedWakelocks()).isEqualTo(1)
-  }
-  ```
-
-### 测试命名与组织模式
-- [Test₈] **BDD风格命名** ⟶ 使用given_when_then或feature_scenario_expected结构命名测试方法
-  ```kotlin
-  // 方法命名: 功能_条件_预期结果
-  @Test
-  fun handleAcquire_firstAcquisition_shouldReturnZero() { ... }
-  
-  @Test
-  fun getActiveWakelockStats_shouldReturnActiveWakelocks() { ... }
-  ```
-
-- [Test₉] **测试分类与归类** ⟶ 将相关测试归类到专门的测试类中
-  ```
-  测试类组织:
-  ├── WakelockCounterTest (单个计数器功能)
-  ├── WakelockRegistryBasicTest (注册表基本功能)
-  └── WakelockRegistryProblemTest (注册表边缘情况)
-  ```
-
-### 时间依赖测试模式
-- [Test₁₀] **时间依赖隔离** ⟶ 使用可控时间源代替System.currentTimeMillis()
-  ```kotlin
-  // 定义时间提供者接口
-  interface TimeProvider {
-      fun currentTimeMillis(): Long
-  }
-  
-  // 测试实现
-  class TestTimeProvider : TimeProvider {
-      var currentTime: Long = 0
-      
-      override fun currentTimeMillis(): Long = currentTime
-      
-      fun advanceBy(millis: Long) {
-          currentTime += millis
-      }
-  }
-  ```
-
-- [Test₁₁] **时间跳转测试** ⟶ 通过控制时间跳转测试与时间相关的功能
-  ```kotlin
-  @Test
-  fun wakelockDuration_shouldCalculateCorrectly() {
-      val timeProvider = TestTimeProvider()
-      val counter = WakelockCounter(timeProvider)
-      
-      // 设置初始时间
-      timeProvider.currentTime = 1000L
-      counter.increment()
-      
-      // 时间跳转
-      timeProvider.advanceBy(5000L)
-      counter.decrement()
-      
-      // 验证持续时间计算
-      assertThat(counter.getTotalDuration()).isEqualTo(5000L)
-  }
-  ```
+- **测试环境准备与清理**：使用@Before和@After确保测试环境一致性
+- **显式状态重置**：在测试方法内部显式重置状态，确保独立性
+- **流畅断言语法**：使用Truth库提供更具可读性的断言
 
 ## 🧩 Component Design Patterns
 
