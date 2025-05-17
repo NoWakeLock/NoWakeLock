@@ -27,6 +27,59 @@ open class DARepositoryImpl(
     private val infoEventDao: InfoEventDao
 ) : DARepository {
     open val type: Type = Type.UnKnow
+    
+    // Simple in-memory cache for frequently accessed data
+    // Cache structure: [cacheKey -> Pair(data, timestamp)]
+    private val cache = mutableMapOf<String, Pair<List<DAItem>, Long>>()
+    
+    // Cache expiration time - 30 seconds
+    private val CACHE_EXPIRATION_MS = 30 * 1000L
+    
+    /**
+     * Generates a cache key based on query parameters
+     */
+    private fun generateCacheKey(packageName: String, userId: Int, sortBy: String): String {
+        return "${type.value}_${packageName}_${userId}_${sortBy}"
+    }
+    
+    /**
+     * Checks if cached data exists and is valid
+     */
+    private fun getCachedData(cacheKey: String): List<DAItem>? {
+        val cachedEntry = cache[cacheKey] ?: return null
+        val (data, timestamp) = cachedEntry
+        
+        // Check if cache is expired
+        return if (System.currentTimeMillis() - timestamp <= CACHE_EXPIRATION_MS) {
+            LogUtil.d("DARepositoryImpl", "Cache hit for $cacheKey")
+            data
+        } else {
+            // Cache expired, remove it
+            cache.remove(cacheKey)
+            null
+        }
+    }
+    
+    /**
+     * Updates the cache with new data
+     */
+    private fun updateCache(cacheKey: String, data: List<DAItem>) {
+        cache[cacheKey] = Pair(data, System.currentTimeMillis())
+        
+        // Simple cache size management - if too many entries, remove oldest
+        if (cache.size > 20) {
+            val oldestKey = cache.entries.minByOrNull { it.value.second }?.key
+            oldestKey?.let { cache.remove(it) }
+        }
+    }
+    
+    /**
+     * Clears cache for a specific type
+     */
+    private fun clearCacheForType() {
+        val keysToRemove = cache.keys.filter { it.startsWith(type.value) }
+        keysToRemove.forEach { cache.remove(it) }
+    }
 
     /**
      * Maps the database entities to DAItem domain model
@@ -61,12 +114,18 @@ open class DARepositoryImpl(
     override suspend fun getDAItemsSortedByName(
         packageName: String, userId: Int
     ): Flow<List<DAItem>> = withContext(Dispatchers.IO) {
+        // Generate cache key
+        val cacheKey = generateCacheKey(packageName, userId, "NAME")
+        
         if (packageName != "" && userId != -1) {
             return@withContext daDao.loadISs(packageName, type, userId)
                 // Use custom comparator to detect only relevant changes
                 .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                    val sortedItems = mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                    // Update cache with fresh data
+                    updateCache(cacheKey, sortedItems)
+                    sortedItems
                 }
         }
 
@@ -74,7 +133,10 @@ open class DARepositoryImpl(
             // Use custom comparator to detect only relevant changes
             .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
             .map { infoToStMap ->
-                mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                val sortedItems = mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                // Update cache with fresh data
+                updateCache(cacheKey, sortedItems)
+                sortedItems
             }
     }
 
@@ -83,12 +145,18 @@ open class DARepositoryImpl(
         userId: Int
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
+            // Generate cache key
+            val cacheKey = generateCacheKey(packageName, userId, "COUNT")
+            
             if (packageName != "" && userId != -1) {
                 return@withContext daDao.loadISs(packageName, type, userId)
                     // Use custom comparator to detect only relevant changes
                     .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                        val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                        // Update cache with fresh data
+                        updateCache(cacheKey, sortedItems)
+                        sortedItems
                     }
             }
 
@@ -96,7 +164,10 @@ open class DARepositoryImpl(
                 // Use custom comparator to detect only relevant changes
                 .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                    val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                    // Update cache with fresh data
+                    updateCache(cacheKey, sortedItems)
+                    sortedItems
                 }
         }
 
@@ -105,12 +176,18 @@ open class DARepositoryImpl(
         userId: Int
     ): Flow<List<DAItem>> =
         withContext(Dispatchers.IO) {
+            // Generate cache key
+            val cacheKey = generateCacheKey(packageName, userId, "TIME")
+            
             if (packageName != "" && userId != -1) {
                 return@withContext daDao.loadISs(packageName, type, userId)
                     // Use custom comparator to detect only relevant changes
                     .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
-                        mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                        val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                        // Update cache with fresh data
+                        updateCache(cacheKey, sortedItems)
+                        sortedItems
                     }
             }
 
@@ -118,12 +195,17 @@ open class DARepositoryImpl(
                 // Use custom comparator to detect only relevant changes
                 .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                    val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                    // Update cache with fresh data
+                    updateCache(cacheKey, sortedItems)
+                    sortedItems
                 }
         }
 
     override suspend fun updateDAItemSettings(setting: St) = withContext(Dispatchers.IO) {
         daDao.insert(setting)
+        // Clear cache since data has changed
+        clearCacheForType()
     }
 
     override fun getSTs(type: Type): Flow<List<St>> {
@@ -151,6 +233,8 @@ open class DARepositoryImpl(
                     if (!infos.isNullOrEmpty()) {
                         // Insert all infos to database
                         daDao.insert(infos.toList())
+                        // Clear cache since data has changed
+                        clearCacheForType()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -205,6 +289,10 @@ open class DARepositoryImpl(
                     if (!events.isNullOrEmpty()) {
                         // insert all events to the database
                         infoEventDao.insert(events.toList())
+                        // Clear cache only if events are affecting UI data
+                        if (events.size > 5) { // Only clear if significant number of events
+                            clearCacheForType()
+                        }
                         LogUtil.d("DARepositoryImpl", "Synced ${events.size} events")
                     }
                 } catch (e: Exception) {

@@ -19,6 +19,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -139,15 +141,30 @@ open class DAsViewModel(
     // For debouncing time window settings updates
     private var timeWindowUpdateJob: Job? = null
 
-    init {
-        // Initial data load
-        loadDAs(LoadingSource.INITIAL)
+    // Add a property to track the last load job
+    private var loadDataJob: Job? = null
 
-        // Sync data with content provider after short delay
-        viewModelScope.launch {
-            delay(300) // Short delay to let UI render first
-            refreshData(LoadingSource.INITIAL)
-            // Sync settings from DB to ST
+    init {
+        // Initial data load from local database only
+        loadDAs(LoadingSource.INITIAL)
+    }
+
+    /**
+     * Centralized method to trigger data loading with debounce
+     * @param source The source of the loading operation
+     * @param immediate Whether to load immediately (true) or apply debounce (false)
+     */
+    private fun triggerDataLoad(source: LoadingSource, immediate: Boolean = false) {
+        // Cancel any pending load job
+        loadDataJob?.cancel()
+        
+        // Start a new load job
+        loadDataJob = viewModelScope.launch {
+            // Apply debounce delay for non-immediate triggers (like search, filter changes)
+            if (!immediate && source != LoadingSource.INITIAL && source != LoadingSource.USER_PULL) {
+                delay(300) // Debounce delay
+            }
+            loadDAs(source)
         }
     }
 
@@ -177,6 +194,8 @@ open class DAsViewModel(
 
                 // Collect and update UI state
                 daFlow
+                    // Add conflate operator to only process the most recent value when collector is busy
+                    .conflate()
                     // Apply custom distinctUntilChanged to filter out equivalent lists
                     .distinctUntilChanged { old, new ->
                         if (old.size != new.size) return@distinctUntilChanged false
@@ -192,9 +211,15 @@ open class DAsViewModel(
                             val oldItem = oldMap[key]!!
                             val newItem = newMap[key]!!
 
-                            oldItem.fullBlocked == newItem.fullBlocked && oldItem.screenOffBlock == newItem.screenOffBlock && oldItem.timeWindowSec == newItem.timeWindowSec
+                            oldItem.fullBlocked == newItem.fullBlocked && 
+                            oldItem.screenOffBlock == newItem.screenOffBlock && 
+                            oldItem.timeWindowSec == newItem.timeWindowSec &&
+                            oldItem.count == newItem.count
                         }
-                    }.collect { daList ->
+                    }
+                    // Add debounce for high-frequency updates (50ms is short but helps bundle database updates)
+                    .debounce(50)
+                    .collect { daList ->
                         // packageName / userId
                         val pkgFilteredList = daList.filter { da ->
                             (packageName == null || da.packageName == packageName) && (userId == null || da.userId == userId)
@@ -252,7 +277,8 @@ open class DAsViewModel(
         if (currentSortOption != option) {
             currentSortOption = option
             _uiState.update { it.copy(currentSortOption = option) }
-            loadDAs(LoadingSource.SORT_CHANGE)
+            // Use unified data loading method
+            triggerDataLoad(LoadingSource.SORT_CHANGE)
         }
     }
 
@@ -263,7 +289,8 @@ open class DAsViewModel(
         if (currentFilterOption != option) {
             currentFilterOption = option
             _uiState.update { it.copy(currentFilterOption = option) }
-            loadDAs(LoadingSource.FILTER_CHANGE)
+            // Use unified data loading method
+            triggerDataLoad(LoadingSource.FILTER_CHANGE)
         }
     }
 
@@ -274,7 +301,8 @@ open class DAsViewModel(
         if (searchQuery != query) {
             searchQuery = query
             _uiState.update { it.copy(searchQuery = query) }
-            loadDAs(LoadingSource.SEARCH_CHANGE)
+            // Use unified data loading method
+            triggerDataLoad(LoadingSource.SEARCH_CHANGE)
         }
     }
 
@@ -303,7 +331,8 @@ open class DAsViewModel(
                     packageName = packageName, userId = userId
                 )
             }
-            loadDAs(LoadingSource.FILTER_CHANGE)
+            // Use unified data loading method - immediate load for important parameters
+            triggerDataLoad(LoadingSource.FILTER_CHANGE, immediate = true)
         }
     }
 
@@ -312,14 +341,45 @@ open class DAsViewModel(
      * @param source The source of the refresh operation
      */
     fun refreshData(source: LoadingSource = LoadingSource.USER_PULL) {
+        // Cancel any existing refresh job to prevent multiple refreshes
         viewModelScope.launch {
             try {
-                _uiState.update { it.copy(isLoading = true, loadingSource = source, message = "") }
-                daRepository.syncDB()
-                // Keep loading source consistent
-                loadDAs(source)
-                daRepository.syncEvents()
+                // Set loading state only once at the beginning
+                _uiState.update { 
+                    it.copy(
+                        isLoading = true, 
+                        loadingSource = source, 
+                        message = ""
+                    ) 
+                }
+                
+                // Execute all synchronization steps in sequence
+                try {
+                    // Step 1: Sync database data
+                    daRepository.syncDB()
+                    
+                    // Step 2: Load data into UI (this will be done via triggerDataLoad)
+                    // We pass immediate=true to ensure this happens right away
+                    triggerDataLoad(source, immediate = true)
+                    
+                    // Step 3: Sync events data
+                    daRepository.syncEvents()
+                } catch (e: Exception) {
+                    // Log error but continue
+                    LogUtil.e("DAsViewModel", "Error during data sync: ${e.message}")
+                    // We'll still set the error message at the end
+                }
+                
+                // Loading complete - note that loadDAs also updates isLoading=false
+                // but we set it again here to be sure in case of partial errors
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        loadingSource = LoadingSource.NONE
+                    )
+                }
             } catch (e: Exception) {
+                // Handle outer exception (completely failed refresh)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
