@@ -167,3 +167,15 @@ Completion: 60%
 - 提高了筛选和排序操作的响应速度
 - 减少了数据库访问频率
 - 改进了多用户切换时的性能表现
+
+## 🔄 Recent Updates
+
+### 2023-08-25: Settings Improvements - Data Management
+- **Fixed**: Bug in the data clearing functionality where messages would persist after returning to the settings screen
+- **Enhancement**: Added auto-clearing of messages after 2 seconds via a coroutine with delay
+- **Enhancement**: Properly localized all data clearing and backup-related messages in English, Chinese, and French
+- **Code Improvement**: Updated the `showMessage` method in `SettingsViewModel.kt` to automatically clear messages
+
+### Action Items
+- Continue monitoring user feedback on data management features
+- Consider adding confirmation dialog option for clearing all data in future updates

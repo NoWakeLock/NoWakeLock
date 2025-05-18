@@ -347,27 +347,23 @@ class WakelockCounter {
 - 参数缓存和性能优化模式
 
 ## 🔮 Current Focus
-优化 AppsScreen 的数据加载和缓存机制，解决重复加载和刷新问题。
+Fixed issues with data clearing functionality in the settings screen:
+1. Message persistence issue - Messages showing after data clearing now properly disappear after 2 seconds
+2. Added proper localization for data clearing and backup messages in English, Chinese, and French
 
 ## 📎 Context References
 - 📄 Active Files: 
-  - app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsViewModel.kt
-  - app/src/main/java/com/js/nowakelock/data/repository/appdas/AppDasAR.kt
-  - app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsScreen.kt
-
+  - app/src/main/java/com/js/nowakelock/ui/screens/settings/SettingsViewModel.kt
+  - app/src/main/java/com/js/nowakelock/ui/screens/settings/SettingsScreen.kt
+  - app/src/main/res/values/strings.xml
+  - app/src/main/res/values-zh/strings.xml
+  - app/src/main/res/values-fr/strings.xml
+  
 - 💻 Active Code: 
-  - `triggerDataLoad` - 统一数据加载方法
-  - 内存缓存机制实现
-  - LaunchedEffect生命周期管理
+  - SettingsViewModel.showMessage() method - Added auto-clearing functionality
+  - String resources for data clearing and backup operations
 
-- 📚 Active Docs: 
-  - Android Jetpack Compose生命周期文档
-  - Kotlin Coroutines Flow操作符文档
-
-- 🟢 Active: 性能优化，缓存机制
-- 🟡 Partially Relevant: UI界面优化
-- 🟣 Essential: 数据加载逻辑
-- 🔴 Deprecated: 直接调用loadApps的旧模式
+- 📚 Active Docs: Localization best practices for Android
 
 ## 📊 Implementation Status
 

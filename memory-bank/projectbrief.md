@@ -63,3 +63,10 @@ NoWakeLock is an Android application that functions as an Xposed module to inter
 - Android SDK
 - Room Database
 - Koin for dependency injection 
+
+## 🚀 Recent Improvements
+- Enhanced UI with Material Design 3
+- Improved data management capabilities 
+- Added automatic message clearing to improve user experience
+- Multi-language support with localized messages in English, Chinese, and French
+- Fixed message persistence bug in settings screen 
