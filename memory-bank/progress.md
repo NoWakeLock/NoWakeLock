@@ -16,6 +16,7 @@ Completion: 60%
 
 ## ✅ Completed Features
 ### 最近完成 (2025-05)
+- [Feature₄₂] 修复 AppScreen 双重刷新问题：通过优化 AppsViewModel 中的加载状态更新逻辑，提供更平滑的用户体验
 - [Feature₄₁] 修复 DAsScreen 的 TopAppBar 刷新按钮不起作用问题：完成事件传递链路，使刷新按钮能够正确触发 viewModel.refreshData() 方法
 - [Feature₄₀] 改进应用性能和数据加载：优化ViewModel初始化，统一数据加载机制，实现Flow链优化和简单缓存系统
 - [Feature₃₉] 修复AppDetailScreen页面状态持久性问题：使用rememberSaveable替代remember，确保从DADetail页面返回时保留选项卡状态
@@ -95,6 +96,7 @@ Completion: 60%
 - [Issue₁₁] Low ⟶ Room数据库实现中的隐藏API访问警告，可能导致未来兼容性问题
 
 ## 🧠 Active Decisions
+- [Decision₃₅] ✅ ⟶ 采用延迟加载状态更新方案修复 AppScreen 双重刷新问题，保持数据流架构不变
 - [Decision₃₄] ✅ ⟶ 应用防抖动机制和内存缓存策略，解决多重数据加载和UI更新延迟问题
 - [Decision₃₃] ✅ ⟶ 使用rememberSaveable和导航配置改进，确保从DADetail页面返回时保留用户选择的标签
 - [Decision₃₂] ✅ ⟶ 通过优化contentWindowInsets和padding应用方式，解决ModuleCheckScreen中空白问题
@@ -169,6 +171,13 @@ Completion: 60%
 - 改进了多用户切换时的性能表现
 
 ## 🔄 Recent Updates
+
+### 2023-11-19: Fixed AppScreen Double Refresh Issue
+- **Fixed**: AppScreen experiencing two visual refreshes when navigating to the screen
+- **Solution**: Implemented delayed loading state updates in AppsViewModel
+- **Technical details**: Modified loading indicator logic to prevent UI refresh during the second data load
+- **Improvement**: Smoother user experience when navigating to the Apps screen with only one visible refresh
+- **Code Impact**: Minimal changes required without disrupting the existing data flow architecture
 
 ### 2023-08-25: Settings Improvements - Data Management
 - **Fixed**: Bug in the data clearing functionality where messages would persist after returning to the settings screen

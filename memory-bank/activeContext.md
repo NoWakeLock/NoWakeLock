@@ -1,5 +1,5 @@
 # σ₄: Active Context
-*v1.0 | Created: 2025-04-15 | Updated: 2025-05-20*
+*v1.0 | Created: 2025-04-15 | Updated: 2023-11-19*
 *Π: 🏗️DEVELOPMENT | Ω: ⚙️E*
 
 ## 🔮 Current Focus
@@ -347,12 +347,20 @@ class WakelockCounter {
 - 参数缓存和性能优化模式
 
 ## 🔮 Current Focus
+Fixing the AppScreen double refresh issue. The screen was experiencing two visual refreshes when users navigated to it. 
+This was caused by the AppsViewModel's init method performing two separate data loading operations - an immediate load 
+and a delayed system data sync after 300ms. We implemented a simple solution (Option B) that delays loading state 
+updates during the second refresh to provide a smoother user experience.
+
 Fixed issues with data clearing functionality in the settings screen:
 1. Message persistence issue - Messages showing after data clearing now properly disappear after 2 seconds
 2. Added proper localization for data clearing and backup messages in English, Chinese, and French
 
 ## 📎 Context References
 - 📄 Active Files: 
+  - app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsViewModel.kt
+  - app/src/main/java/com/js/nowakelock/ui/screens/apps/AppsScreen.kt
+  - app/src/main/java/com/js/nowakelock/data/repository/appdas/AppDasAR.kt
   - app/src/main/java/com/js/nowakelock/ui/screens/settings/SettingsViewModel.kt
   - app/src/main/java/com/js/nowakelock/ui/screens/settings/SettingsScreen.kt
   - app/src/main/res/values/strings.xml
@@ -360,6 +368,7 @@ Fixed issues with data clearing functionality in the settings screen:
   - app/src/main/res/values-fr/strings.xml
   
 - 💻 Active Code: 
+  - AppsViewModel.init method - Modified loading state management
   - SettingsViewModel.showMessage() method - Added auto-clearing functionality
   - String resources for data clearing and backup operations
 
@@ -372,6 +381,7 @@ Fixed issues with data clearing functionality in the settings screen:
 ✅ 实现了防抖机制，避免短时间内重复加载
 ✅ 添加了加载作业跟踪和取消功能
 ✅ 添加了 conflate 操作符优化Flow处理链
+✅ 修复了双重刷新问题，实现了更平滑的加载体验
 
 ### 2. AppDasAR缓存实现
 ✅ 实现了基于查询参数的缓存键生成
@@ -382,11 +392,13 @@ Fixed issues with data clearing functionality in the settings screen:
 ### 3. AppsScreen优化
 ✅ 使用LaunchedEffect优化生命周期管理
 ✅ 添加了错误监听机制
+✅ 解决了双重刷新问题
 
 ## 🔍 Performance Metrics
 - 筛选切换响应时间: 由 ~500ms 提升至 ~50ms (有缓存时)
 - 数据库查询次数: 在频繁切换筛选时大幅降低
 - 缓存命中率: 正常使用场景下 ~60-70%
+- UI流畅度: 解决了双重刷新问题，提高了AppScreen导航体验
 
 ## 🚀 Next Steps
 - 考虑是否需要将缓存机制应用到其他屏幕
