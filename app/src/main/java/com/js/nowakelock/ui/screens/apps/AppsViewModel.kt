@@ -105,7 +105,7 @@ class AppsViewModel(
 
     init {
         // 使用 triggerDataLoad 进行初始数据加载
-        triggerDataLoad(LoadingSource.INITIAL, immediate = true)
+        // triggerDataLoad(LoadingSource.INITIAL, immediate = true)
         
         // 延迟同步系统数据
         viewModelScope.launch {
