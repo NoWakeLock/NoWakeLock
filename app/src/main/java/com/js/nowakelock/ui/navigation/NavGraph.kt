@@ -88,7 +88,8 @@ fun NoWakeLockNavGraph(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 packageName = params.packageName,
-                userId = params.userId
+                userId = params.userId,
+                onTopAppBarEvent = onTopAppBarEvent
             )
         }
 
@@ -111,7 +112,8 @@ fun NoWakeLockNavGraph(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 packageName = params.packageName,
-                userId = params.userId
+                userId = params.userId,
+                onTopAppBarEvent = onTopAppBarEvent
             )
         }
 
@@ -134,7 +136,8 @@ fun NoWakeLockNavGraph(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 packageName = params.packageName,
-                userId = params.userId
+                userId = params.userId,
+                onTopAppBarEvent = onTopAppBarEvent
             )
         }
 
