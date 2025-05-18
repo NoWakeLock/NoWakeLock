@@ -14,6 +14,8 @@ import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -45,13 +47,24 @@ class PowerConnectionReceiver : BroadcastReceiver(), KoinComponent {
     private suspend fun clear(powerFlag: Boolean, clearFlag: Boolean) =
         withContext(Dispatchers.IO) {
             if (powerFlag) {
-                clearCPAll()
-                val db = AppDatabase.getInstance(BasicApp.context)
-                clearCount(db.infoDao())
-                clearEvent(db.infoEventDao())
-
-                if (clearFlag) {
-                    clearNoActive(db.dADao())
+                // Run independent operations in parallel using structured concurrency
+                coroutineScope {
+                    // Start independent operations in parallel
+                    val clearCPAllJob = async { clearCPAll() }
+                    
+                    val db = AppDatabase.getInstance(BasicApp.context)
+                    val clearCountJob = async { clearCount(db.infoDao()) }
+                    val clearEventJob = async { clearEvent(db.infoEventDao()) }
+                    
+                    // Wait for all parallel operations to complete
+                    clearCPAllJob.await()
+                    clearCountJob.await()
+                    clearEventJob.await()
+                    
+                    // This operation depends on previous operations and runs after they complete
+                    if (clearFlag) {
+                        clearNoActive(db.dADao())
+                    }
                 }
             }
         }
