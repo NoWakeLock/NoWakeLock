@@ -9,12 +9,37 @@ import com.js.nowakelock.xposedhook.XpUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.Timer
+import java.util.TimerTask
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 /**
  * XpRecord handles communication with the Content Provider
  * to record events and statistics for tracked system activities.
  */
 object XpRecord {
+    // Cache mechanism for Content Provider calls
+    private data class CpRequest(
+        val context: Context,
+        val method: String,
+        val args: Bundle
+    )
+    
+    // Thread-safe queue for CP requests with FIFO ordering
+    private val requestQueue = ConcurrentLinkedQueue<CpRequest>()
+    
+    // Lock for synchronizing queue operations
+    private val lock = ReentrantReadWriteLock()
+    
+    // Timer for processing the queue
+    private var timer: Timer? = null
+    
+    // Maximum queue size to prevent memory issues
+    private const val MAX_QUEUE_SIZE = 500
+    
+    // Delay for processing queue (in milliseconds)
+    private const val QUEUE_PROCESS_DELAY = 1000L // 1 second
 
     private fun newEvent(
         name: String,
@@ -172,14 +197,86 @@ object XpRecord {
      * @return Bundle with status information
      */
     fun checkHookActive(context: Context): Bundle? {
-        return getCPResult(context, ProviderMethod.CheckHookActive.value, Bundle())
+        // This method requires immediate return value, don't use caching
+        return directCPResult(context, ProviderMethod.CheckHookActive.value, Bundle())
     }
 
     /**
-     * Execute Content Provider call
+     * Execute Content Provider call with caching
+     * Requests are queued and processed in order to reduce IPC calls
      */
     private fun getCPResult(context: Context, method: String, args: Bundle): Bundle? {
+        // Methods that require immediate result should bypass the cache
+        if (method == ProviderMethod.CheckHookActive.value || 
+            method == ProviderMethod.CheckHookEffectiveness.value ||
+            method == ProviderMethod.CheckSharedPreferencesPath.value) {
+            return directCPResult(context, method, args)
+        }
+        
+        lock.writeLock().lock()
+        try {
+            // Check if queue is too large (unlikely but safety measure)
+            if (requestQueue.size >= MAX_QUEUE_SIZE) {
+                // Process queue immediately if too large
+                processQueue()
+            }
+            
+            // Add request to queue
+            requestQueue.add(CpRequest(context, method, args))
+            
+            // Schedule processing if not already scheduled
+            if (timer == null) {
+                timer = Timer()
+                timer?.schedule(object : TimerTask() {
+                    override fun run() {
+                        processQueue()
+                    }
+                }, QUEUE_PROCESS_DELAY)
+            }
+        } finally {
+            lock.writeLock().unlock()
+        }
+        
+        // Return null as the request will be processed later
+        return null
+    }
+    
+    /**
+     * Direct CP call without caching - for methods requiring immediate response
+     */
+    private fun directCPResult(context: Context, method: String, args: Bundle): Bundle? {
         val contentResolver = context.contentResolver
         return contentResolver.call(getURI(), "NoWakelock", method, args)
+    }
+    
+    /**
+     * Process all queued CP requests in FIFO order
+     */
+    private fun processQueue() {
+        val requests = mutableListOf<CpRequest>()
+        
+        lock.writeLock().lock()
+        try {
+            // Get all requests from queue while maintaining order
+            while (requestQueue.isNotEmpty()) {
+                requestQueue.poll()?.let { requests.add(it) }
+            }
+            
+            // Reset timer
+            timer?.cancel()
+            timer = null
+        } finally {
+            lock.writeLock().unlock()
+        }
+        
+        // Process all requests in order they were received
+        for (request in requests) {
+            try {
+                val contentResolver = request.context.contentResolver
+                contentResolver.call(getURI(), "NoWakelock", request.method, request.args)
+            } catch (e: Exception) {
+                XpUtil.log("Error in batch CP processing: ${e.message}")
+            }
+        }
     }
 }
