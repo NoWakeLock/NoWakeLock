@@ -14,6 +14,7 @@ import com.js.nowakelock.ui.navigation.params.DAsScreenParams
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -172,6 +173,7 @@ open class DAsViewModel(
      * Loads DAs based on current sort, filter and search options
      * @param source The source of the loading operation
      */
+    @OptIn(FlowPreview::class)
     private fun loadDAs(source: LoadingSource = LoadingSource.NONE) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, loadingSource = source) }

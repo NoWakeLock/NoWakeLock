@@ -2,6 +2,7 @@ package com.js.nowakelock.ui.screens.das
 
 import androidx.compose.runtime.Composable
 import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.ui.components.TopAppBarEvent
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.qualifier.named
 
@@ -16,7 +17,8 @@ fun WakelockScreen(
     searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit = {},
     packageName: String? = null,
-    userId: Int? = null
+    userId: Int? = null,
+    onTopAppBarEvent: (TopAppBarEvent) -> Unit = {}
 ) {
     DAsScreen(
         type = type,
@@ -27,7 +29,8 @@ fun WakelockScreen(
         searchQuery = searchQuery,
         onSearchQueryChange = onSearchQueryChange,
         packageName = packageName,
-        userId = userId
+        userId = userId,
+        onTopAppBarEvent = onTopAppBarEvent
     )
 }
 
@@ -41,7 +44,8 @@ fun AlarmScreen(
     searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit = {},
     packageName: String? = null,
-    userId: Int? = null
+    userId: Int? = null,
+    onTopAppBarEvent: (TopAppBarEvent) -> Unit = {}
 ) {
     DAsScreen(
         type = type,
@@ -52,7 +56,8 @@ fun AlarmScreen(
         searchQuery = searchQuery,
         onSearchQueryChange = onSearchQueryChange,
         packageName = packageName,
-        userId = userId
+        userId = userId,
+        onTopAppBarEvent = onTopAppBarEvent
     )
 }
 
@@ -66,7 +71,8 @@ fun ServiceScreen(
     searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit = {},
     packageName: String? = null,
-    userId: Int? = null
+    userId: Int? = null,
+    onTopAppBarEvent: (TopAppBarEvent) -> Unit = {}
 ) {
     DAsScreen(
         type = type,
@@ -77,6 +83,7 @@ fun ServiceScreen(
         searchQuery = searchQuery,
         onSearchQueryChange = onSearchQueryChange,
         packageName = packageName,
-        userId = userId
+        userId = userId,
+        onTopAppBarEvent = onTopAppBarEvent
     )
 }

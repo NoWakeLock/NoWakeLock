@@ -13,6 +13,7 @@ import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.ui.components.EmptyView
 import com.js.nowakelock.ui.components.LoadingView
+import com.js.nowakelock.ui.components.TopAppBarEvent
 import com.js.nowakelock.ui.screens.das.components.DAListItem
 import com.js.nowakelock.ui.screens.das.components.DAFilterSection
 import com.js.nowakelock.ui.screens.das.components.DAsSortSection
@@ -35,7 +36,8 @@ fun DAsScreen(
     searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit = {},
     packageName: String? = null,
-    userId: Int? = null
+    userId: Int? = null,
+    onTopAppBarEvent: (TopAppBarEvent) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isAppDetailScreen = packageName != null && packageName != ""
@@ -51,7 +53,7 @@ fun DAsScreen(
         viewModel.updateSearchQuery(searchQuery)
     }
 
-    // 设置包名和用户ID筛选器
+    // Set package name and user ID filters
     LaunchedEffect(packageName, userId) {
         viewModel.setAppFilter(packageName, userId)
     }
@@ -59,6 +61,21 @@ fun DAsScreen(
     // Move syncSt call to LaunchedEffect to prevent calling it on every recomposition
     LaunchedEffect(type) {
         viewModel.syncSt(type)
+    }
+    
+    // Handle refresh button click events
+    LaunchedEffect(Unit) {
+        val refreshHandler: (TopAppBarEvent) -> Unit = { event ->
+            if (event is TopAppBarEvent.RefreshClicked) {
+                // Call the viewModel's refresh method
+                viewModel.refreshData()
+            }
+            // Forward the event to the original handler
+            onTopAppBarEvent(event)
+        }
+        
+        // Set up the refresh handler
+        refreshHandler(TopAppBarEvent.RefreshClicked)
     }
 
     // Top app bar scrolling behavior 
