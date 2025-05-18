@@ -4,6 +4,23 @@
 
 ## 🔮 Current Focus
 
+### DAsScreen TopAppBar 刷新按钮修复
+
+我们成功修复了 DAsScreen (包括 WakelockScreen, AlarmScreen, ServiceScreen) 中 TopAppBar 刷新按钮不起作用的问题：
+
+- **问题**: TopAppBar 中的刷新按钮点击后没有触发实际的数据刷新操作
+- **根本原因**: 
+  - 缺少从 TopAppBar 到 DAsScreen 的事件传递路径
+  - NavGraph 未向 WakelockScreen, AlarmScreen, ServiceScreen 传递 onTopAppBarEvent 参数
+  - 相关组件未实现处理 RefreshClicked 事件的逻辑，无法调用 viewModel.refreshData()
+- **解决方案**:
+  1. 为 WakelockScreen, AlarmScreen, ServiceScreen 添加 onTopAppBarEvent 参数并传递给 DAsScreen
+  2. 修改 NavGraph.kt 文件，传递 onTopAppBarEvent 给具体的屏幕组件
+  3. 在 DAsScreen 中添加处理 RefreshClicked 事件的代码，调用 viewModel.refreshData()
+- **对比**: 应用中的 Apps 屏幕用户切换功能使用了相同的事件机制，但正确地实现了完整的事件传递路径
+
+通过这次修复，确保所有使用 TopAppBar 刷新按钮的屏幕能够正常刷新数据，提升了应用的用户体验。
+
 ### 应用性能优化与数据加载改进
 
 我们成功实现了全面的性能优化，显著提高了应用的响应速度和数据加载效率：
@@ -97,6 +114,7 @@
 Material Design 3 UI 组件标准化，XPosed设置与日志控制问题研究，唤醒锁系统重构
 
 ## 🔄 Recent Changes
+- [Change₆₀] 2025-05-24 ⟶ 修复 DAsScreen 的 TopAppBar 刷新按钮不起作用问题
 - [Change₅₉] 2025-05-20 ⟶ 实现统一数据加载触发机制与Flow链优化
 - [Change₅₄] 2025-05-17 ⟶ 修复AppDetailScreen页面状态持久性问题
 - [Change₅₃] 2025-05-11 ⟶ 修复模块检测页面导航栏重复问题
