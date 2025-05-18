@@ -16,6 +16,7 @@ Completion: 60%
 
 ## ✅ Completed Features
 ### 最近完成 (2025-05)
+- [Feature₄₁] 修复 DAsScreen 的 TopAppBar 刷新按钮不起作用问题：完成事件传递链路，使刷新按钮能够正确触发 viewModel.refreshData() 方法
 - [Feature₄₀] 改进应用性能和数据加载：优化ViewModel初始化，统一数据加载机制，实现Flow链优化和简单缓存系统
 - [Feature₃₉] 修复AppDetailScreen页面状态持久性问题：使用rememberSaveable替代remember，确保从DADetail页面返回时保留选项卡状态
 - [Feature₃₈] 修复ModuleCheckScreen中TopAppBar下方空白问题：优化padding应用方式，解决Scaffold嵌套导致的双重空白问题
@@ -77,6 +78,7 @@ Completion: 60%
 
 ## ⚠️ Known Issues
 ### 关键问题
+- [Issue₁₅] ✓ (已解决) 高优先级 ⟶ DAsScreen (WakelockScreen, AlarmScreen, ServiceScreen) 的 TopAppBar 刷新按钮不起作用，缺少事件传递机制
 - [Issue₁₂] High ⟶ 混合导航方法导致使用类型导航时TopAppBar和相关UI元素消失，需要一致的路由检测方法
 - [Issue₅] High ⟶ DAInfoRepositoryImpl中多语言描述的JSON解析错误，数据模型期望字符串但收到带有语言键的对象
 
