@@ -121,3 +121,23 @@ In this conversation, we focused on initializing the NoWakeLock project with the
 
 ## 代码优化历史
 // ... existing code optimization history ...
+
+## 2023-08-25: Bug Fix - Data Clearing Message Persistence
+
+### Problem Description
+The user reported an issue where after clearing data in the settings screen, the success message "Data has been cleared" would persist even when returning to the settings screen later, despite no new data clearing operation being performed.
+
+### Solution Implemented
+1. Modified the `showMessage` method in `SettingsViewModel.kt` to automatically clear messages after a short delay (2 seconds)
+2. Added proper localization for all data clearing and backup-related messages in English, Chinese, and French languages
+3. Ensured consistent string formatting across all language files
+
+### Technical Details
+- Used Kotlin coroutines with `delay` function to implement the message auto-clearing
+- Added string resources for all messages that were previously hardcoded
+- Ensured proper formatting for placeholder text in error messages
+
+### Benefits
+- Improved user experience by showing transient messages only when relevant
+- Enhanced internationalization support
+- More maintainable codebase with string resources instead of hardcoded strings
