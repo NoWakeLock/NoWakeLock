@@ -209,3 +209,163 @@ if (positions != null) {
 - Reduces repeated computation overhead
 - Improves response time for frequent operations
 - Decreases battery consumption 
+
+## 🔄 加载与缓存模式
+
+### 统一数据加载模式 (Universal Data Loading Pattern)
+
+```
+┌───────────┐     ┌──────────────┐     ┌───────────┐     ┌─────────────┐
+│ UI 事件   │────▶│ 统一加载方法 │────▶│ 加载逻辑  │────▶│ 数据仓库    │
+└───────────┘     └──────────────┘     └───────────┘     └─────────────┘
+                        │                                       │
+                        ▼                                       ▼
+                  ┌──────────┐                           ┌─────────────┐
+                  │ 状态更新 │◀─────────────────────────│ 缓存检查    │
+                  └──────────┘                           └─────────────┘
+```
+
+**特点**：
+- 集中管理所有加载请求
+- 防抖处理，取消进行中的请求
+- 区分关键数据和非关键数据
+- 错误处理和恢复机制
+
+**实现**：
+- `triggerDataLoad(source: LoadingSource, immediate: Boolean)` 方法
+- 使用 Job 跟踪和取消任务
+- 适当设置防抖延迟（200ms）
+
+### 多级缓存模式 (Multi-tier Caching Pattern)
+
+```
+┌──────────┐   ┌──────────┐   ┌──────────┐
+│ UI 组件   │──▶│ 内存缓存 │──▶│ 数据库   │
+└──────────┘   └──────────┘   └──────────┘
+                     │              │
+                     │              ▼
+                     │         ┌──────────┐
+                     └────────▶│ API/系统 │
+                               └──────────┘
+```
+
+**特点**：
+- 多层次缓存设计
+- 自动过期机制
+- 缓存失效触发条件
+- 缓存大小管理
+
+**实现**：
+- 内存缓存：`Map<String, Pair<Data, Timestamp>>`
+- 缓存键生成：`generateCacheKey(sortBy, userId, filter)`
+- 过期时间：30秒
+- 在数据变更时主动清除
+- 最多保留20条记录，LRU淘汰策略
+
+### 响应式数据流模式 (Reactive Data Flow Pattern)
+
+```
+┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+│ 数据源   │──▶│ 转换操作 │──▶│ 过滤操作 │──▶│ 收集点   │
+└──────────┘   └──────────┘   └──────────┘   └──────────┘
+                                                  │
+┌──────────┐                                      │
+│ UI 更新  │◀─────────────────────────────────────┘
+└──────────┘
+```
+
+**特点**：
+- 使用 Flow API 构建响应式数据流
+- 应用适当的操作符优化流处理
+- 数据流终点与UI状态更新关联
+
+**实现**：
+- `conflate()` - 确保处理最新数据
+- `distinctUntilChanged()` - 避免处理相同数据
+- `debounce()` - 高频更新场景
+- 映射和转换操作连接数据源和UI
+
+## 🧩 Component Design Patterns
+
+### 组件拆分与组合
+- **大型组件拆分**: 将复杂UI组件分解为小型、专一职责的可组合函数
+  - 示例: TopAppBar拆分为SearchModeTopBar和StandardModeTopBar
+  - 优势: 提高可读性、可维护性和可测试性
+  
+- **组件层次结构**:
+  ```
+  ParentComponent
+  ├── ControlComponent
+  │   ├── SubControlA
+  │   └── SubControlB
+  └── ContentComponent
+      ├── ContentSectionA
+      └── ContentSectionB
+  ```
+  
+- **组件命名约定**:
+  - 使用描述性命名，反映组件功能
+  - 相关组件使用共同前缀
+  - 私有/内部组件使用private修饰
+  
+### 状态管理模式
+- **状态集中化**:
+  - 使用数据类封装组件状态
+  - 从路由和参数派生UI状态，而非分散的条件判断
+  - 示例: `TopAppBarUiState`封装TopAppBar的所有UI状态
+  
+- **有状态/无状态组件分离**:
+  - 顶层组件管理状态
+  - 子组件设计为无状态，通过参数接收所需数据
+  
+- **状态记忆化**:
+  - 使用`remember`缓存计算结果
+  - 仅在依赖项变化时重新计算
+
+### 工具类模式
+- **功能封装**:
+  - 将通用逻辑抽取为工具类或辅助函数
+  - 示例: `RouteUtils`封装路由判断逻辑
+  
+- **命名空间组织**:
+  - 相关工具函数组织到同一对象或文件中
+  - 使用描述性命名表达功能意图
+
+### 样式与主题模式
+- **样式集中管理**:
+  - 将颜色、形状等样式属性抽取为可重用函数
+  - 示例: `standardTopAppBarColors()`提供一致的颜色设置
+  
+- **主题一致性**:
+  - 组件使用MaterialTheme属性而非硬编码值
+  - 通过样式函数确保跨组件视觉一致性 
+
+## 🧠 Performance Optimization Patterns
+
+### 🔄 Initialization-Time Caching
+
+**Pattern**: Perform expensive operations once at initialization and cache the results for future use.
+
+**Application in NoWakeLock**:
+- **ServiceHook Parameter Caching**: The app caches parameter positions for hooked methods after first successful extraction
+  - Implemented with `AtomicReference<ServiceParamPositions?>` for thread safety
+  - Performs parameter extraction only once per device boot
+  - Significantly reduces CPU usage for frequently called service operations
+
+**Implementation Example**:
+```kotlin
+// Check cached positions before attempting extraction
+val positions = startServicePositionsRef.get()
+if (positions != null) {
+    // Use cached positions to extract parameters
+    extractParametersFromCache(param, positions)
+} else if (!startServiceHookFailed) {
+    // First-time extraction and caching
+    extractAndCacheStartServiceParameters(param)
+}
+```
+
+**Benefits**:
+- Reduces repeated computation overhead
+- Improves response time for frequent operations
+- Decreases battery consumption 

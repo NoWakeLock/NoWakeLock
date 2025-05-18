@@ -274,3 +274,66 @@ fun checkAndResetAfterBoot() {
 - Migration from Gson to Kotlinx.Serialization for better Kotlin integration
 - Standardization on Material 3 components across the entire UI
 - Addressing hidden API access warnings in Room database implementation
+
+## 移动应用性能优化策略
+
+### 数据加载与缓存优化
+NoWakeLock应用采用以下数据加载与缓存策略：
+
+#### 统一数据加载协调器
+- 使用 `triggerDataLoad` 方法集中管理加载请求
+- 通过 `immediate` 参数区分立即加载和延迟加载操作
+- 使用 `Job` 跟踪和取消进行中的加载作业，避免冗余操作
+
+```kotlin
+private fun triggerDataLoad(source: LoadingSource, immediate: Boolean = false) {
+    loadDataJob?.cancel() // 取消进行中的作业
+    loadDataJob = viewModelScope.launch {
+        if (!immediate && source != LoadingSource.INITIAL && source != LoadingSource.USER_PULL) {
+            delay(200) // 非立即加载应用防抖延迟
+        }
+        loadApps(source)
+    }
+}
+```
+
+#### 内存缓存机制
+- 使用 `Map<String, Pair<Data, Timestamp>>` 结构存储缓存数据
+- 基于查询参数生成唯一缓存键
+- 实现30秒过期时间的自动缓存失效策略
+- 在数据变更时主动清除相关缓存（应用列表变化、数据同步等）
+- 通过LRU策略管理缓存大小（最多20项，移除最旧数据）
+
+```kotlin
+// 缓存键生成
+private fun generateCacheKey(sortBy: String, userId: Int? = null, filter: String? = null): String {
+    val sb = StringBuilder(sortBy)
+    if (userId != null) sb.append("_user").append(userId)
+    if (filter != null) sb.append("_filter").append(filter)
+    return sb.toString()
+}
+
+// 缓存检查
+private fun getCachedData(cacheKey: String): List<Data>? {
+    val cachedEntry = cache[cacheKey] ?: return null
+    val (data, timestamp) = cachedEntry
+    return if (System.currentTimeMillis() - timestamp <= CACHE_EXPIRATION_MS) {
+        data // 缓存有效，返回数据
+    } else {
+        cache.remove(cacheKey) // 缓存过期，移除
+        null
+    }
+}
+```
+
+### Flow操作符优化
+- 使用 `conflate()` 确保处理最新数据，忽略处理繁忙时的中间值
+- 应用 `distinctUntilChanged()` 避免无变化数据的重复处理
+- 在高频更新中使用 `debounce()` 减少处理负担
+
+### 生命周期管理
+- 使用 `LaunchedEffect` 封装副作用操作
+- 基于关键参数变化触发数据加载
+- 实现错误追踪和日志记录
+
+这些策略有效减少了重复加载和数据库访问，提高了UI响应速度，特别是在频繁切换筛选条件或搜索时的性能表现。
