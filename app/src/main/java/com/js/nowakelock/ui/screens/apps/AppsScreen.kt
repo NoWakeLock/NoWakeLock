@@ -44,6 +44,11 @@ fun AppsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     
+    // 首次进入屏幕时加载数据
+    LaunchedEffect(Unit) {
+        // 首次进入屏幕时不需要刷新，因为 ViewModel 的 init 已经加载初始数据
+    }
+    
     // Sync the external search active state with the viewModel
     LaunchedEffect(isSearchActive) {
         viewModel.setSearchActive(isSearchActive)
@@ -77,6 +82,11 @@ fun AppsScreen(
         if (currentUserId == 0 && uiState.currentUserId != 0) {
             onTopAppBarEvent(TopAppBarEvent.UserChanged(uiState.currentUserId))
         }
+    }
+    
+    // 监听错误消息并显示Snackbar
+    LaunchedEffect(uiState.message) {
+        // 这里可以添加额外的错误处理逻辑
     }
     
     // Whether to show the pull refresh indicator

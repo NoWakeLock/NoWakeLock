@@ -11,6 +11,9 @@ import com.js.nowakelock.ui.navigation.params.AppsScreenParams
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import com.js.nowakelock.base.LogUtil
 import kotlinx.serialization.Serializable
 
 /**
@@ -97,14 +100,38 @@ class AppsViewModel(
     ))
     val uiState: StateFlow<AppsUiState> = _uiState.asStateFlow()
 
+    // 添加用于跟踪加载作业的属性
+    private var loadDataJob: Job? = null
+
     init {
-        // Initial data load from database
-        loadApps(LoadingSource.INITIAL)
+        // 使用 triggerDataLoad 进行初始数据加载
+        triggerDataLoad(LoadingSource.INITIAL, immediate = true)
         
-        // Sync data after a short delay to let UI render first
+        // 延迟同步系统数据
         viewModelScope.launch {
-            delay(300) // Short delay to show initial UI
-            refreshData(LoadingSource.INITIAL) // Sync with system
+            delay(300) // 短暂延迟，让UI先渲染
+            refreshData(LoadingSource.INITIAL) // 同步系统数据
+        }
+    }
+    
+    /**
+     * 统一的数据加载方法，处理加载请求的协调和防抖
+     * @param source 加载源
+     * @param immediate 是否立即加载（不应用防抖）
+     */
+    private fun triggerDataLoad(source: LoadingSource, immediate: Boolean = false) {
+        // 取消正在进行的加载作业
+        loadDataJob?.cancel()
+        
+        // 启动新的加载作业
+        loadDataJob = viewModelScope.launch {
+            // 对非立即加载的操作应用防抖延迟
+            // 初始加载和用户主动刷新不需要防抖
+            if (!immediate && source != LoadingSource.INITIAL && source != LoadingSource.USER_PULL) {
+                LogUtil.d("AppsViewModel", "Debouncing load for source: $source")
+                delay(200) // 防抖延迟
+            }
+            loadApps(source)
         }
     }
     
@@ -116,7 +143,8 @@ class AppsViewModel(
         if (currentUserId != userId) {
             currentUserId = userId
             _uiState.update { it.copy(currentUserId = userId) }
-            loadApps(LoadingSource.USER_CHANGE)
+            // 用户变更是关键参数，应立即加载
+            triggerDataLoad(LoadingSource.USER_CHANGE, immediate = true)
         }
     }
 
@@ -136,40 +164,41 @@ class AppsViewModel(
                     SortOption.TIME -> appDasRepo.getAppsWithStatsSortedByTime()
                 }
                 
-                // only filter apps for the current selected user
-                
-                // Update UI state with the apps flow
-                appsFlow.collect { appsList ->
-                    // filter apps by userId
-                    val userFilteredApps = appsList.filter { it.appInfo.userId == currentUserId }
-                    
-                    // filter by app type
-                    val typeFilteredApps = when (currentFilterOption) {
-                        FilterOption.ALL -> userFilteredApps
-                        FilterOption.USER -> userFilteredApps.filter { !it.appInfo.system }
-                        FilterOption.SYSTEM -> userFilteredApps.filter { it.appInfo.system }
-                    }
-                    
-                    // Then apply search filter if needed
-                    val query = searchQuery.trim().lowercase()
-                    val searchFilteredApps = if (query.isNotEmpty()) {
-                        typeFilteredApps.filter { app ->
-                            app.appInfo.label.lowercase().contains(query) ||
-                                    app.appInfo.packageName.lowercase().contains(query)
+                // 添加 conflate 操作符，确保处理最新数据
+                appsFlow
+                    .conflate()
+                    .collect { appsList ->
+                        // filter apps by userId
+                        val userFilteredApps = appsList.filter { it.appInfo.userId == currentUserId }
+                        
+                        // filter by app type
+                        val typeFilteredApps = when (currentFilterOption) {
+                            FilterOption.ALL -> userFilteredApps
+                            FilterOption.USER -> userFilteredApps.filter { !it.appInfo.system }
+                            FilterOption.SYSTEM -> userFilteredApps.filter { it.appInfo.system }
                         }
-                    } else {
-                        typeFilteredApps
+                        
+                        // Then apply search filter if needed
+                        val query = searchQuery.trim().lowercase()
+                        val searchFilteredApps = if (query.isNotEmpty()) {
+                            typeFilteredApps.filter { app ->
+                                app.appInfo.label.lowercase().contains(query) ||
+                                        app.appInfo.packageName.lowercase().contains(query)
+                            }
+                        } else {
+                            typeFilteredApps
+                        }
+                        
+                        _uiState.update { 
+                            it.copy(
+                                isLoading = false,
+                                loadingSource = LoadingSource.NONE,
+                                apps = searchFilteredApps
+                            )
+                        }
                     }
-                    
-                    _uiState.update { 
-                        it.copy(
-                            isLoading = false,
-                            loadingSource = LoadingSource.NONE,
-                            apps = searchFilteredApps
-                        )
-                    }
-                }
             } catch (e: Exception) {
+                LogUtil.e("AppsViewModel", "Error loading apps: ${e.message}")
                 _uiState.update { 
                     it.copy(
                         isLoading = false,
@@ -188,7 +217,8 @@ class AppsViewModel(
         if (currentSortOption != option) {
             currentSortOption = option
             _uiState.update { it.copy(currentSortOption = option) }
-            loadApps(LoadingSource.SORT_CHANGE)
+            // 使用 triggerDataLoad 替代直接调用 loadApps
+            triggerDataLoad(LoadingSource.SORT_CHANGE)
         }
     }
 
@@ -199,7 +229,8 @@ class AppsViewModel(
         if (currentFilterOption != option) {
             currentFilterOption = option
             _uiState.update { it.copy(currentFilterOption = option) }
-            loadApps(LoadingSource.FILTER_CHANGE)
+            // 使用 triggerDataLoad 替代直接调用 loadApps
+            triggerDataLoad(LoadingSource.FILTER_CHANGE)
         }
     }
 
@@ -210,7 +241,8 @@ class AppsViewModel(
         if (searchQuery != query) {
             searchQuery = query
             _uiState.update { it.copy(searchQuery = query) }
-            loadApps(LoadingSource.SEARCH_CHANGE)
+            // 搜索查询应该使用防抖，不需要立即加载
+            triggerDataLoad(LoadingSource.SEARCH_CHANGE)
         }
     }
 
@@ -235,12 +267,26 @@ class AppsViewModel(
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true, loadingSource = source, message = "") }
-                appDasRepo.syncAppInfos()
-                appDasRepo.syncInfos()
                 
-                // keep the loading source consistent
-                loadApps(source)
+                // 分阶段执行同步，减少全部失败的可能性
+                try {
+                    appDasRepo.syncAppInfos()
+                } catch (e: Exception) {
+                    LogUtil.e("AppsViewModel", "Error syncing app infos: ${e.message}")
+                    // 继续执行，尝试同步其他数据
+                }
+                
+                try {
+                    appDasRepo.syncInfos()
+                } catch (e: Exception) {
+                    LogUtil.e("AppsViewModel", "Error syncing infos: ${e.message}")
+                    // 继续执行，确保UI更新
+                }
+                
+                // 使用 triggerDataLoad 替代直接调用 loadApps，立即加载
+                triggerDataLoad(source, immediate = true)
             } catch (e: Exception) {
+                LogUtil.e("AppsViewModel", "Error refreshing data: ${e.message}")
                 _uiState.update { 
                     it.copy(
                         isLoading = false, 
