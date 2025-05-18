@@ -51,10 +51,15 @@ class AppDasAR(
         appInfoDao.loadAppInfo(packageName, useId)
 
     override suspend fun syncAppInfos() = withContext(Dispatchers.Default) {
-        val dbAppInfos = getDBAppInfos()//db AppInfos
-        val sysAppInfos = getInstalledAppInfos()//system AppInfos
+        // Launch both operations in parallel using async coroutines
+        val dbAppInfosDeferred = async { getDBAppInfos() }
+        val sysAppInfosDeferred = async { getInstalledAppInfos() }
+        
+        // Wait for both operations to complete and get results
+        val dbAppInfos = dbAppInfosDeferred.await()
+        val sysAppInfos = sysAppInfosDeferred.await()
 
-        // get difference set to update and delete
+        // Process the results - insert new app infos and delete removed ones
         insertAll(sysAppInfos.keys subtract dbAppInfos.keys, sysAppInfos)
         deleteAll(dbAppInfos.keys subtract sysAppInfos.keys, dbAppInfos)
     }

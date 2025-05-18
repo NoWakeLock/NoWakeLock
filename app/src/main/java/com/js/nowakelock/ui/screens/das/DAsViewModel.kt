@@ -28,6 +28,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 /**
  * Defines the loading source to track the origin of data loading operations
@@ -355,25 +357,31 @@ open class DAsViewModel(
                     ) 
                 }
                 
-                // Execute all synchronization steps in sequence
+                // Execute synchronization steps in parallel using coroutineScope
                 try {
-                    // Step 1: Sync database data
-                    daRepository.syncDB()
-                    
-                    // Step 2: Load data into UI (this will be done via triggerDataLoad)
-                    // We pass immediate=true to ensure this happens right away
-                    triggerDataLoad(source, immediate = true)
-                    
-                    // Step 3: Sync events data
-                    daRepository.syncEvents()
+                    withContext(Dispatchers.IO) {
+                        // Use coroutineScope to create a structured concurrency context
+                        coroutineScope {
+                            // Launch sync operations in parallel
+                            val syncDbJob = async { daRepository.syncDB() }
+                            val syncEventsJob = async { daRepository.syncEvents() }
+                            
+                            // Wait for both operations to complete
+                            syncDbJob.await()
+                            syncEventsJob.await()
+                        }
+                        
+                        // Load data into UI after sync operations are complete
+                        // We pass immediate=true to ensure this happens right away
+                        triggerDataLoad(source, immediate = true)
+                    }
                 } catch (e: Exception) {
                     // Log error but continue
                     LogUtil.e("DAsViewModel", "Error during data sync: ${e.message}")
                     // We'll still set the error message at the end
                 }
                 
-                // Loading complete - note that loadDAs also updates isLoading=false
-                // but we set it again here to be sure in case of partial errors
+                // Loading complete
                 _uiState.update {
                     it.copy(
                         isLoading = false,

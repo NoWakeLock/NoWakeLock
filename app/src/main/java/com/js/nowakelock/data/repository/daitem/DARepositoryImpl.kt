@@ -16,6 +16,8 @@ import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.provider.ProviderMethod
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -231,10 +233,17 @@ open class DARepositoryImpl(
                 try {
                     val infos = result.getSerializable("infos") as Array<Info>?
                     if (!infos.isNullOrEmpty()) {
-                        // Insert all infos to database
-                        daDao.insert(infos.toList())
-                        // Clear cache since data has changed
-                        clearCacheForType()
+                        // Use coroutineScope to run these operations with proper error handling
+                        coroutineScope {
+                            // Insert all infos to database
+                            val insertJob = async { daDao.insert(infos.toList()) }
+                            
+                            // Wait for database operations to complete
+                            insertJob.await()
+                            
+                            // Clear cache since data has changed
+                            clearCacheForType()
+                        }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -287,12 +296,20 @@ open class DARepositoryImpl(
                     // parse the InfoEvent array in the result
                     val events = result.getSerializable("events") as Array<InfoEvent>?
                     if (!events.isNullOrEmpty()) {
-                        // insert all events to the database
-                        infoEventDao.insert(events.toList())
-                        // Clear cache only if events are affecting UI data
-                        if (events.size > 5) { // Only clear if significant number of events
-                            clearCacheForType()
+                        // Use coroutineScope for structured concurrency
+                        coroutineScope {
+                            // Insert events in a separate coroutine
+                            val insertJob = async { infoEventDao.insert(events.toList()) }
+                            
+                            // Wait for insertion to complete
+                            insertJob.await()
+                            
+                            // Clear cache only if events are affecting UI data
+                            if (events.size > 5) { // Only clear if significant number of events
+                                clearCacheForType()
+                            }
                         }
+                        
                         LogUtil.d("DARepositoryImpl", "Synced ${events.size} events")
                     }
                 } catch (e: Exception) {

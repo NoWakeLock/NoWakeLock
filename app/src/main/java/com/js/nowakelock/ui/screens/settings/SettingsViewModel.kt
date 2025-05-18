@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.delay
 import androidx.annotation.StringRes
 import com.js.nowakelock.R
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 /**
  * UI state for Settings screen
@@ -311,19 +313,28 @@ open class SettingsViewModel(
             try {
                 _uiState.update { it.copy(clearDataInProgress = true) }
                 
-                // Clear remote database via ContentProvider
+                // Run clearing operations in parallel
                 withContext(Dispatchers.IO) {
-                    val args = Bundle().apply {
-                        putBoolean("clearAll", true)
+                    // Use coroutineScope for structured concurrency
+                    coroutineScope {
+                        // Clear remote database via ContentProvider
+                        val remoteClearJob = async {
+                            val args = Bundle().apply {
+                                putBoolean("clearAll", true)
+                            }
+                            getCPResult(context, ProviderMethod.ClearData.value, args)
+                        }
+                        
+                        // Clear local database tables in parallel
+                        val db = AppDatabase.getInstance(context)
+                        val clearInfoJob = async { db.infoDao().clearAll() }
+                        val clearEventJob = async { db.infoEventDao().clearAll() }
+                        
+                        // Wait for all operations to complete
+                        remoteClearJob.await()
+                        clearInfoJob.await()
+                        clearEventJob.await()
                     }
-                    getCPResult(context, ProviderMethod.ClearData.value, args)
-                }
-                
-                // Clear local database
-                withContext(Dispatchers.IO) {
-                    val db = AppDatabase.getInstance(context)
-                    db.infoDao().clearAll()
-                    db.infoEventDao().clearAll()
                 }
                 
                 // Update data time range after clearing
