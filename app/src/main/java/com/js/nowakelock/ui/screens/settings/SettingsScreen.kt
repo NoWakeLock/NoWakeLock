@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -103,6 +104,11 @@ fun SettingsScreen(
         uri?.let { viewModel.restoreBackup(it) }
     }
 
+    // Load data time range when entering this screen
+    LaunchedEffect(Unit) {
+        viewModel.loadDataTimeRange()
+    }
+
     // Show error message in snackbar if needed
     LaunchedEffect(uiState.message) {
         if (uiState.message.isNotEmpty()) {
@@ -143,7 +149,10 @@ fun SettingsScreen(
                     powerFlag = powerFlag,
                     clearFlag = clearFlag,
                     onPowerFlagChanged = { viewModel.updatePowerFlag(it) },
-                    onClearFlagChanged = { viewModel.updateClearFlag(it) }
+                    onClearFlagChanged = { viewModel.updateClearFlag(it) },
+                    dataTimeRange = uiState.dataTimeRange,
+                    isClearing = uiState.clearDataInProgress,
+                    onClearAllDataClick = { viewModel.clearAllData() }
                 )
                 
                 // backup and restore function
@@ -222,7 +231,10 @@ private fun DataManagementSettings(
     powerFlag: Boolean,
     clearFlag: Boolean,
     onPowerFlagChanged: (Boolean) -> Unit,
-    onClearFlagChanged: (Boolean) -> Unit
+    onClearFlagChanged: (Boolean) -> Unit,
+    dataTimeRange: String = "No data",
+    isClearing: Boolean = false,
+    onClearAllDataClick: () -> Unit = {}
 ) {
     Spacer(modifier = Modifier.height(16.dp))
     SettingsCategoryTitle(title = stringResource(id = R.string.settings_data_management))
@@ -243,6 +255,17 @@ private fun DataManagementSettings(
             checked = clearFlag,
             enabled = powerFlag,
             onCheckedChange = onClearFlagChanged
+        )
+        
+        // Clear All Data option
+        SettingsActionItem(
+            title = stringResource(id = R.string.clear_all_data),
+            subtitle = dataTimeRange,
+            actionIcon = Icons.Default.DeleteForever,
+            actionText = stringResource(id = R.string.clear),
+            isLoading = isClearing,
+            enabled = !isClearing,
+            onClick = onClearAllDataClick
         )
     }
 }

@@ -89,7 +89,14 @@ fun appModule() = module {
         )
     }
 
-    viewModelOf(::SettingsViewModel)
+    // Settings ViewModel with context
+    viewModel {
+        SettingsViewModel(
+            userPreferencesRepository = get(),
+            backupManager = get(),
+            context = get()
+        )
+    }
 
     viewModel {
         DADetailViewModel(
@@ -105,8 +112,6 @@ fun appModule() = module {
             appDetailRepo = get<AppDetailRepositoryImpl>()
         )
     }
-
-    viewModel { SettingsViewModel(get<UserPreferencesRepository>(), get<BackupManager>()) }
 
     // Module check ViewModel
     viewModel { ModuleCheckViewModel(get()) }
