@@ -100,7 +100,7 @@
     <string name="settings_backup">Sauvegarde et restauration</string>
     <string name="settings_experimental">Fonction expérimentale</string>
     <string name="restore_success">Sauvegarde restaurée avec succès</string>
-    <string name="restore_failed">Échec de la restauration de la sauvegarde</string>
+    <string name="restore_failed">Échec de la restauration</string>
     <string name="back">Back</string>
     <string name="unknown_error">Erreur inconnue</string>
     <string name="now">Maintenant</string>
@@ -274,5 +274,13 @@
     <string name="fix_hook_not_working">Redémarrez l\'appareil pour initialiser les hooks</string>
     <string name="fix_config_path">Désinstallez l\'application, redémarrez l\'appareil, réinstallez et activez</string>
     <string name="experimental_features">Fonctionnalités Expérimentales</string>
+
+    <!-- Messages de gestion des données -->
+    <string name="data_cleared">Toutes les données ont été effacées</string>
+    <string name="clear_data_failed">Échec de l\'effacement des données: %1$s</string>
+    <string name="backup_created">Sauvegarde créée avec succès</string>
+    <string name="backup_creation_failed">Échec de la création de la sauvegarde: %1$s</string>
+    <string name="clear_all_data">Effacer toutes les données</string>
+    <string name="clear">Effacer</string>
 
 </resources>

@@ -4,10 +4,14 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.base.SPTools
+import com.js.nowakelock.data.db.AppDatabase
+import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.repository.backup.BackupManager
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.LanguageMode
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository.ThemeMode
+import com.js.nowakelock.base.getCPResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +19,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.os.Bundle
+import android.content.Context
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
+import androidx.annotation.StringRes
+import com.js.nowakelock.R
 
 /**
  * UI state for Settings screen
@@ -28,7 +43,9 @@ data class SettingsUiState(
     val clearFlag: Boolean = false,
     val backupInProgress: Boolean = false,
     val restoreInProgress: Boolean = false,
-    val debugMode: Boolean = false
+    val debugMode: Boolean = false,
+    val dataTimeRange: String = "",
+    val clearDataInProgress: Boolean = false
 )
 
 /**
@@ -36,7 +53,8 @@ data class SettingsUiState(
  */
 open class SettingsViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val backupManager: BackupManager
+    private val backupManager: BackupManager,
+    private val context: Context
 ) : ViewModel() {
     // UI状态
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -106,6 +124,9 @@ open class SettingsViewModel(
         
         // Set initial debug mode state
         _uiState.value = _uiState.value.copy(debugMode = _debugMode.value)
+        
+        // Load initial data time range
+        loadDataTimeRange()
     }
 
     /**
@@ -201,12 +222,12 @@ open class SettingsViewModel(
                 val result = backupManager.createBackup(uri)
                 
                 if (result.isSuccess) {
-                    showMessage("备份创建成功")
+                    showMessage(context.getString(R.string.backup_created))
                 } else {
-                    showMessage("备份创建失败: ${result.exceptionOrNull()?.message}")
+                    showMessage(context.getString(R.string.backup_creation_failed, result.exceptionOrNull()?.message))
                 }
             } catch (e: Exception) {
-                showMessage("备份创建失败: ${e.message}")
+                showMessage(context.getString(R.string.backup_creation_failed, e.message))
             } finally {
                 _uiState.update { it.copy(backupInProgress = false) }
             }
@@ -224,12 +245,12 @@ open class SettingsViewModel(
                 val result = backupManager.restoreBackup(uri)
                 
                 if (result.isSuccess) {
-                    showMessage("恢复成功")
+                    showMessage(context.getString(R.string.restore_success))
                 } else {
-                    showMessage("恢复失败: ${result.exceptionOrNull()?.message}")
+                    showMessage(context.getString(R.string.restore_failed, result.exceptionOrNull()?.message))
                 }
             } catch (e: Exception) {
-                showMessage("恢复失败: ${e.message}")
+                showMessage(context.getString(R.string.restore_failed, e.message))
             } finally {
                 _uiState.update { it.copy(restoreInProgress = false) }
             }
@@ -244,9 +265,89 @@ open class SettingsViewModel(
     }
     
     /**
-     * 显示消息
+     * Calculate and load the data time range for display
+     */
+    fun loadDataTimeRange() {
+        viewModelScope.launch {
+            try {
+                val earliestTime = withContext(Dispatchers.IO) {
+                    AppDatabase.getInstance(context).infoEventDao().getEarliestEventTime()
+                }
+                
+                if (earliestTime == null || earliestTime == 0L) {
+                    _uiState.update { it.copy(dataTimeRange = "No data") }
+                    return@launch
+                }
+                
+                val now = System.currentTimeMillis()
+                val diffMillis = now - earliestTime
+                
+                val days = TimeUnit.MILLISECONDS.toDays(diffMillis)
+                val hours = TimeUnit.MILLISECONDS.toHours(diffMillis) % 24
+                
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+                val formattedDate = dateFormat.format(Date(earliestTime))
+                
+                val rangeText = if (days > 0) {
+                    "$formattedDate ($days days ${hours}h)"
+                } else if (hours > 0) {
+                    "$formattedDate (${hours}h)"
+                } else {
+                    "$formattedDate (< 1h)"
+                }
+                
+                _uiState.update { it.copy(dataTimeRange = rangeText) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(dataTimeRange = "Error loading data range") }
+            }
+        }
+    }
+    
+    /**
+     * Clear all data from local and remote databases
+     */
+    fun clearAllData() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(clearDataInProgress = true) }
+                
+                // Clear remote database via ContentProvider
+                withContext(Dispatchers.IO) {
+                    val args = Bundle().apply {
+                        putBoolean("clearAll", true)
+                    }
+                    getCPResult(context, ProviderMethod.ClearData.value, args)
+                }
+                
+                // Clear local database
+                withContext(Dispatchers.IO) {
+                    val db = AppDatabase.getInstance(context)
+                    db.infoDao().clearAll()
+                    db.infoEventDao().clearAll()
+                }
+                
+                // Update data time range after clearing
+                loadDataTimeRange()
+                
+                showMessage(context.getString(R.string.data_cleared))
+            } catch (e: Exception) {
+                showMessage(context.getString(R.string.clear_data_failed, e.message))
+            } finally {
+                _uiState.update { it.copy(clearDataInProgress = false) }
+            }
+        }
+    }
+    
+    /**
+     * Shows a message in the UI and automatically clears it after a delay
      */
     private fun showMessage(message: String) {
         _uiState.update { it.copy(message = message) }
+        
+        // Clear the message after a delay
+        viewModelScope.launch {
+            delay(2000) // Clear message after 3 seconds
+            _uiState.update { it.copy(message = "") }
+        }
     }
 } 

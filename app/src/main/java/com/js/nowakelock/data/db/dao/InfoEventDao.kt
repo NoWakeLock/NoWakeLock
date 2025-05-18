@@ -42,6 +42,13 @@ interface InfoEventDao : BaseDao<InfoEvent> {
     @Query("SELECT * FROM info_event WHERE instanceId = :instanceId")
     suspend fun loadEventById(instanceId: String): InfoEvent?
 
+    /**
+     * Get the earliest event timestamp from info_event table
+     * @return The earliest startTime value, or null if no events exist
+     */
+    @Query("SELECT MIN(startTime) FROM info_event")
+    suspend fun getEarliestEventTime(): Long?
+
     @Query("DELETE FROM info_event WHERE startTime < :timestamp")
     suspend fun deleteEventsOlderThan(timestamp: Long)
 

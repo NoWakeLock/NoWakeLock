@@ -173,6 +173,14 @@
     <string name="restore_success">恢复成功</string>
     <string name="restore_failed">恢复失败</string>
 
+    <!-- 数据管理消息 -->
+    <string name="data_cleared">所有数据已清理</string>
+    <string name="clear_data_failed">清理数据失败: %1$s</string>
+    <string name="backup_created">备份创建成功</string>
+    <string name="backup_creation_failed">备份创建失败: %1$s</string>
+    <string name="clear_all_data">清除所有数据</string>
+    <string name="clear">清除</string>
+
     <!-- 实验功能设置 -->
     <string name="debug_mode">调试模式</string>
     <string name="debug_mode_desc">启用详细日志,用于排查问题</string>
