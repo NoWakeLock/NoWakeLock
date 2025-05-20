@@ -1,33 +1,30 @@
 # NoWakeLock
 
-For china user 中文用户 -> [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki)
+For Chinese users (中文用户) -> [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki)
 
 ## Introduction
 
-NoWakelock allows you to easily control the frequency and duration of waking up your Android device
-to save power consumption.
+NoWakeLock empowers you to take control of your Android device's wakelocks, alarms, and services. By managing how and when apps can wake your device, NoWakeLock helps you significantly reduce power consumption and extend battery life.
 
-- Take full control of Wakelock/Alarm/Service, no feature limitations.
-- Application level support
-    - Control Wakelock/Alarm/Service by application
-    - Application-level Wakelock/Alarm regular expression interception support.
-    - Limited multi-user support
-- Support for Android N and above.
-- Fully open source, no private data collected and stored.
+Key highlights include:
 
-**Serious warning**:
+-   **Full Control**: Manage Wakelocks, Alarms, and Services with no feature limitations.
+-   **Application-Level Management**: Fine-tune settings for individual applications, including support for regular expression-based interception.
+-   **Modern UI**: A completely revamped, intuitive interface built with Material Design 3 (MD3).
+-   **Performance Boost**: Experience a smoother, faster app thanks to significant performance optimizations and improved data loading.
+-   **Open Source & Private**: Fully open-source with a commitment to privacy – no private data is collected or stored.
+-   **Android Compatibility**: Supports Android 7.0 (Nougat) and above.
+-   **Multi-User Support**: Offers full support for multi-user environments.
 
-- This application is still in Beta testing stage. I will not be responsible for any damage caused
-  by the software to your device.
-- Version 2.0 is not compatible with the previous configuration, you need to clear all application
-  data.
+**Important Warnings**:
+
+-   This application is under active development and should be considered Beta quality. While we strive for stability, use it at your own risk. The developers are not responsible for any potential damage to your device.
+-   If you are upgrading from a version prior to 3.0, please be aware that configurations are not compatible. You will need to clear all application data before using this version.
 
 ## Compatibility
 
-Android 7 ~ Android 12.
-
-Tested with the EdXposed / LSPosed.
-
+-   **Android Versions**: Android 7.0 (SDK 24) to Android 15 (SDK 34/35).
+-   **Frameworks**: Tested with EdXposed and LSPosed.
 
 ## Installation
 
@@ -39,66 +36,74 @@ Tested with the EdXposed / LSPosed.
 
 ## FAQ
 
-Please check [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki)
+For frequently asked questions, please check the [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki).
 
-## About
+## About NoWakeLock
 
-With the update of Android version, doze mode is enough to suppress the power consumption of the
-background of the application, but some advanced users still hope to be able to control the wakelock
-alarm or service by themselves.
+As Android evolves, built-in features like Doze mode have improved background power management. However, many advanced users still seek granular control over wakelocks, alarms, and services to further optimize their device's battery life and performance.
 
-Amplify is good enough to meet the needs of most people, but after Android N, Amplify stops
-updating.
+Amplify was a popular solution but ceased updates after Android N. NoWakeLock aims to provide and expand upon Amplify's capabilities for modern Android versions, offering users the detailed control they need.
 
-So NoWakeLock expects to achieve the same function as Amplify does on Android N and later.
+## Key Features
 
-## 2.x Features
+NoWakeLock offers a comprehensive suite of features to manage your device's background activity:
 
-Alpha:
+-   **Wakelock, Alarm & Service Management**: Monitor and block or allow specific wakelocks, alarms, and services on a per-application basis.
+-   **Material Design 3 UI**: Enjoy a clean, modern, and user-friendly interface.
+-   **Performance Optimizations**: Benefit from a responsive UI and efficient background processing.
+-   **Module Status Check**: Easily verify if the Xposed module is active, hooks are working, and configurations are correctly loaded.
+-   **Regular Expression Support**: Utilize powerful regex patterns for flexible and precise interception rules.
+-   **Detailed Statistics**: Gain insights into wakelock activity and understand the impact of your configurations.
+-   **Data Backup & Recovery**: Safeguard your settings and restore them when needed.
+-   **Boot Reset Functionality**: Ensures data consistency by automatically resetting relevant statistics after a device reboot.
+-   **Multi-User Support**: Basic support for managing different user profiles on a single device.
 
-- ~~record/block alarm~~
-- ~~record/block wakelock~~
-- ~~record/block service~~
-- ~~check module active status~~
-- ~~Data reset~~
-- ~~Regular expressions support~~
+## Recent Developments
 
-Beta:
+The project has seen significant improvements recently:
 
-- Data backup and recovery
-- ~~Long press to copy information~~
-
-Release:
-
-- Application statistics
+-   **Complete UI Overhaul**: Migrated to Material Design 3 for a modern look and feel.
+-   **Xposed Hook System Refactor**: Enhanced the core hooking mechanism for better compatibility, performance, and maintainability across different Android versions.
+-   **Major Performance Enhancements**: Optimized data loading, processing, and UI rendering.
+-   **New Module Detection Feature**: Added a dedicated screen to check the operational status of the Xposed module and its components.
 
 ## Compile
 
-~~[master](https://github.com/NoWakeLock/NoWakeLock): stable version (not ready yet)~~
+The project uses the following branches:
 
-[dev](https://github.com/NoWakeLock/NoWakeLock/tree/dev): Beta version, may not be stable.
+-   [dev](https://github.com/NoWakeLock/NoWakeLock/tree/dev): Beta version, generally stable but may contain new features under test.
+-   [feature](https://github.com/NoWakeLock/NoWakeLock/tree/feature): Alpha versions, experimental and potentially unstable.
 
-[feature](https://github.com/NoWakeLock/NoWakeLock/tree/feature): Alpha version
+The `master` branch is not currently used for active development of the latest versions.
 
 ## Support
 
-Only NoWakeLock downloaded from the above channels is supported
+Support is provided for NoWakeLock versions downloaded from the official channels listed in the "Installation" section.
 
-Please submit [ISSUE](https://github.com/NoWakeLock/NoWakeLock/issues)
+If you encounter any issues, please submit an [ISSUE](https://github.com/NoWakeLock/NoWakeLock/issues) on GitHub.
 
 ## Contributing
 
-- [Jasper Hale](https://github.com/NoWakeLock)
+Contributions are welcome! Whether it's reporting a bug, suggesting a feature, or submitting a pull request, your help is appreciated.
+
+-   [Jasper Hale](https://github.com/NoWakeLock)
+
+Please check the issues tab for areas where you can contribute.
 
 ## License
 
-NoWakeLock is released under GNU
-GPLv3 ([License](https://github.com/NoWakeLock/NoWakeLock/blob/master/LICENSE)).
+NoWakeLock is released under the GNU General Public License v3.0. See the [LICENSE](https://github.com/NoWakeLock/NoWakeLock/blob/master/LICENSE) file for more details.
 
 ## Thanks
 
-NoWakelock is written with reference to the need for more open source applications. Thanks here.
+NoWakeLock builds upon the work and inspiration of several open-source projects. We extend our gratitude to the developers of:
 
-- [Amplify](https://github.com/rsteckler/unbounce-android).
-- [XPrivacyLua](https://github.com/M66B/XPrivacyLua)
-- [GravityBox](https://github.com/GravityBox/GravityBox)
+-   [Amplify](https://github.com/rsteckler/unbounce-android)
+-   [XPrivacyLua](https://github.com/M66B/XPrivacyLua)
+-   [GravityBox](https://github.com/GravityBox/GravityBox)
+
+                        
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/NoWakeLock/NoWakeLock.svg?variant=adaptive)](https://starchart.cc/NoWakeLock/NoWakeLock)
+
+                    
