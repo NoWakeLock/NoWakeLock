@@ -92,9 +92,9 @@ Please check the issues tab for areas where you can contribute.
 
 ## Chat group
 
-Telegram: @NoWakelock
+Telegram: [@NoWakelock](https://t.me/nowakelock)
 
-Discord: @NoWakelock
+Discord: [@NoWakelock](https://discord.gg/kewmG5AShQ)
 
 ## License
 
