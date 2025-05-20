@@ -90,6 +90,12 @@ Contributions are welcome! Whether it's reporting a bug, suggesting a feature, o
 
 Please check the issues tab for areas where you can contribute.
 
+## Chat group
+
+Telegram: @NoWakelock
+
+Discord: @NoWakelock
+
 ## License
 
 NoWakeLock is released under the GNU General Public License v3.0. See the [LICENSE](https://github.com/NoWakeLock/NoWakeLock/blob/master/LICENSE) file for more details.
