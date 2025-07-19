@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.ui.components.EmptyView
@@ -132,6 +133,18 @@ fun DAsScreen(
                     onRefresh = { viewModel.refreshData() }
                 )
             } else {
+                // Defensive programming: Check for potential LazyColumn key conflicts
+                val validatedItems = remember(dasList) {
+                    val keys = dasList.map { daItem -> 
+                        "${daItem.name}_${daItem.packageName}_${daItem.userId}_${daItem.type.ordinal}"
+                    }
+                    val duplicates = keys.groupBy { it }.filter { it.value.size > 1 }
+                    if (duplicates.isNotEmpty()) {
+                        LogUtil.w("DAsScreen", "Duplicate LazyColumn keys detected: ${duplicates.keys}")
+                    }
+                    dasList
+                }
+                
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 8.dp)
@@ -151,14 +164,12 @@ fun DAsScreen(
 
                     // DA list items
                     items<DAItem>(
-                        items = dasList,
-                        // Use a comprehensive key that includes all fields affecting UI appearance
-                        // This prevents unnecessary recompositions when only settings change
+                        items = validatedItems,
+                        // Use stable identity-based key to prevent crashes from key duplication
+                        // State changes are handled by internal remember() and key() mechanisms
                         key = { daItem -> 
-                            // Create a stable key containing all identity and state information
-                            "${daItem.name}_${daItem.packageName}_${daItem.userId}_" +
-                            "${daItem.fullBlocked}_${daItem.screenOffBlock}_${daItem.timeWindowSec}_" +
-                            "${daItem.count}"
+                            // Only use stable identity fields, avoid state-dependent values
+                            "${daItem.name}_${daItem.packageName}_${daItem.userId}_${daItem.type.ordinal}"
                         },
                         contentType = { daItem ->
                             when {
