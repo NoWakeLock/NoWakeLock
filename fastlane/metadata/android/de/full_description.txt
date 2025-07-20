@@ -1,0 +1,14 @@
+Bei aktuellen Android-Versionen reicht der Doze-Modus aus, um den Stromverbrauch des Hintergrunds der Anwendung zu unterdrücken, aber einige fortgeschrittene Benutzer hoffen immer noch, den Wakelock selbst steuern zu können.
+
+Amplify ist gut genug, um die Bedürfnisse der meisten Menschen zu erfüllen, aber nach Android N stoppt Amplify die Aktualisierung. <i>NoWakeLock</i> erwartet also, die gleiche Funktion wie Amplify auf Android N und höher zu erreichen.
+
+<i>NoWakeLock</i> ist für Android N und höher verfügbar. Verwenden Sie für frühere Versionen von Android N bitte Amplify. Beide Apps benötigen root und das Xposed Framework.
+
+<b>Features</b>
+
+* Die Suchabfragen unterscheiden nicht zwischen Satzzeichen, diakritischen Zeichen und Groß-/Kleinschreibung
+* Sehen, welche Anwendungen Wakelock / Alarm / Service auslösen
+* Jegliches Wakelock blockieren
+* Jeglichen Alarm blockieren
+* Verhindern, dass ein Service ausgeführt wird
+* Möglichkeit, diese nur zu sperren, wenn der Bildschirm gesperrt ist
