@@ -1,1 +1,1 @@
-Advanced Android power management tool. Control Wakelocks, Alarms & Services. Requires Xposed.
+Targeted Android power management. Control Wakelocks, Alarms & Services. Requires Xposed.

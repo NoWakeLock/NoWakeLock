@@ -1,0 +1,1 @@
+Gestion ciblée de l'énergie Android. Contrôlez Wakelocks, Alarmes et Services. Nécessite Xposed.

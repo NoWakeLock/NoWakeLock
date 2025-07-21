@@ -1,0 +1,37 @@
+<b>NoWakeLock</b> - Gestion Avancée de l'Énergie Android
+
+Prenez le contrôle de la consommation d'énergie de votre appareil Android en gérant les Wakelocks, Alarmes et Services.
+
+<b>Pourquoi NoWakeLock ?</b>
+Bien que la gestion en arrière-plan d'Android 11+ ait été considérablement optimisée, les utilisateurs avancés ont encore besoin d'un contrôle granulaire des activités en arrière-plan. NoWakeLock est une solution ciblée pour des problèmes spécifiques de décharge de batterie, pas un outil d'optimisation générale.
+
+<b>Fonctionnalités Principales</b>
+
+• <b>Contrôle des Composants</b> - Surveillez et gérez les Wakelocks, Alarmes et Services
+• <b>Contrôle de Blocage</b> - Autorisez, limitez ou bloquez les composants avec des règles configurables
+• <b>Correspondance de Motifs Regex</b> - Créez des règles utilisant les expressions régulières
+• <b>Interface Material Design 3</b> - Interface construite avec Jetpack Compose
+• <b>Statistiques</b> - Suivez l'impact sur la batterie et les résultats d'optimisation
+• <b>Support Multi-Utilisateurs</b> - Compatibilité complète avec l'environnement multi-utilisateurs Android
+• <b>Vérification du Statut du Module</b> - Vérifiez l'intégration du framework Xposed
+• <b>Gestion par Application</b> - Configurez les règles par application
+
+<b>Compatibilité</b>
+• Android 7.0 (API 24) à Android 15.0 (API 35)
+• Nécessite le Framework Xposed (LSPosed recommandé, EdXposed)
+• Supporte les architectures ARM64 et ARM32
+• Version Actuelle : 3.0.3 (version stable)
+• ⚠️ Appareils Samsung OneUI actuellement non supportés
+
+<b>Open Source & Confidentialité</b>
+• Entièrement open source (GPL v3.0)
+• Aucune collecte de données ou suivi
+• Tout le traitement se fait localement sur votre appareil
+
+<b>Avertissement Important</b>
+• Utilisation à vos propres risques - les développeurs ne sont pas responsables des dommages à l'appareil
+• À utiliser uniquement si vous avez confirmé des problèmes de décharge de batterie avec des outils comme BetterBatteryStats
+• Nécessite l'accès root et le framework Xposed
+• Recommandé pour les utilisateurs avancés - configurez avec précaution
+
+Pour les utilisateurs expérimentés qui ont besoin de solutions ciblées pour des problèmes spécifiques de batterie.

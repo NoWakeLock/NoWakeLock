@@ -1,1 +1,1 @@
-Android-Wakelocks mit Open Source steuern
+Gezielte Android-Energieverwaltung. Wakelocks, Alarme & Services kontrollieren. Benötigt Xposed.

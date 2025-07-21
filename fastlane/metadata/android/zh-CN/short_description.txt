@@ -1,0 +1,1 @@
+针对性 Android 电源管理。控制 WakeLock、Alarm 和 Service。需要 Xposed。

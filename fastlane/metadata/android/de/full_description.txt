@@ -1,14 +1,37 @@
-Bei aktuellen Android-Versionen reicht der Doze-Modus aus, um den Stromverbrauch des Hintergrunds der Anwendung zu unterdrücken, aber einige fortgeschrittene Benutzer hoffen immer noch, den Wakelock selbst steuern zu können.
+<b>NoWakeLock</b> - Erweiterte Android-Energieverwaltung
 
-Amplify ist gut genug, um die Bedürfnisse der meisten Menschen zu erfüllen, aber nach Android N stoppt Amplify die Aktualisierung. <i>NoWakeLock</i> erwartet also, die gleiche Funktion wie Amplify auf Android N und höher zu erreichen.
+Übernehmen Sie die Kontrolle über den Stromverbrauch Ihres Android-Geräts durch Verwaltung von Wakelocks, Alarmen und Services.
 
-<i>NoWakeLock</i> ist für Android N und höher verfügbar. Verwenden Sie für frühere Versionen von Android N bitte Amplify. Beide Apps benötigen root und das Xposed Framework.
+<b>Warum NoWakeLock?</b>
+Während Android 11+ Hintergrundverwaltung erheblich optimiert wurde, benötigen Power-User dennoch detaillierte Kontrolle über Hintergrundaktivitäten. NoWakeLock ist eine gezielte Lösung für spezifische Batterieprobleme, kein allgemeines Optimierungstool.
 
-<b>Features</b>
+<b>Hauptfunktionen</b>
 
-* Die Suchabfragen unterscheiden nicht zwischen Satzzeichen, diakritischen Zeichen und Groß-/Kleinschreibung
-* Sehen, welche Anwendungen Wakelock / Alarm / Service auslösen
-* Jegliches Wakelock blockieren
-* Jeglichen Alarm blockieren
-* Verhindern, dass ein Service ausgeführt wird
-* Möglichkeit, diese nur zu sperren, wenn der Bildschirm gesperrt ist
+• <b>Komponentenkontrolle</b> - Überwachung und Verwaltung von Wakelocks, Alarmen und Services
+• <b>Blockierungskontrolle</b> - Komponenten mit konfigurierbaren Regeln erlauben, begrenzen oder blockieren
+• <b>Regex-Mustervergleich</b> - Erstellen Sie Regeln mit regulären Ausdrücken
+• <b>Material Design 3 Oberfläche</b> - Benutzeroberfläche mit Jetpack Compose
+• <b>Statistiken</b> - Verfolgen Sie Batterieauswirkungen und Optimierungsergebnisse
+• <b>Multi-User-Unterstützung</b> - Vollständige Kompatibilität mit Android-Multi-User-Umgebung
+• <b>Modulstatus-Prüfung</b> - Xposed Framework Integration überprüfen
+• <b>App-Level-Verwaltung</b> - Regeln pro Anwendung konfigurieren
+
+<b>Kompatibilität</b>
+• Android 7.0 (API 24) bis Android 15.0 (API 35)
+• Benötigt Xposed Framework (LSPosed empfohlen, EdXposed)
+• Unterstützt ARM64 und ARM32 Architekturen
+• Aktuelle Version: 3.0.3 (stabile Veröffentlichung)
+• ⚠️ Samsung OneUI Geräte derzeit nicht unterstützt
+
+<b>Open Source & Datenschutz</b>
+• Vollständig Open Source (GPL v3.0)
+• Keine Datensammlung oder Verfolgung
+• Alle Verarbeitung erfolgt lokal auf Ihrem Gerät
+
+<b>Wichtiger Haftungsausschluss</b>
+• Verwendung auf eigenes Risiko - Entwickler nicht verantwortlich für Geräteschäden
+• Nur verwenden, wenn Sie Batterieprobleme durch Tools wie BetterBatteryStats bestätigt haben
+• Benötigt Root-Zugriff und Xposed Framework
+• Für fortgeschrittene Benutzer empfohlen - vorsichtig konfigurieren
+
+Für erfahrene Benutzer, die gezielte Lösungen für spezifische Batterieprobleme benötigen.

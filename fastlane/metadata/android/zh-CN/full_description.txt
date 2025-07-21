@@ -1,0 +1,37 @@
+<b>NoWakeLock</b> - 高级 Android 电源管理
+
+通过管理 WakeLock、Alarm 和 Service，控制您的 Android 设备电量消耗。
+
+<b>为什么选择 NoWakeLock？</b>
+虽然 Android 11+ 的后台管理已经过大幅优化，但高级用户仍需要对后台活动进行精细控制。NoWakeLock 是针对特定电池耗电问题的解决工具，而非通用优化软件。
+
+<b>核心功能</b>
+
+• <b>组件控制</b> - 监控和管理 WakeLock、Alarm 和 Service
+• <b>拦截控制</b> - 通过可配置规则允许、限制或拦截组件
+• <b>正则表达式匹配</b> - 使用正则表达式创建规则
+• <b>Material Design 3 界面</b> - 使用 Jetpack Compose 构建的界面
+• <b>统计</b> - 跟踪电池影响和优化结果
+• <b>多用户支持</b> - 完全兼容 Android 多用户环境
+• <b>模块状态检查</b> - 验证 Xposed 框架集成
+• <b>应用级管理</b> - 按应用配置规则
+
+<b>兼容性</b>
+• Android 7.0 (API 24) 至 15.0 (API 35)
+• 需要 Xposed 框架（推荐 LSPosed，支持 EdXposed）
+• 支持 ARM64 和 ARM32 架构
+• 当前版本：3.0.3（正式版）
+• ⚠️ 三星 OneUI 设备目前不支持
+
+<b>开源与隐私</b>
+• 完全开源（GPL v3.0）
+• 无数据收集或跟踪
+• 所有处理均在您的设备本地进行
+
+<b>重要免责声明</b>
+• 使用风险自担 - 开发者不对设备损坏承担责任
+• 仅在通过 BetterBatteryStats 等工具确认存在电池耗电问题时使用
+• 需要 Root 权限和 Xposed 框架
+• 推荐高级用户使用 - 请谨慎配置
+
+适合需要针对特定电池问题进行精确解决的用户。
