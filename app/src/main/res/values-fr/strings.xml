@@ -1,26 +1,26 @@
 <resources>
     <string name="app_name">NoWakeLock</string>
-    <string name="xposeddescription">Juste pour bloquer les alarmes</string>
+    <string name="xposeddescription">Pour bloquer les wakelocks</string>
     <string name="navigation_view_header_title">NoWakeLock</string>
     <string name="active">Le module n\’est pas activé</string>
     <string name="backup">Sauvegarde terminée</string>
     <string name="restore">Restauration terminée</string>
     <string name="BackupAndRestore">Sauvegarde et restauration</string>
-    <string name="clipboard">copier dans le press-papier</string>
-    <string name="test">Test</string>
+    <string name="clipboard">Copier dans le press-papier</string>
+    <string name="test">Mode Test</string>
     <string name="android">Système Android</string>
     <string name="settings">Réglages</string>
-    <string name="sync">Syncchronisation</string>
+    <string name="sync">Synchronisation</string>
     <string name="recordFlag_title">Enregistrement des données</string>
-    <string name="recordFlag_summary">Enregistrer les données d\'alarmes du périphérique</string>
+    <string name="recordFlag_summary">Enregistrer les données de réveil du périphérique</string>
     <string name="Save">Enregistrer</string>
     <string name="updateST_summary">Désactivation synchrone des informations de configuration (en seconde)</string>
     <string name="updateST_title">Synchronisation des réglages</string>
     <string name="updateDb_title">Synchronisation des données</string>
-    <string name="updateDb_summary">Synchronisation des informations des alarmes (en seconde)</string>
+    <string name="updateDb_summary">Synchronisation des informations de réveil (en seconde)</string>
     <string name="other">Autre</string>
     <string name="powerFlag_title">Réinitialiser compteur</string>
-    <string name="powerFlag_summary">Après chargement, compteur réinitialisé</string>
+    <string name="powerFlag_summary">Réinitialiser le compteur lors du chargement</string>
     <string name="theme">Thème</string>
     <string name="theme_list">Thème général</string>
     <string name="light_theme_name">Clair</string>
@@ -37,19 +37,19 @@
     <string name="CountTime">Date de compteur</string>
     <string name="BlockCountTime">BlockCountTime</string>
     <string name="search_title">Rechercher</string>
-    <string name="menu_filter">filtre</string>
+    <string name="menu_filter">Filtre</string>
     <string name="menu_filter_user_app">afficher applications utilisateur</string>
     <string name="menu_filter_system_app">afficher applications système</string>
     <string name="menu_filter_modified">afficher applications modifiées</string>
     <string name="menu_filter_all_app">afficher toutes les applications</string>
-    <string name="menu_filter_count">trier par compteur</string>
-    <string name="menu_filter_name">trier par nom</string>
-    <string name="menu_filter_countime">ordre par temps de comptage</string>
+    <string name="menu_filter_count">Trier par compteur</string>
+    <string name="menu_filter_name">Trier par nom</string>
+    <string name="menu_filter_countime">Trier par temps de comptage</string>
 
     <string name="WakeLock">WakeLock</string>
     <string name="Alarm">Alarme</string>
     <string name="Service">Service</string>
-    <string name="Apps">App</string>
+    <string name="Apps">Applications</string>
     <string name="help">Aide</string>
     <string name="help_instructions">        appuyer sur l\’icône ou le nom de l\’application pour renseigner les réglages d\’alarme, désactiver des alarmes.
         <![CDATA[<br><br>]]> Avertissement sérieux, ne restrégnez pas les applications du système, celà causera des conséquences imprévisibles.
@@ -64,26 +64,26 @@
         JasperHale: ljy087621@gmail.com</string>
     <string name="ATIText">Permettre intervales</string>
     <string name="FlagText">Permettre</string>
-    <string name="wakelockFlagText">Permettre les alarmes</string>
+    <string name="wakelockFlagText">Permettre les wakelocks</string>
     <string name="ATIUnit">sec</string>
     <string name="Re_Alarm">Expression régulière de bloquage d\’alarmes</string>
-    <string name="Re_Wakelock">Expression régulière de bloquage de réveils</string>
+    <string name="Re_Wakelock">Expression régulière de bloquage de wakelocks</string>
     <string name="name">Nom</string>
     <string name="application">Application</string>
     <string name="statistics">Statistiques</string>
     <string name="backup_title">Créer un nouveau fichier de sauvegarde</string>
     <string name="backup_summary">Sauvegarder les réglages des applications installés dans un fichier</string>
     <string name="restore_title">Restaurer depuis un fichier de sauvegarde</string>
-    <string name="restore_summary">Restauration depuis un fichier de sauvegarde outrepassera les réglages actuels</string>
+    <string name="restore_summary">La restauration depuis un fichier de sauvegarde remplacera les réglages actuels</string>
     <string name="action_allow_all">Tout autoriser</string>
     <string name="action_block_all">Tout bloquer</string>
     <string name="action_select_all">Tout sélectionner</string>
     <string name="action_select_inverse">"Inverser la sélection"</string>
     <string name="action_set_ATI">"Définir l\’\'intervalle de temps autorisé"</string>
     <string name="database">Base de données</string>
-    <string name="clear_summary">Quand on remet le compte à zéro, on efface les enregistrements inactifs.</string>
-    <string name="clear_title">Éffacer les enregistrements inactifs</string>
-    <string name="re_hint">Une règle par ligne, nouvelle ligne entrée</string>
+    <string name="clear_summary">Effacer les enregistrements inactifs lors de la réinitialisation du compteur</string>
+    <string name="clear_title">Effacer les enregistrements inactifs</string>
+    <string name="re_hint">Une règle par ligne, appuyer sur Entrée pour une nouvelle règle</string>
     <string name="user_ower">Utilisateur principal</string>
     <string name="user_work">Profile de travail</string>
     <string name="user_name">Nom d\’utilisateur</string>
@@ -121,14 +121,14 @@
     <string name="create_backup">Créer un nouveau fichier de sauvegarde</string>
     <string name="create_backup_desc">Enregistrer les réglages des applications installés dans un fichier</string>
     <string name="restore_backup">Restaurer depuis un fichier de sauvegarde</string>
-    <string name="restore_backup_desc">Restaurer depuis un fichier de sauvegarde outrepassera les réglages actuels</string>
+    <string name="restore_backup_desc">La restauration depuis un fichier de sauvegarde remplacera les réglages actuels</string>
     <string name="backup_success">Sauvegarde terminée</string>
     <string name="backup_failed">Sauvegarde échouée</string>
 
     <!-- Experimental features -->
     <string name="debug_mode">Mode de débogage</string>
-    <string name="debug_mode_desc">Activer le mode de débogage pour les problèmes de réveil/alarme/service non listés, exporter le journal complet dans Xposed et vous pourrez me l\'envoyer dans mon canal pour investiguer le problème.</string>
-    <string name="error_loading_app_detail">Test</string>
+    <string name="debug_mode_desc">Activer le mode de débogage lorsque vous rencontrez un wakelock/alarme/service non listé. Exportez le journal complet dans Xposed et vous pouvez me l\'envoyer pour investiguer le problème.</string>
+    <string name="error_loading_app_detail">Erreur lors du chargement des détails de l\'application</string>
 
     <string-array name="scopes" translatable="false">
         <item>android</item>
@@ -139,11 +139,11 @@
     <!-- App Settings Strings -->
     <string name="app_settings">Paramètres de l\'application</string>
     <string name="block_settings">Paramètres de blocage global</string>
-    <string name="wakelock_patterns">Expressions régulières de blocage des réveils</string>
+    <string name="wakelock_patterns">Expressions régulières de wakelocks</string>
     <string name="alarm_patterns">Expressions régulières de blocage des alarmes</string>
     <string name="service_patterns">Expressions régulières de blocage des services</string>
-    <string name="allow_wakelocks">Autoriser les réveils</string>
-    <string name="allow_wakelocks_description">Autoriser les applications à acquérir des réveils</string>
+    <string name="allow_wakelocks">Autoriser les wakelocks</string>
+    <string name="allow_wakelocks_description">Autoriser les applications à acquérir des wakelocks</string>
     <string name="allow_alarms">Autoriser les alarmes</string>
     <string name="allow_alarms_description">Autoriser les applications à planifier des alarmes</string>
     <string name="allow_services">Autoriser les services</string>
@@ -157,11 +157,11 @@
 
     <string name="app_detail_title">Détails de l\'application</string>
     <string name="app_statistics">Statistiques de l\'application</string>
-    <string name="wakelock_statistics">Statistiques des réveils</string>
+    <string name="wakelock_statistics">Statistiques des wakelocks</string>
     <string name="alarm_statistics">Statistiques des alarmes</string>
     <string name="service_statistics">Statistiques des services</string>
-    <string name="total_wakelocks">Total des réveils</string>
-    <string name="blocked_wakelocks">Réveils bloqués</string>
+    <string name="total_wakelocks">Total des wakelocks</string>
+    <string name="blocked_wakelocks">Wakelocks bloqués</string>
     <string name="total_alarms">Total des alarmes</string>
     <string name="blocked_alarms">Alarmes bloquées</string>
     <string name="total_services">Total des services</string>
@@ -202,8 +202,8 @@
 
     <!-- Settings card -->
     <string name="settings_title">Paramètres</string>
-    <string name="allow_this_item">Autoriser cet élément</string>
-    <string name="allow_this_item_desc">Empêcher cet élément de déclencher</string>
+    <string name="allow_this_item">Bloquer cet élément</string>
+    <string name="allow_this_item_desc">Bloquer cet élément de déclencher</string>
     <string name="block_during_sleep">Bloquer uniquement lorsque le périphérique est en veille</string>
     <string name="block_during_screen_off">Bloquer uniquement lorsque l\'écran est éteint</string>
     <string name="allowed_time_interval">Intervalle de temps autorisé</string>
