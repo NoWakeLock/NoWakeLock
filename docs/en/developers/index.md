@@ -19,11 +19,6 @@ Deep dive into NoWakeLock's technical implementation and contribute code to the 
 - [ContentProvider](api/content-provider.md) - Data access interface
 - [Internal API](api/internal-api.md) - Module internal interfaces
 
-### 🤝 Contribution Guide
-- [Development Environment](contributing/setup.md) - Setting up development environment
-- [Coding Standards](contributing/guidelines.md) - Code style and conventions
-- [Testing Guide](contributing/testing.md) - Testing framework and methods
-
 ## Quick Start
 
 ### Environment Requirements

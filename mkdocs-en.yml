@@ -1,5 +1,5 @@
 site_name: NoWakeLock Documentation
-site_url: https://nowakelock.github.io/NoWakeLock/
+site_url: https://nowakelock.github.io/NoWakeLock/en/
 site_author: NoWakeLock Team
 site_description: >-
   Comprehensive Android power management through WakeLock, Alarm, and Service control.
@@ -146,8 +146,21 @@ nav:
     - FAQ: reference/faq.md
     - Troubleshooting: reference/troubleshooting.md
     - Glossary: reference/glossary.md
+    - Changelog: reference/changelog.md
   - Developers:
     - Overview: developers/index.md
+    - Architecture:
+      - Overview: developers/architecture/overview.md
+      - Data Flow: developers/architecture/data-flow.md
+      - Database: developers/architecture/database.md
+      - Xposed Hooks: developers/architecture/xposed-hooks.md
+    - API Documentation:
+      - Internal API: developers/api/internal-api.md
+      - Content Provider: developers/api/content-provider.md
+    - Implementation Details:
+      - Counter System: developers/implementation/counter-system.md
+      - Hook Details: developers/implementation/hook-details.md
+      - Inter-Process Communication: developers/implementation/ipc.md
 
 # Customization
 extra:

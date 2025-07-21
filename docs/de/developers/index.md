@@ -5,8 +5,8 @@ Tiefer Einblick in die technische Implementierung von NoWakeLock, um zum Projekt
 ## Dokumentationsnavigation
 
 ### 🏗️ Architekturdesign
-- [Systemübersicht](architecture/overview.md) - Gesamtarchitektur und Designprinzipien
-- [Xposed Hooks](architecture/xposed-hooks.md) - Hook-System-Implementierung
+- [Systemübersicht](../architecture/overview.md) - Gesamtarchitektur und Designprinzipien
+- [Xposed Hooks](../architecture/xposed-hooks.md) - Hook-System-Implementierung
 - [Datenflussdesign](architecture/data-flow.md) - Datenfluss im System
 - [Datenbankdesign](architecture/database.md) - Datenspeicher-Architektur
 
@@ -18,11 +18,6 @@ Tiefer Einblick in die technische Implementierung von NoWakeLock, um zum Projekt
 ### 📚 API-Referenz
 - [ContentProvider](api/content-provider.md) - Datenzugriffsschnittstelle
 - [Interne API](api/internal-api.md) - Modulinterne Schnittstellen
-
-### 🤝 Beitragsleitfaden
-- [Entwicklungsumgebung](contributing/setup.md) - Entwicklungsumgebung einrichten
-- [Codierungsstandards](contributing/guidelines.md) - Codestil und Konventionen
-- [Testleitfaden](contributing/testing.md) - Test-Framework und -Methoden
 
 ## Schnellstart
 

@@ -19,11 +19,6 @@
 - [ContentProvider](api/content-provider.md) - 数据访问接口
 - [内部 API](api/internal-api.md) - 模块内部接口
 
-### 🤝 贡献指南
-- [开发环境](contributing/setup.md) - 搭建开发环境
-- [编码规范](contributing/guidelines.md) - 代码风格和约定
-- [测试指南](contributing/testing.md) - 测试框架和方法
-
 ## 快速开始
 
 ### 环境要求

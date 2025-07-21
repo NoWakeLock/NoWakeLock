@@ -1,5 +1,5 @@
 site_name: NoWakeLock 文檔
-site_url: https://nowakelock.github.io/NoWakeLock/
+site_url: https://nowakelock.github.io/NoWakeLock/zh-tw/
 site_author: NoWakeLock Team
 site_description: >-
   透過 WakeLock、Alarm 和 Service 控制進行全面的 Android 電源管理。
@@ -146,8 +146,21 @@ nav:
     - 常見問題: reference/faq.md
     - 故障排除: reference/troubleshooting.md
     - 術語表: reference/glossary.md
+    - 更新日誌: reference/changelog.md
   - 開發者:
     - 概覽: developers/index.md
+    - 架構:
+      - 概述: developers/architecture/overview.md
+      - 資料流: developers/architecture/data-flow.md
+      - 資料庫: developers/architecture/database.md
+      - Xposed鉤子: developers/architecture/xposed-hooks.md
+    - API文件:
+      - 內部API: developers/api/internal-api.md
+      - 內容提供者: developers/api/content-provider.md
+    - 實作詳情:
+      - 計數系統: developers/implementation/counter-system.md
+      - 鉤子詳情: developers/implementation/hook-details.md
+      - 行程間通訊: developers/implementation/ipc.md
 
 # Customization
 extra:

@@ -19,11 +19,6 @@ Comprendre en profondeur l'implémentation technique de NoWakeLock pour contribu
 - [ContentProvider](api/content-provider.md) - Interface d'accès aux données
 - [API interne](api/internal-api.md) - Interface interne du module
 
-### 🤝 Guide de contribution
-- [Environnement de développement](contributing/setup.md) - Configuration de l'environnement de développement
-- [Normes de codage](contributing/guidelines.md) - Style de code et conventions
-- [Guide de test](contributing/testing.md) - Framework et méthodes de test
-
 ## Démarrage rapide
 
 ### Exigences d'environnement

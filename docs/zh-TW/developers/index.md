@@ -19,11 +19,6 @@
 - [ContentProvider](api/content-provider.md) - 資料存取介面
 - [內部 API](api/internal-api.md) - 模組內部介面
 
-### 🤝 貢獻指南
-- [開發環境](contributing/setup.md) - 搭建開發環境
-- [編碼規範](contributing/guidelines.md) - 程式碼風格和約定
-- [測試指南](contributing/testing.md) - 測試框架和方法
-
 ## 快速開始
 
 ### 環境要求
