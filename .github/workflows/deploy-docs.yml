@@ -2,7 +2,7 @@ name: Deploy MkDocs
 
 on:
   push:
-    branches: [master, main, feature-multline-block]
+    branches: [master, main, dev]
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
