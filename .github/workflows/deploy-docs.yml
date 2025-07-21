@@ -1,66 +1,29 @@
-name: Deploy Docs
+name: Deploy MkDocs
 
 on:
   push:
-    branches:
-      - dev
-      - master
-      - main
+    branches: [master, main, feature-multline-block]
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
       - 'CNAME'
-      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
-    inputs:
-      reason:
-        description: 'Reason for manual deployment'
-        required: false
-        default: 'Manual deployment'
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
+      - run: |
           pip install mkdocs-material
-          pip install mkdocs-minify-plugin
-          pip install mkdocs-git-revision-date-localized-plugin
-          pip install pillow cairosvg
-          pip install mike
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Deploy to GitHub Pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Deploy with version support
-          if [[ "${{ github.ref }}" == "refs/heads/master" ]] || [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            mike deploy --push --update-aliases stable latest
-          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-            mike deploy --push dev
-          else
-            mkdocs gh-deploy --force
-          fi
-
+          pip install mkdocs-static-i18n
+      - run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - run: mkdocs gh-deploy --force
