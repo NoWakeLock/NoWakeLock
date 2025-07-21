@@ -1,118 +1,313 @@
 # NoWakeLock
 
-For Chinese users (中文用户) -> [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki)
+<div align="center">
 
-## Introduction
+![Android](https://img.shields.io/badge/platform-Android-green.svg)
+![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)
+![Xposed](https://img.shields.io/badge/framework-Xposed-orange.svg)
+![License](https://img.shields.io/github/license/NoWakeLock/NoWakeLock.svg)
+![GitHub release](https://img.shields.io/github/v/release/NoWakeLock/NoWakeLock.svg)
+![GitHub downloads](https://img.shields.io/github/downloads/NoWakeLock/NoWakeLock/total.svg)
+![GitHub stars](https://img.shields.io/github/stars/NoWakeLock/NoWakeLock.svg)
+![GitHub forks](https://img.shields.io/github/forks/NoWakeLock/NoWakeLock.svg)
+![GitHub issues](https://img.shields.io/github/issues/NoWakeLock/NoWakeLock.svg)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/NoWakeLock/NoWakeLock.svg)
+![Build Status](https://img.shields.io/github/actions/workflow/status/NoWakeLock/NoWakeLock/build.yml?branch=dev)
+![Last Commit](https://img.shields.io/github/last-commit/NoWakeLock/NoWakeLock/dev)
 
-NoWakeLock empowers you to take control of your Android device's wakelocks, alarms, and services. By managing how and when apps can wake your device, NoWakeLock helps you significantly reduce power consumption and extend battery life.
+**Take complete control of your Android device's power management**
 
-Key highlights include:
+[📖 Documentation](https://nowakelock.jasper1024.com/) • 
+[🚀 Releases](https://github.com/NoWakeLock/NoWakeLock/releases) • 
+[💬 Telegram](https://t.me/nowakelock) • 
+[🎮 Discord](https://discord.gg/kewmG5AShQ)
 
--   **Full Control**: Manage Wakelocks, Alarms, and Services with no feature limitations.
--   **Application-Level Management**: Fine-tune settings for individual applications, including support for regular expression-based interception.
--   **Modern UI**: A completely revamped, intuitive interface built with Material Design 3 (MD3).
--   **Performance Boost**: Experience a smoother, faster app thanks to significant performance optimizations and improved data loading.
--   **Open Source & Private**: Fully open-source with a commitment to privacy – no private data is collected or stored.
--   **Android Compatibility**: Supports Android 7.0 (Nougat) and above.
--   **Multi-User Support**: Offers full support for multi-user environments.
+</div>
 
-**Important Warnings**:
+## 📑 Table of Contents
 
--   This application is under active development and should be considered Beta quality. While we strive for stability, use it at your own risk. The developers are not responsible for any potential damage to your device.
--   If you are upgrading from a version prior to 3.0, please be aware that configurations are not compatible. You will need to clear all application data before using this version.
+- [✨ Features](#-features)
+- [📱 Compatibility](#-compatibility)
+- [⚡ Quick Start](#-quick-start)
+- [📥 Installation](#-installation)
+- [🚀 Usage](#-usage)
+- [🌍 Documentation](#-documentation)
+- [⚠️ Important Notes](#️-important-notes)
+- [🔧 Development](#-development)
+- [🤝 Contributing](#-contributing)
+- [💬 Community](#-community)
+- [📄 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
 
-## Compatibility
+## ✨ Features
 
--   **Android Versions**: Android 7.0 (SDK 24) to Android 15 (SDK 34/35).
--   **Frameworks**: Tested with EdXposed and LSPosed.
+NoWakeLock empowers you to take **granular control** of your Android device's background activity, helping you **significantly extend battery life** while maintaining performance.
 
-**Important Limitation**:
--   **Samsung OneUI devices are currently not supported** due to OneUI's modifications to Android source code. Despite multiple attempts with various hooking methods, the module cannot function properly on Samsung OneUI devices. Other Android devices from different manufacturers typically work normally.
+### 🎯 Core Capabilities
 
-## Installation
+- **🔒 WakeLock Management** - Block or allow specific wakelocks with precision timing controls
+- **⏰ Alarm Control** - Manage system and app alarms to prevent unnecessary wake-ups
+- **⚙️ Service Monitoring** - Control background services and their resource usage
+- **📱 Per-App Configuration** - Fine-tune settings for individual applications
+- **🔍 Regex Support** - Use powerful regular expressions for flexible pattern matching
+- **📊 Detailed Analytics** - Monitor real-time statistics and power consumption insights
+
+### 🎨 Modern Experience
+
+- **🎨 Material Design 3** - Clean, modern interface following latest Android design principles
+- **🌙 Dark Theme** - Full dark mode support for comfortable usage
+- **🚀 Performance Optimized** - Smooth, responsive UI with efficient background processing
+- **📈 Real-time Statistics** - Live monitoring of blocked wakelocks, alarms, and services
+
+### 🛡️ Advanced Features
+
+- **✅ Module Status Check** - Comprehensive diagnostics for Xposed module health
+- **💾 Backup & Restore** - Safeguard your configurations with export/import functionality
+- **👥 Multi-User Support** - Full compatibility with Android's multi-user profiles
+- **🔄 Boot Consistency** - Automatic statistics reset after device reboot for accurate data
+
+## 📱 Compatibility
+
+| Component | Requirement |
+|-----------|-------------|
+| **Android Version** | 7.0 (API 24) - 15 (API 35) |
+| **Xposed Framework** | EdXposed, LSPosed |
+| **Architecture** | ARM64, ARM32 |
+| **Root Required** | Yes (for Xposed framework) |
+
+### ⚠️ Known Limitations
+
+- **Samsung OneUI**: Currently not supported due to extensive Android modifications
+- **MIUI**: Partial support - some features may be limited
+- **Stock Android**: Full compatibility guaranteed
+
+## ⚡ Quick Start
+
+### Prerequisites
+
+1. **Root access** on your Android device
+2. **Xposed Framework** installed (LSPosed recommended)
+3. Android 7.0+ running on your device
+
+### Installation Steps
+
+1. **Download** the latest APK from [Releases](https://github.com/NoWakeLock/NoWakeLock/releases)
+2. **Install** the APK on your device
+3. **Activate** the module in your Xposed manager
+4. **Reboot** your device
+5. **Open** NoWakeLock and verify module status
+
+## 📥 Installation
 
 <div align="center">
 
+### Official Distribution Channels
+
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.js.nowakelock)
+&nbsp;&nbsp;&nbsp;
 [<img src="assets/badge_github.png" alt="Get it on GitHub" height="80">](https://github.com/NoWakeLock/NoWakeLock/releases)
+
 </div>
 
-## FAQ
+### Manual Installation
 
-For frequently asked questions, please check the [NoWakelock Wiki](https://github.com/NoWakeLock/NoWakeLock/wiki).
+```bash
+# Download latest release
+wget https://github.com/NoWakeLock/NoWakeLock/releases/latest/download/NoWakeLock.apk
 
-## About NoWakeLock
+# Install via ADB
+adb install NoWakeLock.apk
+```
 
-As Android evolves, built-in features like Doze mode have improved background power management. However, many advanced users still seek granular control over wakelocks, alarms, and services to further optimize their device's battery life and performance.
+## 🚀 Usage
 
-Amplify was a popular solution but ceased updates after Android N. NoWakeLock aims to provide and expand upon Amplify's capabilities for modern Android versions, offering users the detailed control they need.
+### Initial Setup
 
-## Key Features
+1. **Launch** NoWakeLock after installation
+2. **Check Module Status** - Use the built-in diagnostics screen
+3. **Review** the app list to see detected applications
+4. **Configure** your first app by tapping on it
 
-NoWakeLock offers a comprehensive suite of features to manage your device's background activity:
+### Basic Configuration
 
--   **Wakelock, Alarm & Service Management**: Monitor and block or allow specific wakelocks, alarms, and services on a per-application basis.
--   **Material Design 3 UI**: Enjoy a clean, modern, and user-friendly interface.
--   **Performance Optimizations**: Benefit from a responsive UI and efficient background processing.
--   **Module Status Check**: Easily verify if the Xposed module is active, hooks are working, and configurations are correctly loaded.
--   **Regular Expression Support**: Utilize powerful regex patterns for flexible and precise interception rules.
--   **Detailed Statistics**: Gain insights into wakelock activity and understand the impact of your configurations.
--   **Data Backup & Recovery**: Safeguard your settings and restore them when needed.
--   **Boot Reset Functionality**: Ensures data consistency by automatically resetting relevant statistics after a device reboot.
--   **Multi-User Support**: Basic support for managing different user profiles on a single device.
+- **Allow/Block Toggle** - Simple on/off control for wakelocks/alarms/services
+- **Time Intervals** - Set minimum intervals between wakelock acquisitions
+- **Regex Patterns** - Advanced users can define custom matching patterns
 
-## Recent Developments
+### Monitoring
 
-The project has seen significant improvements recently:
+- **Statistics Tab** - View real-time power consumption data
+- **Per-App Details** - Detailed breakdown of each application's activity
+- **Timeline View** - Historical data visualization
 
--   **Complete UI Overhaul**: Migrated to Material Design 3 for a modern look and feel.
--   **Xposed Hook System Refactor**: Enhanced the core hooking mechanism for better compatibility, performance, and maintainability across different Android versions.
--   **Major Performance Enhancements**: Optimized data loading, processing, and UI rendering.
--   **New Module Detection Feature**: Added a dedicated screen to check the operational status of the Xposed module and its components.
+## 🌍 Documentation
 
-## Compile
+Comprehensive documentation is available in multiple languages:
 
-The project uses the following branches:
+- 🇺🇸 **[English Documentation](https://nowakelock.jasper1024.com/en/)**
+- 🇨🇳 **[中文文档](https://nowakelock.jasper1024.com/zh/)**
+- 🇹🇼 **[繁體中文](https://nowakelock.jasper1024.com/zh-tw/)**
+- 🇫🇷 **[Documentation Française](https://nowakelock.jasper1024.com/fr/)**
+- 🇩🇪 **[Deutsche Dokumentation](https://nowakelock.jasper1024.com/de/)**
 
--   [dev](https://github.com/NoWakeLock/NoWakeLock/tree/dev): Beta version, generally stable but may contain new features under test.
--   [feature](https://github.com/NoWakeLock/NoWakeLock/tree/feature): Alpha versions, experimental and potentially unstable.
+### 📚 Key Documentation Sections
 
-The `master` branch is not currently used for active development of the latest versions.
+- **[Getting Started Guide](https://nowakelock.jasper1024.com/en/getting-started/)** - Complete setup walkthrough
+- **[Features Overview](https://nowakelock.jasper1024.com/en/features/)** - Detailed feature explanations
+- **[Developer Documentation](https://nowakelock.jasper1024.com/en/developers/)** - Technical implementation details
+- **[FAQ](https://nowakelock.jasper1024.com/en/reference/faq/)** - Frequently asked questions
+- **[Troubleshooting](https://nowakelock.jasper1024.com/en/reference/troubleshooting/)** - Common issues and solutions
 
-## Support
+## ⚠️ Important Notes
 
-Support is provided for NoWakeLock versions downloaded from the official channels listed in the "Installation" section.
+### 🧪 Development Status
 
-If you encounter any issues, please submit an [ISSUE](https://github.com/NoWakeLock/NoWakeLock/issues) on GitHub.
+- **Beta Quality**: Active development with regular updates
+- **Use at Own Risk**: While stable, unexpected behavior may occur
+- **No Warranty**: Developers not responsible for device damage
 
-## Contributing
+### 🔄 Upgrading from v2.x
 
-Contributions are welcome! Whether it's reporting a bug, suggesting a feature, or submitting a pull request, your help is appreciated.
+- **Breaking Changes**: v3.0+ is not compatible with previous versions
+- **Fresh Start Required**: Clear all app data before upgrading
+- **Backup Recommendation**: Export settings before major updates
 
--   [Jasper Hale](https://github.com/NoWakeLock)
+### 🛡️ Privacy & Security
 
-Please check the issues tab for areas where you can contribute.
+- **🔒 No Data Collection**: Zero telemetry or analytics
+- **📱 Local Processing**: All data stays on your device
+- **🔓 Open Source**: Full source code available for audit
 
-## Chat group
+## 🔧 Development
 
-Telegram: [@NoWakelock](https://t.me/nowakelock)
+### 🏗️ Project Structure
 
-Discord: [@NoWakelock](https://discord.gg/kewmG5AShQ)
+```
+NoWakeLock/
+├── app/                    # Main Android application
+├── docs/                   # Multi-language documentation
+├── fastlane/              # Automated deployment
+└── .github/workflows/     # CI/CD pipelines
+```
 
-## License
+### 🌿 Branch Strategy
 
-NoWakeLock is released under the GNU General Public License v3.0. See the [LICENSE](https://github.com/NoWakeLock/NoWakeLock/blob/master/LICENSE) file for more details.
+- **`dev`** - Beta releases, generally stable
+- **`feature`** - Experimental features, potentially unstable
+- **`master`** - Reserved for stable releases
 
-## Thanks
+### 🛠️ Building from Source
 
-NoWakeLock builds upon the work and inspiration of several open-source projects. We extend our gratitude to the developers of:
+```bash
+# Clone the repository
+git clone https://github.com/NoWakeLock/NoWakeLock.git
+cd NoWakeLock
 
--   [Amplify](https://github.com/rsteckler/unbounce-android)
--   [XPrivacyLua](https://github.com/M66B/XPrivacyLua)
--   [GravityBox](https://github.com/GravityBox/GravityBox)
+# Switch to development branch
+git checkout dev
 
-                        
-## Stargazers over time
+# Build with Gradle
+./gradlew assembleDebug
+```
+
+### 📋 Development Requirements
+
+- **Android Studio** Arctic Fox or newer
+- **JDK** 17 or newer
+- **Android SDK** API 24-35
+- **Git** for version control
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Here's how you can help:
+
+### 🐛 Bug Reports
+
+1. **Check existing issues** before creating new ones
+2. **Use issue templates** for consistent reporting
+3. **Provide detailed logs** and device information
+4. **Include reproduction steps**
+
+### 💡 Feature Requests
+
+1. **Search existing requests** to avoid duplicates
+2. **Explain use cases** and expected behavior
+3. **Consider implementation complexity**
+
+### 🔧 Code Contributions
+
+1. **Fork the repository** and create a feature branch
+2. **Follow coding standards** (see [Developer Guide](https://nowakelock.jasper1024.com/en/developers/))
+3. **Add tests** for new functionality
+4. **Update documentation** as needed
+5. **Submit pull request** with clear description
+
+### 🌐 Translations
+
+Help make NoWakeLock accessible worldwide:
+
+- **Application strings**: Contribute via [Crowdin](https://crowdin.com/project/nowakelock) *(Coming Soon)*
+- **Documentation**: Submit PRs for `/docs/` translations
+
+## 💬 Community
+
+Join our growing community of power management enthusiasts:
+
+- **💬 [Telegram Group](https://t.me/nowakelock)** - General discussion and support
+- **🎮 [Discord Server](https://discord.gg/kewmG5AShQ)** - Real-time chat and development updates
+- **🐛 [GitHub Issues](https://github.com/NoWakeLock/NoWakeLock/issues)** - Bug reports and feature requests
+- **📖 [Documentation](https://nowakelock.jasper1024.com/)** - Comprehensive guides and references
+
+## 📄 License
+
+NoWakeLock is released under the **GNU General Public License v3.0**.
+
+```
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+```
+
+See the [LICENSE](LICENSE) file for the complete license text.
+
+## 🙏 Acknowledgments
+
+NoWakeLock builds upon the foundation and inspiration of several outstanding open-source projects:
+
+- **[Amplify](https://github.com/rsteckler/unbounce-android)** - Original inspiration for wakelock management
+- **[XPrivacyLua](https://github.com/M66B/XPrivacyLua)** - Privacy protection framework techniques
+- **[GravityBox](https://github.com/GravityBox/GravityBox)** - Advanced Xposed module architecture
+
+### 🏆 Special Thanks
+
+- **Jasper Hale** ([@Jasper-1024](https://github.com/Jasper-1024)) - Lead developer and project maintainer
+- **Community Contributors** - Bug reports, feature requests, and translations
+- **Beta Testers** - Early adoption and feedback
+
+### 📊 Project Statistics
+
+<div align="center">
+
+| Metric | Value |
+|--------|-------|
+| **Latest Release** | ![Latest Release](https://img.shields.io/github/v/release/NoWakeLock/NoWakeLock?display_name=tag&sort=semver) |
+| **Total Downloads** | ![Downloads](https://img.shields.io/github/downloads/NoWakeLock/NoWakeLock/total?color=success) |
+| **Community Size** | ![Stars](https://img.shields.io/github/stars/NoWakeLock/NoWakeLock?style=social) ![Forks](https://img.shields.io/github/forks/NoWakeLock/NoWakeLock?style=social) |
+| **Development Activity** | ![Commits](https://img.shields.io/github/commit-activity/m/NoWakeLock/NoWakeLock) ![Contributors](https://img.shields.io/github/contributors/NoWakeLock/NoWakeLock) |
+
+</div>
+
+---
+
+<div align="center">
+
+### 📈 Project Growth
+
 [![Stargazers over time](https://starchart.cc/NoWakeLock/NoWakeLock.svg?variant=adaptive)](https://starchart.cc/NoWakeLock/NoWakeLock)
 
-                    
+**⭐ Star this repository if NoWakeLock helps extend your device's battery life!**
+
+Made with ❤️ by the NoWakeLock community
+
+</div>
