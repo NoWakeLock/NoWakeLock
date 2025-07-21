@@ -29,8 +29,8 @@
     <string name="channel_name">后台服务</string>
     <string name="channel_description">请忽略通知,或者将其隐藏</string>
     <string name="channel_id">nowakelock</string>
-    <string name="notofication_title">后台服务</string>
-    <string name="notofication_text">NoWakeLock 需要使用后台服务来维护数据库,请忽略或隐藏这条通知.</string>
+    <string name="notification_title">后台服务</string>
+    <string name="notification_text">NoWakeLock 需要使用后台服务来维护数据库,请忽略或隐藏这条通知.</string>
     <string name="Count">计数</string>
     <string name="BlockCount">阻止</string>
     <string name="CountTime">唤醒时间</string>
@@ -83,7 +83,7 @@
     <string name="clear_summary">清空计数时,一同清理不活跃记录.</string>
     <string name="clear_title">清理不活跃记录</string>
     <string name="re_hint">一行一个规则,新规则回车另起新行.</string>
-    <string name="user_ower">主用户</string>
+    <string name="user_owner">主用户</string>
     <string name="user_work">工作资料</string>
     <string name="user_name">用户</string>
     <string name="user">用户</string>

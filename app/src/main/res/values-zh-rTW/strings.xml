@@ -78,7 +78,7 @@
     <string name="clear_summary">清空計數時，一同清理不活躍記錄</string>
     <string name="clear_title">清理不活躍記錄</string>
     <string name="re_hint">一行一個規則，新規則回車另起新行</string>
-    <string name="user_ower">主使用者</string>
+    <string name="user_owner">主使用者</string>
     <string name="user_work">工作資料</string>
     <string name="user_name">使用者</string>
     <string name="user">使用者</string>

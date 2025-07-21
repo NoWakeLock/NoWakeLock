@@ -30,8 +30,8 @@
     <string name="channel_name">Services d\’arrière-plan</string>
     <string name="channel_description">Ignorer simplement cette notification ou la masquer</string>
     <string name="channel_id" translatable="false">nowakelock</string>
-    <string name="notofication_title">Services d\’arrière-plan</string>
-    <string name="notofication_text">NoWakeLock a besoin d\’un service pour maintenir la base de données. Ignorez juste cette notification ou masquez la</string>
+    <string name="notification_title">Services d\'arrière-plan</string>
+    <string name="notification_text">NoWakeLock a besoin d\'un service pour maintenir la base de données. Ignorez juste cette notification ou masquez la</string>
     <string name="Count">Compteur</string>
     <string name="BlockCount">Nombre de blocs</string>
     <string name="CountTime">Date de compteur</string>
@@ -84,7 +84,7 @@
     <string name="clear_summary">Effacer les enregistrements inactifs lors de la réinitialisation du compteur</string>
     <string name="clear_title">Effacer les enregistrements inactifs</string>
     <string name="re_hint">Une règle par ligne, appuyer sur Entrée pour une nouvelle règle</string>
-    <string name="user_ower">Utilisateur principal</string>
+    <string name="user_owner">Utilisateur principal</string>
     <string name="user_work">Profile de travail</string>
     <string name="user_name">Nom d\’utilisateur</string>
     <string name="user">Utilisateur</string>
