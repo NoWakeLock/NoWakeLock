@@ -1,0 +1,279 @@
+<resources>
+    <string name="app_name">NoWakeLock</string>
+    <string name="xposeddescription">Zum Blockieren von WakeLocks</string>
+    <string name="navigation_view_header_title">NoWakeLock</string>
+    <string name="active">Modul ist nicht aktiv</string>
+    <string name="backup">Sicherung abgeschlossen</string>
+    <string name="restore">Wiederherstellung abgeschlossen</string>
+    <string name="BackupAndRestore">Sichern und Wiederherstellen</string>
+    <string name="clipboard">In Zwischenablage kopieren</string>
+    <string name="test">Test-Modus</string>
+    <string name="android">Android-System</string>
+    <string name="settings">Einstellungen</string>
+    <string name="sync">Synchronisation</string>
+    <string name="recordFlag_title">Daten aufzeichnen</string>
+    <string name="recordFlag_summary">Geräte-Wake-Up-Daten aufzeichnen</string>
+    <string name="Save">Speichern</string>
+    <string name="updateST_summary">Konfigurationssync-Intervall (Sekunden)</string>
+    <string name="updateST_title">Einstellungen synchronisieren</string>
+    <string name="updateDb_title">Datensynchronisation</string>
+    <string name="updateDb_summary">Wake-Up-Datensync-Intervall (Sekunden)</string>
+    <string name="other">Sonstiges</string>
+    <string name="powerFlag_title">Zähler zurücksetzen</string>
+    <string name="powerFlag_summary">Zähler beim Laden zurücksetzen</string>
+    <string name="theme">Design</string>
+    <string name="theme_list">Allgemeines Design</string>
+    <string name="light_theme_name">Hell</string>
+    <string name="dark_theme_name">Dunkel</string>
+    <string name="black_theme_name">Schwarz (AMOLED)</string>
+    <string name="system_theme_name">System folgen</string>
+    <string name="channel_name">Hintergrunddienste</string>
+    <string name="channel_description">Sie können diese Benachrichtigung ignorieren oder ausblenden</string>
+    <string name="channel_id" translatable="false">nowakelock</string>
+    <string name="notification_title">Hintergrunddienste</string>
+    <string name="notification_text">NoWakeLock benötigt einen Dienst zur Wartung der Datenbank. Sie können diese Benachrichtigung ignorieren oder ausblenden</string>
+    <string name="Count">Anzahl</string>
+    <string name="BlockCount">Block-Anzahl</string>
+    <string name="CountTime">Anzahl-Zeit</string>
+    <string name="BlockCountTime">Block-Anzahl-Zeit</string>
+    <string name="search_title">Suchen</string>
+    <string name="menu_filter">Filter</string>
+    <string name="menu_filter_user_app">Benutzer-Apps</string>
+    <string name="menu_filter_system_app">System-App</string>
+    <string name="menu_filter_modified">Geändert</string>
+    <string name="menu_filter_all_app">Alle Apps</string>
+    <string name="menu_filter_count">Nach Anzahl sortieren</string>
+    <string name="menu_filter_name">Nach Name sortieren</string>
+    <string name="menu_filter_countime">Nach Anzahl-Zeit sortieren</string>
+
+    <string name="WakeLock">WakeLock</string>
+    <string name="Alarm">Timer</string>
+    <string name="Service">Dienst</string>
+    <string name="Apps">Apps</string>
+    <string name="help">Hilfe</string>
+    <string name="help_instructions">        Klicken Sie auf das Anwendungssymbol oder den Namen, um die Komponenten-Einstellungen zu öffnen und das Blockieren zu konfigurieren.
+        <![CDATA[<br><br>]]> Ernste Warnung: Beschränken Sie keine Systemanwendungen, da dies unvorhersehbare Folgen haben kann.
+        <![CDATA[<br><br>]]>Weitere Informationen finden Sie unter <![CDATA[<a href="https://github.com/Jasper-1024/NoWakeLock/blob/dev/README.md">Anwendungseinführung</a>]]>;
+           <![CDATA[<a href="https://github.com/Jasper-1024/NoWakeLock/blob/dev/README/FAQ.md">FAQ</a>]]>;
+    </string>
+    <string name="help_contact">Kontakt:
+
+            Wenn Sie Fragen haben oder auf Fehler stoßen, können Sie mir eine E-Mail senden oder ein neues Issue erstellen.
+        
+
+        Issue: https://github.com/Jasper-1024/NoWakeLock/issues
+        
+
+        JasperHale: ljy087621@gmail.com</string>
+    <string name="ATIText">Erlaubtes Intervall</string>
+    <string name="FlagText">Erlauben</string>
+    <string name="wakelockFlagText">WakeLock erlauben</string>
+    <string name="ATIUnit">s</string>
+    <string name="Re_Alarm">Timer-Block-Regulärer Ausdruck</string>
+    <string name="Re_Wakelock">WakeLock-Block-Regulärer Ausdruck</string>
+    <string name="name">Name</string>
+    <string name="application">Anwendung</string>
+    <string name="statistics">Statistiken</string>
+    <string name="backup_title">Neue Sicherungsdatei erstellen</string>
+    <string name="backup_summary">Einstellungen installierter Apps in Datei sichern</string>
+    <string name="restore_title">Aus Sicherungsdatei wiederherstellen</string>
+    <string name="restore_summary">Die Wiederherstellung aus einer Sicherungsdatei wird die aktuellen Einstellungen überschreiben</string>
+    <string name="action_allow_all">Alles erlauben</string>
+    <string name="action_block_all">Alles blockieren</string>
+    <string name="action_select_all">Alles auswählen</string>
+    <string name="action_select_inverse">"Auswahl umkehren"</string>
+    <string name="action_set_ATI">"Erlaubtes Zeitintervall festlegen"</string>
+    <string name="database">Datenbank</string>
+    <string name="clear_summary">Inaktive Datensätze beim Zurücksetzen des Zählers löschen</string>
+    <string name="clear_title">Inaktive Datensätze löschen</string>
+    <string name="re_hint">Eine Regel pro Zeile, Enter für neue Regel drücken</string>
+    <string name="user_owner">Primärer Benutzer</string>
+    <string name="user_work">Arbeitsprofil</string>
+    <string name="user_name">Benutzer</string>
+    <string name="user">Benutzer</string>
+    <string name="experimental">Experimentelle Funktionen</string>
+    <string name="Debug">Debug-Modus</string>
+    <string name="Debug_summary">Aktivieren Sie dies, wenn Sie auf einen nicht protokollierten WakeLock/Timer/Dienst stoßen. Exportieren Sie das vollständige Log in Xposed und senden Sie es mir über einen beliebigen Kanal zur Fehlerbehebung.</string>
+
+    <!-- Basic navigation and titles -->
+    <string name="da_detail_title">Geräteautomatisierung Details</string>
+    <string name="navigate_back">Zurück</string>
+    <string name="more_options">Weitere Optionen</string>
+
+    <!-- Statistics card -->
+    <string name="stat_total_count">Anzahl</string>
+    <string name="stat_blocked_count">Blockiert</string>
+    <string name="stat_total_time">Gesamtzeit</string>
+    <string name="stat_saved_time">Gesparte Zeit</string>
+
+    <!-- Info card -->
+    <string name="about_this_item">Über dieses Element</string>
+    <string name="no_info_wakelock">Keine zusätzlichen Informationen für diesen WakeLock verfügbar.</string>
+    <string name="no_info_alarm">Keine zusätzlichen Informationen für diesen Timer verfügbar.</string>
+    <string name="no_info_service">Keine zusätzlichen Informationen für diesen Dienst verfügbar.</string>
+    <string name="no_info_unknown">Keine verwandten Informationen verfügbar.</string>
+    <string name="recommendations">Empfehlungen</string>
+
+    <!-- Settings card -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="allow_this_item">Dieses Element blockieren</string>
+    <string name="allow_this_item_desc">Dieses Element am Auslösen hindern</string>
+    <string name="block_during_sleep">Nur während Ruhezustand blockieren</string>
+    <string name="block_during_screen_off">Nur bei ausgeschaltetem Bildschirm blockieren</string>
+    <string name="allowed_time_interval">Erlaubtes Zeitintervall</string>
+    <string name="allowed_time_interval_desc">Zeitintervall, in dem dieses Element laufen darf</string>
+    <string name="seconds">s</string>
+
+    <!-- Timeline card -->
+    <string name="activity_timeline">Aktivitäts-Timeline</string>
+    <string name="past_24_hours">Letzte 24 Stunden</string>
+    <string name="total">Gesamt</string>
+    <string name="blocked">Blockiert</string>
+
+    <!-- Activity list card -->
+    <string name="recent_activities">Letzte Aktivitäten</string>
+    <string name="no_recent_wakelock_activities">Keine neuen WakeLock-Aktivitäten.</string>
+    <string name="no_recent_alarm_activities">Keine neuen Timer-Aktivitäten.</string>
+    <string name="no_recent_service_activities">Keine neuen Dienst-Aktivitäten.</string>
+    <string name="no_recent_activities">Keine neuen Aktivitäten.</string>
+    <string name="status_allowed">Erlaubt</string>
+    <string name="status_blocked">Blockiert</string>
+    <string name="duration_separator"> • Dauer: %s</string>
+
+    <!-- Error handling -->
+    <string name="error_loading_data">Fehler beim Laden der Daten. Bitte versuchen Sie es erneut.</string>
+    <string name="allow_wakelock">WakeLock erlauben</string>
+    <string name="allow_wakelock_desc">Diesem WakeLock das Auslösen erlauben</string>
+    <string name="allow_alarm">Timer erlauben</string>
+    <string name="allow_alarm_desc">Diesem Timer das Auslösen erlauben</string>
+    <string name="allow_service">Dienst erlauben</string>
+    <string name="allow_service_desc">Diesem Dienst das Starten erlauben</string>
+
+    <string name="allow_screenOff_wakelock">WakeLock bei ausgeschaltetem Bildschirm erlauben</string>
+    <string name="allow_screenOff_wakelock_desc">Diesem WakeLock das Auslösen bei ausgeschaltetem Bildschirm erlauben</string>
+    <string name="allow_screenOff_alarm">Timer bei ausgeschaltetem Bildschirm erlauben</string>
+    <string name="allow_screenOff_alarm_desc">Diesem Timer das Auslösen bei ausgeschaltetem Bildschirm erlauben</string>
+    <string name="allow_screenOff_service">Dienst bei ausgeschaltetem Bildschirm erlauben</string>
+    <string name="allow_screenOff_service_desc">Diesem Dienst das Starten bei ausgeschaltetem Bildschirm erlauben</string>
+    <string name="now">Jetzt</string>
+
+    <!-- Settings strings -->
+    <string name="settings_interface">Benutzeroberfläche</string>
+    <string name="settings_data_management">Datenverwaltung</string>
+    <string name="settings_backup">Sichern &amp; Wiederherstellen</string>
+    <string name="settings_experimental">Experimentelle Funktionen</string>
+    <string name="language">Sprache</string>
+    <string name="cancel">Abbrechen</string>
+    
+    <!-- Power Connection and Clear Data settings -->
+    <string name="power_connection_detection">Stromverbindungserkennung</string>
+    <string name="power_connection_detection_desc">Zähler zurücksetzen, wenn Strom verbunden oder getrennt wird</string>
+    <string name="clear_inactive_data">Inaktive Daten löschen</string>
+    <string name="clear_inactive_data_desc">Daten für deinstallierte Apps beim Zurücksetzen der Zähler entfernen</string>
+    <string name="clear_all_data">Alle Daten löschen</string>
+    <string name="clear">Löschen</string>
+    
+    <!-- Experimental features -->
+    <string name="debug_mode">Debug-Modus</string>
+    <string name="debug_mode_desc">Detaillierte Protokollierung für Fehlerbehebung aktivieren. Nur bei Bedarf zur Diagnose von Problemen aktivieren.</string>
+    
+    <!-- Backup settings -->
+    <string name="create_backup">Sicherung erstellen</string>
+    <string name="create_backup_desc">Ihre Einstellungen und Daten in eine Datei speichern</string>
+    <string name="restore_backup">Sicherung wiederherstellen</string>
+    <string name="restore_backup_desc">Einstellungen und Daten aus einer Sicherungsdatei laden</string>
+    <string name="backup_success">Sicherung erfolgreich erstellt</string>
+    <string name="backup_failed">Sicherung fehlgeschlagen</string>
+    <string name="restore_success">Sicherung erfolgreich wiederhergestellt</string>
+    <string name="restore_failed">Wiederherstellung fehlgeschlagen</string>
+    
+    <!-- Language settings -->
+    <string name="english_language_name">Englisch</string>
+    <string name="chinese_language_name">中文</string>
+    <string name="french_language_name">Français</string>
+    <string name="system_language_name">System folgen</string>
+
+    <string name="app_detail_title">Anwendungsdetails</string>
+    <string name="back">Zurück</string>
+    <string name="app_statistics">Anwendungsstatistiken</string>
+    <string name="wakelock_statistics">WakeLock-Statistiken</string>
+    <string name="alarm_statistics">Timer-Statistiken</string>
+    <string name="service_statistics">Dienst-Statistiken</string>
+    <string name="total_wakelocks">Anzahl</string>
+    <string name="blocked_wakelocks">Blockiert</string>
+    <string name="total_alarms">Anzahl</string>
+    <string name="blocked_alarms">Blockiert</string>
+    <string name="total_services">Anzahl</string>
+    <string name="blocked_services">Blockiert</string>
+    <string name="total_time">Zeit</string>
+    <string name="saved_time">Gespart</string>
+    <string name="allowed">Erlaubt</string>
+    <string name="unknown_error">Unbekannter Fehler</string>
+    <string name="error_loading_app_detail">Fehler beim Laden der Anwendungsdetails</string>
+    
+    <!-- App Settings Strings -->
+    <string name="app_settings">App-Einstellungen</string>
+    <string name="block_settings">Globale Block-Einstellungen</string>
+    <string name="wakelock_patterns">WakeLock-Muster</string>
+    <string name="alarm_patterns">Timer-Muster</string>
+    <string name="service_patterns">Dienst-Muster</string>
+    <string name="allow_wakelocks">WakeLocks erlauben</string>
+    <string name="allow_wakelocks_description">Dieser App das Erfassen von WakeLocks erlauben</string>
+    <string name="allow_alarms">Timer erlauben</string>
+    <string name="allow_alarms_description">Dieser App das Planen von Timern erlauben</string>
+    <string name="allow_services">Dienste erlauben</string>
+    <string name="allow_services_description">Dieser App das Starten von Diensten erlauben</string>
+    <string name="add_pattern">Muster hinzufügen</string>
+    <string name="pattern">Muster</string>
+    <string name="invalid_regex">Ungültiger Regex</string>
+    <string name="add">Hinzufügen</string>
+    <string name="remove">Entfernen</string>
+    <string name="sort_by">Sortieren nach:</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_count">Anzahl</string>
+    <string name="sort_time">Zeit</string>
+    <string name="menu_filter_all">Alle</string>
+    <string name="menu_filter_blocked">Blockiert</string>
+    <string name="menu_filter_allowed">Erlaubt</string>
+    <string name="allow">Erlauben</string>
+    <string name="screen_off">Bildschirm aus</string>
+    <string name="timeout">Zeit</string>
+
+    <!-- Module check strings -->
+    <string name="module_check">Modul-Statusprüfung</string>
+    <string name="module_check_description">Überprüfen, ob das Modul aktiv und korrekt funktioniert</string>
+    <string name="check">Prüfen</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="module_status">Xposed-Status</string>
+    <string name="hook_status">Hook-Status</string>
+    <string name="config_path">New XSharedPreferences</string>
+    <string name="overall_status">Gesamtstatus</string>
+    <string name="normal_status">Normal</string>
+    <string name="warning_status">Warnung</string>
+    <string name="error_status">Fehler</string>
+    <string name="module_active">Modul ist aktiv</string>
+    <string name="module_inactive">Modul ist nicht aktiv</string>
+    <string name="module_version">Version: %s</string>
+    <string name="wakelock_hook">WakeLock Hook</string>
+    <string name="alarm_hook">Timer Hook</string>
+    <string name="service_hook">Dienst Hook</string>
+    <string name="hook_working">Funktioniert</string>
+    <string name="hook_not_working">Funktioniert nicht</string>
+    <string name="config_path_valid">Konfigurationspfad ist gültig</string>
+    <string name="config_path_invalid">Konfigurationspfad ist ungültig</string>
+    <string name="loading">Lädt…</string>
+    <string name="error_checking_module">Fehler beim Überprüfen des Modul-Status</string>
+    <string name="status_normal_description">Alle Modulkomponenten funktionieren ordnungsgemäß</string>
+    <string name="status_warning_description">Modul ist aktiv, aber einige Hooks funktionieren nicht</string>
+    <string name="status_error_description">Kritische Modulkomponenten funktionieren nicht</string>
+    <string name="fix_module_inactive">Aktivieren Sie das Modul im Xposed Manager und starten Sie das Gerät neu</string>
+    <string name="fix_hook_not_working">Gerät neu starten, um Hooks zu initialisieren</string>
+    <string name="fix_config_path">App deinstallieren, Gerät neu starten, neu installieren und aktivieren</string>
+    <string name="experimental_features">Experimentelle Funktionen</string>
+
+    <!-- Data management and backup messages -->
+    <string name="data_cleared">Alle Daten wurden gelöscht</string>
+    <string name="clear_data_failed">Fehler beim Löschen der Daten: %1$s</string>
+    <string name="backup_created">Sicherung erfolgreich erstellt</string>
+    <string name="backup_creation_failed">Fehler beim Erstellen der Sicherung: %1$s</string>
+</resources>
