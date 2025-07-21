@@ -1,0 +1,1791 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Gestion complète de l'alimentation Android via le contrôle des WakeLock, Alarm et Service. Un module Xposed open-source pour optimiser l'autonomie de la batterie.">
+      
+      
+        <meta name="author" content="NoWakeLock Team">
+      
+      
+        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/reference/faq/">
+      
+      
+        <link rel="prev" href="../../features/app-management/">
+      
+      
+        <link rel="next" href="../troubleshooting/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
+    
+    
+      
+        <title>FAQ - Documentation NoWakeLock</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../css/timeago.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config",""),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#questions-frequentes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Documentation NoWakeLock" class="md-header__button md-logo" aria-label="Documentation NoWakeLock" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 89 89">
+  <path d="M3.136,17.387l0,42.932l42.932,21.467l-42.932,-64.399Z" />
+  <path d="M21.91,8l42.933,64.398l-18.775,9.388l-42.932,-64.399l18.774,-9.387Z" style="fill-opacity: 0.5" />
+  <path d="M67.535,17.387l-27.262,18.156l21.878,32.818l5.384,2.691l0,-53.665Z" />
+  <path d="M67.535,17.387l0,53.666l18.774,-9.388l0,-53.665l-18.774,9.387Z" style="fill-opacity: 0.25" />
+</svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation NoWakeLock
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              FAQ
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5M7 15a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="https://nowakelock.github.io/NoWakeLock/zh/" hreflang="zh-CN" class="md-select__link">
+              简体中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://nowakelock.github.io/NoWakeLock/en/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://nowakelock.github.io/NoWakeLock/zh-tw/" hreflang="zh-TW" class="md-select__link">
+              繁體中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://nowakelock.github.io/NoWakeLock/fr/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="https://nowakelock.github.io/NoWakeLock/de/" hreflang="de" class="md-select__link">
+              Deutsch
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NoWakeLock/NoWakeLock" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NoWakeLock/NoWakeLock
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Accueil
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Démarrage
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../features/wakelocks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Fonctionnalités
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Référence
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../developers/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Développeurs
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Documentation NoWakeLock" class="md-nav__button md-logo" aria-label="Documentation NoWakeLock" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 89 89">
+  <path d="M3.136,17.387l0,42.932l42.932,21.467l-42.932,-64.399Z" />
+  <path d="M21.91,8l42.933,64.398l-18.775,9.388l-42.932,-64.399l18.774,-9.387Z" style="fill-opacity: 0.5" />
+  <path d="M67.535,17.387l-27.262,18.156l21.878,32.818l5.384,2.691l0,-53.665Z" />
+  <path d="M67.535,17.387l0,53.666l18.774,-9.388l0,-53.665l-18.774,9.387Z" style="fill-opacity: 0.25" />
+</svg>
+
+    </a>
+    Documentation NoWakeLock
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NoWakeLock/NoWakeLock" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NoWakeLock/NoWakeLock
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Accueil
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../getting-started/installation/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    Démarrage
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../features/wakelocks/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    Fonctionnalités
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Référence
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Référence
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQ
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#liees-a-linstallation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Liées à l'installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Liées à l&#39;installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-le-module-ne-fonctionne-pas-apres-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Le module ne fonctionne pas après installation ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-quels-frameworks-xposed-sont-supportes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Quels frameworks Xposed sont supportés ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-la-verification-du-module-affiche-des-rouges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : La vérification du module affiche des ❌ rouges ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilisation-des-fonctionnalites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utilisation des fonctionnalités
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utilisation des fonctionnalités">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-aucun-effet-apres-definition-des-regles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Aucun effet après définition des règles ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-une-application-ne-peut-pas-recevoir-de-notifications-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Une application ne peut pas recevoir de notifications push ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-lapplication-devient-lente-ou-presente-des-fonctionnalites-anormales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : L'application devient lente ou présente des fonctionnalités anormales ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-comment-determiner-si-loptimisation-est-efficace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Comment déterminer si l'optimisation est efficace ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problemes-de-compatibilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problèmes de compatibilité
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problèmes de compatibilité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-compatibilite-des-versions-android" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Compatibilité des versions Android ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-problemes-avec-des-marques-dappareils-specifiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Problèmes avec des marques d'appareils spécifiques ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-dysfonctionnement-apres-mise-a-jour-systeme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Dysfonctionnement après mise à jour système ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problemes-de-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problèmes de performance
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problèmes de performance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-nowakelock-consomme-t-il-de-la-batterie" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : NoWakeLock consomme-t-il de la batterie ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-lappareil-devient-lent-ou-saccade" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : L'appareil devient lent ou saccadé ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-le-demarrage-des-applications-ralentit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Le démarrage des applications ralentit ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problemes-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problèmes de données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problèmes de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-les-donnees-statistiques-ne-sont-pas-precises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Les données statistiques ne sont pas précises ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-perte-des-donnees-historiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Perte des données historiques ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-impossible-dimporter-la-configuration-exportee" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Impossible d'importer la configuration exportée ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problemes-multi-utilisateurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problèmes multi-utilisateurs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Problèmes multi-utilisateurs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-comment-utiliser-dans-un-environnement-multi-utilisateur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Comment utiliser dans un environnement multi-utilisateur ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-impossible-dutiliser-dans-le-profil-de-travail" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Impossible d'utiliser dans le profil de travail ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#questions-de-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Questions de sécurité
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Questions de sécurité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-nowakelock-est-il-sur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : NoWakeLock est-il sûr ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-cela-affecte-t-il-la-stabilite-du-systeme" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Cela affecte-t-il la stabilité du système ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-les-donnees-privees-peuvent-elles-fuiter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Les données privées peuvent-elles fuiter ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depannage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dépannage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dépannage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-que-faire-en-cas-dimpossibilite-complete-dutilisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Que faire en cas d'impossibilité complète d'utilisation ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-certaines-applications-plantent-frequemment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Certaines applications plantent fréquemment ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-comment-collecter-des-informations-de-debogage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Comment collecter des informations de débogage ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts-de-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      Concepts de base
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Concepts de base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-que-sont-les-wakelockalarmservice-comment-les-configurer-pour-obtenir-les-meilleurs-effets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Que sont les WakeLock/Alarm/Service ? Comment les configurer pour obtenir les meilleurs effets ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traitement-des-problemes-graves" class="md-nav__link">
+    <span class="md-ellipsis">
+      Traitement des problèmes graves
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Traitement des problèmes graves">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-que-faire-si-des-operations-incorrectes-empechent-lappareil-de-demarrer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Que faire si des opérations incorrectes empêchent l'appareil de démarrer ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vie-privee-et-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vie privée et sécurité
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vie privée et sécurité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-nowakelock-collecte-t-il-des-donnees-privees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : NoWakeLock collecte-t-il des données privées ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#participation-et-contribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      Participation et contribution
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Participation et contribution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-que-faire-en-cas-de-besoin-de-nouvelles-fonctionnalites-ou-de-decouverte-de-bugs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Que faire en cas de besoin de nouvelles fonctionnalités ou de découverte de bugs ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-comment-aider-a-mettre-a-jour-les-traductions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Comment aider à mettre à jour les traductions ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtenir-de-laide" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtenir de l'aide
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Obtenir de l&#39;aide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q-ou-signaler-les-problemes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Où signaler les problèmes ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-comment-fournir-un-rapport-de-probleme-efficace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Comment fournir un rapport de problème efficace ?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q-dans-combien-de-temps-peut-on-obtenir-une-reponse" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q : Dans combien de temps peut-on obtenir une réponse ?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dépannage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../glossary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Glossaire
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../developers/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    Développeurs
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/NoWakeLock/NoWakeLock/edit/dev/docs/reference/faq.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/NoWakeLock/NoWakeLock/raw/dev/docs/reference/faq.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+    </a>
+  
+
+
+<h1 id="questions-frequentes">Questions fréquentes<a class="headerlink" href="#questions-frequentes" title="Permanent link">&para;</a></h1>
+<p>Collecte des questions les plus courantes rencontrées par les utilisateurs et leurs solutions.</p>
+<h2 id="liees-a-linstallation">Liées à l'installation<a class="headerlink" href="#liees-a-linstallation" title="Permanent link">&para;</a></h2>
+<h3 id="q-le-module-ne-fonctionne-pas-apres-installation">Q : Le module ne fonctionne pas après installation ?<a class="headerlink" href="#q-le-module-ne-fonctionne-pas-apres-installation" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Vérifiez les éléments suivants :
+1. Confirmez que le framework Xposed fonctionne normalement
+2. Cochez le module NoWakeLock dans le gestionnaire de framework
+3. Redémarrez l'appareil puis vérifiez l'état du module
+4. Confirmez que la portée inclut le framework système <code>android</code></p>
+<h3 id="q-quels-frameworks-xposed-sont-supportes">Q : Quels frameworks Xposed sont supportés ?<a class="headerlink" href="#q-quels-frameworks-xposed-sont-supportes" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Frameworks supportés :
+- <strong>LSPosed</strong> - Recommandé, meilleure compatibilité
+- <strong>EdXposed</strong> - Support partiel sur certains appareils
+- <strong>TaiChi</strong> - Non recommandé, problèmes de compatibilité possibles</p>
+<h3 id="q-la-verification-du-module-affiche-des-rouges">Q : La vérification du module affiche des ❌ rouges ?<a class="headerlink" href="#q-la-verification-du-module-affiche-des-rouges" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Traitez selon l'élément spécifique :
+- <strong>Framework non activé</strong> → Vérifiez l'installation Xposed
+- <strong>Module non chargé</strong> → Confirmez que le module est coché et redémarrez
+- <strong>Hook échoué</strong> → Possible incompatibilité de version système</p>
+<h2 id="utilisation-des-fonctionnalites">Utilisation des fonctionnalités<a class="headerlink" href="#utilisation-des-fonctionnalites" title="Permanent link">&para;</a></h2>
+<h3 id="q-aucun-effet-apres-definition-des-regles">Q : Aucun effet après définition des règles ?<a class="headerlink" href="#q-aucun-effet-apres-definition-des-regles" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Causes possibles :
+1. <strong>Règles non effectives</strong> - Vérifiez si les règles sont activées
+2. <strong>Redémarrage d'application</strong> - Certaines règles nécessitent un redémarrage de l'application
+3. <strong>Cache système</strong> - Attendez quelques minutes pour que le système applique les nouvelles règles
+4. <strong>Problèmes de permissions</strong> - Confirmez que NoWakeLock a les permissions nécessaires</p>
+<h3 id="q-une-application-ne-peut-pas-recevoir-de-notifications-push">Q : Une application ne peut pas recevoir de notifications push ?<a class="headerlink" href="#q-une-application-ne-peut-pas-recevoir-de-notifications-push" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Étapes de résolution :
+1. Consultez la liste des WakeLocks de cette application
+2. Trouvez les WakeLocks liés aux notifications push (contiennent généralement Push, GCM, FCM)
+3. Changez ces WakeLocks en mode "Autoriser"
+4. Redémarrez l'application pour tester les notifications push</p>
+<h3 id="q-lapplication-devient-lente-ou-presente-des-fonctionnalites-anormales">Q : L'application devient lente ou présente des fonctionnalités anormales ?<a class="headerlink" href="#q-lapplication-devient-lente-ou-presente-des-fonctionnalites-anormales" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Traitement immédiat :
+1. Désactivez temporairement toutes les règles de cette application
+2. Activez les règles une par une pour identifier la règle problématique
+3. Ajustez les paramètres de la règle problématique ou passez en mode limitation
+4. Évitez d'intercepter les services système critiques</p>
+<h3 id="q-comment-determiner-si-loptimisation-est-efficace">Q : Comment déterminer si l'optimisation est efficace ?<a class="headerlink" href="#q-comment-determiner-si-loptimisation-est-efficace" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Indicateurs à observer :
+- <strong>Court terme (24 heures)</strong> : Vérifiez les statistiques d'interception, fonctionnement normal des applications
+- <strong>Moyen terme (une semaine)</strong> : Amélioration évidente de l'autonomie de la batterie
+- <strong>Long terme</strong> : Amélioration générale de la fluidité du système</p>
+<h2 id="problemes-de-compatibilite">Problèmes de compatibilité<a class="headerlink" href="#problemes-de-compatibilite" title="Permanent link">&para;</a></h2>
+<h3 id="q-compatibilite-des-versions-android">Q : Compatibilité des versions Android ?<a class="headerlink" href="#q-compatibilite-des-versions-android" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Situation de support :
+- <strong>Android 7.0-11</strong> - Support complet
+- <strong>Android 12-13</strong> - Support de base, certaines fonctionnalités peuvent être limitées
+- <strong>Android 14-15</strong> - Support expérimental, problèmes possibles</p>
+<h3 id="q-problemes-avec-des-marques-dappareils-specifiques">Q : Problèmes avec des marques d'appareils spécifiques ?<a class="headerlink" href="#q-problemes-avec-des-marques-dappareils-specifiques" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Problèmes connus :
+- <strong>MIUI</strong> - Nécessite de désactiver l'optimisation MIUI, autoriser l'exécution en arrière-plan
+- <strong>ColorOS</strong> - Peut nécessiter d'autoriser le démarrage automatique dans la gestion des permissions
+- <strong>EMUI</strong> - Il est recommandé d'ajouter NoWakeLock aux applications protégées
+- <strong>OneUI</strong> - ⚠️ <strong>Actuellement non supporté</strong> - En raison des modifications du code source Android par OneUI, la position Hook a été tentée par diverses méthodes mais n'a jamais pu être effective</p>
+<h3 id="q-dysfonctionnement-apres-mise-a-jour-systeme">Q : Dysfonctionnement après mise à jour système ?<a class="headerlink" href="#q-dysfonctionnement-apres-mise-a-jour-systeme" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Étapes de traitement :
+1. Vérifiez si le framework Xposed fonctionne encore
+2. Confirmez que le module NoWakeLock est toujours en état activé
+3. Réinstallez le module si nécessaire
+4. Reconfigurez les paramètres de portée</p>
+<h2 id="problemes-de-performance">Problèmes de performance<a class="headerlink" href="#problemes-de-performance" title="Permanent link">&para;</a></h2>
+<h3 id="q-nowakelock-consomme-t-il-de-la-batterie">Q : NoWakeLock consomme-t-il de la batterie ?<a class="headerlink" href="#q-nowakelock-consomme-t-il-de-la-batterie" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Dans des conditions normales, NoWakeLock consomme très peu :
+- <strong>Utilisation CPU</strong> &lt; 1%
+- <strong>Occupation mémoire</strong> &lt; 50MB
+- <strong>Activité en arrière-plan</strong> minimisée</p>
+<p>Si vous découvrez une consommation anormale, veuillez vérifier la configuration ou contacter le support.</p>
+<h3 id="q-lappareil-devient-lent-ou-saccade">Q : L'appareil devient lent ou saccadé ?<a class="headerlink" href="#q-lappareil-devient-lent-ou-saccade" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Causes possibles :
+1. <strong>Trop de règles</strong> - Réduisez les règles inutiles
+2. <strong>Expressions régulières complexes</strong> - Simplifiez les expressions régulières
+3. <strong>Interceptions fréquentes</strong> - Ajustez la stratégie d'interception
+4. <strong>Mémoire insuffisante</strong> - Redémarrez l'appareil pour libérer la mémoire</p>
+<h3 id="q-le-demarrage-des-applications-ralentit">Q : Le démarrage des applications ralentit ?<a class="headerlink" href="#q-le-demarrage-des-applications-ralentit" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Vérifiez si :
+1. Vous avez intercepté des Services nécessaires au démarrage de l'application
+2. Vous avez excessivement limité les WakeLocks liés à l'initialisation
+3. Les règles affectent le processus de démarrage de l'application</p>
+<h2 id="problemes-de-donnees">Problèmes de données<a class="headerlink" href="#problemes-de-donnees" title="Permanent link">&para;</a></h2>
+<h3 id="q-les-donnees-statistiques-ne-sont-pas-precises">Q : Les données statistiques ne sont pas précises ?<a class="headerlink" href="#q-les-donnees-statistiques-ne-sont-pas-precises" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Situations possibles :
+1. <strong>Retard des données</strong> - Les statistiques sont mises à jour toutes les 5 minutes
+2. <strong>Redémarrage de l'appareil</strong> - Certaines données en temps réel sont réinitialisées après redémarrage
+3. <strong>Problème de fuseau horaire</strong> - Vérifiez les paramètres de fuseau horaire de l'appareil
+4. <strong>Problème de stockage</strong> - Nettoyez le cache de la base de données</p>
+<h3 id="q-perte-des-donnees-historiques">Q : Perte des données historiques ?<a class="headerlink" href="#q-perte-des-donnees-historiques" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Politique de conservation des données :
+- <strong>Données en temps réel</strong> - Effacées après redémarrage de l'appareil
+- <strong>Données statistiques</strong> - Conservées 30 jours
+- <strong>Données de configuration</strong> - Sauvegardées en permanence (sauf suppression manuelle)</p>
+<h3 id="q-impossible-dimporter-la-configuration-exportee">Q : Impossible d'importer la configuration exportée ?<a class="headerlink" href="#q-impossible-dimporter-la-configuration-exportee" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Éléments à vérifier :
+1. Le format de fichier est-il correct (JSON)
+2. La version est-elle compatible
+3. Le fichier est-il corrompu
+4. Les permissions sont-elles suffisantes</p>
+<h2 id="problemes-multi-utilisateurs">Problèmes multi-utilisateurs<a class="headerlink" href="#problemes-multi-utilisateurs" title="Permanent link">&para;</a></h2>
+<h3 id="q-comment-utiliser-dans-un-environnement-multi-utilisateur">Q : Comment utiliser dans un environnement multi-utilisateur ?<a class="headerlink" href="#q-comment-utiliser-dans-un-environnement-multi-utilisateur" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Points à noter :
+1. Chaque utilisateur doit être configuré séparément
+2. Les applications système partagent les paramètres entre tous les utilisateurs
+3. Les configurations n'interfèrent pas entre elles après changement d'utilisateur
+4. Certaines fonctionnalités nécessitent les permissions d'utilisateur principal</p>
+<h3 id="q-impossible-dutiliser-dans-le-profil-de-travail">Q : Impossible d'utiliser dans le profil de travail ?<a class="headerlink" href="#q-impossible-dutiliser-dans-le-profil-de-travail" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Limitations du profil de travail :
+1. Nécessite d'installer le framework Xposed séparément dans le profil de travail
+2. Certaines politiques d'entreprise peuvent interdire les modules Xposed
+3. Contactez l'administrateur pour confirmer les politiques pertinentes</p>
+<h2 id="questions-de-securite">Questions de sécurité<a class="headerlink" href="#questions-de-securite" title="Permanent link">&para;</a></h2>
+<h3 id="q-nowakelock-est-il-sur">Q : NoWakeLock est-il sûr ?<a class="headerlink" href="#q-nowakelock-est-il-sur" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Mesures de sécurité :
+- <strong>Code open source</strong> - Tout le code est public et auditable
+- <strong>Aucune permission réseau</strong> - N'upload aucune donnée
+- <strong>Stockage local</strong> - Toutes les données sont sauvegardées uniquement localement
+- <strong>Permissions minimales</strong> - Ne demande que les permissions système nécessaires</p>
+<h3 id="q-cela-affecte-t-il-la-stabilite-du-systeme">Q : Cela affecte-t-il la stabilité du système ?<a class="headerlink" href="#q-cela-affecte-t-il-la-stabilite-du-systeme" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Considérations de sécurité :
+1. Utilise le mécanisme Hook standard du système
+2. Impact minimal sur les appels système
+3. Traitement de dégradation automatique en cas d'anomalie
+4. Ne modifie pas les fichiers système centraux</p>
+<h3 id="q-les-donnees-privees-peuvent-elles-fuiter">Q : Les données privées peuvent-elles fuiter ?<a class="headerlink" href="#q-les-donnees-privees-peuvent-elles-fuiter" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Protection de la vie privée :
+- <strong>Aucune collecte de données</strong> - Ne collecte aucune information personnelle
+- <strong>Aucune communication réseau</strong> - Ne communique pas avec des serveurs externes
+- <strong>Traitement local</strong> - Toutes les analyses sont effectuées localement sur l'appareil
+- <strong>Contrôle utilisateur</strong> - L'utilisateur contrôle complètement toutes les données</p>
+<h2 id="depannage">Dépannage<a class="headerlink" href="#depannage" title="Permanent link">&para;</a></h2>
+<h3 id="q-que-faire-en-cas-dimpossibilite-complete-dutilisation">Q : Que faire en cas d'impossibilité complète d'utilisation ?<a class="headerlink" href="#q-que-faire-en-cas-dimpossibilite-complete-dutilisation" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Étapes de réinitialisation :
+1. Désactivez le module dans Xposed
+2. Redémarrez l'appareil
+3. Effacez les données de l'application NoWakeLock
+4. Réactivez le module et configurez</p>
+<h3 id="q-certaines-applications-plantent-frequemment">Q : Certaines applications plantent fréquemment ?<a class="headerlink" href="#q-certaines-applications-plantent-frequemment" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Traitement d'urgence :
+1. Désactivez immédiatement toutes les règles de cette application
+2. Vérifiez les informations d'erreur dans les journaux système
+3. Restaurez progressivement les règles et observez
+4. Ajoutez cette application à la liste blanche si nécessaire</p>
+<h3 id="q-comment-collecter-des-informations-de-debogage">Q : Comment collecter des informations de débogage ?<a class="headerlink" href="#q-comment-collecter-des-informations-de-debogage" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Collecte d'informations :
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Informations de l&#39;appareil</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.build.version.release
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.product.model
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Journaux de l&#39;application</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>nowakelock
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Journaux Xposed</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>xposed
+</span></code></pre></div></p>
+<h2 id="concepts-de-base">Concepts de base<a class="headerlink" href="#concepts-de-base" title="Permanent link">&para;</a></h2>
+<h3 id="q-que-sont-les-wakelockalarmservice-comment-les-configurer-pour-obtenir-les-meilleurs-effets">Q : Que sont les WakeLock/Alarm/Service ? Comment les configurer pour obtenir les meilleurs effets ?<a class="headerlink" href="#q-que-sont-les-wakelockalarmservice-comment-les-configurer-pour-obtenir-les-meilleurs-effets" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Explication des concepts centraux :</p>
+<p><strong>WakeLock (verrou de réveil)</strong> :
+- Mécanisme empêchant l'appareil d'entrer en mode veille
+- Types : PARTIAL (CPU en fonctionnement), SCREEN (écran allumé), etc.
+- Documentation officielle : <a href="https://developer.android.com/training/scheduling/wakelock">Guide Android WakeLock</a></p>
+<p><strong>Alarm (tâche programmée)</strong> :
+- Minuteur système déclenchant des tâches à des moments spécifiques
+- Types : RTC, ELAPSED_REALTIME, etc.
+- Documentation officielle : <a href="https://developer.android.com/training/scheduling/alarms">Guide Android Alarms</a></p>
+<p><strong>Service (service)</strong> :
+- Composant d'application s'exécutant en arrière-plan
+- Types : service de premier plan, service d'arrière-plan, service lié
+- Documentation officielle : <a href="https://developer.android.com/guide/components/services">Guide Android Services</a></p>
+<p><strong>Ressources d'apprentissage recommandées</strong> :
+- Guide XDA : <a href="https://forum.xda-developers.com">"Guide complet WakeLock pour débutants"</a>
+- <a href="https://forum.xda-developers.com/t/mod-xposed-amplify-battery-extender-control-alarms-services-and-wakelocks.2853874/">Amplify</a> - Fournit une liste de référence d'informations WakeLock/Alarm/Service
+- <a href="https://github.com/MrLast98/WakeBlock">WakeBlock</a> - Fournit également des informations WakeLock</p>
+<p><strong>Note</strong> : Malheureusement, il n'existe pas de référence universelle parfaite, les différences entre appareils sont énormes. Il faut ajuster selon l'appareil et les applications spécifiques.</p>
+<h2 id="traitement-des-problemes-graves">Traitement des problèmes graves<a class="headerlink" href="#traitement-des-problemes-graves" title="Permanent link">&para;</a></h2>
+<h3 id="q-que-faire-si-des-operations-incorrectes-empechent-lappareil-de-demarrer">Q : Que faire si des opérations incorrectes empêchent l'appareil de démarrer ?<a class="headerlink" href="#q-que-faire-si-des-operations-incorrectes-empechent-lappareil-de-demarrer" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Étapes de récupération d'urgence :</p>
+<p><strong>Situation 1 : Problèmes de démarrage causés par le module NoWakeLock</strong> :</p>
+<p><strong>Méthode 1 : Mode sécurisé par boutons physiques (recommandé)</strong> :
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="m">1</span>.<span class="w"> </span>Maintenez<span class="w"> </span>le<span class="w"> </span>bouton<span class="w"> </span>d<span class="s1">&#39;alimentation 10 secondes pour forcer le redémarrage</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">2. Dès que l&#39;</span>écran<span class="w"> </span>devient<span class="w"> </span>noir,<span class="w"> </span>appuyez<span class="w"> </span>immédiatement<span class="w"> </span>et<span class="w"> </span>de<span class="w"> </span>manière<span class="w"> </span>répétée<span class="w"> </span>sur<span class="w"> </span>n<span class="err">&#39;</span>importe<span class="w"> </span>quel<span class="w"> </span>bouton<span class="w"> </span>physique<span class="w"> </span><span class="o">(</span>volume<span class="w"> </span>ou<span class="w"> </span>alimentation<span class="o">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="m">3</span>.<span class="w"> </span>Après<span class="w"> </span>avoir<span class="w"> </span>ressenti<span class="w"> </span><span class="m">2</span><span class="w"> </span>courtes<span class="w"> </span>vibrations,<span class="w"> </span>continuez<span class="w"> </span>à<span class="w"> </span>appuyer<span class="w"> </span>rapidement<span class="w"> </span><span class="m">4</span><span class="w"> </span>fois<span class="w"> </span>sur<span class="w"> </span>le<span class="w"> </span>même<span class="w"> </span>bouton
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="m">4</span>.<span class="w"> </span>Après<span class="w"> </span>le<span class="w"> </span>4ème<span class="w"> </span>appui,<span class="w"> </span>vous<span class="w"> </span>devriez<span class="w"> </span>ressentir<span class="w"> </span>une<span class="w"> </span>longue<span class="w"> </span>vibration,<span class="w"> </span>indiquant<span class="w"> </span>que<span class="w"> </span>Xposed<span class="w"> </span>est<span class="w"> </span>désactivé
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="m">5</span>.<span class="w"> </span>Après<span class="w"> </span>un<span class="w"> </span>démarrage<span class="w"> </span>normal,<span class="w"> </span>désactivez<span class="w"> </span>le<span class="w"> </span>module<span class="w"> </span>NoWakeLock<span class="w"> </span>dans<span class="w"> </span>LSPosed
+</span></code></pre></div></p>
+<p><strong>Méthode 2 : Méthode du système de fichiers Recovery</strong> :
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="m">1</span>.<span class="w"> </span>Entrez<span class="w"> </span>en<span class="w"> </span>TWRP<span class="w"> </span>Recovery
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="m">2</span>.<span class="w"> </span>Cliquez<span class="w"> </span>sur<span class="w"> </span>Advanced<span class="w"> </span>→<span class="w"> </span>File<span class="w"> </span>Manager
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="m">3</span>.<span class="w"> </span>Naviguez<span class="w"> </span>vers<span class="w"> </span>/data/adb/lspd/
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="m">4</span>.<span class="w"> </span>Supprimez<span class="w"> </span>le<span class="w"> </span>dossier<span class="w"> </span>config
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="m">5</span>.<span class="w"> </span>Redémarrez<span class="w"> </span>vers<span class="w"> </span>le<span class="w"> </span>système
+</span></code></pre></div></p>
+<p><strong>Méthode 3 : Méthode spécifique à l'appareil (comme Pixel)</strong> :
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Au<span class="w"> </span>démarrage,<span class="w"> </span>après<span class="w"> </span>l<span class="s1">&#39;apparition du logo Google, appuyez frénétiquement sur le bouton volume bas</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="s1">Jusqu&#39;</span>à<span class="w"> </span>ce<span class="w"> </span>que<span class="w"> </span>l<span class="s1">&#39;appareil vibre pour confirmer l&#39;</span>entrée<span class="w"> </span>en<span class="w"> </span>mode<span class="w"> </span>sécurisé
+</span></code></pre></div></p>
+<p><strong>Situation 2 : Interception erronée de composants système importants</strong> :
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="m">1</span>.<span class="w"> </span>Entrez<span class="w"> </span>en<span class="w"> </span>Recovery<span class="w"> </span>→<span class="w"> </span>Gestionnaire<span class="w"> </span>de<span class="w"> </span>fichiers
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="m">2</span>.<span class="w"> </span>Naviguez<span class="w"> </span>vers<span class="w"> </span>/data/misc/xxx-xxx-xxx/prefs/com.js.nowakelock
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">   </span><span class="c1"># xxx-xxx-xxx est une longue chaîne de caractères aléatoires, peut différer selon l&#39;appareil</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="m">3</span>.<span class="w"> </span>Supprimez<span class="w"> </span>l<span class="s1">&#39;intégralité du dossier</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s1">4. Redémarrez l&#39;</span>appareil
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="m">5</span>.<span class="w"> </span>Après<span class="w"> </span>être<span class="w"> </span>entré<span class="w"> </span>dans<span class="w"> </span>le<span class="w"> </span>système,<span class="w"> </span>récupérez<span class="w"> </span>de<span class="w"> </span>l<span class="s1">&#39;erreur, si le problème spécifique n&#39;</span>est<span class="w"> </span>pas<span class="w"> </span>clair,<span class="w"> </span>effacez<span class="w"> </span>directement<span class="w"> </span>les<span class="w"> </span>données<span class="w"> </span>NoWakeLock
+</span></code></pre></div></p>
+<p><strong>En cas de cause incertaine</strong> :
+- Après être entré dans le système, effacez directement les données de l'application NoWakeLock
+- Reconfigurez, évitez d'intercepter les composants système critiques</p>
+<div class="admonition danger">
+<p class="admonition-title">Avertissement important</p>
+<p>Sauvegardez impérativement la configuration avant de modifier les composants système critiques. Il est recommandé de commencer par déboguer les applications tierces et d'ajuster progressivement les services système.</p>
+</div>
+<h2 id="vie-privee-et-securite">Vie privée et sécurité<a class="headerlink" href="#vie-privee-et-securite" title="Permanent link">&para;</a></h2>
+<h3 id="q-nowakelock-collecte-t-il-des-donnees-privees">Q : NoWakeLock collecte-t-il des données privées ?<a class="headerlink" href="#q-nowakelock-collecte-t-il-des-donnees-privees" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Engagement de protection de la vie privée :
+- <strong>Complètement localisé</strong> - Toutes les données sont stockées uniquement localement sur l'appareil
+- <strong>Zéro upload de données</strong> - N'upload aucune donnée vers aucun serveur
+- <strong>Aucune collecte de vie privée</strong> - Ne collecte ou stocke aucune information personnelle
+- <strong>Open source transparent</strong> - Le code source est complètement public et auditable</p>
+<p><strong>Fonctionnalités futures possibles</strong> :
+- Possible ajout d'une fonctionnalité optionnelle de synchronisation de configuration cloud
+- L'utilisateur peut contrôler complètement s'il l'active
+- Continuera à respecter les principes de protection de la vie privée</p>
+<h2 id="participation-et-contribution">Participation et contribution<a class="headerlink" href="#participation-et-contribution" title="Permanent link">&para;</a></h2>
+<h3 id="q-que-faire-en-cas-de-besoin-de-nouvelles-fonctionnalites-ou-de-decouverte-de-bugs">Q : Que faire en cas de besoin de nouvelles fonctionnalités ou de découverte de bugs ?<a class="headerlink" href="#q-que-faire-en-cas-de-besoin-de-nouvelles-fonctionnalites-ou-de-decouverte-de-bugs" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Moyens de participation :
+- <strong>GitHub Issues</strong> - <a href="https://github.com/NoWakeLock/NoWakeLock/issues">Soumettre des problèmes ou des demandes de fonctionnalités</a>
+- <strong>Description détaillée</strong> - Fournir une description complète du problème et les étapes de reproduction
+- <strong>Retour actif</strong> - Les développeurs s'efforceront de traiter tous les retours</p>
+<h3 id="q-comment-aider-a-mettre-a-jour-les-traductions">Q : Comment aider à mettre à jour les traductions ?<a class="headerlink" href="#q-comment-aider-a-mettre-a-jour-les-traductions" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Contribution aux traductions :
+- <strong>Pull Request</strong> - Soumettre directement des PR de traduction
+- <strong>Support multilingue</strong> - Toutes contributions de traduction dans diverses langues sont bienvenues
+- <strong>Collaboration communautaire</strong> - Possibilité de discuter des détails de traduction dans les groupes communautaires</p>
+<h2 id="obtenir-de-laide">Obtenir de l'aide<a class="headerlink" href="#obtenir-de-laide" title="Permanent link">&para;</a></h2>
+<h3 id="q-ou-signaler-les-problemes">Q : Où signaler les problèmes ?<a class="headerlink" href="#q-ou-signaler-les-problemes" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Canaux de support :
+- <strong>GitHub Issues</strong> - Problèmes techniques détaillés et demandes de fonctionnalités
+- <strong>Groupe Telegram</strong> - <a href="https://t.me/nowakelock">@nowakelock</a> Questions rapides et discussions
+- <strong>Communauté Discord</strong> - <a href="https://discord.gg/kewmG5AShQ">NoWakelock</a> Échanges techniques approfondis</p>
+<h3 id="q-comment-fournir-un-rapport-de-probleme-efficace">Q : Comment fournir un rapport de problème efficace ?<a class="headerlink" href="#q-comment-fournir-un-rapport-de-probleme-efficace" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Informations à inclure :
+1. <strong>Informations de l'appareil</strong> - Marque, modèle, version Android
+2. <strong>Informations du framework</strong> - Type et version du framework Xposed
+3. <strong>Description du problème</strong> - Phénomènes spécifiques du problème
+4. <strong>Étapes de reproduction</strong> - Comment reproduire le problème
+5. <strong>Informations de journal</strong> - Journaux d'erreur pertinents
+6. <strong>Captures d'écran</strong> - Captures d'écran de l'interface problématique</p>
+<h3 id="q-dans-combien-de-temps-peut-on-obtenir-une-reponse">Q : Dans combien de temps peut-on obtenir une réponse ?<a class="headerlink" href="#q-dans-combien-de-temps-peut-on-obtenir-une-reponse" title="Permanent link">&para;</a></h3>
+<p><strong>R</strong> : Temps de réponse :
+- <strong>Groupes communautaires</strong> - Généralement quelques heures
+- <strong>GitHub Issues</strong> - 1-3 jours ouvrables
+- <strong>Problèmes urgents</strong> - Traités en priorité</p>
+<div class="admonition tip">
+<p class="admonition-title">Conseils d'utilisation</p>
+<p>En cas de problème, il est recommandé de consulter d'abord la documentation et les FAQ. Si le problème persiste, veuillez fournir des informations détaillées pour mieux aider à le résoudre.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Rappel important</p>
+<p>Sauvegardez les données importantes avant utilisation. Une configuration incorrecte peut affecter le fonctionnement normal de l'appareil, veuillez procéder avec prudence.</p>
+</div>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 21, 2025 00:22:03 UTC"><span class="timeago" datetime="2025-07-21T00:22:03+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 21, 2025 00:22:03 UTC">2025-07-21</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 21, 2025 00:22:03 UTC"><span class="timeago" datetime="2025-07-21T00:22:03+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 21, 2025 00:22:03 UTC">2025-07-21</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../features/app-management/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Gestion des Applications">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Gestion des Applications
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../troubleshooting/" class="md-footer__link md-footer__link--next" aria-label="Next: Dépannage">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Dépannage
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024 NoWakeLock Team
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/NoWakeLock" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://t.me/nowakelock" target="_blank" rel="noopener" title="t.me" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M248 8C111.033 8 0 119.033 0 256s111.033 248 248 248 248-111.033 248-248S384.967 8 248 8m114.952 168.66c-3.732 39.215-19.881 134.378-28.1 178.3-3.476 18.584-10.322 24.816-16.948 25.425-14.4 1.326-25.338-9.517-39.287-18.661-21.827-14.308-34.158-23.215-55.346-37.177-24.485-16.135-8.612-25 5.342-39.5 3.652-3.793 67.107-61.51 68.335-66.746.153-.655.3-3.1-1.154-4.384s-3.59-.849-5.135-.5q-3.283.746-104.608 69.142-14.845 10.194-26.894 9.934c-8.855-.191-25.888-5.006-38.551-9.123-15.531-5.048-27.875-7.717-26.8-16.291q.84-6.7 18.45-13.7 108.446-47.248 144.628-62.3c68.872-28.647 83.183-33.623 92.511-33.789 2.052-.034 6.639.474 9.61 2.885a10.45 10.45 0 0 1 3.53 6.716 43.8 43.8 0 0 1 .417 9.769"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://discord.gg/kewmG5AShQ" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485 485 0 0 0 404.081 32.03a1.82 1.82 0 0 0-1.923.91 338 338 0 0 0-14.9 30.6 447.9 447.9 0 0 0-134.426 0 310 310 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.7 483.7 0 0 0-119.688 37.107 1.7 1.7 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.02 2.02 0 0 0 .765 1.375 487.7 487.7 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348 348 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321 321 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251 251 0 0 0 9.109-7.137 1.82 1.82 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.81 1.81 0 0 1 1.924.233 235 235 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.4 301.4 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391 391 0 0 0 30.014 48.815 1.86 1.86 0 0 0 2.063.7A486 486 0 0 0 610.7 405.729a1.88 1.88 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541M222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241m195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
+      
+        <script src="../../js/timeago.min.js"></script>
+      
+        <script src="../../js/timeago_mkdocs_material.js"></script>
+      
+    
+  </body>
+</html>
