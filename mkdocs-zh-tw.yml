@@ -168,7 +168,7 @@ extra:
     default: stable
   alternate:
     - name: 简体中文
-      link: https://nowakelock.github.io/NoWakeLock/
+      link: https://nowakelock.github.io/NoWakeLock/zh/
       lang: zh-CN
     - name: English
       link: https://nowakelock.github.io/NoWakeLock/en/
