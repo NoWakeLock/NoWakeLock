@@ -2,7 +2,7 @@
     <string name="app_name">NoWakeLock</string>
     <string name="xposeddescription">记录和禁用唤醒锁</string>
     <string name="navigation_view_header_title">NoWakeLock</string>
-    <string name="test">Test</string>
+    <string name="test">测试</string>
     <string name="active">模块未在 xposed 框架激活</string>
     <string name="backup">备份完成</string>
     <string name="restore">恢复完成</string>
@@ -75,7 +75,7 @@
     <string name="restore_title">从备份文件恢复</string>
     <string name="restore_summary">从备份文件恢复会覆盖当前设置</string>
     <string name="action_allow_all">全部允许</string>
-    <string name="action_block_all">全部禁止</string>
+    <string name="action_block_all">全部阻止</string>
     <string name="action_select_all">全选</string>
     <string name="action_select_inverse">"反选"</string>
     <string name="action_set_ATI">"设置允许时间间隔"</string>
@@ -99,7 +99,7 @@
     <string name="stat_saved_time">节省时间</string>
     <string name="about_this_item">关于此唤醒锁</string>
     <string name="no_info_wakelock">没有此唤醒锁的更多信息</string>
-    <string name="no_info_alarm">没有此闹钟的更多信息</string>
+    <string name="no_info_alarm">没有此定时器的更多信息</string>
     <string name="no_info_service">没有此服务的更多信息</string>
     <string name="no_info_unknown">没有相关信息</string>
     <string name="recommendations">推荐设置</string>
@@ -117,7 +117,7 @@
     <string name="blocked">已阻止</string>
     <string name="recent_activities">最近活动</string>
     <string name="no_recent_wakelock_activities">最近没有唤醒锁活动</string>
-    <string name="no_recent_alarm_activities">最近没有闹钟活动</string>
+    <string name="no_recent_alarm_activities">最近没有定时器活动</string>
     <string name="no_recent_service_activities">最近没有服务活动</string>
     <string name="no_recent_activities">最近没有活动</string>
     <string name="status_allowed">已允许</string>
@@ -144,14 +144,14 @@
     <string name="back">返回</string>
     <string name="app_statistics">应用统计</string>
     <string name="wakelock_statistics">唤醒锁统计</string>
-    <string name="alarm_statistics">闹钟统计</string>
+    <string name="alarm_statistics">定时器统计</string>
     <string name="service_statistics">服务统计</string>
     <string name="total_wakelocks">唤醒锁总数</string>
-    <string name="blocked_wakelocks">已屏蔽唤醒锁</string>
-    <string name="total_alarms">闹钟总数</string>
-    <string name="blocked_alarms">已屏蔽闹钟</string>
+    <string name="blocked_wakelocks">已阻止唤醒锁</string>
+    <string name="total_alarms">定时器总数</string>
+    <string name="blocked_alarms">已阻止定时器</string>
     <string name="total_services">服务总数</string>
-    <string name="blocked_services">已屏蔽服务</string>
+    <string name="blocked_services">已阻止服务</string>
     <string name="total_time">总时间</string>
     <string name="saved_time">节省时间</string>
     <string name="allowed">允许</string>
@@ -184,18 +184,18 @@
     <!-- 实验功能设置 -->
     <string name="debug_mode">调试模式</string>
     <string name="debug_mode_desc">启用详细日志,用于排查问题</string>
-    <string name="error_loading_app_detail">Test</string>
+    <string name="error_loading_app_detail">加载应用详情时出错</string>
 
     <!-- App Settings Strings -->
     <string name="app_settings">应用设置</string>
     <string name="block_settings">全局阻止设置</string>
     <string name="wakelock_patterns">唤醒锁正则匹配</string>
-    <string name="alarm_patterns">闹钟正则匹配</string>
+    <string name="alarm_patterns">定时器正则匹配</string>
     <string name="service_patterns">服务正则匹配</string>
     <string name="allow_wakelocks">允许唤醒锁</string>
     <string name="allow_wakelocks_description">允许应用申请唤醒锁</string>
-    <string name="allow_alarms">允许闹钟</string>
-    <string name="allow_alarms_description">允许应用申请闹钟</string>
+    <string name="allow_alarms">允许定时器</string>
+    <string name="allow_alarms_description">允许应用申请定时器</string>
     <string name="allow_services">允许服务</string>
     <string name="allow_services_description">允许应用启动服务</string>
     <string name="add_pattern">添加匹配模式</string>
@@ -218,15 +218,15 @@
         <!-- Error handling -->
     <string name="allow_wakelock">允许唤醒锁</string>
     <string name="allow_wakelock_desc">允许此唤醒锁触发</string>
-    <string name="allow_alarm">允许闹钟</string>
-    <string name="allow_alarm_desc">允许此闹钟触发</string>
+    <string name="allow_alarm">允许定时器</string>
+    <string name="allow_alarm_desc">允许此定时器触发</string>
     <string name="allow_service">允许服务</string>
     <string name="allow_service_desc">允许此服务启动</string>
 
     <string name="allow_screenOff_wakelock">允许唤醒锁屏幕关闭</string>
     <string name="allow_screenOff_wakelock_desc">允许此唤醒锁在屏幕关闭时触发</string>
-    <string name="allow_screenOff_alarm">允许闹钟屏幕关闭</string>
-    <string name="allow_screenOff_alarm_desc">允许此闹钟在屏幕关闭时触发</string>
+    <string name="allow_screenOff_alarm">允许定时器屏幕关闭</string>
+    <string name="allow_screenOff_alarm_desc">允许此定时器在屏幕关闭时触发</string>
     <string name="allow_screenOff_service">允许服务屏幕关闭</string>
     <string name="allow_screenOff_service_desc">允许此服务在屏幕关闭时启动</string>
 
