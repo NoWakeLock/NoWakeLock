@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(git log:*)",
+      "Bash(gh issue:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:block-link-plus.jasper1024.com)",
+      "WebFetch(domain:obsidian-block-link-plus.jasper1024.com)",
+      "WebFetch(domain:stackoverflow.com)",
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(for lang in en zh-TW fr de zh-CN)",
+      "Bash(do mkdir -p \"$lang/getting-started\" \"$lang/features\" \"$lang/reference\" \"$lang/developers\")",
+      "Bash(done)",
+      "Bash(do mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)"
+    ],
+    "deny": []
+  }
+}

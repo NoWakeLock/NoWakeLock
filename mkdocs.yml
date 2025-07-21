@@ -1,0 +1,194 @@
+site_name: NoWakeLock Documentation
+site_url: https://nowakelock.github.io/NoWakeLock/
+site_author: NoWakeLock Team
+site_description: >-
+  Comprehensive Android power management through WakeLock, Alarm, and Service control.
+  An open-source Xposed module for optimizing battery life.
+
+# Repository
+repo_name: NoWakeLock/NoWakeLock
+repo_url: https://github.com/NoWakeLock/NoWakeLock
+edit_uri: edit/dev/docs/
+
+# Copyright
+copyright: Copyright &copy; 2024 NoWakeLock Team
+
+# Configuration
+docs_dir: docs/zh-CN
+theme:
+  name: material
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+  font:
+    text: Roboto
+    code: Roboto Mono
+  favicon: assets/favicon.ico
+  icon:
+    logo: logo
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: NoWakeLock
+      repo: NoWakeLock
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Page tree
+nav:
+  - 首页: index.md
+  - 快速开始:
+    - 安装: getting-started/installation.md
+    - 问题分析: getting-started/problem-analysis.md
+    - 快速设定: getting-started/quick-start.md
+    - 模块检查: getting-started/module-check.md
+  - 功能:
+    - WakeLocks: features/wakelocks.md
+    - 定时任务: features/alarms.md
+    - 背景服务: features/services.md
+    - 应用程式管理: features/app-management.md
+  - 参考:
+    - 常见问题: reference/faq.md
+    - 故障排除: reference/troubleshooting.md
+    - 术语表: reference/glossary.md
+  - 开发者:
+    - 概览: developers/index.md
+
+# Customization
+extra:
+  annotate:
+    json: [.s2]
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/NoWakeLock
+    - icon: fontawesome/brands/telegram
+      link: https://t.me/nowakelock
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/kewmG5AShQ
+  version:
+    provider: mike
+    default: stable
+  alternate:
+    - name: 简体中文
+      link: http://127.0.0.1:8001/NoWakeLock/
+      lang: zh-CN
+    - name: English
+      link: http://127.0.0.1:8002/NoWakeLock/
+      lang: en
+    - name: 繁體中文
+      link: http://127.0.0.1:8005/NoWakeLock/
+      lang: zh-TW
+    - name: Français
+      link: http://127.0.0.1:8004/NoWakeLock/
+      lang: fr
+    - name: Deutsch
+      link: http://127.0.0.1:8003/NoWakeLock/
+      lang: de
+
+# Extra CSS
+# extra_css:
+#   - stylesheets/extra.css
+
+# Extra JavaScript  
+# extra_javascript:
+#   - javascripts/mathjax.js
+#   - https://polyfill.io/v3/polyfill.min.js?features=es6
+#   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

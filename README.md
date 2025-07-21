@@ -26,6 +26,9 @@ Key highlights include:
 -   **Android Versions**: Android 7.0 (SDK 24) to Android 15 (SDK 34/35).
 -   **Frameworks**: Tested with EdXposed and LSPosed.
 
+**Important Limitation**:
+-   **Samsung OneUI devices are currently not supported** due to OneUI's modifications to Android source code. Despite multiple attempts with various hooking methods, the module cannot function properly on Samsung OneUI devices. Other Android devices from different manufacturers typically work normally.
+
 ## Installation
 
 <div align="center">
