@@ -168,19 +168,19 @@ extra:
     default: stable
   alternate:
     - name: 简体中文
-      link: http://127.0.0.1:8001/NoWakeLock/
+      link: https://nowakelock.github.io/NoWakeLock/
       lang: zh-CN
     - name: English
-      link: http://127.0.0.1:8002/NoWakeLock/
+      link: https://nowakelock.github.io/NoWakeLock/en/
       lang: en
     - name: 繁體中文
-      link: http://127.0.0.1:8005/NoWakeLock/
+      link: https://nowakelock.github.io/NoWakeLock/zh-tw/
       lang: zh-TW
     - name: Français
-      link: http://127.0.0.1:8004/NoWakeLock/
+      link: https://nowakelock.github.io/NoWakeLock/fr/
       lang: fr
     - name: Deutsch
-      link: http://127.0.0.1:8003/NoWakeLock/
+      link: https://nowakelock.github.io/NoWakeLock/de/
       lang: de
 
 # Extra CSS
