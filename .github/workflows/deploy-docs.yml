@@ -55,11 +55,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Deploy with version support
-          if [[ "${{ github.ref }}" == "refs/heads/master" ]] || [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            mike deploy --push --update-aliases stable latest
-          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-            mike deploy --push dev
-          else
-            mkdocs gh-deploy --force
-          fi
+          # Build all language versions to separate directories
+          echo "Building main site (Chinese)..."
+          mkdocs build -f mkdocs.yml -d site/
+          
+          echo "Building English version..."
+          mkdocs build -f mkdocs-en.yml -d site/en/
+          
+          echo "Building German version..."
+          mkdocs build -f mkdocs-de.yml -d site/de/
+          
+          echo "Building French version..."
+          mkdocs build -f mkdocs-fr.yml -d site/fr/
+          
+          echo "Building Traditional Chinese version..."
+          mkdocs build -f mkdocs-zh-tw.yml -d site/zh-tw/
+          
+          # Deploy to gh-pages (main site at root, others as subdirectories)
+          echo "Deploying to GitHub Pages..."
+          mkdocs gh-deploy --force --config-file mkdocs.yml
