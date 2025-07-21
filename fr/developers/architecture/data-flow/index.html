@@ -12,9 +12,13 @@
         <meta name="author" content="NoWakeLock Team">
       
       
-        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/developers/architecture/data-flow/">
+        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/fr/developers/architecture/data-flow/">
       
       
+        <link rel="prev" href="../overview/">
+      
+      
+        <link rel="next" href="../database/">
       
       
       <link rel="icon" href="../../../assets/favicon.ico">
@@ -22,7 +26,7 @@
     
     
       
-        <title>Conception du flux de données - Documentation NoWakeLock</title>
+        <title>Flux de Données - Documentation NoWakeLock</title>
       
     
     
@@ -131,7 +135,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Conception du flux de données
+              Flux de Données
             
           </span>
         </div>
@@ -380,10 +384,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../" class="md-tabs__link">
           
   
@@ -609,6 +615,8 @@
       
         
       
+        
+      
     
     
     
@@ -654,6 +662,8 @@
       
   
   
+    
+  
   
   
     
@@ -663,9 +673,18 @@
           
         
       
+        
+      
+        
+      
+        
+      
     
     
     
+      
+        
+        
       
       
         
@@ -673,18 +692,17 @@
     
     
       
-        
-        
-      
     
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
-  
-  
-  
-    <a href="../../" class="md-nav__link">
-      
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -693,12 +711,719 @@
   </span>
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Développeurs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
       
-        <span class="md-nav__icon md-icon"></span>
+        
       
-    </a>
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Aperçu
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Flux de Données
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Flux de Données
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#apercu-du-flux-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aperçu du flux de données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aperçu du flux de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagramme-de-flux-de-donnees-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      Diagramme de flux de données global
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-de-la-couche-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architecture de la couche de données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture de la couche de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conception-double-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception double base de données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conception-dentites-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception d'entités de données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flux-de-donnees-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flux de données Repository
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flux de données Repository">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conception-dinterface-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception d'interface Repository
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implémentation Repository
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flux-de-donnees-viewmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flux de données ViewModel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flux de données ViewModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modele-de-gestion-detat" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modèle de gestion d'état
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#processus-de-mise-a-jour-des-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Processus de mise à jour des données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#communication-inter-processus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Communication inter-processus
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Communication inter-processus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pont-de-donnees-xprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pont de données XProvider
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mecanisme-de-synchronisation-des-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mécanisme de synchronisation des données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mecanisme-de-mise-a-jour-en-temps-reel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mécanisme de mise à jour en temps réel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mécanisme de mise à jour en temps réel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reaction-en-chaine-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Réaction en chaîne Flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-de-donnees-et-optimisation-des-performances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Déduplication de données et optimisation des performances
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-derreurs-et-recuperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion d'erreurs et récupération
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestion d&#39;erreurs et récupération">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-derreurs-de-flux-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion d'erreurs de flux de données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#garantie-de-coherence-des-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Garantie de cohérence des données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#surveillance-des-performances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Surveillance des performances
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Surveillance des performances">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metriques-de-performance-de-flux-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Métriques de performance de flux de données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../database/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Données
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xposed-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hooks Xposed
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Documentation API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            Documentation API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/internal-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Interne
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/content-provider/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Fournisseur de Contenu
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Détails d'Implémentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Détails d'Implémentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/counter-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Système de Compteurs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/hook-details/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Détails des Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/ipc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication Inter-Processus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -1329,6 +2054,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Aperçu">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Aperçu
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../database/" class="md-footer__link md-footer__link--next" aria-label="Next: Base de Données">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Base de Données
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">

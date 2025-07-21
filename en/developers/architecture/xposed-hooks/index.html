@@ -12,9 +12,13 @@
         <meta name="author" content="NoWakeLock Team">
       
       
-        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/developers/architecture/xposed-hooks/">
+        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/en/developers/architecture/xposed-hooks/">
       
       
+        <link rel="prev" href="../database/">
+      
+      
+        <link rel="next" href="../../api/internal-api/">
       
       
       <link rel="icon" href="../../../assets/favicon.ico">
@@ -22,7 +26,7 @@
     
     
       
-        <title>Xposed Hooks Implementation Guide - NoWakeLock Documentation</title>
+        <title>Xposed Hooks - NoWakeLock Documentation</title>
       
     
     
@@ -131,7 +135,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Xposed Hooks Implementation Guide
+              Xposed Hooks
             
           </span>
         </div>
@@ -380,10 +384,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../" class="md-tabs__link">
           
   
@@ -609,6 +615,8 @@
       
         
       
+        
+      
     
     
     
@@ -654,6 +662,8 @@
       
   
   
+    
+  
   
   
     
@@ -663,9 +673,18 @@
           
         
       
+        
+      
+        
+      
+        
+      
     
     
     
+      
+        
+        
       
       
         
@@ -673,18 +692,17 @@
     
     
       
-        
-        
-      
     
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
-  
-  
-  
-    <a href="../../" class="md-nav__link">
-      
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -693,12 +711,767 @@
   </span>
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Developers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
       
-        <span class="md-nav__icon md-icon"></span>
+        
       
-    </a>
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../database/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Database
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Xposed Hooks
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Xposed Hooks
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#hook-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hook Architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hook Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entry-point-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entry Point Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entry Point Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xposed-module-declaration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Xposed Module Declaration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#main-module-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Module Class
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wakelock-hook-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      WakeLock Hook Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="WakeLock Hook Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-hook-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core Hook Points
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-resolution-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter Resolution Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wakelock-processing-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      WakeLock Processing Logic
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alarm-hook-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alarm Hook Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alarm Hook Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-version-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Version Compatibility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alarm-processing-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alarm Processing Logic
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-hook-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Hook Implementation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service Hook Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-parameter-position-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Parameter Position Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-processing-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Processing Logic
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rule-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rule Engine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rule Engine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rule-matching-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rule Matching Logic
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-process-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Process Communication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cross-Process Communication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xprovider-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      XProvider Implementation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-compatibility-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Compatibility Handling
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version Compatibility Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-difference-adaptation" class="md-nav__link">
+    <span class="md-ellipsis">
+      API Difference Adaptation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling-and-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Handling and Debugging
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Handling and Debugging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hook-failure-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hook Failure Handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debug Logging
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Optimization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Caching Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimizing-hook-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimizing Hook Overhead
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    API Documentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            API Documentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/internal-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Internal API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/content-provider/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Content Provider
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Implementation Details
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementation Details
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/counter-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Counter System
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/hook-details/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hook Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/ipc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inter-Process Communication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -1308,6 +2081,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../database/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Database">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Database
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../api/internal-api/" class="md-footer__link md-footer__link--next" aria-label="Next: Internal API">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Internal API
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">

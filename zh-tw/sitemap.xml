@@ -1,95 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/api/content-provider/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/api/content-provider/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/api/internal-api/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/api/internal-api/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/architecture/data-flow/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/architecture/data-flow/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/architecture/database/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/architecture/database/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/architecture/overview/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/architecture/overview/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/architecture/xposed-hooks/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/architecture/xposed-hooks/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/implementation/counter-system/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/implementation/counter-system/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/implementation/hook-details/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/implementation/hook-details/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/developers/implementation/ipc/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/developers/implementation/ipc/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/features/alarms/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/features/alarms/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/features/app-management/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/features/app-management/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/features/services/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/features/services/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/features/wakelocks/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/features/wakelocks/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/getting-started/installation/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/getting-started/installation/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/getting-started/module-check/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/getting-started/module-check/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/getting-started/problem-analysis/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/getting-started/problem-analysis/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/getting-started/quick-start/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/getting-started/quick-start/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/reference/changelog/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/reference/changelog/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/reference/faq/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/reference/faq/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/reference/glossary/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/reference/glossary/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
     <url>
-         <loc>https://nowakelock.github.io/NoWakeLock/reference/troubleshooting/</loc>
+         <loc>https://nowakelock.github.io/NoWakeLock/zh-tw/reference/troubleshooting/</loc>
          <lastmod>2025-07-21</lastmod>
     </url>
 </urlset>

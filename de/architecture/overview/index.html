@@ -12,9 +12,13 @@
         <meta name="author" content="NoWakeLock Team">
       
       
-        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/architecture/overview/">
+        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/de/architecture/overview/">
       
       
+        <link rel="prev" href="../../developers/">
+      
+      
+        <link rel="next" href="../../developers/architecture/data-flow/">
       
       
       <link rel="icon" href="../../assets/favicon.ico">
@@ -22,7 +26,7 @@
     
     
       
-        <title>Systemübersicht - NoWakeLock Dokumentation</title>
+        <title>Übersicht - NoWakeLock Dokumentation</title>
       
     
     
@@ -131,7 +135,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Systemübersicht
+              Übersicht
             
           </span>
         </div>
@@ -380,10 +384,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../developers/" class="md-tabs__link">
           
   
@@ -609,6 +615,8 @@
       
         
       
+        
+      
     
     
     
@@ -654,6 +662,8 @@
       
   
   
+    
+  
   
   
     
@@ -663,9 +673,18 @@
           
         
       
+        
+      
+        
+      
+        
+      
     
     
     
+      
+        
+        
       
       
         
@@ -673,18 +692,17 @@
     
     
       
-        
-        
-      
     
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
-  
-  
-  
-    <a href="../../developers/" class="md-nav__link">
-      
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../developers/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -693,12 +711,845 @@
   </span>
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Entwickler
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
       
-        <span class="md-nav__icon md-icon"></span>
+        
       
-    </a>
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architektur
+    
+  </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Architektur
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Übersicht
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Übersicht
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gesamtarchitektur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gesamtarchitektur
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gesamtarchitektur">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architekturdiagramm" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architekturdiagramm
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technologie-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      Technologie-Stack
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Technologie-Stack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kerntechnologien" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kerntechnologien
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#xposed-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Xposed-Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependency Injection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architektur-schichtung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Architektur-Schichtung
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architektur-Schichtung">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-xposed-modulschicht" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Xposed-Modulschicht
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-datenschicht-data-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Datenschicht (Data Layer)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Datenschicht (Data Layer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dual-datenbank-architektur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dual-Datenbank-Architektur
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repository-muster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repository-Muster
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-geschaftsschicht-domain-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Geschäftsschicht (Domain Layer)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Geschäftsschicht (Domain Layer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#viewmodel-architektur" class="md-nav__link">
+    <span class="md-ellipsis">
+      ViewModel-Architektur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-prasentationsschicht-presentation-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Präsentationsschicht (Presentation Layer)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Präsentationsschicht (Presentation Layer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#compose-ui-architektur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compose UI-Architektur
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kernfunktionen" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kernfunktionen
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kernfunktionen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-mehrbenutzunterstutzung" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Mehrbenutzunterstützung
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-versionskompatibilitat" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Versionskompatibilität
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-leistungsoptimierung" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Leistungsoptimierung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#datenflussdesign" class="md-nav__link">
+    <span class="md-ellipsis">
+      Datenflussdesign
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Datenflussdesign">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ereignisverarbeitungsablauf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ereignisverarbeitungsablauf
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zustandsverwaltung" class="md-nav__link">
+    <span class="md-ellipsis">
+      Zustandsverwaltung
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kommunikationsmechanismus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kommunikationsmechanismus
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Kommunikationsmechanismus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-xposed-anwendungskommunikation" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Xposed ↔ Anwendungskommunikation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-komponenten-interne-kommunikation" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Komponenten-interne Kommunikation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#erweiterungspunkte" class="md-nav__link">
+    <span class="md-ellipsis">
+      Erweiterungspunkte
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Erweiterungspunkte">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-neue-hook-typen-hinzufugen" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Neue Hook-Typen hinzufügen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-neue-ui-seiten-hinzufugen" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Neue UI-Seiten hinzufügen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-neue-datenquellen-integrieren" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Neue Datenquellen integrieren
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#designprinzipien" class="md-nav__link">
+    <span class="md-ellipsis">
+      Designprinzipien
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Designprinzipien">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-single-responsibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Single Responsibility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dependency-inversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Dependency Inversion
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-open-closed-prinzip" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Open-Closed-Prinzip
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-reaktives-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Reaktives Design
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/architecture/data-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Datenfluss
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/architecture/database/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Datenbank
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xposed-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Xposed Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    API-Dokumentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            API-Dokumentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/api/internal-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interne API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/api/content-provider/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Content Provider
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Implementierungsdetails
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Implementierungsdetails
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/implementation/counter-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zählersystem
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/implementation/hook-details/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hook-Details
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/implementation/ipc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Prozessübergreifende Kommunikation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -1048,6 +1899,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../developers/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Übersicht">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Übersicht
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../developers/architecture/data-flow/" class="md-footer__link md-footer__link--next" aria-label="Next: Datenfluss">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Datenfluss
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">

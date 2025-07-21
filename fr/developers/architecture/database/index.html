@@ -12,9 +12,13 @@
         <meta name="author" content="NoWakeLock Team">
       
       
-        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/developers/architecture/database/">
+        <link rel="canonical" href="https://nowakelock.github.io/NoWakeLock/fr/developers/architecture/database/">
       
       
+        <link rel="prev" href="../data-flow/">
+      
+      
+        <link rel="next" href="../xposed-hooks/">
       
       
       <link rel="icon" href="../../../assets/favicon.ico">
@@ -22,7 +26,7 @@
     
     
       
-        <title>Conception de base de données - Documentation NoWakeLock</title>
+        <title>Base de Données - Documentation NoWakeLock</title>
       
     
     
@@ -131,7 +135,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Conception de base de données
+              Base de Données
             
           </span>
         </div>
@@ -380,10 +384,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../../" class="md-tabs__link">
           
   
@@ -609,6 +615,8 @@
       
         
       
+        
+      
     
     
     
@@ -654,6 +662,8 @@
       
   
   
+    
+  
   
   
     
@@ -663,9 +673,18 @@
           
         
       
+        
+      
+        
+      
+        
+      
     
     
     
+      
+        
+        
       
       
         
@@ -673,18 +692,17 @@
     
     
       
-        
-        
-      
     
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
-  
-  
-  
-    <a href="../../" class="md-nav__link">
-      
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -693,12 +711,728 @@
   </span>
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Développeurs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
       
-        <span class="md-nav__icon md-icon"></span>
+        
       
-    </a>
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Aperçu
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Flux de Données
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Base de Données
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Base de Données
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#apercu-de-larchitecture-de-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Aperçu de l'architecture de base de données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Aperçu de l&#39;architecture de base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#philosophie-de-conception-double-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Philosophie de conception double base de données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conception-appdatabase" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception AppDatabase
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conception AppDatabase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#declaration-de-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Déclaration de base de données
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conception-dentites-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception d'entités principales
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conception d&#39;entités principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appinfo-table-informations-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      AppInfo - Table informations application
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wakelockrule-table-regles-wakelock" class="md-nav__link">
+    <span class="md-ellipsis">
+      WakelockRule - Table règles WakeLock
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alarmrule-table-regles-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      AlarmRule - Table règles Alarm
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#servicerule-table-regles-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      ServiceRule - Table règles Service
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conception-dinterfaces-dao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception d'interfaces DAO
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conception d&#39;interfaces DAO">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appinfodao" class="md-nav__link">
+    <span class="md-ellipsis">
+      AppInfoDao
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#classe-de-base-dao-de-regles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classe de base DAO de règles
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conception-infodatabase" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conception InfoDatabase
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conception InfoDatabase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-de-donnees-denregistrement-devenements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Base de données d'enregistrement d'événements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explication-detaillee-de-lentite-infoevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explication détaillée de l'entité InfoEvent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infoeventdao" class="md-nav__link">
+    <span class="md-ellipsis">
+      InfoEventDao
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategie-de-migration-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stratégie de migration de données
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stratégie de migration de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-migration-de-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion de migration de versions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outils-de-maintenance-base-de-donnees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outils de maintenance base de données
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#convertisseurs-de-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Convertisseurs de type
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Convertisseurs de type">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-types-de-donnees-complexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion de types de données complexes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimisation-des-performances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimisation des performances
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optimisation des performances">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strategie-doptimisation-de-requete" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stratégie d'optimisation de requête
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xposed-hooks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hooks Xposed
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Documentation API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            Documentation API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/internal-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Interne
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/content-provider/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Fournisseur de Contenu
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Détails d'Implémentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Détails d'Implémentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/counter-system/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Système de Compteurs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/hook-details/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Détails des Hooks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../implementation/ipc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication Inter-Processus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -1664,6 +2398,44 @@
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../data-flow/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Flux de Données">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Flux de Données
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../xposed-hooks/" class="md-footer__link md-footer__link--next" aria-label="Next: Hooks Xposed">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Hooks Xposed
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
