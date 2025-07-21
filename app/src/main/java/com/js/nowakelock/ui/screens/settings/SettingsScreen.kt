@@ -486,6 +486,26 @@ private fun LanguageSelectionDialog(
                 )
 
                 SettingsSelectableItem(
+                    title = stringResource(id = R.string.german_language_name),
+                    selected = currentLanguage == LanguageMode.GERMAN,
+                    onClick = {
+                        onLanguageSelected(LanguageMode.GERMAN)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.Language
+                )
+
+                SettingsSelectableItem(
+                    title = stringResource(id = R.string.traditional_chinese_language_name),
+                    selected = currentLanguage == LanguageMode.TRADITIONAL_CHINESE,
+                    onClick = {
+                        onLanguageSelected(LanguageMode.TRADITIONAL_CHINESE)
+                        onDismiss()
+                    },
+                    icon = Icons.Default.Language
+                )
+
+                SettingsSelectableItem(
                     title = stringResource(id = R.string.system_language_name),
                     selected = currentLanguage == LanguageMode.SYSTEM,
                     onClick = {
@@ -530,7 +550,9 @@ private fun getLanguageSubtitle(languageMode: LanguageMode): String {
     return when (languageMode) {
         LanguageMode.ENGLISH -> stringResource(id = R.string.english_language_name)
         LanguageMode.CHINESE -> stringResource(id = R.string.chinese_language_name)
+        LanguageMode.TRADITIONAL_CHINESE -> stringResource(id = R.string.traditional_chinese_language_name)
         LanguageMode.FRENCH -> stringResource(id = R.string.french_language_name)
+        LanguageMode.GERMAN -> stringResource(id = R.string.german_language_name)
         LanguageMode.SYSTEM -> stringResource(id = R.string.system_language_name)
     }
 }

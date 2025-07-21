@@ -49,7 +49,7 @@ class UserPreferencesRepository(private val context: Context) {
     
     // Possible language values
     enum class LanguageMode {
-        ENGLISH, CHINESE, FRENCH, SYSTEM;
+        ENGLISH, CHINESE, FRENCH, GERMAN, TRADITIONAL_CHINESE, SYSTEM;
         
         companion object {
             fun fromString(value: String?): LanguageMode {
@@ -57,6 +57,8 @@ class UserPreferencesRepository(private val context: Context) {
                     "en" -> ENGLISH
                     "zh" -> CHINESE
                     "fr" -> FRENCH
+                    "de" -> GERMAN
+                    "zh-rTW" -> TRADITIONAL_CHINESE
                     else -> SYSTEM
                 }
             }
@@ -66,6 +68,8 @@ class UserPreferencesRepository(private val context: Context) {
                     ENGLISH -> "en"
                     CHINESE -> "zh"
                     FRENCH -> "fr"
+                    GERMAN -> "de"
+                    TRADITIONAL_CHINESE -> "zh-rTW"
                     SYSTEM -> ""
                 }
             }

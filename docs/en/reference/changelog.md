@@ -2,6 +2,21 @@
 
 This document records the version update history and important changes of NoWakeLock.
 
+## [v3.0.4 Build 81] - 2024-07-21
+
+### 🌐 New Language Support
+- **German (Deutsch)** - Complete German interface support
+- **Traditional Chinese** - Support for Traditional Chinese (Taiwan region)
+- Language selection interface includes new language options
+- Improved localized string resources
+
+### 🔧 Improvements
+- Optimized language switching experience
+- Enhanced multi-language resource configuration
+- Improved localized string consistency
+
+---
+
 ## [v3.0.3 Build 80] - 2024-05-20
 
 ### 🎉 Major Update

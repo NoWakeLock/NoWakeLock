@@ -135,9 +135,11 @@
     <string name="settings_experimental">实验功能</string>
     
     <!-- 语言设置 -->
-    <string name="english_language_name">英语</string>
+    <string name="english_language_name">English</string>
     <string name="chinese_language_name">中文</string>
-    <string name="french_language_name">法语</string>
+    <string name="traditional_chinese_language_name">繁體中文</string>
+    <string name="french_language_name">Français</string>
+    <string name="german_language_name">Deutsch</string>
     <string name="system_language_name">跟随系统</string>
 
     <string name="app_detail_title">应用详情</string>

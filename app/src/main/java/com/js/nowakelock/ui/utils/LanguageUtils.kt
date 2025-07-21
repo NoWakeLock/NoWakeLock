@@ -22,6 +22,8 @@ object LanguageUtils {
             LanguageMode.ENGLISH -> Locale("en")
             LanguageMode.CHINESE -> Locale("zh")
             LanguageMode.FRENCH -> Locale("fr")
+            LanguageMode.GERMAN -> Locale("de")
+            LanguageMode.TRADITIONAL_CHINESE -> Locale("zh", "TW")
             LanguageMode.SYSTEM -> Locale.getDefault()
         }
 

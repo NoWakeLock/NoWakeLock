@@ -190,7 +190,9 @@
     <!-- Language settings -->
     <string name="english_language_name">Englisch</string>
     <string name="chinese_language_name">中文</string>
+    <string name="traditional_chinese_language_name">繁體中文</string>
     <string name="french_language_name">Français</string>
+    <string name="german_language_name">Deutsch</string>
     <string name="system_language_name">System folgen</string>
 
     <string name="app_detail_title">Anwendungsdetails</string>

@@ -106,9 +106,11 @@
     <string name="now">Maintenant</string>
     
     <!-- Paramètres de langue -->
-    <string name="english_language_name">Anglais</string>
-    <string name="chinese_language_name">Chinois</string>
+    <string name="english_language_name">English</string>
+    <string name="chinese_language_name">中文</string>
+    <string name="traditional_chinese_language_name">繁體中文</string>
     <string name="french_language_name">Français</string>
+    <string name="german_language_name">Deutsch</string>
     <string name="system_language_name">Identique au système</string>
 
     <!-- Power Connection and Clear Data settings  -->
