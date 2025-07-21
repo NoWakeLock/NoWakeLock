@@ -1,26 +1,26 @@
 <resources>
     <string name="app_name">NoWakeLock</string>
-    <string name="xposeddescription">Just for block wakelock</string>
+    <string name="xposeddescription">For blocking wakelocks</string>
     <string name="navigation_view_header_title">NoWakeLock</string>
     <string name="active">Module is not active</string>
     <string name="backup">Backup complete</string>
     <string name="restore">Restore complete</string>
     <string name="BackupAndRestore">Backup and restore</string>
-    <string name="clipboard">copy to clipboard</string>
-    <string name="test">Test</string>
+    <string name="clipboard">Copy to clipboard</string>
+    <string name="test">Test Mode</string>
     <string name="android">Android System</string>
     <string name="settings">Settings</string>
     <string name="sync">Sync</string>
     <string name="recordFlag_title">Record data</string>
     <string name="recordFlag_summary">Record device wake-up data</string>
     <string name="Save">Save</string>
-    <string name="updateST_summary">Synchronously disable configuration information(second)</string>
+    <string name="updateST_summary">Configuration sync interval (seconds)</string>
     <string name="updateST_title">Sync setting</string>
     <string name="updateDb_title">Data synchronization</string>
-    <string name="updateDb_summary">Synchronously wake-up data information(second)</string>
+    <string name="updateDb_summary">Wake-up data sync interval (seconds)</string>
     <string name="other">Other</string>
     <string name="powerFlag_title">Reset count</string>
-    <string name="powerFlag_summary">After charged, reset count</string>
+    <string name="powerFlag_summary">Reset count when charged</string>
     <string name="theme">Theme</string>
     <string name="theme_list">General theme</string>
     <string name="light_theme_name">Light</string>
@@ -28,39 +28,42 @@
     <string name="black_theme_name">Black (AMOLED)</string>
     <string name="system_theme_name">Follow System</string>
     <string name="channel_name">Background Services</string>
-    <string name="channel_description">Just ignore this notification or hiding it</string>
+    <string name="channel_description">You can ignore or hide this notification</string>
     <string name="channel_id">nowakelock</string>
-    <string name="notofication_title">Background Services</string>
-    <string name="notofication_text">NoWakeLock need a service to meantain database.Just ignore this notification or hiding it</string>
+    <string name="notification_title">Background Services</string>
+    <string name="notification_text">NoWakeLock needs a service to maintain the database. You can ignore or hide this notification</string>
     <string name="Count">Count</string>
-    <string name="BlockCount">BlockCount</string>
-    <string name="CountTime">CountTime</string>
-    <string name="BlockCountTime">BlockCountTime</string>
+    <string name="BlockCount">Block Count</string>
+    <string name="CountTime">Count Time</string>
+    <string name="BlockCountTime">Block Count Time</string>
     <string name="search_title">Search</string>
-    <string name="menu_filter">filter</string>
+    <string name="menu_filter">Filter</string>
     <string name="menu_filter_user_app">User apps</string>
     <string name="menu_filter_system_app">System app</string>
     <string name="menu_filter_modified">Modified</string>
     <string name="menu_filter_all_app">All apps</string>
-    <string name="menu_filter_count">order by count</string>
-    <string name="menu_filter_name">order by name</string>
-    <string name="menu_filter_countime">order by count time</string>
+    <string name="menu_filter_count">Order by Count</string>
+    <string name="menu_filter_name">Order by Name</string>
+    <string name="menu_filter_countime">Order by Count Time</string>
 
     <string name="WakeLock">WakeLock</string>
     <string name="Alarm">Alarm</string>
     <string name="Service">Service</string>
-    <string name="Apps">App</string>
+    <string name="Apps">Apps</string>
     <string name="help">Help</string>
-    <string name="help_instructions">        click the application icon or name to enter wakelock settings,disable wakelock.
-        <![CDATA[<br><br>]]> Serious warning, don\'t restrict system application, it will cause unpredictable consequences.
-        <![CDATA[<br><br>]]>for other information <![CDATA[<a href="https://github.com/Jasper-1024/NoWakeLock/blob/dev/README.md"> Application Introduction </a>]]>;
+    <string name="help_instructions">        click the application icon or name to enter component settings and configure blocking.
+        <![CDATA[<br><br>]]> Serious warning: do not restrict system applications, as this may cause unpredictable consequences.
+        <![CDATA[<br><br>]]>For more information see <![CDATA[<a href="https://github.com/Jasper-1024/NoWakeLock/blob/dev/README.md">Application Introduction</a>]]>;
            <![CDATA[<a href="https://github.com/Jasper-1024/NoWakeLock/blob/dev/README/FAQ.md">FAQ</a>]]>;
     </string>
-    <string name="help_contact">Contact:\n
-            If you have any questions or encounter bugs during use, you can email me or initiate a new issue.\n
-        \n
-        Issue : https://github.com/Jasper-1024/NoWakeLock/issues \n
-        \n
+    <string name="help_contact">Contact:
+
+            If you have any questions or encounter bugs during use, you can email me or create a new issue.
+        
+
+        Issue: https://github.com/Jasper-1024/NoWakeLock/issues
+        
+
         JasperHale: ljy087621@gmail.com</string>
     <string name="ATIText">Allow interval</string>
     <string name="FlagText">Allow</string>
@@ -80,17 +83,17 @@
     <string name="action_select_all">Select all</string>
     <string name="action_select_inverse">"Select inverse"</string>
     <string name="action_set_ATI">"Set allow time interval"</string>
-    <string name="database">DataBase</string>
-    <string name="clear_summary">When reset count,clear inactive records.</string>
+    <string name="database">Database</string>
+    <string name="clear_summary">Clear inactive records when resetting count</string>
     <string name="clear_title">Clear inactive records</string>
-    <string name="re_hint">One rule per line, new rule input enter</string>
-    <string name="user_ower">Primary user</string>
+    <string name="re_hint">One rule per line, press Enter for new rule</string>
+    <string name="user_owner">Primary user</string>
     <string name="user_work">Work profile</string>
     <string name="user_name">User</string>
     <string name="user">User</string>
-    <string name="experimental">Experimental Features - Use with caution</string>
+    <string name="experimental">Experimental Features</string>
     <string name="Debug">Debug mode</string>
-    <string name="Debug_summary">Enable this when you encounter a wakelock/alarm/service that is not logged, export the full log in Xposed and you can send it to me in any channel to troubleshoot the problem."</string>
+    <string name="Debug_summary">Enable this when you encounter a wakelock/alarm/service that is not logged. Export the full log in Xposed and send it to me through any channel to troubleshoot the problem.</string>
     <string-array name="scopes" translatable="false">
         <item>android</item>
         <item>com.android.providers.settings</item>
@@ -120,8 +123,8 @@
 
     <!-- Settings card -->
     <string name="settings_title">Settings</string>
-    <string name="allow_this_item">Allow this </string>
-    <string name="allow_this_item_desc">Prevent this item from triggering</string>
+    <string name="allow_this_item">Block this item</string>
+    <string name="allow_this_item_desc">Block this item from triggering</string>
     <string name="block_during_sleep">Only block during sleep</string>
     <string name="block_during_screen_off">Only block when screen is off</string>
     <string name="allowed_time_interval">Allowed time interval</string>
@@ -147,9 +150,9 @@
     <!-- Error handling -->
     <string name="error_loading_data">Error loading data. Please try again.</string>
     <string name="allow_wakelock">Allow Wakelock</string>
-    <string name="allow_wakelock_desc">Allow this wakelock form trigger</string>
+    <string name="allow_wakelock_desc">Allow this wakelock to trigger</string>
     <string name="allow_alarm">Allow Alarm</string>
-    <string name="allow_alarm_desc">Allow this alarm form trigger</string>
+    <string name="allow_alarm_desc">Allow this alarm to trigger</string>
     <string name="allow_service">Allow Service</string>
     <string name="allow_service_desc">Allow this service start</string>
 
@@ -213,7 +216,7 @@
     <string name="saved_time">Saved</string>
     <string name="allowed">Allowed</string>
     <string name="unknown_error">Unknown Error</string>
-    <string name="error_loading_app_detail">Test</string>
+    <string name="error_loading_app_detail">Error loading application details</string>
     
     <!-- App Settings Strings -->
     <string name="app_settings">App Settings</string>
