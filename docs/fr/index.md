@@ -74,7 +74,7 @@ Opérations via les cinq onglets de l'interface principale de l'application :
 
 ## Compatibilité
 
-- **Version Android** : 7.0 (API 24) à 15.0 (API 35)
+- **Version Android** : 7.0 (API 24) à 16.0 (API 35)
 - **Framework Xposed** : LSPosed (recommandé), EdXposed
 - **Support d'architecture** : ARM64, ARM32
 - **Version actuelle** : 3.0.3 (version finale)

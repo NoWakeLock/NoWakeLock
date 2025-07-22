@@ -74,7 +74,7 @@ NoWakeLock 是一個 Android Xposed 模組，用於管理裝置的 WakeLock、Al
 
 ## 相容性
 
-- **Android 版本**: 7.0 (API 24) 至 15.0 (API 35)
+- **Android 版本**: 7.0 (API 24) 至 16.0 (API 35)
 - **Xposed 框架**: LSPosed (推薦)、EdXposed
 - **架構支援**: ARM64、ARM32
 - **目前版本**: 3.0.3 (正式版)

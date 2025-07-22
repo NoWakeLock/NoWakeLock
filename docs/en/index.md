@@ -74,7 +74,7 @@ The main application interface has five tabs:
 
 ## Compatibility
 
-- **Android Version**: 7.0 (API 24) to 15.0 (API 35)
+- **Android Version**: 7.0 (API 24) to 16.0 (API 35)
 - **Xposed Framework**: LSPosed (recommended), EdXposed
 - **Architecture Support**: ARM64, ARM32
 - **Current Version**: 3.0.3 (stable release)

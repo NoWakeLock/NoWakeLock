@@ -56,9 +56,7 @@ Collecte des questions les plus courantes rencontrées par les utilisateurs et l
 
 ### Q : Compatibilité des versions Android ?
 **R** : Situation de support :
-- **Android 7.0-11** - Support complet
-- **Android 12-13** - Support de base, certaines fonctionnalités peuvent être limitées
-- **Android 14-15** - Support expérimental, problèmes possibles
+- **Android 7.0-16** - AOSP Support complet
 
 ### Q : Problèmes avec des marques d'appareils spécifiques ?
 **R** : Problèmes connus :

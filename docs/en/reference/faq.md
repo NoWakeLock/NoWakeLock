@@ -56,9 +56,7 @@ Collection of the most commonly encountered questions and solutions.
 
 ### Q: Android version compatibility?
 **A**: Support status:
-- **Android 7.0-11** - Full support
-- **Android 12-13** - Basic support, some features may be limited
-- **Android 14-15** - Experimental support, may have issues
+- **Android 7.0-16** - AOSP Full support
 
 ### Q: Specific brand device issues?
 **A**: Known issues:

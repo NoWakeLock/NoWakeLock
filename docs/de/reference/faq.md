@@ -56,9 +56,7 @@ Sammlung der häufigsten Benutzerfragen und Lösungen.
 
 ### F: Android-Versionskompatibilität?
 **A**: Unterstützungsstatus:
-- **Android 7.0-11** - Vollständige Unterstützung
-- **Android 12-13** - Grundlegende Unterstützung, einige Funktionen möglicherweise eingeschränkt
-- **Android 14-15** - Experimentelle Unterstützung, möglicherweise Probleme vorhanden
+- **Android 7.0-16** - AOSP Vollständige Unterstützung
 
 ### F: Spezifische Markengeräteprobleme?
 **A**: Bekannte Probleme:
