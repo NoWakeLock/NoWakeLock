@@ -1422,14 +1422,9 @@
 <h2 id="_4">兼容性问题<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="q-android">Q: Android 版本兼容性？<a class="headerlink" href="#q-android" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 支持情况：
-- <strong>Android 7.0-11</strong> - 完全支持
-- <strong>Android 12-13</strong> - 基本支持，部分功能可能受限
-- <strong>Android 14-15</strong> - 实验性支持，可能存在问题</p>
+- <strong>Android 7.0-16</strong> - AOSP 完全支持</p>
 <h3 id="q_6">Q: 特定品牌设备问题？<a class="headerlink" href="#q_6" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 已知问题：
-- <strong>MIUI</strong> - 需要关闭 MIUI 优化，允许后台运行
-- <strong>ColorOS</strong> - 可能需要在权限管理中允许自启动
-- <strong>EMUI</strong> - 建议在受保护应用中添加 NoWakeLock
 - <strong>OneUI</strong> - ⚠️ <strong>目前尚不支持</strong> - 由于 OneUI 更改了 Android 源码，Hook 位置经过多种方法尝试，始终无法生效</p>
 <h3 id="q_7">Q: 系统更新后失效？<a class="headerlink" href="#q_7" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 处理步骤：
@@ -1439,11 +1434,8 @@
 4. 重新配置作用域设置</p>
 <h2 id="_5">性能问题<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="q-nowakelock">Q: NoWakeLock 本身耗电？<a class="headerlink" href="#q-nowakelock" title="Permanent link">&para;</a></h3>
-<p><strong>A</strong>: 正常情况下 NoWakeLock 耗电极少：
-- <strong>CPU 使用</strong> &lt; 1%
-- <strong>内存占用</strong> &lt; 50MB
-- <strong>后台活动</strong> 最小化</p>
-<p>如果发现异常耗电，请检查配置或联系支持。</p>
+<p><strong>A</strong>: 正常情况下 NoWakeLock 耗电极少, 可以不保留后台
+如果发现异常耗电，请检查配置或联系支持。</p>
 <h3 id="q_8">Q: 设备变慢或卡顿？<a class="headerlink" href="#q_8" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 可能原因：
 1. <strong>规则过多</strong> - 减少不必要的规则
@@ -1458,14 +1450,12 @@
 <h2 id="_6">数据问题<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="q_10">Q: 统计数据不准确？<a class="headerlink" href="#q_10" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 可能情况：
-1. <strong>数据延迟</strong> - 统计每5分钟更新一次
 2. <strong>设备重启</strong> - 部分实时数据重启后重置
 3. <strong>时区问题</strong> - 检查设备时区设置
 4. <strong>存储问题</strong> - 清理数据库缓存</p>
 <h3 id="q_11">Q: 历史数据丢失？<a class="headerlink" href="#q_11" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 数据保留策略：
 - <strong>实时数据</strong> - 设备重启后清除
-- <strong>统计数据</strong> - 保留30天
 - <strong>配置数据</strong> - 永久保存（除非手动清除）</p>
 <h3 id="q_12">Q: 导出的配置无法导入？<a class="headerlink" href="#q_12" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 检查项目：
@@ -1482,7 +1472,6 @@
 4. 某些功能需要主用户权限</p>
 <h3 id="q_14">Q: 工作资料下无法使用？<a class="headerlink" href="#q_14" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 工作资料限制：
-1. 需要在工作资料中单独安装 Xposed 框架
 2. 部分企业策略可能禁止 Xposed 模块
 3. 联系管理员确认相关政策</p>
 <h2 id="_8">安全问题<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -1553,7 +1542,7 @@
 <h3 id="q_20">Q: 错误操作导致设备无法启动怎么办？<a class="headerlink" href="#q_20" title="Permanent link">&para;</a></h3>
 <p><strong>A</strong>: 紧急恢复步骤：</p>
 <p><strong>情况1：NoWakeLock 模块导致的启动问题</strong>：</p>
-<p><strong>方法1：硬件按键安全模式（推荐）</strong>：
+<p><strong>方法1：LSPosed 硬件按键安全模式（推荐）</strong>：
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="m">1</span>.<span class="w"> </span>长按电源键10秒强制重启
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="m">2</span>.<span class="w"> </span>屏幕变黑后立即反复按任意硬件按键（音量键或电源键）
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="m">3</span>.<span class="w"> </span>感受到2次短震动后，继续快速按4次相同按键
@@ -1657,7 +1646,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 21, 2025 00:22:03 UTC"><span class="timeago" datetime="2025-07-21T00:22:03+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 21, 2025 00:22:03 UTC">2025-07-21</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 22, 2025 11:57:59 UTC"><span class="timeago" datetime="2025-07-22T11:57:59+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 22, 2025 11:57:59 UTC">2025-07-22</span>
   </span>
 
     
