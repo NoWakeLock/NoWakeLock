@@ -48,7 +48,6 @@ android {
     buildFeatures {
         buildConfig true
         compose true
-        vcsInfo false  // Disable VCS info for reproducible builds
     }
 
 
