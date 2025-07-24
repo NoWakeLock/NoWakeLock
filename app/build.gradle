@@ -7,11 +7,12 @@ plugins {
     id 'com.google.devtools.ksp'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
+    id 'org.gradlex.reproducible-builds'
 }
 
 android {
 //    compileSdkVersion 33
-//    buildToolsVersion '33.0.0'
+    buildToolsVersion '34.0.0'  // Required for reproducible builds with apksigcopier
     namespace 'com.js.nowakelock'
 
     defaultConfig {
@@ -36,7 +37,7 @@ android {
 
     android.applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "${buildType.name}-${versionName}-${versionCode}.apk"
+            outputFileName = "NoWakeLock-${versionName}.apk"  // F-Droid compatible naming
         }
     }
     //room test
@@ -47,6 +48,7 @@ android {
     buildFeatures {
         buildConfig true
         compose true
+        vcsInfo false  // Disable VCS info for reproducible builds
     }
 
 

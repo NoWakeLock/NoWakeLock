@@ -5,6 +5,10 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# For reproducible builds
+-optimizationpasses 5
+-dontpreverify
+
 -keep class com.js.nowakelock.xposedhook.XposedModule
 
 -repackageclasses

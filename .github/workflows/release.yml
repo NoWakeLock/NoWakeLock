@@ -68,6 +68,16 @@ jobs:
           distribution: 'zulu'
           java-version: 21
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 9477386  # Fixed version for reproducibility
+          
+      - name: Install specific build-tools
+        run: |
+          sdkmanager "build-tools;34.0.0"  # Must use version 34 for apksigcopier compatibility
+          echo "ANDROID_BUILD_TOOLS_VERSION=34.0.0" >> $GITHUB_ENV
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
