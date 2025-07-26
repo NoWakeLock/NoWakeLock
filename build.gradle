@@ -8,9 +8,7 @@ buildscript {
         google()
         gradlePluginPortal()
         mavenCentral()
-        maven { url "https://jcenter.bintray.com" }
         maven { url "https://jitpack.io" }
-        maven { url "https://api.xposed.info/" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:8.9.2"
@@ -36,7 +34,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://api.xposed.info/' }
     }
 }
 
