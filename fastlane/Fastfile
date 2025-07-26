@@ -116,7 +116,7 @@ lane :build_flavor do |params|
   # end
 
   # commit version changes
-  if (ENV["GITHUB_ACTIONS"] == 'true')
+  if (ENV["GITHUB_ACTIONS"] == 'true' && options[:skip_commit] != true)
     # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
     git_add(path: ["./*.gradle"])
     git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
@@ -133,12 +133,16 @@ lane :build_flavor do |params|
     FileUtils.cp_r(Dir.glob(lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]),dist_path )
   end
 
-  if (ENV["GITHUB_ACTIONS"] != 'true')
+  if (ENV["GITHUB_ACTIONS"] != 'true' && options[:skip_push] != true)
     # push anything standing
     push_to_git_remote(tags:false)
   end
 
-  tag = "#{tag_prefix}#{version}/#{versionCode}";
+  tag = "v#{version}";  # New format: vx.y.z
+  # Use custom tag name if provided (for tag trigger)
+  if (options[:tag_name])
+    tag = options[:tag_name]
+  end
   changelog = get_changelog(platform:platform, flavor:flavor, commit_url:commit_url)
 
   if (options[:publish] != false)
@@ -152,7 +156,7 @@ lane :build_flavor do |params|
       set_github_release(
         repository_name: repository_name,
         api_bearer: ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"],
-        name: "v#{version} Build #{versionCode}",
+        name: "v#{version}",
         tag_name: tag,
         description: changelog,
         upload_assets: Dir.glob(File.join(dist_path, "*.apk")),
@@ -183,10 +187,12 @@ lane :build_flavor do |params|
         push_git_tags(force: true)
       end
     end
-    # we need to pull to be able to push again
-    git_pull
-    # push any change
-    push_to_git_remote(tags:false)
+    if (options[:skip_push] != true)
+      # we need to pull to be able to push again
+      git_pull
+      # push any change
+      push_to_git_remote(tags:false)
+    end
   end
 end
 

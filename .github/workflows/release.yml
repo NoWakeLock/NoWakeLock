@@ -1,6 +1,9 @@
 name: Release Upload
 
 on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
     inputs:
       release_type:
@@ -115,29 +118,45 @@ jobs:
         run: | 
           echo "CURRENT_VERSION_CODE=$(bundle exec fastlane run android_get_version_code gradle_file:app/build.gradle | grep -oP '(?<=Result:)\s*\K(\d+\.?)+' )" > $GITHUB_ENV
 
+      - name: Extract version from tag
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "TAG_VERSION=$TAG_VERSION" >> $GITHUB_ENV
+          echo "IS_TAG_TRIGGER=true" >> $GITHUB_ENV
+          
+
 
       - id: release_type_string
         uses: ASzc/change-string-case-action@v6
         with:
-          string: ${{ github.event.inputs.release_type }}
+          string: ${{ env.IS_TAG_TRIGGER == 'true' && 'none' || github.event.inputs.release_type }}
 
       - name: Bump release version
         id: bump_version
-        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
+        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none' && env.IS_TAG_TRIGGER != 'true'
         uses: boromir674/action-semver-bumper@v1.0.0
         with:
           sem_ver: ${{ env.CURRENT_VERSION }}
           bump_operator: ${{ steps.release_type_string.outputs.uppercase }}
 
-      - name: update Version
-        if: github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none'
+      - name: update Version for manual trigger
+        if: (github.event.inputs.release_type != 'code' && github.event.inputs.release_type != 'none') && env.IS_TAG_TRIGGER != 'true'
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
           echo "NEW_VERSION=${{ steps.bump_version.outputs.new_sem_ver }}" >> $GITHUB_ENV
           echo "NEW_VERSION_CODE=$((CURRENT_VERSION_CODE+1))"  >> $GITHUB_ENV
+          
+      - name: update Version for tag trigger
+        if: env.IS_TAG_TRIGGER == 'true'
+        run: |
+          echo "Using version from tag: ${{ env.TAG_VERSION }}"
+          echo "NEW_VERSION=${{ env.TAG_VERSION }}" >> $GITHUB_ENV
+          # For tag triggers, keep the current version code without incrementing
+          echo "NEW_VERSION_CODE=${{ env.CURRENT_VERSION_CODE }}" >> $GITHUB_ENV
 
-      - name: update Version
-        if: github.event.inputs.release_type == 'code'
+      - name: update Version Code only
+        if: github.event.inputs.release_type == 'code' && env.IS_TAG_TRIGGER != 'true'
         run: |
           echo "change version to ${{ github.event.inputs.release_type }}"
           echo "NEW_VERSION=${{ env.CURRENT_VERSION }}"  >> $GITHUB_ENV
@@ -145,11 +164,16 @@ jobs:
 
       - name: update Version Str
         run: |
-          echo "VERSION_STR=${{env.NEW_VERSION}}.${{env.NEW_VERSION_CODE}}"  >> $GITHUB_ENV
+          if [ -n "$NEW_VERSION" ]; then
+            # Use semantic version only (vx.y.z format)
+            echo "VERSION_STR=${{env.NEW_VERSION}}"  >> $GITHUB_ENV
+          else
+            echo "VERSION_STR=${{env.CURRENT_VERSION}}"  >> $GITHUB_ENV
+          fi
 
       - name: Bump version
         uses: Swisyn/android-version-generator-actions@v1.5
-        if: github.event.inputs.release_type != 'none'
+        if: github.event.inputs.release_type != 'none' && env.IS_TAG_TRIGGER != 'true'
         with:
           gradlePath: app/build.gradle # or app/build.gradle.kts 
           versionCode: ${{env.NEW_VERSION_CODE}}
@@ -176,9 +200,13 @@ jobs:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: publish github
-        if: github.event.inputs.build == 'true'
+        if: github.event.inputs.build == 'true' || env.IS_TAG_TRIGGER == 'true'
         run: |
-          bundle exec fastlane android github create_tag:${{ github.event.inputs.github }} publish:${{ github.event.inputs.github }} github:true release_status:${{ github.event.inputs.release_status }} --verbose
+          if [ "${{ env.IS_TAG_TRIGGER }}" == "true" ]; then
+            bundle exec fastlane android github create_tag:false publish:true github:true release_status:release tag_name:${{ github.ref_name }} skip_commit:true skip_push:true --verbose
+          else
+            bundle exec fastlane android github create_tag:${{ github.event.inputs.github }} publish:${{ github.event.inputs.github }} github:true release_status:${{ github.event.inputs.release_status }} --verbose
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
