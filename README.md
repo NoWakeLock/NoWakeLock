@@ -18,7 +18,7 @@
 **Take complete control of your Android device's power management**
 
 [📖 Documentation](https://nowakelock.jasper1024.com/) • 
-[🚀 Releases](https://github.com/NoWakeLock/NoWakeLock/releases) • 
+[🚀 Releases](https://github.com/NoWakeLock/NoWakeLock/releases/latest) • 
 [💬 Telegram](https://t.me/nowakelock) • 
 [🎮 Discord](https://discord.gg/kewmG5AShQ)
 
@@ -91,7 +91,7 @@ NoWakeLock empowers you to take **granular control** of your Android device's ba
 
 ### Installation Steps
 
-1. **Download** the latest APK from [Releases](https://github.com/NoWakeLock/NoWakeLock/releases)
+1. **Download** the latest APK from [Releases](https://github.com/NoWakeLock/NoWakeLock/releases/latest)
 2. **Install** the APK on your device
 3. **Activate** the module in your Xposed manager
 4. **Reboot** your device
@@ -103,9 +103,11 @@ NoWakeLock empowers you to take **granular control** of your Android device's ba
 
 ### Official Distribution Channels
 
+[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.js.nowakelock/)
+&nbsp;&nbsp;&nbsp;
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.js.nowakelock)
 &nbsp;&nbsp;&nbsp;
-[<img src="assets/badge_github.png" alt="Get it on GitHub" height="80">](https://github.com/NoWakeLock/NoWakeLock/releases)
+[<img src="assets/badge_github.png" alt="Get it on GitHub" height="80">](https://github.com/NoWakeLock/NoWakeLock/releases/latest)
 
 </div>
 
