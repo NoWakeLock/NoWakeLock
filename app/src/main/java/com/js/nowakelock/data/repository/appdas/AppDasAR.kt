@@ -286,19 +286,36 @@ class AppDasAR(
 
     //get single AppInfo
     private fun getSysAppInfo(ai: ApplicationInfo): AppInfo {
-        val easting = pm.getApplicationEnabledSetting(ai.packageName)
-        val enabled = ai.enabled &&
-                (easting == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT ||
-                        easting == PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
+        // Try to get enabled setting, fall back to ai.enabled for cross-user apps on Android 16+
+        val enabled = try {
+            val easting = pm.getApplicationEnabledSetting(ai.packageName)
+            ai.enabled &&
+                    (easting == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT ||
+                            easting == PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
+        } catch (e: IllegalArgumentException) {
+            ai.enabled
+        }
+
         val persistent =
             ai.flags and ApplicationInfo.FLAG_PERSISTENT != 0 || "android" == ai.packageName
         val system = ai.flags and
                 (ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
 
+        // Try to get label, fall back for cross-user apps on Android 16+
+        val label = try {
+            pm.getApplicationLabel(ai) as String
+        } catch (e: IllegalArgumentException) {
+            try {
+                ai.loadLabel(pm).toString()
+            } catch (e: Exception) {
+                ai.packageName
+            }
+        }
+
         return AppInfo(
             ai.packageName,
             ai.uid,
-            pm.getApplicationLabel(ai) as String,
+            label,
             ai.icon,
             system,
             enabled,
