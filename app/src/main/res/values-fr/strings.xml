@@ -134,7 +134,6 @@
 
     <string-array name="scopes" translatable="false">
         <item>android</item>
-        <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
 

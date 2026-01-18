@@ -96,7 +96,6 @@
     <string name="Debug_summary">Enable this when you encounter a wakelock/alarm/service that is not logged. Export the full log in Xposed and send it to me through any channel to troubleshoot the problem.</string>
     <string-array name="scopes" translatable="false">
         <item>android</item>
-        <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
 
