@@ -15,7 +15,8 @@
       "Bash(done)",
       "Bash(do mkdir:*)",
       "Bash(cp:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "WebFetch(domain:gitlab.com)"
     ],
     "deny": []
   }
