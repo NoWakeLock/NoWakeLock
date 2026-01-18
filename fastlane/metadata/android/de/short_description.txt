@@ -1,1 +1,1 @@
-Gezielte Android-Energieverwaltung. Wakelocks, Alarme & Services kontrollieren. Benötigt Xposed.
+Android-Energieverwaltung: Wakelocks, Alarme & Services kontrollieren (Xposed).
