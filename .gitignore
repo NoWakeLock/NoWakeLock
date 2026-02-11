@@ -97,3 +97,8 @@ app/release/output.json
 .idea/misc.xml
 .specstory/*
 .idea/*
+research-data/*
+.history/*
+research/__pycache__/*
+research/oneui_fw/*
+research/tmp_bluejay_kernel_android16/*
