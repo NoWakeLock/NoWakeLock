@@ -2,7 +2,40 @@
 
 本文档记录 NoWakeLock 的版本更新历史和重要变更。
 
-## [v3.0.4 Build 81] - 2024-07-21
+## [v3.0.8 Build 85] - 未发布
+
+### 🐛 修复
+- 修复 Android 16 多用户环境下“应用列表”崩溃
+- 增强 Samsung/OneUI 兼容性（OEM fallback + Nest accessor 钩子支持）
+- LSPosed 推荐作用域移除 `com.android.settings.provider`，避免误导
+- 缩短 fastlane metadata 的 `short_description`（避免被截断/产生告警）
+
+---
+
+## [v3.0.7 Build 84] - 2025-07-26
+
+### 🔧 改进
+- Xposed 依赖迁移到 JitPack，移除过时依赖
+
+---
+
+## [v3.0.6 Build 83] - 2025-07-26
+
+### 🔧 改进
+- 优化 GitHub Actions 发版流程（tag/version 处理）
+
+---
+
+## [v3.0.5 Build 82] - 2025-07-25
+
+### ✨ 新功能
+- 增加 F-Droid 可重复构建支持（reproducible builds）
+- APK 命名调整为 `NoWakeLock-%v.apk`（F-Droid 兼容）
+- 文档更新：Android 兼容性说明更新至 16
+
+---
+
+## [v3.0.4 Build 81] - 2025-07-21
 
 ### 🌐 新增语言支持
 - **德语 (Deutsch)** - 完整的德语界面支持
@@ -17,12 +50,12 @@
 
 ---
 
-## [v3.0.3 Build 80] - 2024-05-20
+## [v3.0.3 Build 80] - 2025-05-20
 
 ### 🎉 重大更新
 - **3.x 系列首个正式版本**，完全重构
 - **Material Design 3** 全新界面设计
-- **Android 7-15** 兼容性支持
+- **Android 7-16** 兼容性支持
 - **多用户支持** 完整实现
 - **事件追踪系统** 全面升级
 
@@ -48,7 +81,7 @@
 
 ---
 
-## [v3.0.2 Build 77] - 2024-05-16
+## [v3.0.2 Build 77] - 2025-05-16
 
 ### ✨ 新功能
 - **模块检查功能** - 完整的模块状态验证
@@ -62,7 +95,7 @@
 
 ---
 
-## [v3.0.1 Build 75-76] - 2024-05-05
+## [v3.0.1 Build 75-76] - 2025-05-05
 
 ### 🔧 改进
 - **统一 Hook 策略** - Service、Alarm、WakeLock 处理优化
@@ -76,7 +109,7 @@
 
 ---
 
-## [v2.0.5 Build 62-63] - 2024-03
+## [v2.0.5 Build 62-63] - 2025-03
 
 ### ✨ 新功能
 - **主题化启动图标** - 支持动态主题
@@ -114,7 +147,7 @@
 |------|------|------|
 | UI 框架 | 传统 View | Jetpack Compose |
 | 设计语言 | Material Design 2 | Material Design 3 |
-| Android 支持 | 7-11 | 7-15 |
+| Android 支持 | 7-11 | 7-16 |
 | 多用户 | ❌ | ✅ |
 | 模块检测 | 基础 | 完整 |
 | 性能 | 一般 | 优化 |

@@ -2,7 +2,40 @@
 
 This document records the version update history and important changes of NoWakeLock.
 
-## [v3.0.4 Build 81] - 2024-07-21
+## [v3.0.8 Build 85] - Unreleased
+
+### 🐛 Fixes
+- Fix crash in multi-user app list on Android 16
+- Improve Samsung/OneUI compatibility (OEM fallback + Nest accessor support for hooks)
+- Remove `com.android.settings.provider` from the recommended LSPosed scope list
+- Shorten fastlane metadata `short_description` to avoid truncation/warnings
+
+---
+
+## [v3.0.7 Build 84] - 2025-07-26
+
+### 🔧 Improvements
+- Switch Xposed dependency to JitPack and remove deprecated artifacts
+
+---
+
+## [v3.0.6 Build 83] - 2025-07-26
+
+### 🔧 Improvements
+- Improve GitHub Actions release workflow (tag/version handling)
+
+---
+
+## [v3.0.5 Build 82] - 2025-07-25
+
+### ✨ New Features
+- Add F-Droid reproducible builds support
+- Use F-Droid compatible APK naming (`NoWakeLock-%v.apk`)
+- Update docs: Android compatibility up to 16
+
+---
+
+## [v3.0.4 Build 81] - 2025-07-21
 
 ### 🌐 New Language Support
 - **German (Deutsch)** - Complete German interface support
@@ -17,12 +50,12 @@ This document records the version update history and important changes of NoWake
 
 ---
 
-## [v3.0.3 Build 80] - 2024-05-20
+## [v3.0.3 Build 80] - 2025-05-20
 
 ### 🎉 Major Update
 - **First stable release of 3.x series**, completely restructured
 - **Material Design 3** brand new interface design
-- **Android 7-15** compatibility support
+- **Android 7-16** compatibility support
 - **Multi-user support** fully implemented
 - **Event tracking system** comprehensively upgraded
 
@@ -48,7 +81,7 @@ This document records the version update history and important changes of NoWake
 
 ---
 
-## [v3.0.2 Build 77] - 2024-05-16
+## [v3.0.2 Build 77] - 2025-05-16
 
 ### ✨ New Features
 - **Module check functionality** - Complete module status verification
@@ -62,7 +95,7 @@ This document records the version update history and important changes of NoWake
 
 ---
 
-## [v3.0.1 Build 75-76] - 2024-05-05
+## [v3.0.1 Build 75-76] - 2025-05-05
 
 ### 🔧 Improvements
 - **Unified Hook strategy** - Service, Alarm, WakeLock processing optimization
@@ -76,7 +109,7 @@ This document records the version update history and important changes of NoWake
 
 ---
 
-## [v2.0.5 Build 62-63] - 2024-03
+## [v2.0.5 Build 62-63] - 2025-03
 
 ### ✨ New Features
 - **Themed startup icon** - Support for dynamic themes
@@ -114,7 +147,7 @@ This document records the version update history and important changes of NoWake
 |---------|------|------|
 | UI Framework | Traditional View | Jetpack Compose |
 | Design Language | Material Design 2 | Material Design 3 |
-| Android Support | 7-11 | 7-15 |
+| Android Support | 7-11 | 7-16 |
 | Multi-user | ❌ | ✅ |
 | Module Detection | Basic | Complete |
 | Performance | General | Optimized |

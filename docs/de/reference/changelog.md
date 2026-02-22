@@ -2,7 +2,40 @@
 
 Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderungen von NoWakeLock.
 
-## [v3.0.4 Build 81] - 21.07.2024
+## [v3.0.8 Build 85] - Unveröffentlicht
+
+### 🐛 Korrekturen
+- Absturz in der App-Liste bei Mehrbenutzern (Multi-User) unter Android 16 behoben
+- Verbesserte Samsung/OneUI-Kompatibilität (OEM-Fallback + Nest-Accessor-Unterstützung für Hooks)
+- `com.android.settings.provider` aus der empfohlenen LSPosed-Scopes-Liste entfernt
+- Fastlane-Metadaten `short_description` gekürzt (verhindert Trunkierung/Warnungen)
+
+---
+
+## [v3.0.7 Build 84] - 26.07.2025
+
+### 🔧 Verbesserungen
+- Xposed-Abhängigkeit auf JitPack umgestellt und veraltete Artefakte entfernt
+
+---
+
+## [v3.0.6 Build 83] - 26.07.2025
+
+### 🔧 Verbesserungen
+- GitHub Actions Release-Workflow verbessert (Tag/Version-Handling)
+
+---
+
+## [v3.0.5 Build 82] - 25.07.2025
+
+### ✨ Neue Funktionen
+- Unterstützung für reproduzierbare F-Droid-Builds hinzugefügt
+- F-Droid-kompatible APK-Benennung (`NoWakeLock-%v.apk`)
+- Dokumentation aktualisiert: Android-Kompatibilität bis 16
+
+---
+
+## [v3.0.4 Build 81] - 21.07.2025
 
 ### 🌐 Neue Sprachunterstützung
 - **Deutsch** - Vollständige deutsche Oberflächenunterstützung
@@ -17,12 +50,12 @@ Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderu
 
 ---
 
-## [v3.0.3 Build 80] - 20.05.2024
+## [v3.0.3 Build 80] - 20.05.2025
 
 ### 🎉 Großes Update
 - **Erste offizielle Version der 3.x-Serie**, vollständig umstrukturiert
 - **Material Design 3** völlig neues Oberflächendesign
-- **Android 7-15** Kompatibilitätsunterstützung
+- **Android 7-16** Kompatibilitätsunterstützung
 - **Mehrbenutzerunterstützung** vollständige Implementierung
 - **Ereignisverfolgungssystem** umfassende Aktualisierung
 
@@ -48,7 +81,7 @@ Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderu
 
 ---
 
-## [v3.0.2 Build 77] - 16.05.2024
+## [v3.0.2 Build 77] - 16.05.2025
 
 ### ✨ Neue Funktionen
 - **Modulprüfungsfunktion** - Vollständige Modulstatus-Validierung
@@ -62,7 +95,7 @@ Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderu
 
 ---
 
-## [v3.0.1 Build 75-76] - 05.05.2024
+## [v3.0.1 Build 75-76] - 05.05.2025
 
 ### 🔧 Verbesserungen
 - **Einheitliche Hook-Strategie** - Service-, Alarm-, WakeLock-Behandlungsoptimierung
@@ -76,7 +109,7 @@ Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderu
 
 ---
 
-## [v2.0.5 Build 62-63] - März 2024
+## [v2.0.5 Build 62-63] - März 2025
 
 ### ✨ Neue Funktionen
 - **Thematisierte Starticons** - Unterstützung für dynamische Themen
@@ -114,7 +147,7 @@ Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderu
 |---------|------|------|
 | UI-Framework | Traditionelle View | Jetpack Compose |
 | Design-Sprache | Material Design 2 | Material Design 3 |
-| Android-Unterstützung | 7-11 | 7-15 |
+| Android-Unterstützung | 7-11 | 7-16 |
 | Mehrbenutzer | ❌ | ✅ |
 | Moduldetektion | Grundlegend | Vollständig |
 | Leistung | Allgemein | Optimiert |
