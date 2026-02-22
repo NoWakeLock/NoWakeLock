@@ -212,9 +212,51 @@ class AlarmHook {
                 }
             }
 
+            // OEM fallback (Samsung/OneUI etc): triggerAlarmsLocked(long nowElapsed, ArrayList triggerList)
+            // If we couldn't match any hardcoded strategies, try to locate the ArrayList argument at runtime.
+            val detectedPos = detectTriggerListPos(args)
+            if (detectedPos != null) {
+                val positions = AlarmParamPositions(detectedPos)
+                if (tryExtractWithPositions(param, positions)) {
+                    alarmPositionsRef.set(positions)
+                    XpUtil.log("Detected triggerAlarmsLocked triggerListPos=$detectedPos on Android ${Build.VERSION.SDK_INT}")
+                    return
+                }
+            }
+
             // If all strategies failed, mark as failed
             alarmHookFailed = true
             XpUtil.log("All triggerAlarmsLocked parameter extraction strategies failed")
+        }
+
+        private fun detectTriggerListPos(args: Array<Any?>): Int? {
+            // Pass 1: prefer a non-empty list that looks like an Alarm list.
+            for (i in args.indices) {
+                val list = args[i] as? ArrayList<*> ?: continue
+                val first = list.firstOrNull { it != null } ?: continue
+                if (looksLikeAlarm(first)) {
+                    return i
+                }
+            }
+
+            // Pass 2: fall back to the first ArrayList position (covers empty triggerList case).
+            for (i in args.indices) {
+                if (args[i] is ArrayList<*>) {
+                    return i
+                }
+            }
+            return null
+        }
+
+        private fun looksLikeAlarm(obj: Any): Boolean {
+            return try {
+                obj.javaClass.getDeclaredField("statsTag")
+                obj.javaClass.getDeclaredField("packageName")
+                obj.javaClass.getDeclaredField("uid")
+                true
+            } catch (_: Throwable) {
+                false
+            }
         }
 
         /**

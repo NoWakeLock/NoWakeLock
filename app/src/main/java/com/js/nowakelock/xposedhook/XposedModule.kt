@@ -34,19 +34,19 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                 try {
                     WakelockHook.hookWakeLocks(lpparam)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     XpUtil.log("${e.message}")
                     XpUtil.log("${e.stackTrace}")
                 }
                 try {
                     AlarmHook.hookAlarm(lpparam)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     XpUtil.log("${e.message}")
                     XpUtil.log("${e.stackTrace}")
                 }
                 try {
                     ServiceHook.hookService(lpparam)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     XpUtil.log("${e.message}")
                     XpUtil.log("${e.stackTrace}")
                 }
@@ -73,7 +73,7 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         AlarmHook.booted = true
                     }
                 })
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             XpUtil.log("${e.message}")
             XpUtil.log("${e.stackTrace}")
 
@@ -91,7 +91,7 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                             AlarmHook.booted = true
                         }
                     })
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 XpUtil.log("${e.message}")
                 XpUtil.log("${e.stackTrace}")
 
@@ -109,7 +109,7 @@ open class XposedModule : IXposedHookZygoteInit, IXposedHookLoadPackage {
                                 AlarmHook.booted = true
                             }
                         })
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     XpUtil.log("${e.message}")
                     XpUtil.log("${e.stackTrace}")
                 }

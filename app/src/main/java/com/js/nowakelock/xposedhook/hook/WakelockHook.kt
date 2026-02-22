@@ -112,9 +112,19 @@ class WakelockHook {
             lpparam: XC_LoadPackage.LoadPackageParam
         ): Boolean {
             try {
-                // Find all methods named acquireWakeLockInternal
-                val methods = 
+                // Find all methods named acquireWakeLockInternal.
+                // Samsung/OneUI may not expose the original method name and instead uses a Nest accessor
+                // like: m773$$Nest$macquireWakeLockInternal(...)
+                var methods =
                     powerManagerServiceClass.declaredMethods.filter { it.name == "acquireWakeLockInternal" }
+
+                if (methods.isEmpty()) {
+                    methods =
+                        powerManagerServiceClass.declaredMethods.filter { it.name.contains("acquireWakeLockInternal") }
+                    if (methods.isNotEmpty()) {
+                        XpUtil.log("Fallback: Found ${methods.size} acquireWakeLockInternal-like methods via contains()")
+                    }
+                }
                 
                 XpUtil.log("Found ${methods.size} acquireWakeLockInternal methods")
                 
@@ -154,7 +164,7 @@ class WakelockHook {
                         override fun beforeHookedMethod(param: MethodHookParam) {
                             try {
                                 val context = AndroidAppHelper.currentApplication()
-                                val lock = param.args[0] as IBinder
+                                val lock = param.args.firstOrNull { it is IBinder } as? IBinder ?: return
                                 handleWakeLockRelease(lock, context)
                             } catch (e: Exception) {
                                 XpUtil.log("Error in releaseWakeLockInternal hook: ${e.message}")
@@ -164,8 +174,39 @@ class WakelockHook {
                 return true
             } catch (e: Throwable) {
                 XpUtil.log("Error hooking releaseWakeLockInternal method: ${e.message}")
-                e.printStackTrace()
-                return false
+
+                // Samsung/OneUI fallback: Nest accessor method, e.g. m787$$Nest$mreleaseWakeLockInternal(PMS, IBinder, int)
+                try {
+                    val methods =
+                        powerManagerServiceClass.declaredMethods.filter { it.name.contains("releaseWakeLockInternal") }
+
+                    XpUtil.log("Fallback: Found ${methods.size} releaseWakeLockInternal-like methods via contains()")
+                    if (methods.isEmpty()) {
+                        e.printStackTrace()
+                        return false
+                    }
+
+                    for (method in methods) {
+                        XpUtil.log("Hooking releaseWakeLockInternal-like method: ${method.name}(${method.parameterTypes.joinToString()})")
+                        XposedBridge.hookMethod(method, object : XC_MethodHook() {
+                            @Throws(Throwable::class)
+                            override fun beforeHookedMethod(param: MethodHookParam) {
+                                try {
+                                    val context = AndroidAppHelper.currentApplication()
+                                    val lock = param.args.firstOrNull { it is IBinder } as? IBinder ?: return
+                                    handleWakeLockRelease(lock, context)
+                                } catch (t: Throwable) {
+                                    XpUtil.log("Error in releaseWakeLockInternal-like hook: ${t.message}")
+                                }
+                            }
+                        })
+                    }
+                    return true
+                } catch (t: Throwable) {
+                    XpUtil.log("Fallback error hooking releaseWakeLockInternal-like methods: ${t.message}")
+                    t.printStackTrace()
+                    return false
+                }
             }
         }
 
@@ -249,9 +290,10 @@ class WakelockHook {
             // Try the expected strategy for current version first
             if (androidVersionIndex < acquireWakeLockPositionStrategies.size) {
                 val positions = acquireWakeLockPositionStrategies[androidVersionIndex]
-                if (tryExtractWithPositions(param, positions)) {
-                    // Cache successful positions
-                    acquireWakeLockPositionsRef.set(positions)
+                val extracted = tryExtractWithPositions(param, positions)
+                if (extracted != null) {
+                    // Cache successful positions (may be shifted for Nest accessor)
+                    acquireWakeLockPositionsRef.set(extracted)
                     XpUtil.log("Successfully extracted parameters for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
                     return
                 } else {
@@ -263,9 +305,14 @@ class WakelockHook {
             // Try all strategies if the expected one failed
             XpUtil.log("Trying all strategies for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
             for ((index, positions) in acquireWakeLockPositionStrategies.withIndex()) {
-                if (index != androidVersionIndex && tryExtractWithPositions(param, positions)) {
-                    // Cache successful positions
-                    acquireWakeLockPositionsRef.set(positions)
+                if (index != androidVersionIndex) {
+                    val extracted = tryExtractWithPositions(param, positions)
+                    if (extracted == null) {
+                        continue
+                    }
+
+                    // Cache successful positions (may be shifted for Nest accessor)
+                    acquireWakeLockPositionsRef.set(extracted)
                     
                     // Log warning that we're using different positions than expected
                     XpUtil.log("Warning: Using unexpected parameter positions for acquireWakeLockInternal on Android ${Build.VERSION.SDK_INT}")
@@ -285,9 +332,42 @@ class WakelockHook {
         private fun tryExtractWithPositions(
             param: XC_MethodHook.MethodHookParam,
             positions: WakeLockParamPositions
+        ): WakeLockParamPositions? {
+            val args = param.args
+
+            // First try positions as-is
+            if (tryExtractWithExactPositions(param, positions)) {
+                return positions
+            }
+
+            // Samsung/OneUI Nest accessor: static method adds a leading PowerManagerService parameter.
+            // Example (A16): m773$$Nest$macquireWakeLockInternal(PMS, IBinder, int, int, String, String, ..., int uid, ...)
+            if (shouldShiftForNestAccessor(args)) {
+                val shifted = WakeLockParamPositions(
+                    positions.lockPos + 1,
+                    positions.tagPos + 1,
+                    positions.packagePos + 1,
+                    positions.uidPos + 1
+                )
+                if (tryExtractWithExactPositions(param, shifted)) {
+                    return shifted
+                }
+            }
+
+            return null
+        }
+
+        private fun shouldShiftForNestAccessor(args: Array<Any?>): Boolean {
+            val first = args.firstOrNull() ?: return false
+            return first.javaClass.name == "com.android.server.power.PowerManagerService"
+        }
+
+        private fun tryExtractWithExactPositions(
+            param: XC_MethodHook.MethodHookParam,
+            positions: WakeLockParamPositions
         ): Boolean {
             val args = param.args
-            
+
             // Check if positions are valid for this args array
             if (args.size <= maxOf(
                     positions.lockPos,
@@ -298,14 +378,14 @@ class WakelockHook {
             ) {
                 return false
             }
-            
+
             try {
                 // Extract parameters
                 val lock = args[positions.lockPos] as? IBinder
                 val wN = args[positions.tagPos] as? String
                 val pN = args[positions.packagePos] as? String
                 val uid = args[positions.uidPos] as? Int
-                
+
                 // Validate parameters
                 if (lock != null && wN != null && pN != null && uid != null) {
                     // Parameters are valid, process the wakelock
@@ -317,7 +397,7 @@ class WakelockHook {
                 // This positions strategy failed
                 return false
             }
-            
+
             return false
         }
 
