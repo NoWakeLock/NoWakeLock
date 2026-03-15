@@ -4,6 +4,7 @@ Instructions for AI coding assistants using OpenSpec for spec-driven development
 
 ## TL;DR Quick Checklist
 
+- For Gradle tests or test-related assemble tasks in this repo, always include `-PuseLocalMavenBootstrap=true --offline` to avoid refreshing the Xposed SNAPSHOT dependency metadata
 - Search existing work: `openspec spec list --long`, `openspec list` (use `rg` only for full-text search)
 - Decide scope: new capability vs modify existing capability
 - Pick a unique `change-id`: kebab-case, verb-led (`add-`, `update-`, `remove-`, `refactor-`)

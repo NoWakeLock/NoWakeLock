@@ -590,6 +590,29 @@ class WakelockHook {
             return InfoEvent.generateInstanceId(iBinderHash, timestamp)
         }
 
+        internal fun lastAllowKey(name: String, packageName: String, userId: Int): String {
+            return "$name|$packageName|$userId"
+        }
+
+        internal fun getLastAllowTime(
+            lastAllowTimes: Map<String, Long>,
+            name: String,
+            packageName: String,
+            userId: Int
+        ): Long {
+            return lastAllowTimes[lastAllowKey(name, packageName, userId)] ?: 0L
+        }
+
+        internal fun recordLastAllowTime(
+            lastAllowTimes: MutableMap<String, Long>,
+            name: String,
+            packageName: String,
+            userId: Int,
+            now: Long
+        ) {
+            lastAllowTimes[lastAllowKey(name, packageName, userId)] = now
+        }
+
         // PROTECTED - DO NOT MODIFY
         // handle wakelock acquire
         private fun handleWakeLockAcquire(
@@ -602,7 +625,14 @@ class WakelockHook {
             val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
             val instanceId = generateInstanceId(lock, now)
             val isBlocked =
-                block(wN, pN, userId, lastAllowTime[wN] ?: 0, now, booted && !pm.isInteractive)
+                block(
+                    wN,
+                    pN,
+                    userId,
+                    getLastAllowTime(lastAllowTime, wN, pN, userId),
+                    now,
+                    booted && !pm.isInteractive
+                )
 
             if (isBlocked) {
                 XpUtil.log("$pN wakeLock:$wN block '${pm.isInteractive}' '$booted'")
@@ -613,7 +643,7 @@ class WakelockHook {
             }
 
             // Allow wakelock
-            lastAllowTime[wN] = now
+            recordLastAllowTime(lastAllowTime, wN, pN, userId, now)
             wlTs[lock] = WLT(
                 wakelockName = wN, packageName = pN, userId = userId,
                 startTime = now, instanceId = instanceId

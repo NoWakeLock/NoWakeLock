@@ -194,9 +194,9 @@ NoWakeLock/
 
 ### 🌿 Branch Strategy
 
-- **`dev`** - Beta releases, generally stable
-- **`feature`** - Experimental features, potentially unstable
-- **`master`** - Reserved for stable releases
+- **`dev`** - Primary integration and release branch
+- **`fix/*` / `feature/*`** - Topic branches for focused changes
+- **Release tags** - Semantic version tags in `vX.Y.Z` format
 
 ### 🛠️ Building from Source
 
@@ -205,11 +205,24 @@ NoWakeLock/
 git clone https://github.com/NoWakeLock/NoWakeLock.git
 cd NoWakeLock
 
-# Switch to development branch
+# Switch to the main development branch
 git checkout dev
 
 # Build with Gradle
 ./gradlew assembleDebug
+```
+
+### ✅ Test Commands
+
+```bash
+# Unit tests
+./gradlew -PuseLocalMavenBootstrap=true --offline :app:testDebugUnitTest
+
+# Build instrumentation APKs
+./gradlew -PuseLocalMavenBootstrap=true --offline :app:assembleDebug :app:assembleDebugAndroidTest
+
+# Run connected-device app tests
+powershell -ExecutionPolicy Bypass -File .\scripts\run-connected-android-tests.ps1 -SkipBootstrap
 ```
 
 ### 📋 Development Requirements

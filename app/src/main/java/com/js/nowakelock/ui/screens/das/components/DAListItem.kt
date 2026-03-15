@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -373,131 +374,106 @@ private fun ControlSection(
     onToggleFullBlock: (Boolean) -> Unit,
     onToggleScreenOffBlock: (Boolean) -> Unit
 ) {
-    ConstraintLayout(
+    FlowRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .padding(start = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        val (blockLabel, block, screenOffLabel, screenOffBlock, timeLabel, time) = createRefs()
         // Block section
         // Full block label and switch
-        Text(
-            text = stringResource(R.string.allow),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.constrainAs(blockLabel) {
-                start.linkTo(parent.start, 16.dp)
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-            },
-        )
-        Switch(
-            checked = !daItem.fullBlocked,
-            onCheckedChange = onToggleFullBlock,
-            modifier = Modifier
-                .scale(0.75f)
-                .constrainAs(block) {
-                    start.linkTo(blockLabel.end, 4.dp)
-                    top.linkTo(blockLabel.top)
-                    bottom.linkTo(blockLabel.bottom)
-                },
-
-            thumbContent = if (daItem.fullBlocked) {
-                {
-                    Icon(
-                        imageVector = Icons.Outlined.Bolt,
-                        contentDescription = null,
-                        modifier = Modifier.size(12.dp)
-                    )
-                }
-            } else null)
+        Row(
+            modifier = Modifier.testTag("da_control_allow"),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.allow),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Switch(
+                checked = !daItem.fullBlocked,
+                onCheckedChange = onToggleFullBlock,
+                modifier = Modifier.scale(0.75f),
+                thumbContent = if (daItem.fullBlocked) {
+                    {
+                        Icon(
+                            imageVector = Icons.Outlined.Bolt,
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                } else null
+            )
+        }
 
         // Screen off label and switch
-        Text(
-            text = stringResource(R.string.screen_off),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.constrainAs(screenOffLabel) {
-                start.linkTo(block.end, 8.dp)
-                top.linkTo(block.top)
-                bottom.linkTo(block.bottom)
-            })
-        Switch(
-            checked = !daItem.screenOffBlock,
-            onCheckedChange = onToggleScreenOffBlock,
-            enabled = !daItem.fullBlocked,
-            modifier = Modifier
-                .scale(0.75f)
-                .constrainAs(screenOffBlock) {
-                    start.linkTo(screenOffLabel.end, 4.dp)
-                    top.linkTo(screenOffLabel.top)
-                    bottom.linkTo(screenOffLabel.bottom)
-                })
-
+        Row(
+            modifier = Modifier.testTag("da_control_screen_off"),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.screen_off),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Switch(
+                checked = !daItem.screenOffBlock,
+                onCheckedChange = onToggleScreenOffBlock,
+                enabled = !daItem.fullBlocked,
+                modifier = Modifier.scale(0.75f),
+            )
+        }
 
         // Timeout section
-        Text(
-            text = stringResource(R.string.timeout),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.constrainAs(timeLabel) {
-                start.linkTo(screenOffBlock.end, 8.dp)
-                top.linkTo(screenOffBlock.top)
-                bottom.linkTo(screenOffBlock.bottom)
-            })
+        Row(
+            modifier = Modifier.testTag("da_control_timeout"),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.timeout),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
 
-        // BasicTextField
-        BasicTextField(
-            value = timeWindowText,
-            onValueChange = onTimeWindowTextChange,
-            modifier = Modifier
-                .width(65.dp)
-                .height(36.dp)
-                .border(
-                    width = 1.dp,
-                    color = if (!daItem.fullBlocked) MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-                    else MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .constrainAs(time) {
-                    start.linkTo(timeLabel.end, 0.dp)
-                    top.linkTo(timeLabel.top)
-                    bottom.linkTo(timeLabel.bottom)
-                    end.linkTo(parent.end)
-                },
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                textAlign = TextAlign.End,
-                color = if (!daItem.fullBlocked)
-                    MaterialTheme.colorScheme.onSurface
-                else
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            enabled = !daItem.fullBlocked,
-            singleLine = true,
-            decorationBox = { innerTextField ->
-                if (timeWindowText.isEmpty()) {
-                    Text(
-                        text = "0",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-                        textAlign = TextAlign.End
+            // BasicTextField
+            BasicTextField(
+                value = timeWindowText,
+                onValueChange = onTimeWindowTextChange,
+                modifier = Modifier
+                    .testTag("da_control_timeout_field")
+                    .width(65.dp)
+                    .height(36.dp)
+                    .border(
+                        width = 1.dp,
+                        color = if (!daItem.fullBlocked) MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        else MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(4.dp)
                     )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(
-                        text = "s",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (!daItem.fullBlocked)
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        else
-                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
-                    )
-                } else {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(modifier = Modifier.weight(1f)) {
-                            innerTextField()
-                        }
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    textAlign = TextAlign.End,
+                    color = if (!daItem.fullBlocked)
+                        MaterialTheme.colorScheme.onSurface
+                    else
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                enabled = !daItem.fullBlocked,
+                singleLine = true,
+                decorationBox = { innerTextField ->
+                    if (timeWindowText.isEmpty()) {
+                        Text(
+                            text = "0",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                            textAlign = TextAlign.End
+                        )
                         Spacer(modifier = Modifier.width(2.dp))
                         Text(
                             text = "s",
@@ -507,10 +483,25 @@ private fun ControlSection(
                             else
                                 MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
                         )
+                    } else {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                innerTextField()
+                            }
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Text(
+                                text = "s",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (!daItem.fullBlocked)
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                            )
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
@@ -572,6 +563,52 @@ fun Preview2() {
         onToggleFullBlock = {},
         onToggleScreenOffBlock = {},
         onTimeWindowChange = {})
+}
+
+@Composable
+@Preview(showBackground = true, widthDp = 320, name = "DAListItem (Narrow 320)")
+fun PreviewDAListItemNarrow320() {
+    val dAItem = DAItem(
+        name = "KEEP_SCREEN_ON_FLAG",
+        packageName = "com.facebook.katana",
+        count = 47,
+        blockCount = 12,
+        countTime = 8100000,
+        fullBlocked = false,
+        timeWindowSec = 60,
+        screenOffBlock = true,
+        type = Type.Wakelock
+    )
+
+    DAListItem(
+        daItem = dAItem,
+        onToggleFullBlock = {},
+        onToggleScreenOffBlock = {},
+        onTimeWindowChange = {}
+    )
+}
+
+@Composable
+@Preview(showBackground = true, widthDp = 320, fontScale = 1.3f, name = "DAListItem (Narrow 320, Font 1.3)")
+fun PreviewDAListItemNarrow320FontScale() {
+    val dAItem = DAItem(
+        name = "KEEP_SCREEN_ON_FLAG",
+        packageName = "com.facebook.katana",
+        count = 47,
+        blockCount = 12,
+        countTime = 8100000,
+        fullBlocked = false,
+        timeWindowSec = 60,
+        screenOffBlock = true,
+        type = Type.Wakelock
+    )
+
+    DAListItem(
+        daItem = dAItem,
+        onToggleFullBlock = {},
+        onToggleScreenOffBlock = {},
+        onTimeWindowChange = {}
+    )
 }
 
 @Composable

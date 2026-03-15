@@ -1,7 +1,20 @@
-# Changelog
+﻿# Changelog
 
 This document records the version update history and important changes of NoWakeLock.
 
+## [v3.0.9 Build 86] - 2026-03-15
+
+### 🐛 Fixes
+- Fix cross-app minimum-interval state collisions for same-name WakeLock/Alarm entries
+- Fix the Service-domain screen-off-only blocking rule not taking effect
+- Fix timeout field clipping in the DA control section on narrow widths
+
+### 🧪 Testing & Quality
+- Add unit tests for `calculateTime`, backup JSON, preferences mapping, and wakelock counter/registry
+- Add instrumentation coverage for MainActivity, `XProvider`, and narrow-width layouts
+- Add connected-device automation scripts and validation docs
+
+---
 ## [v3.0.8 Build 85] - Unreleased
 
 ### 🐛 Fixes
@@ -224,3 +237,4 @@ This document records the version update history and important changes of NoWake
 
 !!! warning "Upgrade Reminder"
     Please backup configuration before major version upgrades. There may be incompatibilities between some versions.
+

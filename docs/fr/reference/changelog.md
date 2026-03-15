@@ -1,7 +1,20 @@
-# Journal des modifications
+﻿# Journal des modifications
 
 Ce document enregistre l'historique des mises à jour de version et les changements importants de NoWakeLock.
 
+## [v3.0.9 Build 86] - 2026-03-15
+
+### 🐛 Corrections
+- Corrige les collisions inter-apps de l''état d''intervalle minimum pour des entrées WakeLock/Alarm de même nom
+- Corrige la règle « bloquer uniquement écran éteint » qui ne s''appliquait pas dans le domaine Service
+- Corrige le champ de délai tronqué dans la zone de contrôle DA sur largeur étroite
+
+### 🧪 Tests et qualité
+- Ajoute des tests unitaires pour `calculateTime`, le JSON de sauvegarde, le mapping des préférences et le compteur/registre des wakelocks
+- Ajoute des tests d''instrumentation pour MainActivity, `XProvider` et les layouts étroits
+- Ajoute un script d''automatisation sur appareil réel et la documentation de validation
+
+---
 ## [v3.0.8 Build 85] - Non publié
 
 ### 🐛 Corrections
@@ -224,3 +237,4 @@ Ce document enregistre l'historique des mises à jour de version et les changeme
 
 !!! warning "Rappel de mise à niveau"
     Sauvegardez impérativement la configuration avant les mises à niveau de versions majeures, certaines versions peuvent présenter des incompatibilités.
+

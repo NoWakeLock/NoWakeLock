@@ -1,7 +1,20 @@
-# Änderungsprotokoll
+﻿# Änderungsprotokoll
 
 Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderungen von NoWakeLock.
 
+## [v3.0.9 Build 86] - 2026-03-15
+
+### 🐛 Korrekturen
+- Behebt app-übergreifende Kollisionen des Mindestintervall-Status bei gleichnamigen WakeLock-/Alarm-Einträgen
+- Behebt, dass die Regel „nur bei ausgeschaltetem Bildschirm blockieren“ im Service-Bereich nicht wirksam war
+- Behebt das Abschneiden des Timeout-Felds im DA-Steuerbereich bei schmaler Breite
+
+### 🧪 Tests & Qualität
+- Fügt Unit-Tests für `calculateTime`, Backup-JSON, Preferences-Mapping sowie Wakelock Counter/Registry hinzu
+- Fügt Instrumentation-Tests für MainActivity, `XProvider` und schmale Layouts hinzu
+- Fügt Skripte und Dokumentation für automatisierte Tests auf echten Geräten hinzu
+
+---
 ## [v3.0.8 Build 85] - Unveröffentlicht
 
 ### 🐛 Korrekturen
@@ -224,3 +237,4 @@ Dieses Dokument dokumentiert die Versionsupdate-Geschichte und wichtigen Änderu
 
 !!! warning "Upgrade-Erinnerung"
     Vor großen Versionsupgrades unbedingt Konfigurationen sichern. Zwischen bestimmten Versionen können inkompatible Situationen bestehen.
+
