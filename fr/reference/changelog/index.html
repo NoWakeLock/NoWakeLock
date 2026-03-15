@@ -35,7 +35,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -847,6 +847,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v309-build-86-2026-03-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [v3.0.9 Build 86] - 2026-03-15
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[v3.0.9 Build 86] - 2026-03-15">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#corrections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🐛 Corrections
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests-et-qualite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Tests et qualité
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v308-build-85-non-publie" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -859,7 +898,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#corrections" class="md-nav__link">
+  <a href="#corrections_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         🐛 Corrections
@@ -1082,7 +1121,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#corrections_1" class="md-nav__link">
+  <a href="#corrections_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         🐛 Corrections
@@ -1121,7 +1160,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#corrections_2" class="md-nav__link">
+  <a href="#corrections_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         🐛 Corrections
@@ -1584,8 +1623,22 @@
 
 <h1 id="journal-des-modifications">Journal des modifications<a class="headerlink" href="#journal-des-modifications" title="Permanent link">&para;</a></h1>
 <p>Ce document enregistre l'historique des mises à jour de version et les changements importants de NoWakeLock.</p>
-<h2 id="v308-build-85-non-publie">[v3.0.8 Build 85] - Non publié<a class="headerlink" href="#v308-build-85-non-publie" title="Permanent link">&para;</a></h2>
+<h2 id="v309-build-86-2026-03-15">[v3.0.9 Build 86] - 2026-03-15<a class="headerlink" href="#v309-build-86-2026-03-15" title="Permanent link">&para;</a></h2>
 <h3 id="corrections">🐛 Corrections<a class="headerlink" href="#corrections" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Corrige les collisions inter-apps de l''état d''intervalle minimum pour des entrées WakeLock/Alarm de même nom</li>
+<li>Corrige la règle « bloquer uniquement écran éteint » qui ne s''appliquait pas dans le domaine Service</li>
+<li>Corrige le champ de délai tronqué dans la zone de contrôle DA sur largeur étroite</li>
+</ul>
+<h3 id="tests-et-qualite">🧪 Tests et qualité<a class="headerlink" href="#tests-et-qualite" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ajoute des tests unitaires pour <code>calculateTime</code>, le JSON de sauvegarde, le mapping des préférences et le compteur/registre des wakelocks</li>
+<li>Ajoute des tests d''instrumentation pour MainActivity, <code>XProvider</code> et les layouts étroits</li>
+<li>Ajoute un script d''automatisation sur appareil réel et la documentation de validation</li>
+</ul>
+<hr />
+<h2 id="v308-build-85-non-publie">[v3.0.8 Build 85] - Non publié<a class="headerlink" href="#v308-build-85-non-publie" title="Permanent link">&para;</a></h2>
+<h3 id="corrections_1">🐛 Corrections<a class="headerlink" href="#corrections_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Correction d'un crash de la liste des apps en multi-utilisateur sur Android 16</li>
 <li>Amélioration de la compatibilité Samsung/OneUI (fallback OEM + support Nest accessor pour les hooks)</li>
@@ -1668,7 +1721,7 @@
 <li><strong>Optimisation de l'interface de détection</strong> - Affichage d'état plus clair</li>
 <li><strong>Stratégie de migration de base de données</strong> - Traitement amélioré de mise à niveau de version</li>
 </ul>
-<h3 id="corrections_1">🐛 Corrections<a class="headerlink" href="#corrections_1" title="Permanent link">&para;</a></h3>
+<h3 id="corrections_2">🐛 Corrections<a class="headerlink" href="#corrections_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Correction des problèmes de détection de module sur certains appareils</li>
 <li>Amélioration du processus de mise à niveau de base de données</li>
@@ -1682,7 +1735,7 @@
 <li><strong>Optimisation des performances</strong> - Réduction de l'occupation des ressources système</li>
 <li><strong>Refactorisation du code</strong> - Amélioration de la qualité et maintenabilité du code</li>
 </ul>
-<h3 id="corrections_2">🐛 Corrections<a class="headerlink" href="#corrections_2" title="Permanent link">&para;</a></h3>
+<h3 id="corrections_3">🐛 Corrections<a class="headerlink" href="#corrections_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Correction des problèmes de compatibilité sur certaines versions Android</li>
 <li>Amélioration de la stabilité Hook</li>
@@ -1866,7 +1919,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="February 22, 2026 08:50:22 UTC"><span class="timeago" datetime="2026-02-22T08:50:22+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="February 22, 2026 08:50:22 UTC">2026-02-22</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 15, 2026 01:57:42 UTC"><span class="timeago" datetime="2026-03-15T01:57:42+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 15, 2026 01:57:42 UTC">2026-03-15</span>
   </span>
 
     
