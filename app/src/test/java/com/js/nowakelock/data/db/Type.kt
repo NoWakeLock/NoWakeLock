@@ -1,15 +1,17 @@
-package com.js.nowakelock.data.db
+package com.js.nowakelock.testutil
 
 /**
- * Mock of Type enum for testing purposes
- * This is a simplified version of the actual Type enum used in the app
+ * Legacy test-only enum.
+ *
+ * NOTE: Must not share the same FQCN as production `com.js.nowakelock.data.db.Type`,
+ * otherwise it will shadow the real class on the unit test classpath.
  */
-enum class Type(val value: String) {
+enum class TestType(val value: String) {
     Wakelock("Wakelock"),
     Alarm("Alarm"),
     Service("Service");
-    
+
     override fun toString(): String {
         return value
     }
-} 
+}

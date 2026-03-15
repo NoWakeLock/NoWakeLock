@@ -5,6 +5,9 @@ buildscript {
     }
     ext.kotlin_version = '2.1.20'
     repositories {
+        if (gradle.startParameter.projectProperties.containsKey('useLocalMavenBootstrap')) {
+            mavenLocal()
+        }
         google()
         gradlePluginPortal()
         mavenCentral()
@@ -31,6 +34,9 @@ plugins {
 
 allprojects {
     repositories {
+        if (gradle.startParameter.projectProperties.containsKey('useLocalMavenBootstrap')) {
+            mavenLocal()
+        }
         google()
         mavenCentral()
         maven { url 'https://jitpack.io' }

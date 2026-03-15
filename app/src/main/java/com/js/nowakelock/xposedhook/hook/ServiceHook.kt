@@ -431,6 +431,14 @@ class ServiceHook {
             }
         }
 
+        internal fun shouldBlockService(
+            fullBlock: Boolean,
+            screenOffBlock: Boolean,
+            isLocked: Boolean
+        ): Boolean {
+            return fullBlock || (isLocked && screenOffBlock)
+        }
+
         private fun block(
             name: String,
             packageName: String,
@@ -438,8 +446,11 @@ class ServiceHook {
             isLocked: Boolean
         ): Boolean {
             val xpNSP = XpNSP.getInstance()
-            return xpNSP.flag(name, packageName, type, userId)
-                    || isLocked && xpNSP.flag(name, packageName, type, userId)
+            return shouldBlockService(
+                fullBlock = xpNSP.flag(name, packageName, type, userId),
+                screenOffBlock = xpNSP.flagLock(name, packageName, type, userId),
+                isLocked = isLocked
+            )
         }
     }
 }

@@ -314,7 +314,7 @@ class AlarmHook {
                     alarmName,
                     packageName,
                     userId,
-                    lastAllowTime[alarmName] ?: 0,
+                    getLastAllowTime(lastAllowTime, alarmName, packageName, userId),
                     now,
                     isScreenOff
                 )
@@ -331,7 +331,7 @@ class AlarmHook {
                     )
                 } else {
                     // Update last allowed time and record event
-                    lastAllowTime[alarmName] = now
+                    recordLastAllowTime(lastAllowTime, alarmName, packageName, userId, now)
                     XpRecord.newEvent(
                         alarmName, packageName, type,
                         context, userId
@@ -352,6 +352,29 @@ class AlarmHook {
                 XpUtil.log(" alarm: hookAlarmsLocked err:$e")
                 null
             }
+        }
+
+        internal fun lastAllowKey(name: String, packageName: String, userId: Int): String {
+            return "$name|$packageName|$userId"
+        }
+
+        internal fun getLastAllowTime(
+            lastAllowTimes: Map<String, Long>,
+            name: String,
+            packageName: String,
+            userId: Int
+        ): Long {
+            return lastAllowTimes[lastAllowKey(name, packageName, userId)] ?: 0L
+        }
+
+        internal fun recordLastAllowTime(
+            lastAllowTimes: MutableMap<String, Long>,
+            name: String,
+            packageName: String,
+            userId: Int,
+            now: Long
+        ) {
+            lastAllowTimes[lastAllowKey(name, packageName, userId)] = now
         }
 
         private fun block(

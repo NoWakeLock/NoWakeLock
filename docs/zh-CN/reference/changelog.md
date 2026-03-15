@@ -1,7 +1,20 @@
-# 更新日志
+﻿# 更新日志
 
 本文档记录 NoWakeLock 的版本更新历史和重要变更。
 
+## [v3.0.9 Build 86] - 2026-03-15
+
+### 🐛 修复
+- 修复同名 WakeLock/Alarm 在不同应用间共享最小间隔状态，避免跨应用误拦截
+- 修复 Service 域“仅灭屏拦截”规则未生效的问题
+- 修复窄宽度下控制区超时输入框被裁切的问题
+
+### 🧪 测试与质量
+- 补齐 `calculateTime`、Backup JSON、Preferences 映射、Wakelock counter/registry 的单元测试
+- 新增 MainActivity、`XProvider` 和窄宽布局的 instrumentation 测试
+- 固化真机自动化测试脚本与执行文档
+
+---
 ## [v3.0.8 Build 85] - 未发布
 
 ### 🐛 修复
@@ -224,3 +237,4 @@
 
 !!! warning "升级提醒"
     重大版本升级前请务必备份配置，某些版本间可能存在不兼容的情况。
+
