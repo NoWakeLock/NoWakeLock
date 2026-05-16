@@ -1,10 +1,8 @@
 package com.js.nowakelock.data.repository.daitem
 
 import android.os.Bundle
-import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.BasicApp
 import com.js.nowakelock.base.LogUtil
-import com.js.nowakelock.base.SPTools
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
@@ -19,9 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 open class DARepositoryImpl(
@@ -29,6 +25,14 @@ open class DARepositoryImpl(
     private val infoEventDao: InfoEventDao
 ) : DARepository {
     open val type: Type = Type.UnKnow
+    private val daNameComparator =
+        compareBy<DAItem>({ it.name.lowercase() }, { it.packageName }, { it.userId })
+    private val daCountComparator =
+        compareByDescending<DAItem> { it.count }
+            .then(daNameComparator)
+    private val daTimeComparator =
+        compareByDescending<DAItem> { it.countTime }
+            .then(daNameComparator)
     
     // Simple in-memory cache for frequently accessed data
     // Cache structure: [cacheKey -> Pair(data, timestamp)]
@@ -92,27 +96,6 @@ open class DARepositoryImpl(
         }
     }
 
-    /**
-     * Helper function to compare two InfoWithSt lists for settings equality
-     * Only compares fields that affect UI rendering to prevent unnecessary UI refreshes
-     * @param list1 First list of InfoWithSt objects
-     * @param list2 Second list of InfoWithSt objects
-     * @return true if the settings fields are equal across both lists
-     */
-    private fun areInfoWithStsSettingsEqual(list1: List<InfoWithSt>, list2: List<InfoWithSt>): Boolean {
-        if (list1.size != list2.size) return false
-        
-        return list1.zip(list2).all { (item1, item2) ->
-            // Only compare fields that affect UI settings rendering
-            item1.info.name == item2.info.name &&
-            item1.info.packageName == item2.info.packageName &&
-            item1.info.userId == item2.info.userId &&
-            item1.st?.fullBlock == item2.st?.fullBlock &&
-            item1.st?.screenOffBlock == item2.st?.screenOffBlock &&
-            item1.st?.timeWindowMs == item2.st?.timeWindowMs
-        }
-    }
-
     override suspend fun getDAItemsSortedByName(
         packageName: String, userId: Int
     ): Flow<List<DAItem>> = withContext(Dispatchers.IO) {
@@ -121,10 +104,8 @@ open class DARepositoryImpl(
         
         if (packageName != "" && userId != -1) {
             return@withContext daDao.loadISs(packageName, type, userId)
-                // Use custom comparator to detect only relevant changes
-                .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    val sortedItems = mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                    val sortedItems = mapToDAItems(infoToStMap).sortedWith(daNameComparator)
                     // Update cache with fresh data
                     updateCache(cacheKey, sortedItems)
                     sortedItems
@@ -132,10 +113,8 @@ open class DARepositoryImpl(
         }
 
         return@withContext daDao.loadISs(type)
-            // Use custom comparator to detect only relevant changes
-            .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
             .map { infoToStMap ->
-                val sortedItems = mapToDAItems(infoToStMap).sortedBy { it.name.lowercase() }
+                val sortedItems = mapToDAItems(infoToStMap).sortedWith(daNameComparator)
                 // Update cache with fresh data
                 updateCache(cacheKey, sortedItems)
                 sortedItems
@@ -152,10 +131,8 @@ open class DARepositoryImpl(
             
             if (packageName != "" && userId != -1) {
                 return@withContext daDao.loadISs(packageName, type, userId)
-                    // Use custom comparator to detect only relevant changes
-                    .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
-                        val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                        val sortedItems = mapToDAItems(infoToStMap).sortedWith(daCountComparator)
                         // Update cache with fresh data
                         updateCache(cacheKey, sortedItems)
                         sortedItems
@@ -163,10 +140,8 @@ open class DARepositoryImpl(
             }
 
             return@withContext daDao.loadISs(type)
-                // Use custom comparator to detect only relevant changes
-                .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.count }
+                    val sortedItems = mapToDAItems(infoToStMap).sortedWith(daCountComparator)
                     // Update cache with fresh data
                     updateCache(cacheKey, sortedItems)
                     sortedItems
@@ -183,10 +158,8 @@ open class DARepositoryImpl(
             
             if (packageName != "" && userId != -1) {
                 return@withContext daDao.loadISs(packageName, type, userId)
-                    // Use custom comparator to detect only relevant changes
-                    .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                     .map { infoToStMap ->
-                        val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                        val sortedItems = mapToDAItems(infoToStMap).sortedWith(daTimeComparator)
                         // Update cache with fresh data
                         updateCache(cacheKey, sortedItems)
                         sortedItems
@@ -194,10 +167,8 @@ open class DARepositoryImpl(
             }
 
             return@withContext daDao.loadISs(type)
-                // Use custom comparator to detect only relevant changes
-                .distinctUntilChanged { old, new -> areInfoWithStsSettingsEqual(old, new) }
                 .map { infoToStMap ->
-                    val sortedItems = mapToDAItems(infoToStMap).sortedByDescending { it.countTime }
+                    val sortedItems = mapToDAItems(infoToStMap).sortedWith(daTimeComparator)
                     // Update cache with fresh data
                     updateCache(cacheKey, sortedItems)
                     sortedItems

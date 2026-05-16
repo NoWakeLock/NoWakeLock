@@ -13,6 +13,7 @@ import com.js.nowakelock.data.repository.daitem.DARepository
 import com.js.nowakelock.ui.navigation.params.DAsScreenParams
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -22,7 +23,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -149,7 +149,7 @@ open class DAsViewModel(
 
     init {
         // Initial data load from local database only
-        loadDAs(LoadingSource.INITIAL)
+        triggerDataLoad(LoadingSource.INITIAL, immediate = true)
     }
 
     /**
@@ -176,100 +176,72 @@ open class DAsViewModel(
      * @param source The source of the loading operation
      */
     @OptIn(FlowPreview::class)
-    private fun loadDAs(source: LoadingSource = LoadingSource.NONE) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, loadingSource = source) }
+    private suspend fun loadDAs(source: LoadingSource = LoadingSource.NONE) {
+        _uiState.update { it.copy(isLoading = true, loadingSource = source) }
 
-            try {
-                // Select data flow based on sort option
-                val daFlow = when (currentSortOption) {
-                    DASortOption.NAME -> daRepository.getDAItemsSortedByName(
-                        packageName = packageName ?: "", userId = userId ?: -1
-                    )
+        try {
+            val daFlow = when (currentSortOption) {
+                DASortOption.NAME -> daRepository.getDAItemsSortedByName(
+                    packageName = packageName ?: "", userId = userId ?: -1
+                )
 
-                    DASortOption.COUNT -> daRepository.getDAItemsSortedByCount(
-                        packageName = packageName ?: "", userId = userId ?: -1
-                    )
+                DASortOption.COUNT -> daRepository.getDAItemsSortedByCount(
+                    packageName = packageName ?: "", userId = userId ?: -1
+                )
 
-                    DASortOption.TIME -> daRepository.getDAItemsSortedByTime(
-                        packageName = packageName ?: "", userId = userId ?: -1
-                    )
-                }
+                DASortOption.TIME -> daRepository.getDAItemsSortedByTime(
+                    packageName = packageName ?: "", userId = userId ?: -1
+                )
+            }
 
-                // Collect and update UI state
-                daFlow
-                    // Add conflate operator to only process the most recent value when collector is busy
-                    .conflate()
-                    // Apply custom distinctUntilChanged to filter out equivalent lists
-                    .distinctUntilChanged { old, new ->
-                        if (old.size != new.size) return@distinctUntilChanged false
-
-                        // Check if lists contain the same items with the same state
-                        val oldMap = old.associateBy { "${it.name}_${it.packageName}_${it.userId}" }
-                        val newMap = new.associateBy { "${it.name}_${it.packageName}_${it.userId}" }
-
-                        if (oldMap.keys != newMap.keys) return@distinctUntilChanged false
-
-                        // Deep comparison of relevant state properties
-                        oldMap.keys.all { key ->
-                            val oldItem = oldMap[key]!!
-                            val newItem = newMap[key]!!
-
-                            oldItem.fullBlocked == newItem.fullBlocked && 
-                            oldItem.screenOffBlock == newItem.screenOffBlock && 
-                            oldItem.timeWindowSec == newItem.timeWindowSec &&
-                            oldItem.count == newItem.count
-                        }
+            daFlow
+                .conflate()
+                .debounce(50)
+                .collect { daList ->
+                    val pkgFilteredList = daList.filter { da ->
+                        (packageName == null || da.packageName == packageName) &&
+                            (userId == null || da.userId == userId)
                     }
-                    // Add debounce for high-frequency updates (50ms is short but helps bundle database updates)
-                    .debounce(50)
-                    .collect { daList ->
-                        // packageName / userId
-                        val pkgFilteredList = daList.filter { da ->
-                            (packageName == null || da.packageName == packageName) && (userId == null || da.userId == userId)
-                        }
 
-                        // app filter
-                        val filteredList = when (currentFilterOption) {
-                            DAFilterOption.ALL -> pkgFilteredList
-                            DAFilterOption.BLOCKED -> pkgFilteredList.filter { it.fullBlocked }
-                            DAFilterOption.ALLOWED -> pkgFilteredList.filter { !it.fullBlocked }
-                        }
-
-                        // search filter
-                        val query = searchQuery.trim().lowercase()
-                        val searchFilteredList = if (query.isNotEmpty()) {
-                            filteredList.filter { da ->
-                                da.name.lowercase().contains(query) || da.packageName.lowercase()
-                                    .contains(query)
-                            }
-                        } else {
-                            filteredList
-                        }
-
-                        // count
-                        val totalCount = pkgFilteredList.size
-                        val blockedCount = pkgFilteredList.count { it.fullBlocked }
-
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                loadingSource = LoadingSource.NONE,
-                                das = searchFilteredList.toImmutableList(),
-                                totalDAs = totalCount,
-                                blockedCount = blockedCount,
-                                allowedCount = totalCount - blockedCount
-                            )
-                        }
+                    val filteredList = when (currentFilterOption) {
+                        DAFilterOption.ALL -> pkgFilteredList
+                        DAFilterOption.BLOCKED -> pkgFilteredList.filter { it.fullBlocked }
+                        DAFilterOption.ALLOWED -> pkgFilteredList.filter { !it.fullBlocked }
                     }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        loadingSource = LoadingSource.NONE,
-                        message = "Error loading das: ${e.message}"
-                    )
+
+                    val query = searchQuery.trim().lowercase()
+                    val searchFilteredList = if (query.isNotEmpty()) {
+                        filteredList.filter { da ->
+                            da.name.lowercase().contains(query) ||
+                                da.packageName.lowercase().contains(query)
+                        }
+                    } else {
+                        filteredList
+                    }
+
+                    val totalCount = pkgFilteredList.size
+                    val blockedCount = pkgFilteredList.count { it.fullBlocked }
+
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            loadingSource = LoadingSource.NONE,
+                            das = searchFilteredList.toImmutableList(),
+                            totalDAs = totalCount,
+                            blockedCount = blockedCount,
+                            allowedCount = totalCount - blockedCount
+                        )
+                    }
                 }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    loadingSource = LoadingSource.NONE,
+                    message = "Error loading das: ${e.message}"
+                )
             }
         }
     }
@@ -360,33 +332,19 @@ open class DAsViewModel(
                 // Execute synchronization steps in parallel using coroutineScope
                 try {
                     withContext(Dispatchers.IO) {
-                        // Use coroutineScope to create a structured concurrency context
                         coroutineScope {
-                            // Launch sync operations in parallel
                             val syncDbJob = async { daRepository.syncDB() }
                             val syncEventsJob = async { daRepository.syncEvents() }
-                            
-                            // Wait for both operations to complete
+
                             syncDbJob.await()
                             syncEventsJob.await()
                         }
-                        
-                        // Load data into UI after sync operations are complete
-                        // We pass immediate=true to ensure this happens right away
-                        triggerDataLoad(source, immediate = true)
                     }
                 } catch (e: Exception) {
                     // Log error but continue
                     LogUtil.e("DAsViewModel", "Error during data sync: ${e.message}")
-                    // We'll still set the error message at the end
-                }
-                
-                // Loading complete
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        loadingSource = LoadingSource.NONE
-                    )
+                } finally {
+                    triggerDataLoad(source, immediate = true)
                 }
             } catch (e: Exception) {
                 // Handle outer exception (completely failed refresh)
@@ -499,4 +457,4 @@ open class DAsViewModel(
             }
         }
     }
-} 
+}

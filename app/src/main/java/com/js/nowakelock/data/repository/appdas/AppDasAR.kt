@@ -31,6 +31,14 @@ class AppDasAR(
     private val daDao: DADao,
     private val infoEventDao: InfoEventDao
 ) : AppDasRepo {
+    private val appNameComparator =
+        compareBy<AppWithStats>({ it.appInfo.label.lowercase() }, { it.appInfo.packageName }, { it.appInfo.userId })
+    private val appCountComparator =
+        compareByDescending<AppWithStats> { it.totalDisplayedCount() }
+            .then(appNameComparator)
+    private val appTimeComparator =
+        compareByDescending<AppWithStats> { it.wakelockTime }
+            .then(appNameComparator)
 
     private val pm: PackageManager = context.packageManager
     private val um = context.getSystemService(Context.USER_SERVICE) as UserManager
@@ -117,7 +125,7 @@ class AppDasAR(
      */
     override fun getAppsWithStatsSortedByName(): Flow<List<AppWithStats>> {
         return baseAppsWithStatsFlow.map { list ->
-            list.sortedBy { it.appInfo.label }
+            list.sortedWith(appNameComparator)
         }
     }
 
@@ -127,7 +135,7 @@ class AppDasAR(
      */
     override fun getAppsWithStatsSortedByCount(): Flow<List<AppWithStats>> {
         return baseAppsWithStatsFlow.map { list ->
-            list.sortedByDescending { it.wakelockCount }
+            list.sortedWith(appCountComparator)
         }
     }
 
@@ -137,7 +145,7 @@ class AppDasAR(
      */
     override fun getAppsWithStatsSortedByTime(): Flow<List<AppWithStats>> {
         return baseAppsWithStatsFlow.map { list ->
-            list.sortedByDescending { it.wakelockTime }
+            list.sortedWith(appTimeComparator)
         }
     }
 
@@ -344,5 +352,9 @@ class AppDasAR(
             // if error, return primary user
             return@withContext listOf(UserInfo.createPrimaryUser())
         }
+    }
+
+    private fun AppWithStats.totalDisplayedCount(): Int {
+        return wakelockCount + alarmCount + serviceCount
     }
 }

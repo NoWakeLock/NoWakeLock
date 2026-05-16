@@ -3,17 +3,16 @@ package com.js.nowakelock.ui.screens.apps
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.AppWithStats
 import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.data.repository.appdas.AppDasRepo
 import com.js.nowakelock.ui.navigation.params.AppsScreenParams
+import com.js.nowakelock.base.LogUtil
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
-import com.js.nowakelock.base.LogUtil
 import kotlinx.serialization.Serializable
 
 /**
@@ -152,61 +151,58 @@ class AppsViewModel(
      * Loads apps based on current sort, filter and search options
      * @param source the source of the load operation
      */
-    private fun loadApps(source: LoadingSource = LoadingSource.NONE) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, loadingSource = source) }
-            
-            try {
-                // Get the appropriate flow based on current sort option
-                val appsFlow = when (currentSortOption) {
-                    SortOption.NAME -> appDasRepo.getAppsWithStatsSortedByName()
-                    SortOption.COUNT -> appDasRepo.getAppsWithStatsSortedByCount()
-                    SortOption.TIME -> appDasRepo.getAppsWithStatsSortedByTime()
-                }
-                
-                // 添加 conflate 操作符，确保处理最新数据
-                appsFlow
-                    .conflate()
-                    .collect { appsList ->
-                        // filter apps by userId
-                        val userFilteredApps = appsList.filter { it.appInfo.userId == currentUserId }
-                        
-                        // filter by app type
-                        val typeFilteredApps = when (currentFilterOption) {
-                            FilterOption.ALL -> userFilteredApps
-                            FilterOption.USER -> userFilteredApps.filter { !it.appInfo.system }
-                            FilterOption.SYSTEM -> userFilteredApps.filter { it.appInfo.system }
-                        }
-                        
-                        // Then apply search filter if needed
-                        val query = searchQuery.trim().lowercase()
-                        val searchFilteredApps = if (query.isNotEmpty()) {
-                            typeFilteredApps.filter { app ->
-                                app.appInfo.label.lowercase().contains(query) ||
-                                        app.appInfo.packageName.lowercase().contains(query)
-                            }
-                        } else {
-                            typeFilteredApps
-                        }
-                        
-                        _uiState.update { 
-                            it.copy(
-                                isLoading = false,
-                                loadingSource = LoadingSource.NONE,
-                                apps = searchFilteredApps
-                            )
-                        }
-                    }
-            } catch (e: Exception) {
-                LogUtil.e("AppsViewModel", "Error loading apps: ${e.message}")
-                _uiState.update { 
-                    it.copy(
-                        isLoading = false,
-                        loadingSource = LoadingSource.NONE,
-                        message = "Error loading apps: ${e.message}"
-                    )
-                }
+    private suspend fun loadApps(source: LoadingSource = LoadingSource.NONE) {
+        _uiState.update { it.copy(isLoading = true, loadingSource = source) }
+
+        try {
+            val appsFlow = when (currentSortOption) {
+                SortOption.NAME -> appDasRepo.getAppsWithStatsSortedByName()
+                SortOption.COUNT -> appDasRepo.getAppsWithStatsSortedByCount()
+                SortOption.TIME -> appDasRepo.getAppsWithStatsSortedByTime()
             }
+
+            appsFlow
+                .conflate()
+                .collect { appsList ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            loadingSource = LoadingSource.NONE,
+                            apps = filterApps(appsList)
+                        )
+                    }
+                }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            LogUtil.e("AppsViewModel", "Error loading apps: ${e.message}")
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    loadingSource = LoadingSource.NONE,
+                    message = "Error loading apps: ${e.message}"
+                )
+            }
+        }
+    }
+
+    private fun filterApps(appsList: List<AppWithStats>): List<AppWithStats> {
+        val userFilteredApps = appsList.filter { it.appInfo.userId == currentUserId }
+
+        val typeFilteredApps = when (currentFilterOption) {
+            FilterOption.ALL -> userFilteredApps
+            FilterOption.USER -> userFilteredApps.filter { !it.appInfo.system }
+            FilterOption.SYSTEM -> userFilteredApps.filter { it.appInfo.system }
+        }
+
+        val query = searchQuery.trim().lowercase()
+        return if (query.isNotEmpty()) {
+            typeFilteredApps.filter { app ->
+                app.appInfo.label.lowercase().contains(query) ||
+                    app.appInfo.packageName.lowercase().contains(query)
+            }
+        } else {
+            typeFilteredApps
         }
     }
 
@@ -297,4 +293,4 @@ class AppsViewModel(
             }
         }
     }
-} 
+}
