@@ -1,165 +1,87 @@
-# NoWakeLock (Enhanced Fork)
+# 🔋 NoWakeLock Reborn
 
 <div align="center">
 
-![Android](https://img.shields.io/badge/platform-Android-green.svg)
-![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)
-![Framework](https://img.shields.io/badge/framework-Xposed%20%7C%20Shizuku-orange.svg)
-![License](https://img.shields.io/github/license/NoWakeLock/NoWakeLock.svg)
+![Android](https://img.shields.io/badge/platform-Android%207.0%2B-green.svg?style=for-the-badge)
+![Framework](https://img.shields.io/badge/framework-Shizuku%20%7C%20Xposed-orange.svg?style=for-the-badge)
+![License](https://img.shields.io/github/license/NoWakeLock/NoWakeLock.svg?style=for-the-badge)
+![GitHub release](https://img.shields.io/github/v/release/NoWakeLock/NoWakeLock.svg?style=for-the-badge)
 
-**Take complete control of your Android device's power management — Now with Shizuku & Samsung Support!**
+**The ultimate power management tool for Android—now supercharged with Shizuku support and universal compatibility!**
 
 </div>
 
-## 🎉 Fork Achievements & Major Updates
+## 🌟 The "Reborn" Vision
 
-This fork of NoWakeLock introduces several highly anticipated features and compatibility improvements that expand the app's usability to a much wider range of devices.
+Welcome to **NoWakeLock Reborn**! Inspired by the phenomenal original project, this independently developed fork was created with one massive goal in mind: **to bring advanced battery-saving capabilities to everyone, not just those with rooted devices.** 
 
-### 🌟 Key Enhancements
+We took the brilliant architectural foundation of the original app and completely overhauled its core mechanisms to introduce entirely new ways to manage your device's power. 
 
-- **Shizuku Support (No Root Required!)**: You can now use NoWakeLock without a rooted device! By leveraging Shizuku, the app can monitor and block wakelocks, alarms, and services via ADB/AppOps. It serves as an excellent fallback when the Xposed framework is unavailable.
-- **Samsung OneUI Compatibility**: Fixed the longstanding issue where Samsung devices were not supported. By handling varying `ContentProvider` call signatures across different Android and OEM versions, NoWakeLock now fully supports Samsung OneUI!
-- **Robust Fallbacks**: Bypasses ContentProvider caching and handles direct queries when operating in Shizuku mode to ensure seamless operation.
+### 🔥 What Makes This Version Special?
 
-### 🙏 Special Thanks & Praise
-
-A massive thank you to the original developer, **Jasper Hale ([@Jasper-1024](https://github.com/Jasper-1024))**, for creating such an incredible and well-architected project. The foundation of NoWakeLock is exceptionally robust, making it a joy to build upon. This fork is built directly on their hard work, and all original credit for the core application goes to the NoWakeLock team.
+1. **Rootless Operation (Shizuku Magic!):**
+   You no longer need a rooted device to take control of your battery! We engineered a brand-new backend that leverages **Shizuku** (via ADB/AppOps) to seamlessly monitor, manage, and block wakelocks, alarms, and background services. 
+2. **Samsung OneUI Mastery:**
+   Historically, heavily modified Android skins like Samsung's OneUI struggled with this type of system-level hooking. We rebuilt the `SettingsProviderHook` and implemented dynamic signature resolution to ensure **100% compatibility with Samsung devices!**
+3. **Smart Fallback Architecture:**
+   The app intelligently switches between Xposed (if available) and our custom Shizuku implementation. It dynamically bypasses caching mechanisms when operating rootless, ensuring real-time, accurate data.
 
 ---
 
-## 📑 Table of Contents
+## ✨ Core Features
 
-- [✨ Features](#-features)
-- [📱 Compatibility](#-compatibility)
-- [⚡ Quick Start](#-quick-start)
-- [📥 Installation](#-installation)
-- [🚀 Usage](#-usage)
-- [🌍 Documentation](#-documentation)
-- [⚠️ Important Notes](#️-important-notes)
-- [🔧 Development](#-development)
-- [🤝 Contributing](#-contributing)
-- [💬 Community](#-community)
-- [📄 License](#-license)
+Whether you are running full root or entirely rootless via Shizuku, NoWakeLock Reborn grants you unparalleled control over your device's background activities:
 
-## ✨ Features
-
-NoWakeLock empowers you to take **granular control** of your Android device's background activity, helping you **significantly extend battery life** while maintaining performance.
-
-### 🎯 Core Capabilities
-
-- **🔒 WakeLock Management** - Block or allow specific wakelocks with precision timing controls. *(Works via Xposed or Shizuku)*
-- **⏰ Alarm Control** - Manage system and app alarms to prevent unnecessary wake-ups.
-- **⚙️ Service Monitoring** - Control background services and their resource usage.
-- **📱 Per-App Configuration** - Fine-tune settings for individual applications.
-- **🔍 Regex Support** - Use powerful regular expressions for flexible pattern matching.
-- **📊 Detailed Analytics** - Monitor real-time statistics and power consumption insights.
-
-### 🎨 Modern Experience
-
-- **🎨 Material Design 3** - Clean, modern interface following latest Android design principles.
-- **🌙 Dark Theme** - Full dark mode support for comfortable usage.
-- **🚀 Performance Optimized** - Smooth, responsive UI with efficient background processing.
-- **📈 Real-time Statistics** - Live monitoring of blocked wakelocks, alarms, and services.
-
-### 🛡️ Advanced Features
-
-- **✅ Module Status Check** - Comprehensive diagnostics for Xposed & Shizuku health.
-- **💾 Backup & Restore** - Safeguard your configurations with export/import functionality.
-- **👥 Multi-User Support** - Full compatibility with Android's multi-user profiles.
-- **🔄 Boot Consistency** - Automatic statistics reset after device reboot for accurate data.
-
-## 📱 Compatibility
-
-| Component | Requirement |
-|-----------|-------------|
-| **Android Version** | 7.0 (API 24) - 15 (API 35) |
-| **Xposed Framework** | EdXposed, LSPosed (Optional if using Shizuku) |
-| **Shizuku** | Supported as a Rootless Alternative! |
-| **Architecture** | ARM64, ARM32 |
-| **Root Required** | **NO** (If using Shizuku) / Yes (If using Xposed) |
-
-### ✅ Newly Supported
-- **Samsung OneUI**: Fully supported!
-- **Non-Rooted Devices**: Supported via Shizuku!
-
-## ⚡ Quick Start
-
-### Prerequisites
-
-1. **Shizuku** installed and activated (for non-root users), OR
-2. **Root access** + **Xposed Framework** (LSPosed recommended)
-3. Android 7.0+ running on your device
-
-### Installation Steps
-
-1. **Download** the latest APK from the Releases page.
-2. **Install** the APK on your device.
-3. **Activate** the module in your Xposed manager OR grant permissions via Shizuku.
-4. **Reboot** your device (if using Xposed).
-5. **Open** NoWakeLock and verify the module or Shizuku status.
+- **🛡️ Granular WakeLock Control:** Block rogue apps from keeping your device awake.
+- **⏰ Alarm Management:** Stop unnecessary wake-up alarms from draining your battery overnight.
+- **⚙️ Service Optimization:** Monitor and forcefully halt resource-heavy background services.
+- **🎯 Per-App Targeting:** Apply custom rules and regular expressions (Regex) to specific apps.
+- **📊 Real-Time Analytics:** Beautiful Material You dashboards showing live power consumption and blocked events.
+- **👥 Multi-User Ready:** Fully supports Android work profiles and secondary users.
 
 ## 📥 Installation
 
-<div align="center">
+Currently, NoWakeLock Reborn is distributed exclusively through our GitHub Releases to ensure you are getting the most authentic and secure build directly from the source.
 
-### Official Distribution Channels
+1. Head over to the [**Releases Page**](../../releases/latest).
+2. Download the latest `NoWakeLock-Reborn.apk`.
+3. Install the APK on your Android device.
 
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.js.nowakelock/)
-&nbsp;&nbsp;&nbsp;
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.js.nowakelock)
+## 🚀 Getting Started
 
-</div>
+### Method 1: The Rootless Way (Shizuku) *[Recommended]*
+1. Install [Shizuku](https://shizuku.rikka.app/) from the Play Store.
+2. Follow Shizuku's guide to start it via Wireless Debugging or ADB.
+3. Open NoWakeLock Reborn, and grant it Shizuku permissions when prompted.
+4. You are ready to go! The app will now intercept and manage power events rootlessly.
 
-### Manual Installation
+### Method 2: The Rooted Way (Xposed)
+1. Ensure your device is rooted with Magisk/KernelSU.
+2. Install the **LSPosed** framework.
+3. Enable the NoWakeLock Reborn module inside LSPosed and select the recommended System Framework targets.
+4. Reboot your device.
+
+## 🛠️ Building from Source
+
+Want to compile the project yourself? We welcome developers!
 
 ```bash
-# Install via ADB
-adb install NoWakeLock.apk
+# Clone the repository
+git clone https://github.com/YourUsername/NoWakeLock-Reborn.git
+cd NoWakeLock-Reborn
+
+# Build the release APK using Gradle
+./gradlew assembleRelease
 ```
-
-## 🚀 Usage
-
-### Initial Setup
-
-1. **Launch** NoWakeLock after installation.
-2. **Check Status** - Use the built-in diagnostics screen to verify Shizuku or Xposed is active.
-3. **Review** the app list to see detected applications.
-4. **Configure** your first app by tapping on it.
-
-## 🌍 Documentation
-
-Original comprehensive documentation is available in multiple languages:
-- 🇺🇸 **[English Documentation](https://nowakelock.jasper1024.com/en/)**
-
-## ⚠️ Important Notes
-
-### 🧪 Development Status
-
-- **Beta Quality**: Active development with regular updates
-- **Use at Own Risk**: While stable, unexpected behavior may occur
-- **No Warranty**: Developers not responsible for device damage
-
-### 🛡️ Privacy & Security
-
-- **🔒 No Data Collection**: Zero telemetry or analytics
-- **📱 Local Processing**: All data stays on your device
-- **🔓 Open Source**: Full source code available for audit
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Check out the GitHub issues for bug reports and feature requests.
+Love what we're doing? Contributions are highly encouraged! Whether it's adding a new feature, fixing a bug, or improving translations, feel free to open an Issue or submit a Pull Request. If this project helped you squeeze more life out of your battery, **please consider giving it a ⭐ Star!**
+
+## 🙏 Inspiration & Credits
+
+This project would not exist without the incredible groundwork laid by **Jasper Hale ([@Jasper-1024](https://github.com/Jasper-1024))** and the original NoWakeLock contributors. We were deeply inspired by their vision of open-source power management. All core architectural credit goes to them, while the Shizuku integration, Samsung compatibility layer, and dynamic hooking mechanisms were engineered exclusively for this fork. 
 
 ## 📄 License
 
-NoWakeLock is released under the **GNU General Public License v3.0**.
-
-See the [LICENSE](LICENSE) file for the complete license text.
-
-## 🙏 Acknowledgments
-
-- **Amplify** - Original inspiration for wakelock management
-- **XPrivacyLua** - Privacy protection framework techniques
-- **GravityBox** - Advanced Xposed module architecture
-
-### 🏆 Special Thanks
-Once again, a massive shoutout to **Jasper Hale ([@Jasper-1024](https://github.com/Jasper-1024))** and all original contributors for their phenomenal work on this project!
+NoWakeLock Reborn is proud to remain open-source under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for more details.
