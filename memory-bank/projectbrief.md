@@ -1,11 +1,11 @@
 # σ₁: Project Brief
-*v1.0 | Created: 2025-04-15 | Updated: 2025-04-17*
+*v1.1 | Updated: 2026-05-27*
 *Π: 🏗️DEVELOPMENT | Ω: 🔍R*
 
 ## 🏆 Overview
-NoWakeLock is an Android application that functions as an Xposed module to intercept and manage wakelock, alarm, and service operations on Android devices. It helps users control the frequency and duration of waking up their devices to save power consumption and optimize battery life. The app provides granular control at the application level with support for regular expression-based filtering.
+NoWakeLock Extended is an Android application that functions as an Xposed module and a Shizuku client to intercept and manage wakelock, alarm, and service operations on Android devices. It helps users control the frequency and duration of waking up their devices to save power consumption and optimize battery life. The app provides granular control at the application level with support for regular expression-based filtering.
 
-目前正在使用 md3 重构 UI 并加强统计和电池优化功能;
+Currently refactoring the UI with Material Design 3 and enhancing statistics and battery optimization features, alongside adding rootless Shizuku support.
 
 ## 📋 Requirements
 - [R₁] Control Wakelock/Alarm/Service by application
@@ -18,34 +18,41 @@ NoWakeLock is an Android application that functions as an Xposed module to inter
 - [R₈] Support for monitoring and blocking service operations
 - [R₉] User-friendly interface with clear battery impact visualization
 - [R₁₀] Comprehensive statistics to help users understand device wake patterns
+- [R₁₁] Rootless support via Shizuku
+- [R₁₂] Samsung OneUI Compatibility
 
 ## 🎯 Goals
-- [G₁] 使用 md3 重构 UI;
-- [G₂] Wakelock alarm service 完整支持
-- [G₃] 其他的: 多用户 备份 Wakelock/alarm/service 说明
-- [G₄] 加强电池使用统计和可视化功能
-- [G₅] 提供更详细的电池影响分析
+- [G₁] Refactor UI using Material Design 3.
+- [G₂] Full support for Wakelock, Alarm, and Service through both Xposed and Shizuku.
+- [G₃] Others: Multi-user support, backup functionality, and documentation for Wakelock/alarm/service.
+- [G₄] Enhance battery usage statistics and visualization.
+- [G₅] Provide more detailed battery impact analysis.
+- [G₆] Achieve 100% rootless capability for widespread adoption.
 
 ## 🔍 Success Criteria
-- [S₁] 正常控制 wakelock/alarm/service
-- [S₂] MD3 UI 正常工作
-- [S₃] 多用户 备份 Wakelock/alarm/service 说明等正常
-- [S₄] 减少设备唤醒次数，延长电池寿命
-- [S₅] 详细记录系统活动，提供用户对电池消耗的控制
+- [S₁] Proper control of wakelock/alarm/service.
+- [S₂] MD3 UI functioning correctly.
+- [S₃] Multi-user support, backups, and explanations working normally.
+- [S₄] Reduce device wakeups and extend battery life.
+- [S₅] Detail system activity and provide user control over battery consumption.
+- [S₆] Fully functional on non-rooted devices via Shizuku.
+- [S₇] Fully functional on Samsung devices.
 
 ## 🧩 Project Scope
-- [In-scope] 正常控制 wakelock/alarm/service
-- [In-scope] MD3 UI 正常工作
-- [In-scope] 多用户; 备份; Wakelock/alarm/service 说明
-- [In-scope] 电池使用影响评估和可视化
-- [In-scope] 详细的唤醒统计和阻止百分比计算
-- [Out-of-scope] 系统级修改 需要 自定义 ROM
-- [Out-of-scope] 自动 wakelock 优化
+- [In-scope] Proper control of wakelock/alarm/service.
+- [In-scope] MD3 UI functioning correctly.
+- [In-scope] Multi-user; Backups; Explanations.
+- [In-scope] Battery usage impact assessment and visualization.
+- [In-scope] Detailed wake statistics and blocking percentage calculations.
+- [In-scope] Shizuku ADB-level operation monitoring and blocking.
+- [Out-of-scope] System-level modifications requiring custom ROMs.
+- [Out-of-scope] Automatic wakelock optimization.
 
 ## 🎯 Target Audience
 - Power users wanting granular control over device wake patterns
 - Users with battery life concerns
 - Xposed/LSPosed framework users
+- Users without root access (via Shizuku)
 - Android developers testing wake behavior
 
 ## 🔑 Key Features
@@ -56,17 +63,21 @@ NoWakeLock is an Android application that functions as an Xposed module to inter
 - Custom rules for different apps
 - Battery impact visualization
 - Detailed statistics with blocking percentages
+- Shizuku Rootless Fallback
+- Universal compatibility including Samsung OneUI
 
 ## 🧰 Technical Stack
 - Kotlin
 - Xposed Framework
+- Shizuku API
 - Android SDK
 - Room Database
 - Koin for dependency injection 
 
 ## 🚀 Recent Improvements
-- Enhanced UI with Material Design 3
-- Improved data management capabilities 
-- Added automatic message clearing to improve user experience
-- Multi-language support with localized messages in English, Chinese, and French
-- Fixed message persistence bug in settings screen 
+- Added Shizuku support for rootless operation.
+- Fixed Samsung OneUI incompatibility by refactoring `SettingsProviderHook`.
+- Fixed a critical data wipe bug triggered by IPC deserialization errors.
+- Enhanced UI with Material Design 3.
+- Improved data management capabilities.
+- Fixed message persistence bug in settings screen.

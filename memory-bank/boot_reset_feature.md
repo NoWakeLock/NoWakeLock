@@ -112,6 +112,9 @@ The boot detection implementation:
 
 This multi-layered approach ensures boot detection works reliably across different Android versions and manufacturer customizations.
 
+### Shizuku Rootless Boot Detection
+When running in Shizuku mode, `XposedModule` hooks are not available. Instead, the application relies on the system broadcasting the standard `ACTION_BOOT_COMPLETED` intent or starting the `ShizukuMonitorService` once the Shizuku manager application starts and re-grants permissions. Shizuku's own polling mechanism assumes the device is booted if Shizuku is accessible.
+
 ### Single Reset Guarantee
 ```kotlin
 // Only reset if after reboot and reset not done for this boot cycle
