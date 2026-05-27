@@ -5,9 +5,9 @@
 ![Android](https://img.shields.io/badge/platform-Android%207.0%2B-green.svg?style=for-the-badge)
 ![Framework](https://img.shields.io/badge/framework-Shizuku%20%7C%20Xposed-orange.svg?style=for-the-badge)
 ![License](https://img.shields.io/github/license/NoWakeLock/NoWakeLock.svg?style=for-the-badge)
-![GitHub release](https://img.shields.io/github/v/release/NoWakeLock/NoWakeLock.svg?style=for-the-badge)
+![GitHub release](https://img.shields.io/github/v/release/YOUR_USERNAME/NoWakeLock-Extended.svg?style=for-the-badge)
 
-**The ultimate power management tool for Android—now supercharged with Shizuku support and universal compatibility!**
+**The ultimate power management tool for Android - now supercharged with Shizuku support and universal compatibility!**
 
 </div>
 
@@ -19,12 +19,17 @@ We took the brilliant architectural foundation of the original app and overhaule
 
 ### 🔥 What Makes This Fork Special?
 
-1. **Rootless Operation (Shizuku Magic!):**
+1. **Rootless Operation (Shizuku Magic!)**  
    You no longer need a rooted device to take control of your battery! We engineered a brand-new backend that leverages **Shizuku** (via ADB/AppOps) to seamlessly monitor, manage, and block wakelocks, alarms, and background services. 
-2. **Samsung OneUI Mastery:**
+
+2. **Samsung OneUI Mastery**  
    Historically, heavily modified Android skins like Samsung's OneUI struggled with this type of system-level hooking. We rebuilt the `SettingsProviderHook` and implemented dynamic signature resolution to ensure **100% compatibility with Samsung devices!**
-3. **Smart Fallback Architecture:**
+
+3. **Smart Fallback Architecture**  
    The app intelligently switches between Xposed (if available) and our custom Shizuku implementation. It dynamically bypasses caching mechanisms when operating rootless, ensuring real-time, accurate data.
+
+4. **IPC Data Resiliency**  
+   Fixed a critical logic flaw from the original app where serialization errors (like Shizuku unbinding) would maliciously command the internal database to wipe all user records. Your data and scores are now perfectly safe across disconnects!
 
 ---
 
@@ -44,7 +49,7 @@ Whether you are running full root or entirely rootless via Shizuku, NoWakeLock E
 Currently, NoWakeLock Extended is distributed exclusively through our GitHub Releases to ensure you are getting the most authentic and secure build directly from the source.
 
 1. Head over to the [**Releases Page**](../../releases/latest).
-2. Download the latest `NoWakeLock-Extended.apk`.
+2. Download the latest `v3.1.0` APK (`NoWakeLock-Extended.apk`).
 3. Install the APK on your Android device.
 
 ## 🚀 Getting Started
