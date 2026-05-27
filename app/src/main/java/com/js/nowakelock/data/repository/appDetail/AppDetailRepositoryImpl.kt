@@ -50,6 +50,17 @@ class AppDetailRepositoryImpl(
     override suspend fun updateAppSt(appSt: AppSt): Boolean = withContext(Dispatchers.IO) {
         try {
             appDaDao.insert(appSt)
+            
+            // Apply pseudo-blocking via Shizuku if Xposed isn't doing the job
+            if (!com.js.nowakelock.base.isModuleActive() || com.js.nowakelock.shizuku.ShizukuManager.hasPermission()) {
+                com.js.nowakelock.shizuku.ShizukuBlocker.applyBlockSettings(
+                    context = com.js.nowakelock.BasicApp.context,
+                    packageName = appSt.packageName,
+                    blockWakelock = appSt.wakelock, // true means blocked in appSt
+                    blockAlarm = appSt.alarm,
+                    blockService = appSt.service
+                )
+            }
             true
         } catch (e: Exception) {
             LogUtil.e("AppDetailRepository", "Error updating AppSt: ${e.message}")

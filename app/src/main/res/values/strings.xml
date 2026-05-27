@@ -259,6 +259,7 @@
     <string name="normal_status">Normal</string>
     <string name="warning_status">Warning</string>
     <string name="error_status">Error</string>
+    <string name="shizuku_status">Shizuku Monitor</string>
     <string name="module_active">Module is active</string>
     <string name="module_inactive">Module is not active</string>
     <string name="module_version">Version: %s</string>

@@ -185,23 +185,24 @@ class AppDasAR(
      */
     private suspend fun appInfoToAppWithStats(appInfo: AppInfo): AppWithStats =
         withContext(Dispatchers.IO) {
-            // Get all data for this app with the same package and user ID
             val packageName = appInfo.packageName
             val userId = appInfo.userId
 
+            // Direct database query bypassing sync failures
+            val infoDb = com.js.nowakelock.data.db.InfoDatabase.getInstance(context)
+
             // Parallelize the database queries using async coroutines
-            // Each query runs independently and concurrently
             val wakelockInfosDeferred = async { 
-                daDao.getInfosByPackageAndType(packageName, Type.Wakelock, userId) 
+                infoDb.infoDao().loadInfos(packageName, Type.Wakelock, userId) 
             }
             val wakelockEventsDeferred = async { 
-                infoEventDao.getEventsByApp(packageName, Type.Wakelock, userId) 
+                infoDb.infoEventDao().loadEvents(packageName, Type.Wakelock, userId) 
             }
             val alarmInfosDeferred = async { 
-                daDao.getInfosByPackageAndType(packageName, Type.Alarm, userId) 
+                infoDb.infoDao().loadInfos(packageName, Type.Alarm, userId) 
             }
             val serviceInfosDeferred = async { 
-                daDao.getInfosByPackageAndType(packageName, Type.Service, userId) 
+                infoDb.infoDao().loadInfos(packageName, Type.Service, userId) 
             }
 
             // Await the results of all queries

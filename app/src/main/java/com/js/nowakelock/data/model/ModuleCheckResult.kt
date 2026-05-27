@@ -10,8 +10,11 @@ data class ModuleCheckResult(
     val moduleVersion: String?,
     val hookStatus: Map<Type, Boolean>, // Status of each hook type (Wakelock, Alarm, Service)
     val configPathValid: Boolean,
+    val shizukuActive: Boolean = false,
     val overallStatus: CheckStatus // Overall status determined from component statuses
 ) {
+    val isShizukuMode: Boolean get() = shizukuActive && !moduleActive
+
     companion object {
         /**
          * Creates an empty/initial result with all checks failed
@@ -27,6 +30,7 @@ data class ModuleCheckResult(
                 moduleVersion = null,
                 hookStatus = emptyHookStatus,
                 configPathValid = false,
+                shizukuActive = false,
                 overallStatus = CheckStatus.ERROR
             )
         }
@@ -39,5 +43,6 @@ data class ModuleCheckResult(
 enum class CheckStatus {
     NORMAL,   // All checks passed
     WARNING,  // Some hooks not working but module is active
+    SHIZUKU,  // Shizuku Monitor Mode is active (no Xposed)
     ERROR     // Module not active or config path invalid
 } 

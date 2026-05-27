@@ -140,6 +140,14 @@ fun infoToBundle(info: Info): Bundle {
  * @return Bundle?
  */
 fun getCPResult(context: Context, method: String, args: Bundle): Bundle? {
+    // If we're not checking module status, and Xposed isn't active,
+    // we bypass the ContentProvider and query the local XProvider directly (for Shizuku mode).
+    if (method != ProviderMethod.CheckHookActive.value && 
+        context.packageName == "com.js.nowakelock" && 
+        !isModuleActive()) {
+        return com.js.nowakelock.data.provider.XProvider.getInstance(context).getMethod(method, args)
+    }
+
     val contentResolver = context.contentResolver
     return contentResolver.call(getURI(), "NoWakelock", method, args)
 }
@@ -227,6 +235,14 @@ fun isModuleActive(): Boolean {
     }
 }
 
+/**
+ * check if Shizuku is available and has permission
+ * @return Boolean
+ */
+fun isShizukuActive(): Boolean {
+    return com.js.nowakelock.shizuku.ShizukuManager.hasPermission()
+}
+
 fun calculateTime(
     events: List<InfoEvent>
 ): Long {
@@ -234,23 +250,20 @@ fun calculateTime(
         return 0L
     }
 
-    // filter completed events
-    val completedEvents = events.filter { it.endTime != null }
-    
-    if (completedEvents.isEmpty()) {
-        return 0L
-    }
+    // Sort events by start time first to ensure sequential processing
+    val sortedEvents = events.sortedBy { it.startTime }
+    val now = System.currentTimeMillis()
 
     var totalDuration = 0L
-    var currentStart = completedEvents[0].startTime
-    var currentEnd = completedEvents[0].endTime!!
+    var currentStart = sortedEvents[0].startTime
+    var currentEnd = sortedEvents[0].endTime ?: (currentStart + 10000L) // Default 10s for snapshot events
 
-    for (i in 1 until completedEvents.size) {
-        val event = completedEvents[i]
+    for (i in 1 until sortedEvents.size) {
+        val event = sortedEvents[i]
         val eventStart = event.startTime
-        val eventEnd = event.endTime!!
+        val eventEnd = event.endTime ?: (eventStart + 10000L) // Assume 10s duration for active snapshot events
 
-        if (eventStart < currentEnd) {
+        if (eventStart <= currentEnd) {
             // event overlap, update current end time
             currentEnd = max(currentEnd, eventEnd)
         } else {

@@ -245,6 +245,15 @@ object XpRecord {
      * Direct CP call without caching - for methods requiring immediate response
      */
     private fun directCPResult(context: Context, method: String, args: Bundle): Bundle? {
+        // Prevent infinite recursion: never bypass when checking if the hook itself is active.
+        // If Xposed is not active, but we are running in our own app process (e.g. Shizuku mode),
+        // we should bypass the ContentProvider hook and call XProvider directly.
+        if (method != ProviderMethod.CheckHookActive.value && 
+            context.packageName == "com.js.nowakelock" && 
+            !com.js.nowakelock.base.isModuleActive()) {
+            return com.js.nowakelock.data.provider.XProvider.getInstance(context).getMethod(method, args)
+        }
+
         val contentResolver = context.contentResolver
         return contentResolver.call(getURI(), "NoWakelock", method, args)
     }
@@ -272,8 +281,13 @@ object XpRecord {
         // Process all requests in order they were received
         for (request in requests) {
             try {
-                val contentResolver = request.context.contentResolver
-                contentResolver.call(getURI(), "NoWakelock", request.method, request.args)
+                if (request.context.packageName == "com.js.nowakelock" && !com.js.nowakelock.base.isModuleActive()) {
+                    com.js.nowakelock.data.provider.XProvider.getInstance(request.context)
+                        .getMethod(request.method, request.args)
+                } else {
+                    val contentResolver = request.context.contentResolver
+                    contentResolver.call(getURI(), "NoWakelock", request.method, request.args)
+                }
             } catch (e: Exception) {
                 XpUtil.log("Error in batch CP processing: ${e.message}")
             }

@@ -24,27 +24,46 @@ class SettingsProviderHook {
                 false,
                 lpparam.classLoader
             )
-            // Bundle call(String method, String arg, Bundle extras)
-            val mCall: Method = clsSet.getMethod(
-                "call",
-                String::class.java,
-                String::class.java,
-                Bundle::class.java
-            )
-
-            XposedBridge.hookMethod(mCall, object : XC_MethodHook() {
-                @Throws(Throwable::class)
-                override fun beforeHookedMethod(param: MethodHookParam) {
-                    makeCall(param)
-                }
-            })
+            
+            // Hook all 'call' methods since signatures differ across Android versions
+            val methods = clsSet.declaredMethods.filter { it.name == "call" }
+            for (mCall in methods) {
+                XposedBridge.hookMethod(mCall, object : XC_MethodHook() {
+                    @Throws(Throwable::class)
+                    override fun beforeHookedMethod(param: MethodHookParam) {
+                        makeCall(param)
+                    }
+                })
+            }
         }
 
         private fun makeCall(param: XC_MethodHook.MethodHookParam) {
             try {
-                val method = param.args[0] as String?
-                val arg = param.args[1] as String?
-                val extras = param.args[2] as Bundle?
+                var method: String? = null
+                var arg: String? = null
+                var extras: Bundle? = null
+
+                // Handle different call signatures in ContentProvider
+                when (param.args.size) {
+                    3 -> {
+                        // call(String method, String arg, Bundle extras)
+                        method = param.args[0] as String?
+                        arg = param.args[1] as String?
+                        extras = param.args[2] as Bundle?
+                    }
+                    4 -> {
+                        // call(String authority, String method, String arg, Bundle extras)
+                        method = param.args[1] as String?
+                        arg = param.args[2] as String?
+                        extras = param.args[3] as Bundle?
+                    }
+                    5 -> {
+                        // call(String callingPkg, String authority, String method, String arg, Bundle extras)
+                        method = param.args[2] as String?
+                        arg = param.args[3] as String?
+                        extras = param.args[4] as Bundle?
+                    }
+                }
 
                 if ("NoWakelock" == method) { // if call form NoWakelock
                     try {

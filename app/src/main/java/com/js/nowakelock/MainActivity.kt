@@ -45,8 +45,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check if the module is active
-        if (!isModuleActive()) {
+        // Attempt to initialize Shizuku monitoring mode if available
+        if (com.js.nowakelock.shizuku.ShizukuManager.isShizukuAvailable()) {
+            com.js.nowakelock.shizuku.ShizukuManager.requestPermission()
+            if (com.js.nowakelock.shizuku.ShizukuManager.hasPermission()) {
+                com.js.nowakelock.shizuku.ShizukuMonitorService.start(applicationContext)
+            }
+        } else if (!isModuleActive()) {
+            // Only show the "Module not active" toast if neither Shizuku nor Xposed is active
             Toast.makeText(this, getString(R.string.active), Toast.LENGTH_LONG).show()
         }
 
@@ -67,5 +73,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoWakeLockApp()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Do not stop ShizukuMonitorService here; it runs in the background
     }
 }

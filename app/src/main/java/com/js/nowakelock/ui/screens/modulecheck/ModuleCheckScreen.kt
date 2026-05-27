@@ -163,6 +163,11 @@ fun OverallStatusCard(
             Icons.Default.Error,
             stringResource(R.string.error_status)
         )
+        CheckStatus.SHIZUKU -> Triple(
+            MaterialTheme.colorScheme.secondary,
+            Icons.Default.Info,
+            stringResource(R.string.shizuku_status)
+        )
     }
     
     Card(
@@ -201,6 +206,7 @@ fun OverallStatusCard(
                 CheckStatus.NORMAL -> stringResource(R.string.status_normal_description)
                 CheckStatus.WARNING -> stringResource(R.string.status_warning_description)
                 CheckStatus.ERROR -> stringResource(R.string.status_error_description)
+                CheckStatus.SHIZUKU -> "Shizuku is active. Monitoring wakelocks, alarms and services. Blocking requires Xposed."
             }
             
             Text(
@@ -218,7 +224,8 @@ fun OverallStatusCard(
 fun ModuleStatusCard(
     isActive: Boolean,
     version: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isShizuku: Boolean = false
 ) {
     Card(
         modifier = modifier
@@ -238,6 +245,12 @@ fun ModuleStatusCard(
                     Icons.Default.CheckCircle,
                     stringResource(R.string.module_active),
                     MaterialTheme.colorScheme.primary
+                )
+            } else if (isShizuku) {
+                Triple(
+                    Icons.Default.Info,
+                    "Shizuku Active",
+                    MaterialTheme.colorScheme.secondary
                 )
             } else {
                 Triple(

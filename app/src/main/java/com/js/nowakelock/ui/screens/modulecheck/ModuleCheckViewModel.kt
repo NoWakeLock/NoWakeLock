@@ -70,6 +70,7 @@ class ModuleCheckViewModel(
             CheckStatus.NORMAL -> "All module components are working properly"
             CheckStatus.WARNING -> "Module is active but some hooks are not working"
             CheckStatus.ERROR -> "Critical module components are not working"
+            CheckStatus.SHIZUKU -> "Shizuku Monitor Mode is active"
         }
     }
 } 

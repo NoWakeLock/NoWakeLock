@@ -86,12 +86,15 @@ class ModuleCheckManager(
             Type.Service to checkHookEffectiveness(Type.Service)
         )
         val configPathValid = checkConfigPath()
+        val shizukuActive = com.js.nowakelock.base.isShizukuActive()
         
         // Determine overall status based on component statuses
         val overallStatus = when {
-            !moduleActive || !configPathValid -> CheckStatus.ERROR
-            !hookStatus[Type.Wakelock]!! || !hookStatus[Type.Alarm]!! || !hookStatus[Type.Service]!! -> CheckStatus.WARNING
-            else -> CheckStatus.NORMAL
+            moduleActive && !configPathValid -> CheckStatus.ERROR
+            moduleActive && (!hookStatus[Type.Wakelock]!! || !hookStatus[Type.Alarm]!! || !hookStatus[Type.Service]!!) -> CheckStatus.WARNING
+            moduleActive -> CheckStatus.NORMAL
+            shizukuActive -> CheckStatus.SHIZUKU
+            else -> CheckStatus.ERROR
         }
         
         return ModuleCheckResult(
@@ -99,6 +102,7 @@ class ModuleCheckManager(
             moduleVersion = moduleVersion,
             hookStatus = hookStatus,
             configPathValid = configPathValid,
+            shizukuActive = shizukuActive,
             overallStatus = overallStatus
         )
     }
