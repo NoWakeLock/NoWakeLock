@@ -87,10 +87,9 @@ class AppDasAR(
                     daDao.insert(it)
                 }
             } catch (e: Exception) {
-                getCPResult(context, ProviderMethod.ClearData.value, Bundle())
-                LogUtil.d("AppDasAR", "getSerializable err: $e")
+                LogUtil.e("AppDasAR", "getSerializable err: $e")
             } finally {
-                LogUtil.d("AppDasAR", "getSerializable err clearAll")
+                LogUtil.d("AppDasAR", "syncInfos attempt finished")
             }
         }
     }

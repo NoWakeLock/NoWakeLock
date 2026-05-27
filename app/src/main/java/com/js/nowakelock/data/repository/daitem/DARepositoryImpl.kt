@@ -218,8 +218,7 @@ open class DARepositoryImpl(
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    // Clear data if error occurs
-                    getCPResult(BasicApp.context, ProviderMethod.ClearData.value, Bundle())
+                    // Skipping clearData because it causes data loss on intermittent errors.
                 }
             }
         } catch (e: Exception) {
