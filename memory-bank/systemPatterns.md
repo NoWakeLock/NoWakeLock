@@ -44,7 +44,7 @@ NoWakeLock Extended employs a modern Android application architecture, integrati
 ## 🔐 Critical Implementation Paths
 - [Path₁] Wakelock Detection ⟶ WakelockHook / ShizukuCollector → Record → Repository → Database
 - [Path₂] Wakelock Display ⟶ Database → Repository → ViewModel → UI
-- [Path₃] Wakelock Control ⟶ UI → ViewModel → Repository → XpNSP / ShizukuBlocker → System
+- [Path₃] Wakelock Control ⟶ UI → ViewModel → Repository → XpNSP / ShizukuRestricter → System
 - [Path₄] Alarm Detection ⟶ AlarmHook / ShizukuCollector → Record → Repository → Database
 - [Path₅] Service Detection ⟶ ServiceHook / ShizukuCollector → Record → Repository → Database
 - [Path₆] User Switching ⟶ UI → ViewModel → Repositories → Database Queries

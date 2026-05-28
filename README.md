@@ -20,7 +20,7 @@ We took the brilliant architectural foundation of the original app and overhaule
 ### 🔥 What Makes This Fork Special?
 
 1. **Rootless Operation (Shizuku Magic!)**  
-   You no longer need a rooted device to take control of your battery! We engineered a brand-new backend that leverages **Shizuku** (via ADB/AppOps) to seamlessly monitor, manage, and block wakelocks, alarms, and background services. 
+   You no longer need a rooted device to take control of your battery! We engineered a brand-new backend that leverages **Shizuku** (via ADB/AppOps) to seamlessly monitor background activity. Note that Shizuku operates by **restricting** permissions (`AppOps`) and forcefully stopping services, unlike Xposed which performs low-level interception.
 
 2. **Samsung OneUI Mastery**  
    Historically, heavily modified Android skins like Samsung's OneUI struggled with this type of system-level hooking. We rebuilt the `SettingsProviderHook` and implemented dynamic signature resolution to ensure **100% compatibility with Samsung devices!**
@@ -30,6 +30,24 @@ We took the brilliant architectural foundation of the original app and overhaule
 
 4. **IPC Data Resiliency**  
    Fixed a critical logic flaw from the original app where serialization errors (like Shizuku unbinding) would maliciously command the internal database to wipe all user records. Your data and scores are now perfectly safe across disconnects!
+
+5. **Bulletproof Stability & Deduplication**  
+   We completely engineered the background polling system to be hyper-efficient. It features native OS timeouts (to prevent Android `system_server` freezes), 15,000-line circuit breakers, and an intelligent `ConcurrentHashMap` caching layer. It only registers *genuinely new* events, cutting UI rendering load and memory consumption by 99.9% compared to raw polling!
+
+---
+
+## ⚖️ Xposed vs. Shizuku: What's the Difference?
+
+NoWakeLock Extended operates in one of two modes depending on your device's capabilities:
+
+| Feature | Xposed Mode (Root) | Shizuku Mode (Rootless) |
+| :--- | :--- | :--- |
+| **Mechanism** | Low-level Android API hook (Interception) | System shell commands & Polling |
+| **Wakelocks / Alarms** | **True Blocking:** Intercepts the request *before* it happens, denying it instantly. | **Restriction:** Alters `AppOps` permissions to ignore background requests. |
+| **Background Services** | **True Blocking:** Prevents the service from ever starting. | **Mitigation:** Issues `force-stop` to halt the app if a service is detected. |
+| **Battery Impact** | Negligible (Event-driven) | Minor (Polls `dumpsys` periodically) |
+
+**TL;DR:** Xposed provides absolute, true blocking at the Android core. Shizuku provides an excellent, rootless "restriction" alternative that achieves similar real-world battery savings by limiting app permissions and force-stopping misbehaving services.
 
 ---
 

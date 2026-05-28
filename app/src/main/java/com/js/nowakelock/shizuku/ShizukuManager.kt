@@ -51,6 +51,7 @@ object ShizukuManager {
         if (!hasPermission()) return "Shizuku permission not granted."
 
         val builder = StringBuilder()
+        var process: Process? = null
         try {
             // Shizuku.newProcess might be private or restricted in this API version
             // Use reflection to call it
@@ -63,22 +64,26 @@ object ShizukuManager {
             method.isAccessible = true
 
             // Execute via shell to support pipes and avoid manual split issues
-            val cmdArray = arrayOf("sh", "-c", command)
+            val cmdArray = arrayOf("sh", "-c", "$command 2>/dev/null")
 
-            val process = method.invoke(
+            process = method.invoke(
                 null,
                 cmdArray,
                 null,
                 null
             ) as Process
 
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            var line: String?
-            while (reader.readLine().also { line = it } != null) {
-                if (lineProcessor != null) {
-                    lineProcessor(line!!)
-                } else {
-                    builder.append(line).append("\n")
+            BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                var line: String?
+                var lineCount = 0
+                while (reader.readLine().also { line = it } != null) {
+                    if (Thread.currentThread().isInterrupted) break // Stop if coroutine is cancelled
+                    if (lineCount++ > 15000) break // Hard limit to absolutely prevent OOM
+                    if (lineProcessor != null) {
+                        lineProcessor(line!!)
+                    } else {
+                        builder.append(line).append("\n")
+                    }
                 }
             }
             process.waitFor()
@@ -87,6 +92,16 @@ object ShizukuManager {
             if (lineProcessor == null) {
                 builder.append("Error executing command: ").append(e.message)
             }
+        } finally {
+            try {
+                process?.outputStream?.close()
+            } catch (ignored: Exception) {}
+            try {
+                process?.errorStream?.close()
+            } catch (ignored: Exception) {}
+            try {
+                process?.destroy()
+            } catch (ignored: Exception) {}
         }
         return if (lineProcessor != null) "" else builder.toString()
     }

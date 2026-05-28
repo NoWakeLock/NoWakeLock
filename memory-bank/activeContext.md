@@ -59,7 +59,7 @@ We have successfully implemented Shizuku support as a fallback for users without
 - [Decision₃₀] ✅ ⟶ Implemented comprehensive module detection covering Shizuku status alongside Xposed.
 
 ## 📎 Context References
-- 💻 `ShizukuBlocker.kt`, `ShizukuManager.kt`, `ShizukuDataCollector.kt`
+- 💻 `ShizukuRestricter.kt`, `ShizukuManager.kt`, `ShizukuDataCollector.kt`
 - 💻 `SettingsProviderHook.kt`
 - 💻 `AppDasAR.kt`, `DARepositoryImpl.kt`
 

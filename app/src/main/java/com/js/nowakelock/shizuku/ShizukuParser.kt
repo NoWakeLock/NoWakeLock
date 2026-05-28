@@ -7,6 +7,13 @@ import com.js.nowakelock.data.db.entity.InfoEvent
 
 object ShizukuParser {
 
+    private val tagRegex = Regex("'([^']+)'")
+    private val wsRegex = Regex("""ws=WorkSource\{([^}]+)\}""")
+    private val pkgRegex = Regex("""\b([a-z][a-z0-9_]*(\.[a-z0-9_]+)+)\b""")
+    private val chainUidRegex = Regex("""\((\d{4,})\)""")
+    private val tagPkgRegex = Regex("""([a-z][a-z0-9_]*(\.[a-z0-9_]+)+)""")
+    private val uidRegex = Regex("""uid=(\d+)""")
+
     /**
      * Helper to get package name from UID
      */
@@ -30,22 +37,22 @@ object ShizukuParser {
     fun parseWakelockLine(line: String, currentTimestamp: Long): InfoEvent? {
         if (line.contains("WAKE_LOCK") && line.contains("ACQ=")) {
             // Extract tag inside single quotes: 'MyWakelockTag'
-            val tagMatch = Regex("'([^']+)'").find(line)
+            val tagMatch = tagRegex.find(line)
             val tag = tagMatch?.groupValues?.get(1) ?: return null
 
             var packageName = "unknown"
             var uid = -1
             
             // 1. Try to extract from WorkSource e.g. ws=WorkSource{10656 com.brave.browser}
-            val wsMatch = Regex("""ws=WorkSource\{([^}]+)\}""").find(line)
+            val wsMatch = wsRegex.find(line)
             if (wsMatch != null) {
                 val wsContent = wsMatch.groupValues[1]
-                val pkgMatch = Regex("""\b([a-z][a-z0-9_]*(\.[a-z0-9_]+)+)\b""").find(wsContent)
+                val pkgMatch = pkgRegex.find(wsContent)
                 if (pkgMatch != null) {
                     packageName = pkgMatch.value
                 } else {
                     // try to grab uid from WorkChain e.g. WorkChain{(10656)
-                    val chainUidMatch = Regex("""\((\d{4,})\)""").find(wsContent)
+                    val chainUidMatch = chainUidRegex.find(wsContent)
                     if (chainUidMatch != null) {
                         uid = chainUidMatch.groupValues[1].toInt()
                     }
@@ -54,7 +61,7 @@ object ShizukuParser {
             
             // 2. Look in the tag itself (very common for *job* / alarms)
             if (packageName == "unknown") {
-                val pkgMatch = Regex("""([a-z][a-z0-9_]*(\.[a-z0-9_]+)+)""").find(tag)
+                val pkgMatch = tagPkgRegex.find(tag)
                 if (pkgMatch != null) {
                     packageName = pkgMatch.value
                 }
@@ -62,7 +69,7 @@ object ShizukuParser {
             
             // 3. Fallback to standard UID parsing
             if (packageName == "unknown" && uid == -1) {
-                val uidMatch = Regex("""uid=(\d+)""").find(line)
+                val uidMatch = uidRegex.find(line)
                 if (uidMatch != null) {
                     uid = uidMatch.groupValues[1].toInt()
                 }

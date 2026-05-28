@@ -51,14 +51,14 @@ class AppDetailRepositoryImpl(
         try {
             appDaDao.insert(appSt)
             
-            // Apply pseudo-blocking via Shizuku if Xposed isn't doing the job
+            // Apply restriction via Shizuku if Xposed isn't doing the job
             if (!com.js.nowakelock.base.isModuleActive() || com.js.nowakelock.shizuku.ShizukuManager.hasPermission()) {
-                com.js.nowakelock.shizuku.ShizukuBlocker.applyBlockSettings(
+                com.js.nowakelock.shizuku.ShizukuRestricter.applyRestrictSettings(
                     context = com.js.nowakelock.BasicApp.context,
                     packageName = appSt.packageName,
-                    blockWakelock = appSt.wakelock, // true means blocked in appSt
-                    blockAlarm = appSt.alarm,
-                    blockService = appSt.service
+                    restrictWakelock = appSt.wakelock, // true means restricted in appSt
+                    restrictAlarm = appSt.alarm,
+                    restrictService = appSt.service
                 )
             }
             true
