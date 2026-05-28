@@ -43,11 +43,13 @@ object ShizukuManager {
     }
 
     /**
-     * Executes a shell command using Shizuku and returns the output as a String.
+     * Executes a shell command using Shizuku.
+     * If [lineProcessor] is provided, it will process the output line-by-line to prevent OutOfMemoryError.
+     * Otherwise, it returns the full output as a String.
      */
-    fun executeCommand(command: String): String {
+    fun executeCommand(command: String, lineProcessor: ((String) -> Unit)? = null): String {
         if (!hasPermission()) return "Shizuku permission not granted."
-        
+
         val builder = StringBuilder()
         try {
             // Shizuku.newProcess might be private or restricted in this API version
@@ -59,11 +61,10 @@ object ShizukuManager {
                 String::class.java
             )
             method.isAccessible = true
-            
-            // Split the command string into an array, respecting quotes for complex commands if needed
-            // But for dumpsys and am, a simple split by space is sufficient
-            val cmdArray = command.split(" ").toTypedArray()
-            
+
+            // Execute via shell to support pipes and avoid manual split issues
+            val cmdArray = arrayOf("sh", "-c", command)
+
             val process = method.invoke(
                 null,
                 cmdArray,
@@ -74,13 +75,19 @@ object ShizukuManager {
             val reader = BufferedReader(InputStreamReader(process.inputStream))
             var line: String?
             while (reader.readLine().also { line = it } != null) {
-                builder.append(line).append("\n")
+                if (lineProcessor != null) {
+                    lineProcessor(line!!)
+                } else {
+                    builder.append(line).append("\n")
+                }
             }
             process.waitFor()
         } catch (e: Exception) {
             e.printStackTrace()
-            builder.append("Error executing command: ").append(e.message)
+            if (lineProcessor == null) {
+                builder.append("Error executing command: ").append(e.message)
+            }
         }
-        return builder.toString()
+        return if (lineProcessor != null) "" else builder.toString()
     }
 }

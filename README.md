@@ -4,8 +4,8 @@
 
 ![Android](https://img.shields.io/badge/platform-Android%207.0%2B-green.svg?style=for-the-badge)
 ![Framework](https://img.shields.io/badge/framework-Shizuku%20%7C%20Xposed-orange.svg?style=for-the-badge)
-![License](https://img.shields.io/github/license/NoWakeLock/NoWakeLock.svg?style=for-the-badge)
-![GitHub release](https://img.shields.io/github/v/release/YOUR_USERNAME/NoWakeLock-Extended.svg?style=for-the-badge)
+![License](https://img.shields.io/github/license/Arora-Sir/NoWakeLock-Extended.svg?style=for-the-badge)
+![GitHub release](https://img.shields.io/github/v/release/Arora-Sir/NoWakeLock-Extended.svg?style=for-the-badge)
 
 **The ultimate power management tool for Android - now supercharged with Shizuku support and universal compatibility!**
 

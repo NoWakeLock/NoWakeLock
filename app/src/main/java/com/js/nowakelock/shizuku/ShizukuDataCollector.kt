@@ -39,18 +39,19 @@ object ShizukuDataCollector {
 
         // 1. Collect Wakelocks
         try {
-            val wakelockOutput = ShizukuManager.executeCommand("dumpsys power")
-            val wakelocks = ShizukuParser.parseWakelocks(wakelockOutput, currentTimestamp)
-            for (event in wakelocks) {
-                com.js.nowakelock.xposedhook.model.XpRecord.newEvent(
-                    name = event.name,
-                    packageName = event.packageName,
-                    type = event.type,
-                    context = context,
-                    userId = event.userId,
-                    startTime = event.startTime,
-                    instanceId = event.instanceId
-                )
+            ShizukuManager.executeCommand("dumpsys power") { line ->
+                val event = ShizukuParser.parseWakelockLine(line, currentTimestamp)
+                if (event != null) {
+                    com.js.nowakelock.xposedhook.model.XpRecord.newEvent(
+                        name = event.name,
+                        packageName = event.packageName,
+                        type = event.type,
+                        context = context,
+                        userId = event.userId,
+                        startTime = event.startTime,
+                        instanceId = event.instanceId
+                    )
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -58,18 +59,19 @@ object ShizukuDataCollector {
 
         // 2. Collect Alarms
         try {
-            val alarmOutput = ShizukuManager.executeCommand("dumpsys alarm")
-            val alarms = ShizukuParser.parseAlarms(alarmOutput, currentTimestamp)
-            for (event in alarms) {
-                com.js.nowakelock.xposedhook.model.XpRecord.newEvent(
-                    name = event.name,
-                    packageName = event.packageName,
-                    type = event.type,
-                    context = context,
-                    userId = event.userId,
-                    startTime = event.startTime,
-                    instanceId = event.instanceId
-                )
+            ShizukuManager.executeCommand("dumpsys alarm") { line ->
+                val event = ShizukuParser.parseAlarmLine(line, currentTimestamp)
+                if (event != null) {
+                    com.js.nowakelock.xposedhook.model.XpRecord.newEvent(
+                        name = event.name,
+                        packageName = event.packageName,
+                        type = event.type,
+                        context = context,
+                        userId = event.userId,
+                        startTime = event.startTime,
+                        instanceId = event.instanceId
+                    )
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -77,18 +79,19 @@ object ShizukuDataCollector {
 
         // 3. Collect Services
         try {
-            val serviceOutput = ShizukuManager.executeCommand("dumpsys activity services")
-            val services = ShizukuParser.parseServices(serviceOutput, currentTimestamp)
-            for (event in services) {
-                com.js.nowakelock.xposedhook.model.XpRecord.newEvent(
-                    name = event.name,
-                    packageName = event.packageName,
-                    type = event.type,
-                    context = context,
-                    userId = event.userId,
-                    startTime = event.startTime,
-                    instanceId = event.instanceId
-                )
+            ShizukuManager.executeCommand("dumpsys activity services") { line ->
+                val event = ShizukuParser.parseServiceLine(line, currentTimestamp)
+                if (event != null) {
+                    com.js.nowakelock.xposedhook.model.XpRecord.newEvent(
+                        name = event.name,
+                        packageName = event.packageName,
+                        type = event.type,
+                        context = context,
+                        userId = event.userId,
+                        startTime = event.startTime,
+                        instanceId = event.instanceId
+                    )
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

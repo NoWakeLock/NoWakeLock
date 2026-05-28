@@ -25,6 +25,8 @@ import com.js.nowakelock.data.model.UserInfo
 import com.js.nowakelock.data.provider.ProviderMethod
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 class AppDasAR(
     private val appInfoDao: AppInfoDao,
@@ -79,18 +81,22 @@ class AppDasAR(
             it
         }
 
-        val result = getCPResult(context, ProviderMethod.LoadInfos.value, args)
-        result?.let {
-            try {
-                val infos = result.getSerializable("infos") as Array<Info>?
-                infos?.toList()?.let {
-                    daDao.insert(it)
+        try {
+            val result = getCPResult(context, ProviderMethod.LoadInfos.value, args)
+            result?.let {
+                try {
+                    val infos = result.getSerializable("infos") as Array<Info>?
+                    infos?.toList()?.let {
+                        daDao.insert(it)
+                    }
+                } catch (e: Exception) {
+                    LogUtil.e("AppDasAR", "getSerializable err: $e")
+                } finally {
+                    LogUtil.d("AppDasAR", "syncInfos attempt finished")
                 }
-            } catch (e: Exception) {
-                LogUtil.e("AppDasAR", "getSerializable err: $e")
-            } finally {
-                LogUtil.d("AppDasAR", "syncInfos attempt finished")
             }
+        } catch (e: Exception) {
+            LogUtil.e("AppDasAR", "syncInfos failed: ${e.message}")
         }
     }
 
@@ -100,10 +106,15 @@ class AppDasAR(
         .map { appInfoList ->
             // Process all apps in parallel using coroutineScope
             coroutineScope {
+                val semaphore = kotlinx.coroutines.sync.Semaphore(10) // Limit concurrency to prevent OOM
                 // Create async tasks for each app processing
                 appInfoList.map { appInfo ->
                     // Each app is processed in a separate async coroutine
-                    async { appInfoToAppWithStats(appInfo) }
+                    async {
+                        semaphore.withPermit {
+                            appInfoToAppWithStats(appInfo)
+                        }
+                    }
                 }.awaitAll() // Wait for all apps to be processed
             }
         }
