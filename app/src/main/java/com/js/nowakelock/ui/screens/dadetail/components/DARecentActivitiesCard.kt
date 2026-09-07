@@ -153,7 +153,7 @@ fun ActivityItem(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                if (event.type != Type.Wakelock) {
+                if (event.type == Type.Wakelock && !event.isBlocked) {
                     Text(
                         text = stringResource(R.string.duration_separator, event.formattedDuration),
                         style = MaterialTheme.typography.bodyMedium,
@@ -217,4 +217,4 @@ fun DARecentActivitiesCardEmptyPreview() {
             type = Type.Alarm
         )
     }
-} 
+}

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import com.js.nowakelock.xposedhook.XpUtil
 import com.js.nowakelock.data.provider.XProvider
+import com.js.nowakelock.xposedhook.XposedHookInstallGuard
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -17,12 +18,17 @@ class SettingsProviderHook {
 
         @SuppressLint("PrivateApi")
         fun hook(lpparam: XC_LoadPackage.LoadPackageParam) {
+            hook(lpparam.classLoader)
+        }
 
+        @SuppressLint("PrivateApi")
+        fun hook(classLoader: ClassLoader?) {
+            val loader = classLoader ?: return
             // https://android.googlesource.com/platform/frameworks/base/+/master/packages/SettingsProvider/src/com/android/providers/settings/SettingsProvider.java
             val clsSet = Class.forName(
                 "com.android.providers.settings.SettingsProvider",
                 false,
-                lpparam.classLoader
+                loader
             )
             // Bundle call(String method, String arg, Bundle extras)
             val mCall: Method = clsSet.getMethod(
@@ -31,6 +37,9 @@ class SettingsProviderHook {
                 String::class.java,
                 Bundle::class.java
             )
+            if (!XposedHookInstallGuard.markSharedInstalled("legacy", "settings-provider", loader)) {
+                return
+            }
 
             XposedBridge.hookMethod(mCall, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -68,7 +77,7 @@ class SettingsProviderHook {
             }
         }
 
-        private fun call(context: Context?, method: String?, extras: Bundle?): Bundle? {
+        fun call(context: Context?, method: String?, extras: Bundle?): Bundle? {
             return if (context == null || extras == null || method == null) {
                 XpUtil.log("null")
                 null

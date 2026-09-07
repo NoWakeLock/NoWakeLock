@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import com.js.nowakelock.base.getCPResult
+import com.js.nowakelock.data.config.ConfigBackendStatus
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.model.CheckStatus
 import com.js.nowakelock.data.model.ModuleCheckResult
@@ -85,20 +86,22 @@ class ModuleCheckManager(
             Type.Alarm to checkHookEffectiveness(Type.Alarm),
             Type.Service to checkHookEffectiveness(Type.Service)
         )
-        val configPathValid = checkConfigPath()
+        val configBackendStatus = checkConfigBackendStatus()
+        val configPathValid = configBackendStatus.backendAvailable
         
         // Determine overall status based on component statuses
-        val overallStatus = when {
-            !moduleActive || !configPathValid -> CheckStatus.ERROR
-            !hookStatus[Type.Wakelock]!! || !hookStatus[Type.Alarm]!! || !hookStatus[Type.Service]!! -> CheckStatus.WARNING
-            else -> CheckStatus.NORMAL
-        }
+        val overallStatus = ModuleCheckResult.determineOverallStatus(
+            moduleActive = moduleActive,
+            hookStatus = hookStatus,
+            configBackendStatus = configBackendStatus
+        )
         
         return ModuleCheckResult(
             moduleActive = moduleActive,
             moduleVersion = moduleVersion,
             hookStatus = hookStatus,
             configPathValid = configPathValid,
+            configBackendStatus = configBackendStatus,
             overallStatus = overallStatus
         )
     }
@@ -148,16 +151,22 @@ class ModuleCheckManager(
     }
     
     /**
-     * Check if the config path exists
+     * Check if the hook can read at least one config backend
      */
-    private fun checkConfigPath(): Boolean {
+    private fun checkConfigBackendStatus(): ConfigBackendStatus {
         return try {
             val args = Bundle()
-            val result = getCPResult(context, ProviderMethod.CheckSharedPreferencesPath.value, args)
-            result?.getBoolean("pathExists", false) ?: false
+            val result = getCPResult(context, ProviderMethod.CheckConfigBackendStatus.value, args)
+            ConfigBackendStatus.fromBundle(result).copy(
+                publishedRevision = com.js.nowakelock.data.config.ConfigLocalState(context).publishedRevision(),
+                requestedRevision = com.js.nowakelock.data.config.ConfigLocalState(context).revision(),
+                diagnostics = listOfNotNull(result?.getString("diagnostics"),
+                    com.js.nowakelock.data.config.XposedRemotePreferencesManagers.create().diagnostics())
+                    .joinToString("\n")
+            )
         } catch (e: Exception) {
-            Log.e(TAG, "Error checking config path: ${e.message}")
-            false
+            Log.e(TAG, "Error checking config backend: ${e.message}")
+            ConfigBackendStatus(lastError = e.message)
         }
     }
-} 
+}

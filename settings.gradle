@@ -18,3 +18,5 @@
 
 rootProject.name='NoWakeLock'
 include ':app'
+include ':xposed-entry'
+include ':test-harness'

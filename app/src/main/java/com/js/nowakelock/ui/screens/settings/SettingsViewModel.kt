@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.base.SPTools
+import com.js.nowakelock.data.config.ConfigPublisher
+import com.js.nowakelock.data.config.XposedConfigKeys
 import com.js.nowakelock.data.db.AppDatabase
 import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.repository.backup.BackupManager
@@ -56,7 +58,8 @@ data class SettingsUiState(
 open class SettingsViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val backupManager: BackupManager,
-    private val context: Context
+    private val context: Context,
+    private val configPublisher: ConfigPublisher? = null
 ) : ViewModel() {
     // UI状态
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -95,7 +98,8 @@ open class SettingsViewModel(
         )
         
     // Debug mode from SPTools
-    private val _debugMode = MutableStateFlow(SPTools.getBoolean("debug", false))
+    private val _debugMode = MutableStateFlow(configPublisher?.debugEnabled()
+        ?: SPTools.getBoolean(XposedConfigKeys.DEBUG, false))
     val debugMode: StateFlow<Boolean> = _debugMode
 
     init {
@@ -209,8 +213,29 @@ open class SettingsViewModel(
      * Update debug mode using SPTools
      */
     fun updateDebugMode(enabled: Boolean) {
-        SPTools.setBoolean("debug", enabled)
         _debugMode.value = enabled
+        _uiState.value = _uiState.value.copy(debugMode = enabled)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val published = configPublisher?.publishDebug(enabled)
+                    ?: SPTools.setBoolean(XposedConfigKeys.DEBUG, enabled).also {
+                        check(it) { "Unable to save debug configuration" }
+                    }
+                if (!published) {
+                    withContext(Dispatchers.Main) { showMessage(context.getString(R.string.config_publish_pending)) }
+                }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                val saved = configPublisher?.debugEnabled()
+                    ?: SPTools.getBoolean(XposedConfigKeys.DEBUG, false)
+                withContext(Dispatchers.Main) {
+                    _debugMode.value = saved
+                    _uiState.update { it.copy(debugMode = saved) }
+                    showMessage(e.message ?: "Unable to save debug configuration")
+                }
+            }
+        }
     }
     
     /**
@@ -247,7 +272,8 @@ open class SettingsViewModel(
                 val result = backupManager.restoreBackup(uri)
                 
                 if (result.isSuccess) {
-                    showMessage(context.getString(R.string.restore_success))
+                    showMessage(context.getString(if (result.getOrNull() == true)
+                        R.string.restore_success else R.string.config_restore_publish_pending))
                 } else {
                     showMessage(context.getString(R.string.restore_failed, result.exceptionOrNull()?.message))
                 }
@@ -361,4 +387,4 @@ open class SettingsViewModel(
             _uiState.update { it.copy(message = "") }
         }
     }
-} 
+}

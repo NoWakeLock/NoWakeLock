@@ -76,26 +76,30 @@ class ServiceHook {
         )
 
         fun hookService(lpparam: XC_LoadPackage.LoadPackageParam) {
+            hookService(lpparam.classLoader)
+        }
+
+        fun hookService(classLoader: ClassLoader) {
             XpUtil.log("Hooking Service ${Build.VERSION.SDK_INT}")
 
             // Use unified hook approach for all Android versions
-            unifiedServiceHook(lpparam)
+            unifiedServiceHook(classLoader)
         }
 
         /**
          * Unified service hook approach that works across all Android versions
          */
-        private fun unifiedServiceHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun unifiedServiceHook(classLoader: ClassLoader) {
             try {
                 // Get the ActiveServices class
                 val activeServicesClass =
-                    findClass("com.android.server.am.ActiveServices", lpparam.classLoader)
+                    findClass("com.android.server.am.ActiveServices", classLoader)
 
                 // Hook startServiceLocked methods
-                hookStartServiceMethods(activeServicesClass, lpparam)
+                hookStartServiceMethods(activeServicesClass)
 
                 // Hook bindServiceLocked methods
-                hookBindServiceMethods(activeServicesClass, lpparam)
+                hookBindServiceMethods(activeServicesClass)
             } catch (e: Throwable) {
                 XpUtil.log("Error in unified service hook: ${e.message}")
                 e.printStackTrace()
@@ -106,8 +110,7 @@ class ServiceHook {
          * Hook all startServiceLocked methods
          */
         private fun hookStartServiceMethods(
-            activeServicesClass: Class<*>,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            activeServicesClass: Class<*>
         ) {
             try {
                 // Find all methods named startServiceLocked
@@ -123,7 +126,7 @@ class ServiceHook {
 
                 // Hook each method found
                 for (method in methods) {
-                    hookStartServiceLockedMethod(method, lpparam)
+                    hookStartServiceLockedMethod(method)
                 }
             } catch (e: Throwable) {
                 XpUtil.log("Error hooking startServiceLocked methods: ${e.message}")
@@ -135,8 +138,7 @@ class ServiceHook {
          * Hook all bindServiceLocked methods
          */
         private fun hookBindServiceMethods(
-            activeServicesClass: Class<*>,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            activeServicesClass: Class<*>
         ) {
             try {
                 // Find all methods named bindServiceLocked
@@ -152,7 +154,7 @@ class ServiceHook {
 
                 // Hook each method found
                 for (method in methods) {
-                    hookBindServiceLockedMethod(method, lpparam)
+                    hookBindServiceLockedMethod(method)
                 }
             } catch (e: Throwable) {
                 XpUtil.log("Error hooking bindServiceLocked methods: ${e.message}")
@@ -164,8 +166,7 @@ class ServiceHook {
          * Hook a specific startServiceLocked method with parameter caching
          */
         private fun hookStartServiceLockedMethod(
-            method: Method,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            method: Method
         ) {
             XpUtil.log("Hooking startServiceLocked method with signature: ${method.parameterTypes.joinToString()}")
 
@@ -201,8 +202,7 @@ class ServiceHook {
          * Hook a specific bindServiceLocked method with parameter caching
          */
         private fun hookBindServiceLockedMethod(
-            method: Method,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            method: Method
         ) {
             XpUtil.log("Hooking bindServiceLocked method with signature: ${method.parameterTypes.joinToString()}")
 
@@ -410,7 +410,9 @@ class ServiceHook {
             val block = block(serviceName, packageName, userId, booted and !pm.isInteractive)
 
             if (block) {
-                param.result = null
+                // bindServiceLocked returns int (0 = not bound); startServiceLocked
+                // returns ComponentName (null = not started). Never unbox null.
+                param.result = if ((param.method as Method).returnType == Int::class.javaPrimitiveType) 0 else null
 
                 XpUtil.log("$packageName service: $serviceName block $booted ${pm.isInteractive}")
                 XpRecord.blockEvent(
@@ -445,7 +447,7 @@ class ServiceHook {
             userId: Int,
             isLocked: Boolean
         ): Boolean {
-            val xpNSP = XpNSP.getInstance()
+            val xpNSP = XpNSP.getInstance().decisionView()
             return shouldBlockService(
                 fullBlock = xpNSP.flag(name, packageName, type, userId),
                 screenOffBlock = xpNSP.flagLock(name, packageName, type, userId),

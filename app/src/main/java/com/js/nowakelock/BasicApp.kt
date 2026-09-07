@@ -10,10 +10,12 @@ import com.google.gson.Gson
 import com.js.nowakelock.data.broadcastreceiver.PowerConnectionReceiver
 import com.js.nowakelock.data.manager.BootResetManager
 import com.js.nowakelock.data.manager.ModuleCheckManager
+import com.js.nowakelock.data.config.ConfigPublisher
 import com.js.nowakelock.data.repository.preferences.UserPreferencesRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.context.GlobalContext
 import org.koin.core.logger.Level
 import org.koin.java.KoinJavaComponent.inject
 
@@ -31,6 +33,13 @@ class BasicApp : Application() {
         context = applicationContext
         gson = Gson()
 
+        // The fixed old framework can create another Application for a second LoadedApk
+        // in this process. Keep process-wide services and receiver registration single.
+        if (GlobalContext.getOrNull() != null) {
+            Log.i(TAG, "Reusing initialized application services")
+            return
+        }
+
         // Initialize Koin for dependency injection
         startKoin {
             androidContext(this@BasicApp)
@@ -40,6 +49,8 @@ class BasicApp : Application() {
         
         // Get UserPreferencesRepository from Koin
         val userPreferencesRepository: UserPreferencesRepository by inject(UserPreferencesRepository::class.java)
+        val configPublisher: ConfigPublisher by inject(ConfigPublisher::class.java)
+        configPublisher.start()
         
         // Initialize and use BootResetManager to check if we need to reset tables after device restart
         val bootResetManager = BootResetManager(context, userPreferencesRepository)

@@ -53,28 +53,32 @@ class AlarmHook {
         )
 
         fun hookAlarm(lpparam: XC_LoadPackage.LoadPackageParam) {
+            hookAlarm(lpparam.classLoader)
+        }
+
+        fun hookAlarm(classLoader: ClassLoader) {
             XpUtil.log("Hooking Alarm ${Build.VERSION.SDK_INT}")
 
             // Use unified hook approach for all Android versions
-            unifiedAlarmHook(lpparam)
+            unifiedAlarmHook(classLoader)
         }
 
         /**
          * Unified alarm hook approach that works across all Android versions
          */
-        private fun unifiedAlarmHook(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun unifiedAlarmHook(classLoader: ClassLoader) {
             try {
                 // Get the AlarmManagerService class based on Android version
                 val alarmManagerServiceClass = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     // Android 12+ (API 31+)
-                    XposedHelpers.findClass("com.android.server.alarm.AlarmManagerService", lpparam.classLoader)
+                    XposedHelpers.findClass("com.android.server.alarm.AlarmManagerService", classLoader)
                 } else {
                     // Android 11 and below (API <= 30)
-                    XposedHelpers.findClass("com.android.server.AlarmManagerService", lpparam.classLoader)
+                    XposedHelpers.findClass("com.android.server.AlarmManagerService", classLoader)
                 }
 
                 // Hook triggerAlarmsLocked methods
-                hookAlarmMethods(alarmManagerServiceClass, lpparam)
+                hookAlarmMethods(alarmManagerServiceClass)
             } catch (e: Throwable) {
                 XpUtil.log("Error in unified alarm hook: ${e.message}")
                 e.printStackTrace()
@@ -85,8 +89,7 @@ class AlarmHook {
          * Hook all triggerAlarmsLocked methods
          */
         private fun hookAlarmMethods(
-            alarmManagerServiceClass: Class<*>,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            alarmManagerServiceClass: Class<*>
         ) {
             try {
                 // Find all methods named triggerAlarmsLocked
@@ -102,7 +105,7 @@ class AlarmHook {
 
                 // Hook each method found
                 for (method in methods) {
-                    hookAlarmMethod(method, lpparam)
+                    hookAlarmMethod(method)
                 }
             } catch (e: Throwable) {
                 XpUtil.log("Error hooking triggerAlarmsLocked methods: ${e.message}")
@@ -114,8 +117,7 @@ class AlarmHook {
          * Hook a specific triggerAlarmsLocked method with parameter caching
          */
         private fun hookAlarmMethod(
-            method: Method,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            method: Method
         ) {
             XpUtil.log("Hooking triggerAlarmsLocked method with signature: ${method.parameterTypes.joinToString()}")
 
@@ -385,7 +387,7 @@ class AlarmHook {
             now: Long,
             isLocked: Boolean
         ): Boolean {
-            val xpNSP = XpNSP.getInstance()
+            val xpNSP = XpNSP.getInstance().decisionView()
             return xpNSP.flag(name, packageName, type, userId)
                     || isLocked && xpNSP.flagLock(name, packageName, type, userId)
                     || xpNSP.aTI(now, lastActive, name, packageName, type, userId)

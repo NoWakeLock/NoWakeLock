@@ -26,11 +26,11 @@ class SPTools {
         }
 
         // @SuppressLint("CommitPrefEdits")
-        fun setString(key: String, value: String) {
-            with(prefs?.edit() ?: return) {
+        fun setString(key: String, value: String): Boolean {
+            with(prefs?.edit() ?: return false) {
                 putString(key, value)
 //                apply()
-                commit()
+                return commit()
             }
         }
 
@@ -39,11 +39,11 @@ class SPTools {
         }
 
         // @SuppressLint("CommitPrefEdits")
-        fun setBoolean(key: String, value: Boolean) {
-            with(prefs?.edit() ?: return) {
+        fun setBoolean(key: String, value: Boolean): Boolean {
+            with(prefs?.edit() ?: return false) {
                 putBoolean(key, value)
 //                apply()
-                commit()
+                return commit()
             }
         }
 
@@ -52,10 +52,10 @@ class SPTools {
         }
 
         // @SuppressLint("CommitPrefEdits")
-        fun setInt(key: String, value: Int) {
-            with(prefs?.edit() ?: return) {
+        fun setInt(key: String, value: Int): Boolean {
+            with(prefs?.edit() ?: return false) {
                 putInt(key, value)
-                commit()
+                return commit()
             }
         }
 
@@ -64,22 +64,32 @@ class SPTools {
         }
 
         // @SuppressLint("CommitPrefEdits")
-        fun setLong(key: String, value: Long) {
-            with(prefs?.edit() ?: return) {
+        fun setLong(key: String, value: Long): Boolean {
+            with(prefs?.edit() ?: return false) {
                 putLong(key, value)
-                commit()
+                return commit()
             }
         }
 
-        fun setSet(key: String, value: Set<String>) {
-            with(prefs?.edit() ?: return) {
+        fun setSet(key: String, value: Set<String>): Boolean {
+            with(prefs?.edit() ?: return false) {
                 putStringSet(key, value)
-                commit()
+                return commit()
             }
         }
 
         fun getSet(key: String, defaultValue: Set<String> = setOf()): Set<String> {
             return prefs?.getStringSet(key, defaultValue) ?: defaultValue
+        }
+
+        fun isAvailable(): Boolean {
+            return prefs != null
+        }
+
+        fun publish(snapshot: com.js.nowakelock.data.config.ConfigSnapshot): Boolean {
+            val current = prefs ?: return false
+            return com.js.nowakelock.data.config.SharedPreferencesConfigBackend("legacy", current)
+                .publish(snapshot)
         }
     }
 }

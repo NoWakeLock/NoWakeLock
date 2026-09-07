@@ -233,7 +233,7 @@
     <string name="refresh">重新整理</string>
     <string name="module_status">Xposed 狀態</string>
     <string name="hook_status">Hook狀態</string>
-    <string name="config_path">New XSharedPreferences</string>
+    <string name="config_path">設定後端</string>
     <string name="overall_status">整體狀態</string>
     <string name="normal_status">正常</string>
     <string name="warning_status">警告</string>
@@ -246,15 +246,16 @@
     <string name="service_hook">Service Hook</string>
     <string name="hook_working">正常工作</string>
     <string name="hook_not_working">未工作</string>
-    <string name="config_path_valid">設定路徑有效</string>
-    <string name="config_path_invalid">設定路徑無效</string>
+    <string name="config_path_valid">至少一個設定後端可讀取</string>
+    <string name="config_path_invalid">沒有可讀取的設定後端</string>
+    <string name="config_backend_active">目前後端：%s</string>
     <string name="loading">載入中…</string>
     <string name="error_checking_module">檢查模組狀態時出錯</string>
     <string name="status_normal_description">所有模組元件工作正常</string>
     <string name="status_warning_description">模組已啟動但部分Hook未工作</string>
-    <string name="status_error_description">關鍵模組元件未工作</string>
+    <string name="status_error_description">模組未啟動，或沒有可讀取的設定後端</string>
     <string name="fix_module_inactive">在Xposed管理器中啟動模組並重新啟動裝置</string>
     <string name="fix_hook_not_working">重新啟動裝置以初始化Hook</string>
-    <string name="fix_config_path">解除安裝應用，重新啟動裝置，重新安裝並啟動</string>
+    <string name="fix_config_path">開啟 NoWakeLock 一次以發布設定，然後重新啟動被 Hook 的程序或裝置</string>
     <string name="experimental_features">實驗功能</string>
 </resources>

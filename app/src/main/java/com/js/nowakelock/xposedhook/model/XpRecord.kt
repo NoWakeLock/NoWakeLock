@@ -2,281 +2,132 @@ package com.js.nowakelock.xposedhook.model
 
 import android.content.Context
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
+import com.js.nowakelock.data.counter.BoundedEventQueue
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.provider.ProviderMethod
+import com.js.nowakelock.data.provider.XProvider
 import com.js.nowakelock.data.provider.getURI
-import com.js.nowakelock.xposedhook.XpUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.Timer
-import java.util.TimerTask
-import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.locks.LockSupport
 
-/**
- * XpRecord handles communication with the Content Provider
- * to record events and statistics for tracked system activities.
- */
+/** Hooks submit events only. The single worker owns communication and persistence. */
 object XpRecord {
-    // Cache mechanism for Content Provider calls
-    private data class CpRequest(
-        val context: Context,
-        val method: String,
-        val args: Bundle
-    )
-    
-    // Thread-safe queue for CP requests with FIFO ordering
-    private val requestQueue = ConcurrentLinkedQueue<CpRequest>()
-    
-    // Lock for synchronizing queue operations
-    private val lock = ReentrantReadWriteLock()
-    
-    // Timer for processing the queue
-    private var timer: Timer? = null
-    
-    // Maximum queue size to prevent memory issues
-    private const val MAX_QUEUE_SIZE = 500
-    
-    // Delay for processing queue (in milliseconds)
-    private const val QUEUE_PROCESS_DELAY = 1000L // 1 second
-
-    private fun newEvent(
-        name: String,
-        packageName: String,
-        type: Type,
-        context: Context,
-        userId: Int = 0,
-        startTime: Long = System.currentTimeMillis(),
-        isBlocked: Boolean,
-        instanceId: String = ""
-    ) = CoroutineScope(Dispatchers.Default).launch {
-        val instanceIdKey = instanceId.ifEmpty {
-            "${name}_${startTime}"
-        }
-
-        val args = Bundle().apply {
-            putString("name", name)
-            putString("type", type.value)
-            putString("packageName", packageName)
-            putInt("userId", userId)
-            putLong("startTime", startTime)
-            putBoolean("isBlocked", isBlocked)
-            putString("instanceId", instanceIdKey)
-        }
-
-        getCPResult(context, ProviderMethod.NewEvent.value, args)
-    }
-
-    /**
-     * Record a new event (non-blocked)
-     *
-     * @param name Event name
-     * @param packageName Package name
-     * @param type Event type
-     * @param context Context
-     * @param userId User ID
-     * @param startTime Event start time
-     * @param instanceId Unique instance ID based on IBinder hash
-     * @return Bundle containing the eventKey
-     */
-    fun newEvent(
-        name: String,
-        packageName: String,
-        type: Type,
-        context: Context,
-        userId: Int = 0,
-        startTime: Long = System.currentTimeMillis(),
-        instanceId: String = ""
-    ) {
-//        XpUtil.log("newEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
-        newEvent(
-            name = name,
-            packageName = packageName,
-            type = type,
-            context = context,
-            userId = userId,
-            startTime = startTime,
-            isBlocked = false,
-            instanceId = instanceId
-        )
-    }
-
-    /**
-     * Record a new event (non-blocked)
-     *
-     * @param name Event name
-     * @param packageName Package name
-     * @param type Event type
-     * @param context Context
-     * @param userId User ID
-     * @param startTime Event start time
-     * @param instanceId Unique instance ID based on IBinder hash
-     * @return Bundle containing the eventKey
-     */
-    fun blockEvent(
-        name: String,
-        packageName: String,
-        type: Type,
-        context: Context,
-        userId: Int = 0,
-        startTime: Long = System.currentTimeMillis(),
-        instanceId: String = ""
-    ) {
-//        XpUtil.log("blockEvent: $name, $packageName, $type, $userId, $startTime, $instanceId")
-        newEvent(
-            name = name,
-            packageName = packageName,
-            type = type,
-            context = context,
-            userId = userId,
-            startTime = startTime,
-            isBlocked = true,
-            instanceId = instanceId
-        )
-    }
-
-    /**
-     * Record event end by reconstructing the event key
-     *
-     * @param name Event name
-     * @param packageName Package name
-     * @param context Context
-     * @param userId User ID
-     * @param endTime Event end time
-     * @param instanceId Unique instance ID based on IBinder hash
-     */
-    fun endEvent(
-        name: String,
-        packageName: String,
-        type: Type,
-        context: Context,
-        userId: Int = 0,
-        startTime: Long,
-        endTime: Long = System.currentTimeMillis(),
-        instanceId: String = ""
-    ) = CoroutineScope(Dispatchers.Default).launch {
-//        XpUtil.log("endEvent: $name, $packageName, $type, $userId, $startTime ,$endTime, $instanceId")
-        if (type != Type.Wakelock && instanceId.isEmpty()) {
-            return@launch
-        }
-
-        val args = Bundle().apply {
-            putString("name", name)
-            putString("type", Type.Wakelock.value)
-            putString("packageName", packageName)
-            putInt("userId", userId)
-            putLong("startTime", startTime)
-            putLong("endTime", endTime)
-            putString("instanceId", instanceId)
-        }
-
-        getCPResult(context, ProviderMethod.EndEvent.value, args)
-    }
-
-    /**
-     * Clear all counts and event data
-     *
-     * @param context Context
-     * @param clearAll Whether to clear all data including statistics
-     */
-    fun clearData(
-        context: Context, clearAll: Boolean = false
-    ) = CoroutineScope(Dispatchers.Default).launch {
-        val args = Bundle().apply {
-            putBoolean("clearAll", clearAll)
-        }
-
-        getCPResult(context, ProviderMethod.ClearData.value, args)
-    }
-
-    /**
-     * Check if hook is active
-     *
-     * @param context Context
-     * @return Bundle with status information
-     */
-    fun checkHookActive(context: Context): Bundle? {
-        // This method requires immediate return value, don't use caching
-        return directCPResult(context, ProviderMethod.CheckHookActive.value, Bundle())
-    }
-
-    /**
-     * Execute Content Provider call with caching
-     * Requests are queued and processed in order to reduce IPC calls
-     */
-    private fun getCPResult(context: Context, method: String, args: Bundle): Bundle? {
-        // Methods that require immediate result should bypass the cache
-        if (method == ProviderMethod.CheckHookActive.value || 
-            method == ProviderMethod.CheckHookEffectiveness.value ||
-            method == ProviderMethod.CheckSharedPreferencesPath.value) {
-            return directCPResult(context, method, args)
-        }
-        
-        lock.writeLock().lock()
-        try {
-            // Check if queue is too large (unlikely but safety measure)
-            if (requestQueue.size >= MAX_QUEUE_SIZE) {
-                // Process queue immediately if too large
-                processQueue()
-            }
-            
-            // Add request to queue
-            requestQueue.add(CpRequest(context, method, args))
-            
-            // Schedule processing if not already scheduled
-            if (timer == null) {
-                timer = Timer()
-                timer?.schedule(object : TimerTask() {
-                    override fun run() {
-                        processQueue()
-                    }
-                }, QUEUE_PROCESS_DELAY)
-            }
-        } finally {
-            lock.writeLock().unlock()
-        }
-        
-        // Return null as the request will be processed later
-        return null
-    }
-    
-    /**
-     * Direct CP call without caching - for methods requiring immediate response
-     */
-    private fun directCPResult(context: Context, method: String, args: Bundle): Bundle? {
-        val contentResolver = context.contentResolver
-        return contentResolver.call(getURI(), "NoWakelock", method, args)
-    }
-    
-    /**
-     * Process all queued CP requests in FIFO order
-     */
-    private fun processQueue() {
-        val requests = mutableListOf<CpRequest>()
-        
-        lock.writeLock().lock()
-        try {
-            // Get all requests from queue while maintaining order
-            while (requestQueue.isNotEmpty()) {
-                requestQueue.poll()?.let { requests.add(it) }
-            }
-            
-            // Reset timer
-            timer?.cancel()
-            timer = null
-        } finally {
-            lock.writeLock().unlock()
-        }
-        
-        // Process all requests in order they were received
-        for (request in requests) {
+    data class Event(val generation: Long, val context: Context, val method: String, val args: Bundle)
+    private val generation = AtomicLong()
+    private val sequence = AtomicLong()
+    private val queue = BoundedEventQueue<Event>(4096)
+    private val submitted = AtomicLong()
+    private val failed = AtomicLong()
+    private val batches = AtomicLong()
+    private val directEvents = AtomicLong()
+    private val providerEvents = AtomicLong()
+    private val lastRuntimeReport = AtomicLong()
+    @Volatile private var localProvider: XProvider? = null
+    @Volatile private var lastError: String? = null
+    private val worker = Thread({
+        while (true) {
+            val first = queue.poll()
+            if (first == null) { LockSupport.park(); continue }
+            // Coalesce a short burst without a periodic idle timer.
+            LockSupport.parkNanos(25_000_000L)
+            val batch = ArrayList<Event>(256)
+            batch.add(first)
+            while (batch.size < 256) batch.add(queue.poll() ?: break)
             try {
-                val contentResolver = request.context.contentResolver
-                contentResolver.call(getURI(), "NoWakelock", request.method, request.args)
+                val provider = localProvider
+                if (provider != null && batch.none { it.method == ProviderMethod.ClearData.value }) {
+                    provider.recordBatch(batch)
+                    directEvents.addAndGet(batch.size.toLong())
+                } else {
+                    // The provider may be hosted in a different process on other ROMs.
+                    batch.filter { it.generation == generation.get() }.forEach {
+                        it.context.contentResolver.call(getURI(), "NoWakelock", it.method, it.args)
+                        providerEvents.incrementAndGet()
+                    }
+                }
+                batches.incrementAndGet()
+                if (runtimeReportDue()) reportRuntime(first.context)
             } catch (e: Exception) {
-                XpUtil.log("Error in batch CP processing: ${e.message}")
+                localProvider?.invalidateDuration()
+                failed.addAndGet(batch.size.toLong())
+                lastError = e.toString()
+                Log.e("NoWakeLockRecord", "Statistics batch failed", e)
             }
         }
+    }, "NWL-statistics").apply { isDaemon = true; priority = Thread.MIN_PRIORITY; start() }
+
+    fun attachProvider(provider: XProvider) { localProvider = provider }
+    fun currentGeneration(): Long = generation.get()
+    fun clearGeneration() { generation.incrementAndGet() }
+    fun diagnostics(): Bundle = Bundle().apply {
+        putLong("recordSubmitted", submitted.get())
+        putLong("recordDropped", queue.rejected.get())
+        putLong("recordFailed", failed.get())
+        putLong("recordBatches", batches.get())
+        putLong("recordDirect", directEvents.get())
+        putLong("recordProviderCalls", providerEvents.get())
+        putInt("recordPending", queue.size)
+        putLong("recordGeneration", generation.get())
+        putString("recordLastError", lastError)
+        putBoolean("recordIncomplete", queue.rejected.get() > 0 || failed.get() > 0)
+    }
+
+    private fun submit(context: Context, method: String, args: Bundle, epoch: Long) {
+        submitted.incrementAndGet()
+        if (queue.offer(Event(epoch, context, method, args))) LockSupport.unpark(worker)
+    }
+    private fun newEvent(name: String, packageName: String, type: Type, context: Context,
+                         userId: Int, startTime: Long, isBlocked: Boolean, instanceId: String) {
+        val epoch = generation.get()
+        val enqueuedAt = SystemClock.elapsedRealtimeNanos()
+        val args = Bundle().apply {
+            putLong("__recordEnqueuedAt", enqueuedAt)
+            putString("name", name); putString("packageName", packageName); putString("type", type.value)
+            putInt("userId", userId); putLong("startTime", startTime); putBoolean("isBlocked", isBlocked)
+            putString("instanceId", instanceId.ifEmpty { name + "_" + startTime + "_" + sequence.incrementAndGet() })
+        }
+        submit(context, ProviderMethod.NewEvent.value, args, epoch)
+    }
+    fun newEvent(name: String, packageName: String, type: Type, context: Context, userId: Int = 0,
+                 startTime: Long = System.currentTimeMillis(), instanceId: String = "") {
+        newEvent(name, packageName, type, context, userId, startTime, false, instanceId)
+    }
+    fun blockEvent(name: String, packageName: String, type: Type, context: Context, userId: Int = 0,
+                   startTime: Long = System.currentTimeMillis(), instanceId: String = "") {
+        newEvent(name, packageName, type, context, userId, startTime, true, instanceId)
+    }
+    fun endEvent(name: String, packageName: String, type: Type, context: Context, userId: Int = 0,
+                 startTime: Long, endTime: Long = System.currentTimeMillis(), instanceId: String = "") {
+        if (type != Type.Wakelock || instanceId.isEmpty()) return
+        val epoch = generation.get()
+        val enqueuedAt = SystemClock.elapsedRealtimeNanos()
+        submit(context, ProviderMethod.EndEvent.value, Bundle().apply {
+            putLong("__recordEnqueuedAt", enqueuedAt)
+            putString("name", name); putString("packageName", packageName); putString("type", type.value)
+            putInt("userId", userId); putLong("startTime", startTime); putLong("endTime", endTime)
+            putString("instanceId", instanceId)
+        }, epoch)
+    }
+    fun clearData(context: Context, clearAll: Boolean = false) {
+        submit(context, ProviderMethod.ClearData.value, Bundle().apply { putBoolean("clearAll", clearAll) }, generation.get())
+    }
+    fun checkHookActive(context: Context): Bundle? =
+        context.contentResolver.call(getURI(), "NoWakelock", ProviderMethod.CheckHookActive.value, Bundle())
+
+    fun runtimeReportDue(): Boolean = SystemClock.elapsedRealtime() - lastRuntimeReport.get() >= 10_000
+    fun reportRuntime(context: Context) {
+        val now = SystemClock.elapsedRealtime()
+        val last = lastRuntimeReport.get()
+        if (now - last < 10_000 || !lastRuntimeReport.compareAndSet(last, now)) return
+        try {
+            val args = XpNSP.getInstance().backendStatus().toBundle().apply {
+                putString("process", "system_server")
+                putLong("observedAt", now)
+                putString("hooks", com.js.nowakelock.xposedhook.HookInstallRegistry.summary())
+            }
+            context.contentResolver.call(getURI(), "NoWakelock", ProviderMethod.ReportRuntime.value, args)
+        } catch (e: Exception) { lastError = e.toString() }
     }
 }

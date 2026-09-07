@@ -2,6 +2,7 @@ package com.js.nowakelock.data.repository.appDetail
 
 import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.base.calculateTime
+import com.js.nowakelock.data.config.ConfigPublisher
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.AppDaDao
 import com.js.nowakelock.data.db.dao.AppInfoDao
@@ -22,7 +23,8 @@ class AppDetailRepositoryImpl(
     private val appInfoDao: AppInfoDao,
     private val daDao: DADao,
     private val infoEventDao: InfoEventDao,
-    private val appDaDao: AppDaDao
+    private val appDaDao: AppDaDao,
+    private val configPublisher: ConfigPublisher? = null
 ) : AppDetailRepository {
     override fun getAppsWithStat(packageName: String, userId: Int): Flow<AppWithStats> {
         return appInfoDao.loadAppInfoFw(packageName, userId).distinctUntilChanged().map { appInfo ->
@@ -50,6 +52,7 @@ class AppDetailRepositoryImpl(
     override suspend fun updateAppSt(appSt: AppSt): Boolean = withContext(Dispatchers.IO) {
         try {
             appDaDao.insert(appSt)
+            configPublisher?.publishAppSt(appSt)
             true
         } catch (e: Exception) {
             LogUtil.e("AppDetailRepository", "Error updating AppSt: ${e.message}")

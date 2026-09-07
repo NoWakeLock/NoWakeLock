@@ -239,7 +239,7 @@
     <string name="refresh">刷新</string>
     <string name="module_status">Xposed 状态</string>
     <string name="hook_status">Hook状态</string>
-    <string name="config_path">New XSharedPreferences</string>
+    <string name="config_path">配置后端</string>
     <string name="overall_status">整体状态</string>
     <string name="normal_status">正常</string>
     <string name="warning_status">警告</string>
@@ -252,15 +252,21 @@
     <string name="service_hook">Service Hook</string>
     <string name="hook_working">正常工作</string>
     <string name="hook_not_working">未工作</string>
-    <string name="config_path_valid">配置路径有效</string>
-    <string name="config_path_invalid">配置路径无效</string>
+    <string name="config_path_valid">至少一个配置后端可读取</string>
+    <string name="config_path_invalid">没有可读取的配置后端</string>
+    <string name="config_backend_active">当前后端：%s</string>
     <string name="loading">加载中…</string>
     <string name="error_checking_module">检查模块状态时出错</string>
     <string name="status_normal_description">所有模块组件工作正常</string>
     <string name="status_warning_description">模块已激活但部分Hook未工作</string>
-    <string name="status_error_description">关键模块组件未工作</string>
+    <string name="status_error_description">模块未激活，或没有可读取的配置后端</string>
     <string name="fix_module_inactive">在Xposed管理器中激活模块并重启设备</string>
     <string name="fix_hook_not_working">重启设备以初始化Hook</string>
-    <string name="fix_config_path">卸载应用，重启设备，重新安装并激活</string>
+    <string name="fix_config_path">打开 NoWakeLock 一次以发布配置，然后重启被 Hook 的进程或设备</string>
     <string name="experimental_features">实验功能</string>
+    <string name="config_publish_pending">设置已保存，框架同步待完成，请查看模块检查。</string>
+    <string name="config_restore_publish_pending">备份已恢复，框架同步待完成，请查看模块检查。</string>
+    <string name="config_diagnostics">配置与拦截诊断</string>
+    <string name="config_revision_status">已发布：%1$s · 当前进程已读取：%2$s</string>
+    <string name="config_pending">等待目标进程确认</string>
 </resources>

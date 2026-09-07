@@ -248,7 +248,7 @@
     <string name="refresh">Aktualisieren</string>
     <string name="module_status">Xposed-Status</string>
     <string name="hook_status">Hook-Status</string>
-    <string name="config_path">New XSharedPreferences</string>
+    <string name="config_path">Konfigurations-Backend</string>
     <string name="overall_status">Gesamtstatus</string>
     <string name="normal_status">Normal</string>
     <string name="warning_status">Warnung</string>
@@ -261,16 +261,17 @@
     <string name="service_hook">Dienst Hook</string>
     <string name="hook_working">Funktioniert</string>
     <string name="hook_not_working">Funktioniert nicht</string>
-    <string name="config_path_valid">Konfigurationspfad ist gültig</string>
-    <string name="config_path_invalid">Konfigurationspfad ist ungültig</string>
+    <string name="config_path_valid">Ein Konfigurations-Backend ist lesbar</string>
+    <string name="config_path_invalid">Kein Konfigurations-Backend ist lesbar</string>
+    <string name="config_backend_active">Aktives Backend: %s</string>
     <string name="loading">Lädt…</string>
     <string name="error_checking_module">Fehler beim Überprüfen des Modul-Status</string>
     <string name="status_normal_description">Alle Modulkomponenten funktionieren ordnungsgemäß</string>
     <string name="status_warning_description">Modul ist aktiv, aber einige Hooks funktionieren nicht</string>
-    <string name="status_error_description">Kritische Modulkomponenten funktionieren nicht</string>
+    <string name="status_error_description">Modul ist inaktiv oder kein Konfigurations-Backend ist lesbar</string>
     <string name="fix_module_inactive">Aktivieren Sie das Modul im Xposed Manager und starten Sie das Gerät neu</string>
     <string name="fix_hook_not_working">Gerät neu starten, um Hooks zu initialisieren</string>
-    <string name="fix_config_path">App deinstallieren, Gerät neu starten, neu installieren und aktivieren</string>
+    <string name="fix_config_path">NoWakeLock einmal öffnen, um Einstellungen zu veröffentlichen, dann den Hook-Prozess oder das Gerät neu starten</string>
     <string name="experimental_features">Experimentelle Funktionen</string>
 
     <!-- Data management and backup messages -->

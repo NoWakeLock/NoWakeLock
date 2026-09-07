@@ -1,0 +1,14 @@
+plugins { id 'java-library' }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+// This union ABI is only a compile-time input for the small entry bridge.
+// The APK gets the main output only; every io.github.libxposed.api class is framework-owned.
+sourceSets { stubs { java.srcDir 'src/stubs/java' } }
+def androidBoot = files(provider { project(':app').android.bootClasspath })
+sourceSets.stubs.compileClasspath += androidBoot
+sourceSets.main.compileClasspath += androidBoot + sourceSets.stubs.output
+tasks.named('compileJava') { dependsOn tasks.named('compileStubsJava') }

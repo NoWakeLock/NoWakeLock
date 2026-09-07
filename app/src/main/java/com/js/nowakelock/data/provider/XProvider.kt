@@ -8,6 +8,7 @@ import android.provider.Settings
 import android.util.Log
 import com.js.nowakelock.BuildConfig
 import com.js.nowakelock.base.stringToType
+import com.js.nowakelock.data.config.ConfigBackendStatus
 import com.js.nowakelock.data.counter.WakelockRegistry
 import com.js.nowakelock.data.db.InfoDatabase
 import com.js.nowakelock.data.db.Type
@@ -18,8 +19,9 @@ import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.xposedhook.XpUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import java.io.File
-import java.util.regex.Pattern
+import androidx.room.withTransaction
+import com.js.nowakelock.xposedhook.model.XpRecord
+import com.js.nowakelock.xposedhook.model.XpNSP
 
 /**
  * Get the ContentProvider URI
@@ -46,7 +48,9 @@ enum class ProviderMethod(var value: String) {
     
     // Module check methods
     CheckHookEffectiveness("CheckHookEffectiveness"), // Check if hook has data
-    CheckSharedPreferencesPath("CheckSharedPreferencesPath") // Check config path
+    CheckSharedPreferencesPath("CheckSharedPreferencesPath"), // Legacy alias
+    CheckConfigBackendStatus("CheckConfigBackendStatus"), // Check config backend
+    ReportRuntime("ReportRuntime")
 }
 
 /**
@@ -63,14 +67,24 @@ class XProvider(
     private var unixTimeBoot = System.currentTimeMillis() - SystemClock.elapsedRealtime()
     private val wakelockRegistry = WakelockRegistry.getInstance()
     private val TAG = "XProvider"
+    private val runtimeReports = java.util.concurrent.ConcurrentHashMap<Int, Bundle>()
+
+    @Volatile private var clearCutoff = 0L
+    private var lastDropped = 0L
+    private var durationReliable = true
+
+    @Synchronized fun invalidateDuration() {
+        durationReliable = false
+        wakelockRegistry.clearAll()
+    }
 
     companion object {
         @Volatile
         private var instance: XProvider? = null
 
-        fun getInstance(context: Context): XProvider {
+        @Synchronized fun getInstance(context: Context): XProvider {
             if (instance == null) {
-                instance = XProvider(context)
+                instance = XProvider(context).also { XpRecord.attachProvider(it) }
             }
             return instance!!
         }
@@ -79,16 +93,51 @@ class XProvider(
     /**
      * Route method calls to appropriate handler functions
      */
-    fun getMethod(methodName: String, bundle: Bundle): Bundle? {
+    @Synchronized fun recordBatch(events: List<XpRecord.Event>) {
+        val dropped = XpRecord.diagnostics().getLong("recordDropped")
+        if (dropped != lastDropped) {
+            // Lost acquire/release information must not leave a phantom active interval.
+            wakelockRegistry.clearAll()
+            durationReliable = false
+            lastDropped = dropped
+        }
+        runBlocking {
+            db.withTransaction {
+                for (event in events) {
+                    if (event.generation != XpRecord.currentGeneration() || stale(event.args)) continue
+                    when (event.method) {
+                        ProviderMethod.NewEvent.value -> newEvent(event.args)
+                        ProviderMethod.EndEvent.value -> endEvent(event.args)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun stale(bundle: Bundle): Boolean =
+        bundle.containsKey("__recordEnqueuedAt") && bundle.getLong("__recordEnqueuedAt") <= clearCutoff
+
+    @Synchronized fun getMethod(methodName: String, bundle: Bundle): Bundle? {
+        if ((methodName == ProviderMethod.NewEvent.value || methodName == ProviderMethod.EndEvent.value) && stale(bundle)) return Bundle()
+        if (methodName == ProviderMethod.ReportRuntime.value) {
+            // Reports are diagnostic evidence only; never permit arbitrary apps to forge them.
+            if (android.os.Binder.getCallingUid() != 1000) return null
+            val pid = android.os.Binder.getCallingPid()
+            val now = SystemClock.elapsedRealtime()
+            runtimeReports.entries.removeAll { now - it.value.getLong("observedAt") > 60_000 }
+            runtimeReports[pid] = Bundle(bundle)
+            return Bundle()
+        }
         return when (methodName) {
-            ProviderMethod.NewEvent.value -> newEvent(bundle)
-            ProviderMethod.EndEvent.value -> endEvent(bundle)
+            ProviderMethod.NewEvent.value -> runBlocking { db.withTransaction { newEvent(bundle) } }
+            ProviderMethod.EndEvent.value -> runBlocking { db.withTransaction { endEvent(bundle) } }
             ProviderMethod.LoadInfos.value -> loadInfos(bundle)
             ProviderMethod.LoadEvents.value -> loadEvents(bundle)
             ProviderMethod.ClearData.value -> clearData(bundle)
             ProviderMethod.CheckHookActive.value -> checkHookActive(bundle)
             ProviderMethod.CheckHookEffectiveness.value -> checkHookEffectiveness(bundle)
-            ProviderMethod.CheckSharedPreferencesPath.value -> checkSharedPreferencesPath(bundle)
+            ProviderMethod.CheckSharedPreferencesPath.value -> checkConfigBackendStatus(bundle)
+            ProviderMethod.CheckConfigBackendStatus.value -> checkConfigBackendStatus(bundle)
             else -> null
         }
     }
@@ -107,7 +156,7 @@ class XProvider(
      *   - instanceId: Unique instance ID based on IBinder hash
      * @return Bundle containing eventKey for normal events
      */
-    private fun newEvent(bundle: Bundle): Bundle {
+    private suspend fun newEvent(bundle: Bundle): Bundle {
         val name = bundle.getString("name") ?: ""
         val type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
@@ -128,61 +177,61 @@ class XProvider(
 
 //        XpUtil.log("CP newEvent: $name, $packageName, $type, $userId, $startTime, $isBlocked, $instanceId")
 
-        runBlocking(Dispatchers.IO) {
-            // Create and insert event record
-            val infoEvent = InfoEvent(
-                instanceId = instanceId,  // primary key
-                name = name,
-                type = type,
-                packageName = packageName,
-                userId = userId,
-                startTime = startTime,
-                isBlocked = isBlocked
-            )
-            eventDao.insert(infoEvent)
+        // Create and insert event record
+        val infoEvent = InfoEvent(
+            instanceId = instanceId,  // primary key
+            name = name,
+            type = type,
+            packageName = packageName,
+            userId = userId,
+            startTime = startTime,
+            isBlocked = isBlocked
+        )
+        eventDao.insert(infoEvent)
 
-            // Update statistics
-            val info = dao.loadInfo(name, type, userId)
+        // Update statistics
+        val info = dao.loadInfo(name, type, userId)
 
-            when {
-                info == null -> {
-                    // Create new statistics record if none exists
-                    dao.insert(
-                        Info(
-                            name = name,
-                            type = type,
-                            packageName = packageName,
-                            userId = userId,
-                            count = if (!isBlocked) 1 else 0,
-                            blockCount = if (isBlocked) 1 else 0
-                        )
+        when {
+            info == null -> {
+                // Create new statistics record if none exists
+                dao.insert(
+                    Info(
+                        name = name,
+                        type = type,
+                        packageName = packageName,
+                        userId = userId,
+                        count = if (!isBlocked) 1 else 0,
+                        blockCount = if (isBlocked) 1 else 0
                     )
-                }
-
-                isBlocked -> {
-                    // Just increment block count and return early
-                    dao.upBlockCountPO(name, type, userId)
-                    return@runBlocking
-                }
-
-                else -> {
-                    // Increment normal event count
-                    dao.upCountPO(name, type, userId)
-                }
+                )
             }
 
-            // Special handling for Wakelock type events
-            if (type == Type.Wakelock) {
-                try {
-                    wakelockRegistry.handleAcquire(name, packageName, type, userId, startTime, instanceId)
-                        .takeIf { it > 0 }?.let { durationToAdd ->
-                            dao.upCountTime(durationToAdd, name, type, userId)
-                        }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error updating countTime on acquire: ${e.message}")
-                }
+            isBlocked -> {
+                // Just increment block count and return early
+                dao.upBlockCountPO(name, type, userId)
+                return Bundle()
+            }
+
+            else -> {
+                // Increment normal event count
+                dao.upCountPO(name, type, userId)
             }
         }
+
+        // A blocked request is recorded, but never acquires a wakelock. This
+        // also applies when the request created the first statistics row.
+        if (type == Type.Wakelock && !isBlocked && durationReliable) {
+            try {
+                wakelockRegistry.handleAcquire(name, packageName, type, userId, startTime, instanceId)
+                    .takeIf { it > 0 }?.let { durationToAdd ->
+                        dao.upCountTime(durationToAdd, name, type, userId)
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating countTime on acquire: ${e.message}")
+            }
+        }
+
 
         return Bundle()
     }
@@ -200,7 +249,7 @@ class XProvider(
      *   - instanceId: Unique instance ID based on IBinder hash
      * @return Empty bundle
      */
-    private fun endEvent(bundle: Bundle): Bundle {
+    private suspend fun endEvent(bundle: Bundle): Bundle {
         val name = bundle.getString("name") ?: ""
         val type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
@@ -227,34 +276,33 @@ class XProvider(
 
 //        XpUtil.log("CP endEvent: $name, $packageName, $type, $userId, $startTime, $endTime, $instanceId")
 
-        runBlocking(Dispatchers.IO) {
-            // Verify event record exists
-            val event = eventDao.loadEventById(instanceId) ?: run {
-                Log.e(TAG, "Event not found for instanceId: $instanceId")
-                return@runBlocking
-            }
-
-            // Update event end time
-            event.endTime = endTime
-            if (startTime > 0) {
-                event.startTime = startTime
-            }
-
-            eventDao.insert(event)
-
-            // Calculate duration using WakelockRegistry
-            try {
-                val durationToAdd = wakelockRegistry.handleRelease(
-                    name, packageName, type, userId, endTime, instanceId
-                )
-                if (durationToAdd > 0) {
-                    dao.upCountTime(durationToAdd, name, type, userId)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error calculating duration: ${e.message}")
-            }
-
+        // Verify event record exists
+        val event = eventDao.loadEventById(instanceId) ?: run {
+            Log.e(TAG, "Event not found for instanceId: $instanceId")
+            return Bundle()
         }
+
+        // Update event end time
+        event.endTime = endTime
+        if (startTime > 0) {
+            event.startTime = startTime
+        }
+
+        eventDao.insert(event)
+
+        // Calculate duration using WakelockRegistry
+        try {
+            val durationToAdd = if (durationReliable) wakelockRegistry.handleRelease(
+                name, packageName, type, userId, endTime, instanceId
+            ) else 0L
+            if (durationToAdd > 0) {
+                dao.upCountTime(durationToAdd, name, type, userId)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error calculating duration: ${e.message}")
+        }
+
+
 
         return Bundle()
     }
@@ -343,6 +391,10 @@ class XProvider(
      */
     private fun clearData(bundle: Bundle): Bundle {
         val clearAll = bundle.getBoolean("clearAll", false)
+        clearCutoff = SystemClock.elapsedRealtimeNanos()
+        XpRecord.clearGeneration()
+        durationReliable = true
+        lastDropped = XpRecord.diagnostics().getLong("recordDropped")
 
         runBlocking {
             if (clearAll) {
@@ -352,6 +404,7 @@ class XProvider(
                 wakelockRegistry.clearAll()
             } else {
                 dao.rstAllCount()
+                dao.rstAllBlockCount()
                 dao.rstAllCountTime()
                 eventDao.clearAll()
                 // Also clear the wakelock registry
@@ -399,36 +452,35 @@ class XProvider(
     }
 
     /**
-     * Check if the shared preferences path exists
-     * This path is typically: /data/misc/{uuid}/com.js.nowakelock
+     * Check if at least one hook-readable configuration backend is available.
      * 
-     * @return Bundle with pathExists status
+     * @return Bundle with backend status
      */
-    private fun checkSharedPreferencesPath(bundle: Bundle): Bundle {
-        val pathExists = try {
-            // Look for directories matching the UUID pattern in /data/misc
-            val miscDir = File("/data/misc/")
-            val uuidPattern = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-            
-            // Check if any of these directories contains our package folder
-            val found = miscDir.listFiles()?.any { uuidDir ->
-                if (uuidDir.isDirectory && uuidPattern.matches(uuidDir.name)) {
-                    val prefsDir = File(uuidDir, "prefs")
-                    val packageDir = File(prefsDir, BuildConfig.APPLICATION_ID)
-                    packageDir.exists() && packageDir.isDirectory
-                } else {
-                    false
-                }
-            } ?: false
-            
-            found
+    private fun checkConfigBackendStatus(bundle: Bundle): Bundle {
+        val status = try {
+            XpNSP.getInstance().backendStatus()
         } catch (e: Exception) {
-            Log.e(TAG, "Error checking shared preferences path: ${e.message}")
-            false
+            Log.e(TAG, "Error checking config backend: ${e.message}")
+            ConfigBackendStatus(lastError = e.message)
         }
         
-        return Bundle().apply {
-            putBoolean("pathExists", pathExists)
+        return status.toBundle().apply {
+            val now = SystemClock.elapsedRealtime()
+            putLong("hookObservedRevision", runtimeReports.values
+                .filter { it.getString("process") == "system_server" &&
+                    now - it.getLong("observedAt") in 0..60_000 }
+                .maxOfOrNull { it.getLong("observedRevision") } ?: 0)
+            if (XpNSP.getInstance().api102SystemRuntime) {
+                putLong("hookObservedRevision", status.observedRevision)
+            }
+            putAll(XpRecord.diagnostics())
+            putBoolean("recordDurationReliable", durationReliable)
+            putBoolean("pathExists", status.backendAvailable)
+            putString("processName", "SettingsProvider pid=${android.os.Process.myPid()}")
+            putString("diagnostics", "Statistics: ${XpRecord.diagnostics()} durationReliable=$durationReliable\n" + "SettingsProvider pid=${android.os.Process.myPid()} read=${status.observedRevision}\n" +
+                runtimeReports.entries.joinToString("\n") { (pid, report) ->
+                    "pid=$pid read=${report.getLong("observedRevision")} observedAt=${report.getLong("observedAt")}ms\n${report.getString("hooks")}"
+                })
         }
     }
 }

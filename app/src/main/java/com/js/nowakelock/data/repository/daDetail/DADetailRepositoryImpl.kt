@@ -1,6 +1,7 @@
 package com.js.nowakelock.data.repository.daDetail
 
 import com.js.nowakelock.data.db.Type
+import com.js.nowakelock.data.config.ConfigPublisher
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.InfoEvent
@@ -25,7 +26,9 @@ import java.util.concurrent.TimeUnit
  * from the database and provides data transformations for UI consumption.
  */
 class DADetailRepositoryImpl(
-    private val daDao: DADao, private val infoEventDao: InfoEventDao
+    private val daDao: DADao,
+    private val infoEventDao: InfoEventDao,
+    private val configPublisher: ConfigPublisher? = null
 ) : DADetailRepository {
 
     companion object {
@@ -91,6 +94,7 @@ class DADetailRepositoryImpl(
     override suspend fun updateDAItemSettings(setting: St) {
         withContext(Dispatchers.IO) {
             daDao.insert(setting)
+            configPublisher?.publishSt(setting)
         }
     }
 
@@ -99,7 +103,9 @@ class DADetailRepositoryImpl(
      */
     private fun convertToEventItem(event: InfoEvent): EventItem {
         val dateFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-        val duration = (event.endTime ?: System.currentTimeMillis()) - event.startTime
+        val duration = if (event.type == Type.Wakelock && !event.isBlocked) {
+            ((event.endTime ?: System.currentTimeMillis()) - event.startTime).coerceAtLeast(0)
+        } else 0L
 
         return EventItem(
             type = event.type,

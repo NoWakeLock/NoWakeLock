@@ -61,18 +61,22 @@ class WakelockHook {
 
         // CRITICAL - BUSINESS LOGIC
         fun hookWakeLocks(lpparam: XC_LoadPackage.LoadPackageParam) {
+            hookWakeLocks(lpparam.classLoader)
+        }
+
+        fun hookWakeLocks(classLoader: ClassLoader) {
             //for test
-//            wakelockTest(lpparam)
+//            wakelockTest(classLoader)
 
             // Try the unified adaptive hook first
-            if (!unifiedWakeLockHook(lpparam)) {
+            if (!unifiedWakeLockHook(classLoader)) {
                 // Fall back to version-specific hooks if unified approach fails
                 XpUtil.log("Falling back to version-specific wakelock hooks")
                 when (Build.VERSION.SDK_INT) {
                     //Try for alarm hooks for API levels >= 31 (S or higher)
-                    in Build.VERSION_CODES.S..40 -> wakeLockHook31(lpparam)
+                    in Build.VERSION_CODES.S..40 -> wakeLockHook31(classLoader)
                     //hooks for API levels 24-30 (N ~ R)
-                    in Build.VERSION_CODES.N..Build.VERSION_CODES.R -> wakeLockHook24to30(lpparam)
+                    in Build.VERSION_CODES.N..Build.VERSION_CODES.R -> wakeLockHook24to30(classLoader)
                 }
             }
         }
@@ -81,20 +85,20 @@ class WakelockHook {
          * Unified wakelock hook approach that works across all Android versions
          * Returns true if hooks were successfully applied, false otherwise
          */
-        private fun unifiedWakeLockHook(lpparam: XC_LoadPackage.LoadPackageParam): Boolean {
+        private fun unifiedWakeLockHook(classLoader: ClassLoader): Boolean {
             try {
                 XpUtil.log("Trying unified wakelock hook for Android ${Build.VERSION.SDK_INT}")
                 
                 // Get the PowerManagerService class
                 val powerManagerServiceClass = 
-                    XpUtil.getClass("com.android.server.power.PowerManagerService", lpparam.classLoader)
+                    XpUtil.getClass("com.android.server.power.PowerManagerService", classLoader)
                     ?: return false
                 
                 // Hook acquireWakeLockInternal methods
-                val acquireSuccess = hookAcquireWakeLockMethods(powerManagerServiceClass, lpparam)
+                val acquireSuccess = hookAcquireWakeLockMethods(powerManagerServiceClass)
                 
                 // Hook releaseWakeLockInternal method
-                val releaseSuccess = hookReleaseWakeLockMethod(powerManagerServiceClass, lpparam)
+                val releaseSuccess = hookReleaseWakeLockMethod(powerManagerServiceClass)
                 
                 return acquireSuccess && releaseSuccess
             } catch (e: Throwable) {
@@ -108,8 +112,7 @@ class WakelockHook {
          * Hook all acquireWakeLockInternal methods
          */
         private fun hookAcquireWakeLockMethods(
-            powerManagerServiceClass: Class<*>,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            powerManagerServiceClass: Class<*>
         ): Boolean {
             try {
                 // Find all methods named acquireWakeLockInternal.
@@ -135,7 +138,7 @@ class WakelockHook {
                 
                 // Hook each method found
                 for (method in methods) {
-                    hookAcquireWakeLockMethod(method, lpparam)
+                    hookAcquireWakeLockMethod(method)
                 }
                 return true
             } catch (e: Throwable) {
@@ -149,8 +152,7 @@ class WakelockHook {
          * Hook releaseWakeLockInternal method
          */
         private fun hookReleaseWakeLockMethod(
-            powerManagerServiceClass: Class<*>,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            powerManagerServiceClass: Class<*>
         ): Boolean {
             try {
                 // Hook the releaseWakeLockInternal method
@@ -214,8 +216,7 @@ class WakelockHook {
          * Hook a specific acquireWakeLockInternal method with parameter caching
          */
         private fun hookAcquireWakeLockMethod(
-            method: Method,
-            lpparam: XC_LoadPackage.LoadPackageParam
+            method: Method
         ) {
             XpUtil.log("Hooking acquireWakeLockInternal method with signature: ${method.parameterTypes.joinToString()}")
             
@@ -402,13 +403,13 @@ class WakelockHook {
         }
 
         // Original methods preserved below
-        private fun wakelockTest(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun wakelockTest(classLoader: ClassLoader) {
             // if no debug enable
             if (!XpNSP.getInstance().getDebug())
                 return
 
             val tmp: Class<*>? =
-                XpUtil.getClass("com.android.server.power.PowerManagerService", lpparam.classLoader)
+                XpUtil.getClass("com.android.server.power.PowerManagerService", classLoader)
 
             tmp?.let {
                 XposedBridge.hookAllMethods(
@@ -442,7 +443,7 @@ class WakelockHook {
             }
         }
 
-        private fun wakeLockHook31(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun wakeLockHook31(classLoader: ClassLoader) {
             //https://cs.android.com/android/platform/superproject/+/android-12.1.0_r8:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java?hl=zh-cn
             //private void acquireWakeLockInternal(IBinder lock, int displayId, int flags, String tag,
             //         String packageName, WorkSource ws, String historyTag, int uid, int pid)
@@ -470,7 +471,7 @@ class WakelockHook {
 //                })
 
             val tmp: Class<*>? =
-                XpUtil.getClass("com.android.server.power.PowerManagerService", lpparam.classLoader)
+                XpUtil.getClass("com.android.server.power.PowerManagerService", classLoader)
 
             tmp?.let {
                 XposedBridge.hookAllMethods(
@@ -497,7 +498,7 @@ class WakelockHook {
 
             XposedHelpers.findAndHookMethod(
                 "com.android.server.power.PowerManagerService",
-                lpparam.classLoader,
+                classLoader,
                 "releaseWakeLockInternal",
                 IBinder::class.java,
                 Int::class.javaPrimitiveType,
@@ -511,7 +512,7 @@ class WakelockHook {
                 })
         }
 
-        private fun wakeLockHook24to30(lpparam: XC_LoadPackage.LoadPackageParam) {
+        private fun wakeLockHook24to30(classLoader: ClassLoader) {
             //https://cs.android.com/android/platform/superproject/+/android-11.0.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java
 //            XposedHelpers.findAndHookMethod("com.android.server.power.PowerManagerService",
 //                lpparam.classLoader,
@@ -540,7 +541,7 @@ class WakelockHook {
 //                })
 
             val tmp: Class<*>? =
-                XpUtil.getClass("com.android.server.power.PowerManagerService", lpparam.classLoader)
+                XpUtil.getClass("com.android.server.power.PowerManagerService", classLoader)
 
             tmp?.let {
                 XposedBridge.hookAllMethods(
@@ -567,7 +568,7 @@ class WakelockHook {
 
             XposedHelpers.findAndHookMethod(
                 "com.android.server.power.PowerManagerService",
-                lpparam.classLoader,
+                classLoader,
                 "releaseWakeLockInternal",
                 IBinder::class.java,
                 Int::class.javaPrimitiveType,
@@ -699,7 +700,7 @@ class WakelockHook {
             wN: String, packageName: String, userId: Int,
             lastActive: Long, now: Long, isLocked: Boolean
         ): Boolean {
-            val xpNSP = XpNSP.getInstance()
+            val xpNSP = XpNSP.getInstance().decisionView()
             return xpNSP.flag(wN, packageName, type, userId)
                     || isLocked && xpNSP.flagLock(wN, packageName, type, userId)
                     || xpNSP.aTI(now, lastActive, wN, packageName, type, userId)

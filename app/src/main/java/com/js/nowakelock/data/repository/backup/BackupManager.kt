@@ -3,6 +3,7 @@ package com.js.nowakelock.data.repository.backup
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.js.nowakelock.data.config.ConfigPublisher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -18,7 +19,8 @@ import java.util.Locale
  */
 class BackupManager(
     private val context: Context,
-    private val backupRepo: BackupRepo
+    private val backupRepo: BackupRepo,
+    private val configPublisher: ConfigPublisher? = null
 ) {
     private val json = Json { 
         prettyPrint = true 
@@ -40,7 +42,9 @@ class BackupManager(
             val jsonString = json.encodeToString(backup)
             
             // 写入文件
-            context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+            val output = context.contentResolver.openOutputStream(uri)
+                ?: throw IOException("Unable to open backup file for writing")
+            output.use { outputStream ->
                 outputStream.write(jsonString.toByteArray())
                 outputStream.flush()
             }
@@ -69,8 +73,8 @@ class BackupManager(
             
             // 恢复到数据库
             backupRepo.restoreBackup(backup)
-            
-            Result.success(true)
+            val published = configPublisher?.publishAll() ?: true
+            Result.success(published)
         } catch (e: Exception) {
             Log.e(TAG, "Error restoring backup", e)
             Result.failure(e)
@@ -89,4 +93,4 @@ class BackupManager(
     companion object {
         private const val TAG = "BackupManager"
     }
-} 
+}

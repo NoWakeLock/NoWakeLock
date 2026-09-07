@@ -5,9 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.js.nowakelock.base.LogUtil
-import com.js.nowakelock.base.SPTools
 import com.js.nowakelock.data.db.Type
-import com.js.nowakelock.data.db.entity.St
 import com.js.nowakelock.data.model.DAItem
 import com.js.nowakelock.data.repository.daitem.DARepository
 import com.js.nowakelock.ui.navigation.params.DAsScreenParams
@@ -433,28 +431,4 @@ open class DAsViewModel(
         }
     }
 
-    private fun saveSt(st: St) {
-        SPTools.setBoolean(
-            "${st.name}_${st.type}_${st.packageName}_${st.userId}_flag",
-            st.fullBlock
-        )
-        SPTools.setBoolean(
-            "${st.name}_${st.type}_${st.packageName}_${st.userId}_flag_lock",
-            st.screenOffBlock ?: false
-        )
-        SPTools.setLong(
-            "${st.name}_${st.type}_${st.packageName}_${st.userId}_aTI", st.timeWindowMs
-        )
-    }
-
-    fun syncSt(type: Type) {
-        viewModelScope.launch(Dispatchers.IO) {
-            daRepository.getSTs(type).collect { list ->
-//                LogUtil.d("sync", "${list.size}")
-                list.map {
-                    saveSt(it)
-                }
-            }
-        }
-    }
 }

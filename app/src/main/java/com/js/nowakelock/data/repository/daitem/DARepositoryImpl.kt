@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.js.nowakelock.BasicApp
 import com.js.nowakelock.base.LogUtil
 import com.js.nowakelock.base.getCPResult
+import com.js.nowakelock.data.config.ConfigPublisher
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.dao.DADao
 import com.js.nowakelock.data.db.dao.InfoEventDao
@@ -22,7 +23,8 @@ import kotlinx.coroutines.withContext
 
 open class DARepositoryImpl(
     private val daDao: DADao,
-    private val infoEventDao: InfoEventDao
+    private val infoEventDao: InfoEventDao,
+    private val configPublisher: ConfigPublisher? = null
 ) : DARepository {
     open val type: Type = Type.UnKnow
     private val daNameComparator =
@@ -177,6 +179,7 @@ open class DARepositoryImpl(
 
     override suspend fun updateDAItemSettings(setting: St) = withContext(Dispatchers.IO) {
         daDao.insert(setting)
+        configPublisher?.publishSt(setting)
         // Clear cache since data has changed
         clearCacheForType()
     }

@@ -133,7 +133,7 @@ fun ModuleCheckContent(
         
         // Config path card
         ConfigPathCard(
-            isValid = result.configPathValid,
+            status = result.configBackendStatus,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -421,7 +421,7 @@ fun HookStatusItem(
  */
 @Composable
 fun ConfigPathCard(
-    isValid: Boolean,
+    status: com.js.nowakelock.data.config.ConfigBackendStatus,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -437,7 +437,7 @@ fun ConfigPathCard(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            val (icon, text, color) = if (isValid) {
+            val (icon, text, color) = if (status.backendAvailable) {
                 Triple(
                     Icons.Default.CheckCircle,
                     stringResource(R.string.config_path_valid),
@@ -467,8 +467,25 @@ fun ConfigPathCard(
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.config_backend_active, status.activeBackend),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(stringResource(R.string.config_revision_status,
+                status.publishedRevision.toString(), status.observedRevision.toString()))
+            if (status.remoteReadable && !status.synchronizationConfirmed) {
+                Text(stringResource(R.string.config_pending))
+            }
+            status.lastError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            status.diagnostics?.takeIf { it.isNotBlank() }?.let {
+                Spacer(Modifier.height(8.dp))
+                Text(stringResource(R.string.config_diagnostics), style = MaterialTheme.typography.titleSmall)
+                Text(it, style = MaterialTheme.typography.bodySmall)
+            }
             
-            if (!isValid) {
+            if (!status.backendAvailable) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Card(
                     colors = CardDefaults.cardColors(
@@ -506,6 +523,7 @@ fun ModuleCheckContentPreview() {
         moduleVersion = "3.0.1",
         hookStatus = hookStatus,
         configPathValid = false,
+        configBackendStatus = com.js.nowakelock.data.config.ConfigBackendStatus(),
         overallStatus = CheckStatus.ERROR
     )
     
@@ -537,6 +555,10 @@ fun ModuleCheckContentNormalPreview() {
         moduleVersion = "3.0.1",
         hookStatus = hookStatus,
         configPathValid = true,
+        configBackendStatus = com.js.nowakelock.data.config.ConfigBackendStatus(
+            legacyReadable = true,
+            activeBackend = com.js.nowakelock.data.config.ConfigBackendStatus.BACKEND_LEGACY
+        ),
         overallStatus = CheckStatus.NORMAL
     )
     

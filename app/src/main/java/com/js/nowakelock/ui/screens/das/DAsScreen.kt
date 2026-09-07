@@ -58,11 +58,6 @@ fun DAsScreen(
         viewModel.setAppFilter(packageName, userId)
     }
     
-    // Move syncSt call to LaunchedEffect to prevent calling it on every recomposition
-    LaunchedEffect(type) {
-        viewModel.syncSt(type)
-    }
-    
     // Handle refresh button click events
     LaunchedEffect(Unit) {
         val refreshHandler: (TopAppBarEvent) -> Unit = { event ->
@@ -234,4 +229,4 @@ fun DAsScreen(
             }
         }
     }
-} 
+}

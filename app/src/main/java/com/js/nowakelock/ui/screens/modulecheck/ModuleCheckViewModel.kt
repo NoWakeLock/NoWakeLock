@@ -45,10 +45,8 @@ class ModuleCheckViewModel(
                 moduleCheckRepository.checkModuleStatus().collect { result ->
                     // First emission is empty result (loading state)
                     // Second emission is actual result
-                    if (result.moduleActive || result.hookStatus.values.any { it } || result.configPathValid) {
-                        _uiState.update { 
-                            it.copy(isLoading = false, result = result) 
-                        }
+                    _uiState.update {
+                        it.copy(isLoading = false, result = result)
                     }
                 }
             } catch (e: Exception) {
@@ -72,4 +70,4 @@ class ModuleCheckViewModel(
             CheckStatus.ERROR -> "Critical module components are not working"
         }
     }
-} 
+}

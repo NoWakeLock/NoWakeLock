@@ -1,19 +1,24 @@
 package com.js.nowakelock.xposedhook.model
 
-import android.os.SystemClock
-import com.js.nowakelock.BuildConfig
-import com.js.nowakelock.base.SPTools
+import android.content.SharedPreferences
+import com.js.nowakelock.data.config.ConfigBackendStatus
+import com.js.nowakelock.data.config.XposedConfigKeys
 import com.js.nowakelock.data.db.Type
-import com.js.nowakelock.xposedhook.XpUtil
-import de.robv.android.xposed.XSharedPreferences
 
-class XpNSP {
+class XpNSP(initialReader: HookConfigReader = EmptyHookConfigReader()) {
+    fun decisionView(): XpNSP {
+        val captured = reader.capture()
+        return (captured as? ImmutableRuleReader)?.decision ?: XpNSP(captured)
+    }
+    @Volatile var api102SystemRuntime = false
+    fun acceptPushed(values: Map<String, *>): Long {
+        check(api102SystemRuntime) { "API102 system runtime unavailable" }
+        return (reader as? SharedPreferencesHookConfigReader
+            ?: error("Remote reader unavailable")).accept(values)
+    }
 
     @Volatile
-    var pref: XSharedPreferences? = null
-
-    @Volatile
-    private var lastRefresh: Long = 0
+    private var reader: HookConfigReader = initialReader
 
     companion object {
 
@@ -21,29 +26,36 @@ class XpNSP {
         private var instance: XpNSP? = null
 
         fun getInstance() = instance ?: synchronized(this) {
-            XpNSP().also {
-                it.makePref()
-                it.reFresh()
+            instance ?: XpNSP().also {
                 instance = it
             }
         }
-    }
 
-    fun makePref(): XSharedPreferences? {
-        return pref ?: synchronized(this) {
-            val p = XSharedPreferences(BuildConfig.APPLICATION_ID, SPTools.SP_NAME)
-            pref = if (p.file.canRead()) p else null
-            pref
+        @Synchronized fun installRemotePreferences(
+            preferences: SharedPreferences,
+            frameworkName: String?,
+            frameworkVersion: String?
+        ) {
+            if (getInstance().reader is SharedPreferencesHookConfigReader) return
+            getInstance().reader = SharedPreferencesHookConfigReader(
+                preferences,
+                frameworkName,
+                frameworkVersion
+            )
+        }
+
+        fun installReader(reader: HookConfigReader) {
+            getInstance().reader = reader
         }
     }
 
     fun flag(name: String, packageName: String, type: Type, userId: Int): Boolean {
 //        XpUtil.log("${name}_${type}_${packageName}_${userId}_flag, flag:${getBool("${name}_${type}_${packageName}_${userId}_flag")}")
-        return getBool("${name}_${type}_${packageName}_${userId}_flag")
+        return getBool(XposedConfigKeys.flag(name, packageName, type, userId))
     }
     fun flagLock(name: String, packageName: String, type: Type, userId: Int): Boolean {
 //        XpUtil.log("${name}_${type}_${packageName}_${userId}_flag, flag:${getBool("${name}_${type}_${packageName}_${userId}_flag")}")
-        return getBool("${name}_${type}_${packageName}_${userId}_flag_lock")
+        return getBool(XposedConfigKeys.flagLock(name, packageName, type, userId))
     }
 
     fun aTI(
@@ -53,9 +65,9 @@ class XpNSP {
 
 //        XpUtil.log("${name}_${type}_${packageName}_${userId}_aTI, ati:${getLong("${name}_${type}_${packageName}_${userId}_aTI")}")
 
-        val ati = getLong("${name}_${type}_${packageName}_${userId}_aTI")
+        val ati = getLong(XposedConfigKeys.allowTimeInterval(name, packageName, type, userId))
 
-        return (now - lastActive) < (ati * 1000)
+        return (now - lastActive) < ati
     }
 
     fun rE(name: String, packageName: String, type: Type, userId: Int): Boolean {
@@ -65,45 +77,31 @@ class XpNSP {
 //                    "re:${getSet("${type}_${packageName}_${userId}_rE")}"
 //        )
 
-        val rE = getSet("${type}_${packageName}_${userId}_rE")
-        if (rE.isEmpty()) {
-            return false
-        } else {
-            rE.forEach {
-                if (name.matches(Regex(it))) {
-                    return true
-                }
-            }
-            return false
-        }
+        return reader.matches(XposedConfigKeys.regex(type, packageName, userId), name)
     }
 
     fun getDebug(): Boolean {
-        return getBool("debug")
+        return getBool(XposedConfigKeys.DEBUG)
     }
 
 
     private fun getBool(key: String, defValue: Boolean = false): Boolean {
-        reFresh()
-        return pref?.getBoolean(key, defValue) ?: defValue
+        return reader.getBoolean(key, defValue)
     }
 
     private fun getLong(key: String, defValue: Long = 0): Long {
-        reFresh()
-        return pref?.getLong(key, defValue) ?: defValue
+        return reader.getLong(key, defValue)
     }
 
     private fun getSet(key: String): Set<String> {
-        reFresh()
-        return pref?.getStringSet(key, emptySet()) ?: emptySet()
+        return reader.getStringSet(key)
     }
 
     fun reFresh() {
-        if (SystemClock.elapsedRealtime() - lastRefresh > (30 * 1000)) {
-//            XpUtil.log("pref reFresh ${SystemClock.elapsedRealtime()}")
-            pref = makePref()
-            pref?.reload()
-            lastRefresh = SystemClock.elapsedRealtime()
-        }
+        reader.refresh()
+    }
+
+    fun backendStatus(): ConfigBackendStatus {
+        return reader.status()
     }
 }

@@ -96,6 +96,7 @@
     <string name="Debug_summary">Enable this when you encounter a wakelock/alarm/service that is not logged. Export the full log in Xposed and send it to me through any channel to troubleshoot the problem.</string>
     <string-array name="scopes" translatable="false">
         <item>android</item>
+        <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
 
@@ -254,7 +255,7 @@
     <string name="refresh">Refresh</string>
     <string name="module_status">Xposed Status</string>
     <string name="hook_status">Hook Status</string>
-    <string name="config_path">New XSharedPreferences</string>
+    <string name="config_path">Configuration backend</string>
     <string name="overall_status">Overall Status</string>
     <string name="normal_status">Normal</string>
     <string name="warning_status">Warning</string>
@@ -267,16 +268,17 @@
     <string name="service_hook">Service Hook</string>
     <string name="hook_working">Working</string>
     <string name="hook_not_working">Not working</string>
-    <string name="config_path_valid">Configuration path is valid</string>
-    <string name="config_path_invalid">Configuration path is invalid</string>
+    <string name="config_path_valid">A configuration backend is readable</string>
+    <string name="config_path_invalid">No configuration backend is readable</string>
+    <string name="config_backend_active">Active backend: %s</string>
     <string name="loading">Loading…</string>
     <string name="error_checking_module">Error checking module status</string>
     <string name="status_normal_description">All module components are working properly</string>
     <string name="status_warning_description">Module is active but some hooks are not working</string>
-    <string name="status_error_description">Critical module components are not working</string>
+    <string name="status_error_description">Module is inactive or no configuration backend is readable</string>
     <string name="fix_module_inactive">Activate the module in Xposed Manager and restart device</string>
     <string name="fix_hook_not_working">Restart device to initialize hooks</string>
-    <string name="fix_config_path">Uninstall app, restart device, reinstall and activate</string>
+    <string name="fix_config_path">Open NoWakeLock once to publish settings, then restart the hooked process or device</string>
     <string name="experimental_features">Experimental Features</string>
 
     <!-- Data management and backup messages -->
@@ -284,4 +286,9 @@
     <string name="clear_data_failed">Failed to clear data: %1$s</string>
     <string name="backup_created">Backup created successfully</string>
     <string name="backup_creation_failed">Failed to create backup: %1$s</string>
+    <string name="config_publish_pending">Settings saved; framework synchronization is pending. Check module status.</string>
+    <string name="config_restore_publish_pending">Backup restored; framework synchronization is pending. Check module status.</string>
+    <string name="config_diagnostics">Configuration and hook diagnostics</string>
+    <string name="config_revision_status">Published: %1$s · Read here: %2$s</string>
+    <string name="config_pending">Awaiting process confirmation</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.js.nowakelock
 
 import com.js.nowakelock.data.db.AppDatabase
+import com.js.nowakelock.data.config.ConfigPublisher
+import com.js.nowakelock.data.config.XposedRemotePreferencesManagers
 import com.js.nowakelock.data.repository.appDetail.AppDetailRepository
 import com.js.nowakelock.data.repository.appDetail.AppDetailRepositoryImpl
 import com.js.nowakelock.data.repository.appdas.AppDasAR
@@ -39,23 +41,25 @@ fun appModule() = module {
     factory { get<AppDatabase>().appDaDao() }
     factory { get<AppDatabase>().infoEventDao() }
 
+    single { XposedRemotePreferencesManagers.create() }
+    single { ConfigPublisher(get(), get(), get()) }
 
     // Repository
     singleOf(::AppDasAR) { bind<AppDasRepo>() }
     singleOf(::BackupRepo)
     single { UserPreferencesRepository(get()) }
-    single { BackupManager(get(), get()) }
+    single { BackupManager(get(), get(), get()) }
 
-    single { WakelockRepositoryImpl(get(), get()) }
-    single { AlarmRepositoryImpl(get(), get()) }
-    single { ServiceRepositoryImpl(get(), get()) }
+    single { WakelockRepositoryImpl(get(), get(), get()) }
+    single { AlarmRepositoryImpl(get(), get(), get()) }
+    single { ServiceRepositoryImpl(get(), get(), get()) }
     
     // Update to include appDaDao
-    single { AppDetailRepositoryImpl(get(), get(), get(), get()) }
+    single { AppDetailRepositoryImpl(get(), get(), get(), get(), get()) }
 
     //
     singleOf(::DAInfoRepositoryImpl) { bind<DAInfoRepository>() }
-    singleOf(::DADetailRepositoryImpl) { bind<DADetailRepository>() }
+    single<DADetailRepository> { DADetailRepositoryImpl(get(), get(), get()) }
     
     // Module check repository
     single<ModuleCheckRepository> { ModuleCheckRepositoryImpl(get(), get()) }
@@ -94,7 +98,8 @@ fun appModule() = module {
         SettingsViewModel(
             userPreferencesRepository = get(),
             backupManager = get(),
-            context = get()
+            context = get(),
+            configPublisher = get()
         )
     }
 

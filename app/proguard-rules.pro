@@ -10,6 +10,19 @@
 -dontpreverify
 
 -keep class com.js.nowakelock.xposedhook.XposedModule
+-keep class com.js.nowakelock.xposedhook.ModernXposedModule { *; }
+-keep class com.js.nowakelock.xposedhook.OldModernEntryAdapter { *; }
+-keep class com.js.nowakelock.xposedhook.entry.** { *; }
+-dontwarn io.github.libxposed.api.XposedModuleInterface$SystemServerLoadedParam
+-keepclassmembers class com.js.nowakelock.xposedhook.ModernXposedModule {
+    public <init>();
+}
+-keep class com.js.nowakelock.xposedhook.XposedHookInstallGuard
+-dontwarn io.github.libxposed.annotation.**
+-adaptresourcefilecontents META-INF/xposed/java_init.list
+-keep,allowoptimization,allowobfuscation public class * extends io.github.libxposed.api.XposedModule {
+    public <init>();
+}
 
 -repackageclasses
 -allowaccessmodification

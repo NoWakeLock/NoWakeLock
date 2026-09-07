@@ -134,6 +134,7 @@
 
     <string-array name="scopes" translatable="false">
         <item>android</item>
+        <item>com.android.providers.settings</item>
         <item>com.js.nowakelock</item>
     </string-array>
 
@@ -251,7 +252,7 @@
     <string name="refresh">Actualiser</string>
     <string name="module_status">État du Xposed</string>
     <string name="hook_status">État des Hooks</string>
-    <string name="config_path">New XSharedPreferences</string>
+    <string name="config_path">Backend de configuration</string>
     <string name="overall_status">État Général</string>
     <string name="normal_status">Normal</string>
     <string name="warning_status">Avertissement</string>
@@ -264,16 +265,17 @@
     <string name="service_hook">Hook Service</string>
     <string name="hook_working">Fonctionnel</string>
     <string name="hook_not_working">Non fonctionnel</string>
-    <string name="config_path_valid">Chemin de configuration valide</string>
-    <string name="config_path_invalid">Chemin de configuration invalide</string>
+    <string name="config_path_valid">Un backend de configuration est lisible</string>
+    <string name="config_path_invalid">Aucun backend de configuration n\'est lisible</string>
+    <string name="config_backend_active">Backend actif : %s</string>
     <string name="loading">Chargement…</string>
     <string name="error_checking_module">Erreur lors de la vérification du module</string>
     <string name="status_normal_description">Tous les composants du module fonctionnent correctement</string>
     <string name="status_warning_description">Le module est actif mais certains hooks ne fonctionnent pas</string>
-    <string name="status_error_description">Des composants critiques du module ne fonctionnent pas</string>
+    <string name="status_error_description">Le module est inactif ou aucun backend de configuration n\'est lisible</string>
     <string name="fix_module_inactive">Activez le module dans Xposed Manager et redémarrez l\'appareil</string>
     <string name="fix_hook_not_working">Redémarrez l\'appareil pour initialiser les hooks</string>
-    <string name="fix_config_path">Désinstallez l\'application, redémarrez l\'appareil, réinstallez et activez</string>
+    <string name="fix_config_path">Ouvrez NoWakeLock une fois pour publier les paramètres, puis redémarrez le processus hooké ou l\'appareil</string>
     <string name="experimental_features">Fonctionnalités Expérimentales</string>
 
     <!-- Messages de gestion des données -->
