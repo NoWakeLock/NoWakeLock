@@ -1,4 +1,4 @@
-Always use Desktop Commander tools for searching, locating, analyzing, and editing files/code/text. For files requiring reading with fewer than 1000 lines, read them in full at once. Do not use Desktop Commander tools for terminal-related operations.
+For files requiring reading with fewer than 1000 lines, read them in full at once.
 
 Use context7 to get the latest documentation and best practice details.
 

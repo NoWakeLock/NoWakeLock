@@ -102,3 +102,7 @@ research-data/*
 research/__pycache__/*
 research/oneui_fw/*
 research/tmp_bluejay_kernel_android16/*
+
+# Local investigation downloads, device captures and measurement builds
+/.tmp/
+/tmp/
