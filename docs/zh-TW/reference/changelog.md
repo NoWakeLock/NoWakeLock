@@ -19,7 +19,7 @@
 - 首次從不具備熱重載能力的建置升級可能仍需重啟；後續重載依賴框架支援，舊框架仍按原方式重啟載入新 APK。
 - 前序 3.0.10 / 88 候選通過 OP13 / Vector 2.2 手動與自動重載、跨代持鎖、使用者 0/10 放行/阻斷/恢復及 120 項單元測試。
 - 最終實作仍需舊框架整機、獨立 Provider、首次解鎖前與部分重載並行邊界驗證；前序證據不代表新 CI 產物已安裝驗收。
-- [完整中英更新說明與測試限制](https://github.com/NoWakeLock/NoWakeLock/blob/feature/dual-xposed-config-backend/fastlane/release-notes/3.0.11.md)
+- [完整中英更新說明與測試限制](https://github.com/NoWakeLock/NoWakeLock/blob/master/fastlane/release-notes/3.0.11.md)
 
 ---
 

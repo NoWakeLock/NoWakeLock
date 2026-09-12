@@ -12,7 +12,7 @@
 
 ## 手动运行 CI
 
-先将准备好的提交推送到用于测试的分支，然后在 GitHub Actions → **Release Upload** → **Run workflow** 选择该分支。
+本次按维护者要求将准备好的提交合入并推送到 `master`，然后在 GitHub Actions → **Release Upload** → **Run workflow** 选择 `master`。版本仍通过 prerelease 渠道试用；合入分支不等于发布稳定版。
 
 | 参数 | 本次取值 | 含义 |
 |---|---|---|

@@ -19,7 +19,7 @@ Cette version est destinée au canal GitHub **Pre-release**, avant une diffusion
 - La première migration depuis un module sans callbacks de rechargement peut encore demander un redémarrage. Les mises à jour suivantes dépendent du framework ; l'ancien chemin conserve son besoin de redémarrage.
 - Le candidat précédent 3.0.10 / 88 a passé les tests OP13 / Vector 2.2 : rechargement manuel/automatique, continuité des verrous, autorisation/blocage/rétablissement pour les utilisateurs 0/10, et 120 tests unitaires.
 - Restent à vérifier l'implémentation finale sur un ancien framework, un Provider séparé, le démarrage avant déverrouillage et certains cas concurrents. Ces résultats ne valident pas l'installation du nouvel APK CI.
-- [Notes complètes et limites en anglais/chinois](https://github.com/NoWakeLock/NoWakeLock/blob/feature/dual-xposed-config-backend/fastlane/release-notes/3.0.11.md)
+- [Notes complètes et limites en anglais/chinois](https://github.com/NoWakeLock/NoWakeLock/blob/master/fastlane/release-notes/3.0.11.md)
 
 ---
 
