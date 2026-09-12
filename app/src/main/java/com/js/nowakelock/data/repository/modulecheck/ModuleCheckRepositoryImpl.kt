@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import com.js.nowakelock.data.config.CodeReloadReport
 import com.js.nowakelock.data.config.ExecutingTarget
 import com.js.nowakelock.data.config.XposedRemotePreferencesManagers
+import com.js.nowakelock.data.config.XposedRemotePreferencesManager
 import com.js.nowakelock.base.getCPResult
 import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.BuildConfig
@@ -22,14 +23,22 @@ import android.os.Bundle
  */
 class ModuleCheckRepositoryImpl(
     private val context: Context,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val remoteManager: XposedRemotePreferencesManager = XposedRemotePreferencesManagers.create()
 ) : ModuleCheckRepository {
     
     private val moduleCheckManager = ModuleCheckManager(context, userPreferencesRepository)
     override suspend fun reloadCode(): CodeReloadReport = withContext(Dispatchers.IO) {
         val before = try { getCPResult(context, ProviderMethod.CheckHookActive.value, Bundle()) } catch (_: Exception) { null }
-        val retryFailure = before == null || before.getString("providerReloadFailure") != null || before.getString("systemReloadFailure") != null
-        val report = XposedRemotePreferencesManagers.create().reloadCode(retryFailure)
+        // Framework UP_TO_DATE may only compare versionCode. Two local release builds
+        // can share that code while system_server still executes the previous APK.
+        val retryCurrentTargets = listOf("provider", "system").any { prefix ->
+            before?.getString("${prefix}BuildId") != BuildConfig.HOOK_BUILD_ID ||
+                before.getBoolean("${prefix}CodeReady") != true ||
+                before.getInt("${prefix}Pid", 0) <= 0 ||
+                before.getString("${prefix}ReloadFailure") != null
+        }
+        val report = remoteManager.reloadCode(retryCurrentTargets)
         val state = try { getCPResult(context, ProviderMethod.CheckHookActive.value, Bundle()) } catch (_: Exception) { null }
         fun executing(prefix: String) = ExecutingTarget(state?.getString("${prefix}BuildId"),
             state?.getInt("${prefix}Pid", 0) ?: 0, state?.getBoolean("${prefix}CodeReady") == true,

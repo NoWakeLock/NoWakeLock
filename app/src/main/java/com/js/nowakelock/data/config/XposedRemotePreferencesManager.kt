@@ -21,7 +21,7 @@ interface XposedRemotePreferencesManager {
     fun getRemotePreferences(): SharedPreferences?
     fun status(legacyReadable: Boolean): ConfigBackendStatus
     fun diagnostics(): String? = null
-    suspend fun reloadCode(retryFailedLifecycle: Boolean = false): CodeReloadReport = CodeReloadReport(error = "API 102 hot reload is unavailable")
+    suspend fun reloadCode(retryCurrentTargets: Boolean = false): CodeReloadReport = CodeReloadReport(error = "API 102 hot reload is unavailable")
 }
 
 object XposedRemotePreferencesManagers {
@@ -63,7 +63,7 @@ private class LibXposedRemotePreferencesManager : XposedRemotePreferencesManager
     private val registered = AtomicBoolean(false)
     private val reloadInProgress = AtomicBoolean(false)
 
-    override suspend fun reloadCode(retryFailedLifecycle: Boolean): CodeReloadReport = withContext(Dispatchers.IO) {
+    override suspend fun reloadCode(retryCurrentTargets: Boolean): CodeReloadReport = withContext(Dispatchers.IO) {
         if (!reloadInProgress.compareAndSet(false, true)) return@withContext CodeReloadReport(error = "Reload is already in progress")
         try {
             val current = service ?: return@withContext CodeReloadReport(error = "Framework service is disconnected")
@@ -72,7 +72,7 @@ private class LibXposedRemotePreferencesManager : XposedRemotePreferencesManager
             if (targets.isEmpty()) return@withContext CodeReloadReport(error = "Framework reports no running targets")
             val results = targets.map { target ->
                 val result = when (target.state) {
-                    HookedTarget.State.UP_TO_DATE -> if (retryFailedLifecycle) requestReload(current, target) else "ALREADY_CURRENT" to null
+                    HookedTarget.State.UP_TO_DATE -> if (retryCurrentTargets) requestReload(current, target) else "ALREADY_CURRENT" to null
                     HookedTarget.State.RELOADING -> "IN_PROGRESS" to null
                     else -> requestReload(current, target)
                 }
