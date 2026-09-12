@@ -118,19 +118,22 @@ lane :build_flavor do |params|
   # commit version changes
   if (ENV["GITHUB_ACTIONS"] == 'true' && options[:skip_commit] != true)
     # sh("git add *.plist *.gradle; git commit -m 'chore: new build' --allow-empty")
-    git_add(path: ["./*.gradle"])
-    git_commit(path: ["./*.gradle"], message: "chore: new build", allow_nothing_to_commit: true)
+    version_files = ["app/build.gradle", "app/src/main/resources/META-INF/xposed/module.prop"]
+    git_add(path: version_files)
+    git_commit(path: version_files, message: "chore: new build", allow_nothing_to_commit: true)
   end
 
   build_output = build(flavor: flavor, options: options)
   puts "build_output #{JSON.pretty_generate(build_output)}"
   # copy dist files to dist, already done on iOS
-  if (platform == 'android')
-    puts "copy dist files #{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]} to #{dist_path}"
+  if (platform == 'android' && ['github', 'fdroid'].include?(flavor))
+    apk_path = File.join(project_root_path, 'app', 'build', 'outputs', 'apk', 'release', "NoWakeLock-#{version}.apk")
+    UI.user_error!("Missing release APK: #{apk_path}") unless File.file?(apk_path)
+    puts "copy #{apk_path} to #{dist_path}"
     if (Dir.exist?(dist_path) == false)
       FileUtils.mkdir dist_path
     end
-    FileUtils.cp_r(Dir.glob(lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]),dist_path )
+    FileUtils.cp(apk_path, dist_path)
   end
 
   if (ENV["GITHUB_ACTIONS"] != 'true' && options[:skip_push] != true)
@@ -143,7 +146,7 @@ lane :build_flavor do |params|
   if (options[:tag_name])
     tag = options[:tag_name]
   end
-  changelog = get_changelog(platform:platform, flavor:flavor, commit_url:commit_url)
+  changelog = get_changelog(platform:platform, flavor:flavor, commit_url:commit_url, version:version)
 
   if (options[:publish] != false)
     if (flavor != 'github' && platform == 'android')
@@ -153,13 +156,18 @@ lane :build_flavor do |params|
     when 'appcenter'
       upload_appcenter(changelog:changelog, version: version, versionCode: versionCode, flavor:flavor)
     when 'github'
+      # A new tag must refer to the commit we built, including a CI version bump.
+      if (options[:skip_push] != true)
+        push_to_git_remote(tags:false)
+      end
       set_github_release(
         repository_name: repository_name,
         api_bearer: ENV["GH_TOKEN"] || ENV["GITHUB_TOKEN"],
-        name: "v#{version}",
+        name: options[:release_status] == 'prerelease' ? "v#{version} (Test release)" : "v#{version}",
         tag_name: tag,
+        commitish: last_git_commit[:commit_hash],
         description: changelog,
-        upload_assets: Dir.glob(File.join(dist_path, "*.apk")),
+        upload_assets: [File.join(dist_path, "NoWakeLock-#{version}.apk")],
         is_prerelease: options[:release_status] == 'prerelease'
       )
     # when 'fdroid'
@@ -181,7 +189,8 @@ lane :build_flavor do |params|
       when 'alpha','beta','production'
         upload_store(changelog:changelog, version: version, versionCode: versionCode, flavor:flavor, options:options, build_output:build_output)
     end
-    if (options[:create_tag] != false)
+    # GitHub creates the tag at commitish; do not force-push a second tag over it.
+    if (options[:create_tag] != false && flavor != 'github')
       if !git_tag_exists(tag: tag)
         add_git_tag(tag: tag, force: true)
         push_git_tags(force: true)
@@ -200,6 +209,10 @@ lane :get_changelog  do |params|
   platform = params[:platform]
   flavor = params[:flavor]
   commit_url = params[:commit_url]
+  if flavor == 'github' && params[:version]
+    notes_path = File.join(project_root_path, 'fastlane', 'release-notes', "#{params[:version]}.md")
+    next File.read(notes_path, encoding: 'UTF-8') if File.file?(notes_path)
+  end
   changelogFormat = params[:format] ||  flavor == 'github' ? 'github' : 'plain'
   ignoredScopes = []
   if (ignore_app_scope)
@@ -311,9 +324,9 @@ platform :android do
     case params[:flavor]
     when 'fdroid','github'
       gradle(
-        task: "assemble",
-        build_type: "Release",
+        task: ":app:assembleRelease",
         properties: {
+          "hookBuildId" => ENV["HOOK_BUILD_ID"] || "#{android_get_version_name(gradle_file: 'app/build.gradle')}:#{android_get_version_code(gradle_file: 'app/build.gradle')}-#{last_git_commit[:commit_hash][0, 12]}",
           "android.injected.signing.store.file" => File.join(project_root_path, ENV["KEYSTORE_PATH"]),
           "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
           "android.injected.signing.key.alias" => ENV["KEYSTORE_ALIAS"],

@@ -8,8 +8,8 @@ on:
     inputs:
       release_type:
         type: choice
-        default: patch
-        description: What kind of version upgrade
+        default: none
+        description: Version upgrade (none uses the version already committed)
         options: 
         - none
         - code
@@ -20,7 +20,7 @@ on:
         description: "Should we build?"
         required: true
         type: boolean
-        default: false
+        default: true
       github:
         description: "Should we publish on Github?"
         default: true
@@ -74,17 +74,14 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          cmdline-tools-version: 9477386  # Fixed version for reproducibility
+          cmdline-tools-version: 16111833  # Pinned SDK tools supporting API 37.0 packages
           
-      - name: Install specific build-tools
+      - name: Install project Android SDK packages
         run: |
-          sdkmanager "build-tools;34.0.0"  # Must use version 34 for apksigcopier compatibility
-          echo "ANDROID_BUILD_TOOLS_VERSION=34.0.0" >> $GITHUB_ENV
+          sdkmanager "platforms;android-37.0" "build-tools;36.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.9" # Quotes required to prevent YAML converting to number
 
       - uses: oNaiPs/secrets-to-env-action@v1
         with:
@@ -94,21 +91,6 @@ jobs:
         uses: xom9ikk/dotenv@v2.3.0
         with:
           mode: ci
-          load-mode: strict
-
-      
-      - name: Generate flavor ci file name
-        id: define_flavor_ci_string
-        run: |
-          echo "FLAVOR_CI_FILENAME=.env.ci.${{ inputs.flavor }}" >> $GITHUB_ENV
-          echo "FLAVOR_CI_MODE=ci.${{ inputs.flavor }}" >> $GITHUB_ENV
-
-
-      - name: Load flavor .env file
-        uses: xom9ikk/dotenv@v2.3.0
-        if: ${{ hashFiles(env.FLAVOR_CI_FILENAME) != '' }}
-        with:
-          mode: ${{ env.FLAVOR_CI_MODE }}
           load-mode: strict
 
       - name: get current version
@@ -179,10 +161,29 @@ jobs:
           versionCode: ${{env.NEW_VERSION_CODE}}
           versionName: ${{env.NEW_VERSION}}
 
+      - name: Synchronize module version and identify Hook build
+        env:
+          TAG_VERSION: ${{ env.TAG_VERSION }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+          gradle = Path('app/build.gradle').read_text(encoding='utf-8')
+          version = re.search(r'versionName "([^"]+)"', gradle).group(1)
+          code = re.search(r'versionCode (\d+)', gradle).group(1)
+          if os.environ.get('TAG_VERSION') and os.environ['TAG_VERSION'] != version:
+              raise SystemExit('Tag version does not match app/build.gradle')
+          module = Path('app/src/main/resources/META-INF/xposed/module.prop')
+          module.write_text(re.sub(r'^version=.*$', f'version={version}', module.read_text(encoding='utf-8'), flags=re.M), encoding='utf-8')
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as env:
+              env.write(f"HOOK_BUILD_ID={version}:{code}-{os.environ['GITHUB_SHA'][:12]}\n")
+          PY
+
       - name: Run shell prepare script
         if: ${{ hashFiles('scripts/ci.prepare.sh') != '' }}
         run: |
-          sh scripts/ci.prepare.sh --platform android --flavor "${{ github.event.inputs.flavor }}" --version "${{ env.VERSION_STR }}"
+          sh scripts/ci.prepare.sh --platform android --flavor github --version "${{ env.VERSION_STR }}"
 
       - name: Decode Keystore
         env:
@@ -205,15 +206,17 @@ jobs:
           if [ "${{ env.IS_TAG_TRIGGER }}" == "true" ]; then
             bundle exec fastlane android github create_tag:false publish:true github:true release_status:release tag_name:${{ github.ref_name }} skip_commit:true skip_push:true --verbose
           else
-            bundle exec fastlane android github create_tag:${{ github.event.inputs.github }} publish:${{ github.event.inputs.github }} github:true release_status:${{ github.event.inputs.release_status }} --verbose
+            bundle exec fastlane android github create_tag:${{ github.event.inputs.github }} publish:${{ github.event.inputs.github }} github:true release_status:${{ github.event.inputs.release_status }} skip_commit:${{ inputs.release_type == 'none' }} skip_push:${{ inputs.release_type == 'none' }} --verbose
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
       - uses: actions/upload-artifact@v4
+        if: inputs.build || env.IS_TAG_TRIGGER == 'true'
         with:
           name:  ${{ env.APP_ID }}.${{ env.VERSION_STR }}
           path: |
             dist/*.apk
+            app/build/outputs/mapping/release/mapping.txt
           retention-days: 7
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`

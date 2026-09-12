@@ -2,6 +2,35 @@
 
 Ce document enregistre l'historique des mises à jour de version et les changements importants de NoWakeLock.
 
+## [v3.0.11 Build 89] - Préparation de la préversion (2026-09-12)
+
+Cette version est destinée au canal GitHub **Pre-release**, avant une diffusion stable.
+
+### Nouveautés et corrections
+
+- Conservation de Xposed historique et ajout d'un chemin distinct pour l'API officielle 102 : wakelocks, alarmes et services. Les API intermédiaires ne font pas partie de la cible.
+- Publication atomique des règles avec confirmation, sans redémarrage ni application résidente ; statistiques par lots dans une file bornée avec diagnostic des pertes et erreurs.
+- Rechargement du module via l'API 102, manuel ou après mise à jour de l'APK, avec transfert des règles, statistiques et verrous actifs et vérification du code exécuté.
+- Correction des groupes regex vides, de l'effacement des statistiques après erreur de lecture/cache, des doubles comptes Service, des durées gonflées après un premier blocage et du retour bindService sur l'ancien framework.
+
+### Mise à niveau et validation
+
+- Sauvegarder les règles. Une signature identique permet la mise à jour sur place ; passer d'une signature locale de débogage à celle de CI peut nécessiter une réinstallation après sauvegarde.
+- La première migration depuis un module sans callbacks de rechargement peut encore demander un redémarrage. Les mises à jour suivantes dépendent du framework ; l'ancien chemin conserve son besoin de redémarrage.
+- Le candidat précédent 3.0.10 / 88 a passé les tests OP13 / Vector 2.2 : rechargement manuel/automatique, continuité des verrous, autorisation/blocage/rétablissement pour les utilisateurs 0/10, et 120 tests unitaires.
+- Restent à vérifier l'implémentation finale sur un ancien framework, un Provider séparé, le démarrage avant déverrouillage et certains cas concurrents. Ces résultats ne valident pas l'installation du nouvel APK CI.
+- [Notes complètes et limites en anglais/chinois](https://github.com/NoWakeLock/NoWakeLock/blob/feature/dual-xposed-config-backend/fastlane/release-notes/3.0.11.md)
+
+---
+
+## [v3.0.10 Build 87] - 2026-05-17
+
+- Correction des flux de tri/filtrage des listes d'applications et d'événements, avec tests unitaires et sur appareil.
+- Les candidats locaux suivants ont conservé 3.0.10 jusqu'au Build 88 ; leurs changements sont décrits dans la préversion 3.0.11 ci-dessus.
+
+---
+
+
 ## [v3.0.9 Build 86] - 2026-03-15
 
 ### 🐛 Corrections

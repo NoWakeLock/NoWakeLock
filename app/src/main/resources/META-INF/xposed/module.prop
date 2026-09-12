@@ -1,7 +1,7 @@
 name=NoWakeLock
 description=For blocking wakelocks
 author=NoWakeLock
-version=3.0.10
+version=3.0.11
 minApiVersion=100
 targetApiVersion=102
 staticScope=true

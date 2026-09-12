@@ -2,6 +2,35 @@
 
 This document records the version update history and important changes of NoWakeLock.
 
+## [v3.0.11 Build 89] - Test release preparation (2026-09-12)
+
+This version is for the GitHub **Pre-release** channel before a stable rollout.
+
+### Changes and fixes
+
+- Keep legacy Xposed and add an isolated official API 102 runtime for wakelocks, alarms and services. Intermediate API revisions are outside the compatibility target.
+- Atomically publish and confirm live rule snapshots without a reboot or resident app; batch statistics in a bounded background queue with drop/failure diagnostics.
+- Add API 102 manual and APK-triggered module reload, handing over rules, statistics and active locks, and verifying executing build identities.
+- Fix publication with empty regex groups, accidental statistics clearing after read/cache failures, duplicate modern Service overload counts, inflated duration after a first blocked wakelock, and legacy bindService blocking return values.
+
+### Upgrading and validation
+
+- Back up rules. Matching v3.x signatures allow in-place updates; switching from local debug to CI signing may require backup and reinstall.
+- The initial migration from a build without reload callbacks may still need a reboot. Later code reload requires framework support; legacy APK updates keep their normal restart requirement.
+- The preceding 3.0.10 / 88 candidate passed OP13 / Vector 2.2 manual/automatic reload, active lock continuity, user 0/10 allow/block/restore tests and 120 unit tests.
+- The final implementation still needs legacy-device, separate-Provider, pre-unlock and some concurrent-reload coverage. Previous candidate evidence does not establish installation acceptance of the new CI artifact.
+- [Full bilingual release notes and test limits](https://github.com/NoWakeLock/NoWakeLock/blob/feature/dual-xposed-config-backend/fastlane/release-notes/3.0.11.md)
+
+---
+
+## [v3.0.10 Build 87] - 2026-05-17
+
+- Fix app/event list sorting and filtering flows, with unit and device sorting tests.
+- Later local compatibility candidates reused 3.0.10, reaching Build 88; their changes are covered by the 3.0.11 test release above.
+
+---
+
+
 ## [v3.0.9 Build 86] - 2026-03-15
 
 ### 🐛 Fixes

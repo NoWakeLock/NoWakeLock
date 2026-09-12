@@ -15,6 +15,12 @@ Use context7 to get the latest documentation and best practice details.
 - For the current OP13 hot-reload work, announce any required reboot and wait for the user to agree and reboot manually. Do not issue device reboot commands.
 - Device delivery must verify requested/published/observed rule revisions, empty regex groups in a nonempty rule database, and actual allowed/blocked event deltas for the tested Android users. Record any missing first-unlock, cold-start, legacy or multi-user validation instead of treating installation as completed acceptance.
 
+## Test release preparation
+
+- Keep app versionName/versionCode, Xposed module metadata, localized changelogs and release notes consistent. Prepared test versions use manual Release Upload with release_type=none and release_status=prerelease; the existing tag-push workflow publishes stable releases.
+- GitHub release notes live in `fastlane/release-notes/<versionName>.md`. Describe upgrade/restart/signing requirements and unverified device coverage; prior candidate evidence is not acceptance of a new CI artifact.
+- Publish only the main release APK and bind its tag to the built commit. Preserve the CI Hook build identity and R8 mapping for diagnosis; reproducing CI bytes requires the same hookBuildId property as well as the other build inputs.
+
 <!-- OPENSPEC:START -->
 # OpenSpec Instructions
 
