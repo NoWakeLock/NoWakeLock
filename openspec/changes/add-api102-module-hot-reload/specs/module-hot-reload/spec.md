@@ -42,3 +42,4 @@ The application SHALL distinguish configuration activation from code replacement
 #### Scenario: Same versionCode test builds
 - **WHEN** two test APKs use the same versionCode
 - **THEN** acceptance verifies a distinct executing build identity rather than inferring success from versionCode or rule revision alone
+- **AND** an explicit reload request does not skip mismatched or incomplete executing targets merely because the framework reports UP_TO_DATE
