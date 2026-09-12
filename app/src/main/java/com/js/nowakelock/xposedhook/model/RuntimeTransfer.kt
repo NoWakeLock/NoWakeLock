@@ -51,6 +51,15 @@ object RuntimeTransfer {
     @Suppress("UNCHECKED_CAST") fun <T> get(key: String): T = data[key] as T
     fun put(key: String, value: Any) { data[key] = value }
 
+    /** Initialized at hook installation, shared across generations; never a module subclass.
+     * Frames contain only operation/String, platform Intent, package/String, user/Integer,
+     * and the previous neutral array. Each callback removes its frame in finally.
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun serviceCalls(): ThreadLocal<Array<Any?>> = data.computeIfAbsent("serviceCalls") {
+        ThreadLocal<Array<Any?>>()
+    } as ThreadLocal<Array<Any?>>
+
     /** Lifecycle-only graph check; never run during a hook decision. */
     fun validateNeutralState() {
         val visited = IdentityHashMap<Any, Boolean>()
@@ -65,6 +74,9 @@ object RuntimeTransfer {
                 is Collection<*> -> value.forEach { visit(it) }
                 is AtomicReference<*> -> visit(value.get())
                 is Bundle -> value.keySet().forEach { visit(value.get(it)) }
+                // Other threads' frames are private to the service callback and contain only
+                // platform objects. Do not allow arbitrary ThreadLocals into transferred state.
+                is ThreadLocal<*> -> check(value === data["serviceCalls"] && value.javaClass == ThreadLocal::class.java)
                 // Opaque platform handles contain framework-owned internals.
                 is Context, is IBinder, is ClassLoader, is Semaphore,
                 is java.util.concurrent.atomic.AtomicInteger, is AtomicLong, is AtomicBoolean,

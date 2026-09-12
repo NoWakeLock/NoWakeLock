@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import com.js.nowakelock.xposedhook.model.RuntimeTransfer
 
 object ModernServiceHook {
+    private val activeCalls = RuntimeTransfer.serviceCalls()
     var booted: Boolean
         get() = RuntimeTransfer.get<AtomicBoolean>("booted").get()
         set(value) { RuntimeTransfer.get<AtomicBoolean>("booted").set(value) }
@@ -23,6 +24,10 @@ object ModernServiceHook {
             classLoader
         ) ?: return
 
+        hookServiceClass(xposed, cls)
+    }
+
+    internal fun hookServiceClass(xposed: XposedInterface, cls: Class<*>) {
         hookServiceMethods(
             xposed = xposed,
             methods = cls.declaredMethods.filter { it.name == "startServiceLocked" },
@@ -52,8 +57,10 @@ object ModernServiceHook {
             val positionsRef = AtomicReference<ServiceParamPositions?>(null)
             val reportedFailure = java.util.concurrent.atomic.AtomicBoolean(false)
             ModernHookSupport.hookMethod(xposed, method) { chain ->
+                val previous = activeCalls.get()
                 try {
-                    if (handleService(
+                    val blocked = try {
+                        handleService(
                             chain,
                             positionsRef,
                             { if (reportedFailure.compareAndSet(false, true))
@@ -62,13 +69,14 @@ object ModernServiceHook {
                             androidVersionIndex,
                             label
                         )
-                    ) {
-                        return@hookMethod ModernHookSupport.defaultReturn(chain)
+                    } catch (e: Throwable) {
+                        ModernXposedLog.error("Error in Modern $label hook", e)
+                        false
                     }
-                } catch (e: Throwable) {
-                    ModernXposedLog.error("Error in Modern $label hook", e)
+                    if (blocked) ModernHookSupport.defaultReturn(chain) else chain.proceed()
+                } finally {
+                    if (previous == null) activeCalls.remove() else activeCalls.set(previous)
                 }
-                chain.proceed()
             }
         }
     }
@@ -83,7 +91,7 @@ object ModernServiceHook {
     ): Boolean {
         val positions = positionsRef.get()
         if (positions != null) {
-            return extractWithPositions(chain, positions)?.blocked ?: false
+            return extractWithPositions(chain, positions, label)?.blocked ?: false
         }
         return extractAndCacheServiceParameters(
                 chain,
@@ -105,7 +113,7 @@ object ModernServiceHook {
     ): Boolean {
         if (androidVersionIndex < strategies.size) {
             val positions = strategies[androidVersionIndex]
-            val extracted = extractWithPositions(chain, positions)
+            val extracted = extractWithPositions(chain, positions, label)
             if (extracted != null) {
                 positionsRef.set(positions)
                 ModernXposedLog.info("Modern $label parameter positions cached for Android ${Build.VERSION.SDK_INT}")
@@ -115,7 +123,7 @@ object ModernServiceHook {
 
         for ((index, positions) in strategies.withIndex()) {
             if (index == androidVersionIndex) continue
-            val extracted = extractWithPositions(chain, positions)
+            val extracted = extractWithPositions(chain, positions, label)
             if (extracted != null) {
                 positionsRef.set(positions)
                 ModernXposedLog.info("Modern $label parameter positions cached from fallback strategy $index")
@@ -129,7 +137,8 @@ object ModernServiceHook {
 
     private fun extractWithPositions(
         chain: XposedInterface.Chain,
-        positions: ServiceParamPositions
+        positions: ServiceParamPositions,
+        label: String
     ): ServiceExtraction? {
         val args = ModernHookSupport.args(chain)
         if (args.size <= maxOf(positions.servicePos, positions.packagePos, positions.userIdPos)) {
@@ -140,7 +149,18 @@ object ModernServiceHook {
         val userId = args[positions.userIdPos] as? Int ?: return null
         if (userId !in 0..1000) return null
         val context = ModernHookSupport.findContext(chain) ?: return null
+        // ROM overloads may delegate to each other with the same request. Evaluate and
+        // record that request once; independent intents, users and start/bind stay distinct.
+        var parent = activeCalls.get()
+        while (parent != null) {
+            if (parent[0] == label && parent[1] === service &&
+                parent[2] == packageName && parent[3] == userId) return ServiceExtraction(positions, false)
+            @Suppress("UNCHECKED_CAST")
+            val previous = parent[4] as? Array<Any?>
+            parent = previous
+        }
         val blocked = hookStartServiceLocked(service, packageName, context, userId)
+        activeCalls.set(arrayOf(label, service, packageName, userId, activeCalls.get()))
         return ServiceExtraction(positions, blocked)
     }
 
