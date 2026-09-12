@@ -35,7 +35,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -43,7 +43,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1722,11 +1722,11 @@
 4. Ajoutez cette application à la liste blanche si nécessaire</p>
 <h3 id="q-comment-collecter-des-informations-de-debogage">Q : Comment collecter des informations de débogage ?<a class="headerlink" href="#q-comment-collecter-des-informations-de-debogage" title="Permanent link">&para;</a></h3>
 <p><strong>R</strong> : Collecte d'informations :
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Informations de l&#39;appareil</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Informations de l'appareil</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.build.version.release
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.product.model
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Journaux de l&#39;application</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Journaux de l'application</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>nowakelock
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Journaux Xposed</span>
@@ -1757,8 +1757,8 @@
 <p><strong>R</strong> : Étapes de récupération d'urgence :</p>
 <p><strong>Situation 1 : Problèmes de démarrage causés par le module NoWakeLock</strong> :</p>
 <p><strong>Méthode 1 : Mode sécurisé par boutons physiques (recommandé)</strong> :
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="m">1</span>.<span class="w"> </span>Maintenez<span class="w"> </span>le<span class="w"> </span>bouton<span class="w"> </span>d<span class="s1">&#39;alimentation 10 secondes pour forcer le redémarrage</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">2. Dès que l&#39;</span>écran<span class="w"> </span>devient<span class="w"> </span>noir,<span class="w"> </span>appuyez<span class="w"> </span>immédiatement<span class="w"> </span>et<span class="w"> </span>de<span class="w"> </span>manière<span class="w"> </span>répétée<span class="w"> </span>sur<span class="w"> </span>n<span class="err">&#39;</span>importe<span class="w"> </span>quel<span class="w"> </span>bouton<span class="w"> </span>physique<span class="w"> </span><span class="o">(</span>volume<span class="w"> </span>ou<span class="w"> </span>alimentation<span class="o">)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="m">1</span>.<span class="w"> </span>Maintenez<span class="w"> </span>le<span class="w"> </span>bouton<span class="w"> </span>d<span class="s1">'alimentation 10 secondes pour forcer le redémarrage</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">2. Dès que l'</span>écran<span class="w"> </span>devient<span class="w"> </span>noir,<span class="w"> </span>appuyez<span class="w"> </span>immédiatement<span class="w"> </span>et<span class="w"> </span>de<span class="w"> </span>manière<span class="w"> </span>répétée<span class="w"> </span>sur<span class="w"> </span>n<span class="err">'</span>importe<span class="w"> </span>quel<span class="w"> </span>bouton<span class="w"> </span>physique<span class="w"> </span><span class="o">(</span>volume<span class="w"> </span>ou<span class="w"> </span>alimentation<span class="o">)</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="m">3</span>.<span class="w"> </span>Après<span class="w"> </span>avoir<span class="w"> </span>ressenti<span class="w"> </span><span class="m">2</span><span class="w"> </span>courtes<span class="w"> </span>vibrations,<span class="w"> </span>continuez<span class="w"> </span>à<span class="w"> </span>appuyer<span class="w"> </span>rapidement<span class="w"> </span><span class="m">4</span><span class="w"> </span>fois<span class="w"> </span>sur<span class="w"> </span>le<span class="w"> </span>même<span class="w"> </span>bouton
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="m">4</span>.<span class="w"> </span>Après<span class="w"> </span>le<span class="w"> </span>4ème<span class="w"> </span>appui,<span class="w"> </span>vous<span class="w"> </span>devriez<span class="w"> </span>ressentir<span class="w"> </span>une<span class="w"> </span>longue<span class="w"> </span>vibration,<span class="w"> </span>indiquant<span class="w"> </span>que<span class="w"> </span>Xposed<span class="w"> </span>est<span class="w"> </span>désactivé
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="m">5</span>.<span class="w"> </span>Après<span class="w"> </span>un<span class="w"> </span>démarrage<span class="w"> </span>normal,<span class="w"> </span>désactivez<span class="w"> </span>le<span class="w"> </span>module<span class="w"> </span>NoWakeLock<span class="w"> </span>dans<span class="w"> </span>LSPosed
@@ -1771,16 +1771,16 @@
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="m">5</span>.<span class="w"> </span>Redémarrez<span class="w"> </span>vers<span class="w"> </span>le<span class="w"> </span>système
 </span></code></pre></div></p>
 <p><strong>Méthode 3 : Méthode spécifique à l'appareil (comme Pixel)</strong> :
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Au<span class="w"> </span>démarrage,<span class="w"> </span>après<span class="w"> </span>l<span class="s1">&#39;apparition du logo Google, appuyez frénétiquement sur le bouton volume bas</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="s1">Jusqu&#39;</span>à<span class="w"> </span>ce<span class="w"> </span>que<span class="w"> </span>l<span class="s1">&#39;appareil vibre pour confirmer l&#39;</span>entrée<span class="w"> </span>en<span class="w"> </span>mode<span class="w"> </span>sécurisé
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Au<span class="w"> </span>démarrage,<span class="w"> </span>après<span class="w"> </span>l<span class="s1">'apparition du logo Google, appuyez frénétiquement sur le bouton volume bas</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="s1">Jusqu'</span>à<span class="w"> </span>ce<span class="w"> </span>que<span class="w"> </span>l<span class="s1">'appareil vibre pour confirmer l'</span>entrée<span class="w"> </span>en<span class="w"> </span>mode<span class="w"> </span>sécurisé
 </span></code></pre></div></p>
 <p><strong>Situation 2 : Interception erronée de composants système importants</strong> :
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="m">1</span>.<span class="w"> </span>Entrez<span class="w"> </span>en<span class="w"> </span>Recovery<span class="w"> </span>→<span class="w"> </span>Gestionnaire<span class="w"> </span>de<span class="w"> </span>fichiers
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="m">2</span>.<span class="w"> </span>Naviguez<span class="w"> </span>vers<span class="w"> </span>/data/misc/xxx-xxx-xxx/prefs/com.js.nowakelock
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">   </span><span class="c1"># xxx-xxx-xxx est une longue chaîne de caractères aléatoires, peut différer selon l&#39;appareil</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="m">3</span>.<span class="w"> </span>Supprimez<span class="w"> </span>l<span class="s1">&#39;intégralité du dossier</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s1">4. Redémarrez l&#39;</span>appareil
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="m">5</span>.<span class="w"> </span>Après<span class="w"> </span>être<span class="w"> </span>entré<span class="w"> </span>dans<span class="w"> </span>le<span class="w"> </span>système,<span class="w"> </span>récupérez<span class="w"> </span>de<span class="w"> </span>l<span class="s1">&#39;erreur, si le problème spécifique n&#39;</span>est<span class="w"> </span>pas<span class="w"> </span>clair,<span class="w"> </span>effacez<span class="w"> </span>directement<span class="w"> </span>les<span class="w"> </span>données<span class="w"> </span>NoWakeLock
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">   </span><span class="c1"># xxx-xxx-xxx est une longue chaîne de caractères aléatoires, peut différer selon l'appareil</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="m">3</span>.<span class="w"> </span>Supprimez<span class="w"> </span>l<span class="s1">'intégralité du dossier</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s1">4. Redémarrez l'</span>appareil
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="m">5</span>.<span class="w"> </span>Après<span class="w"> </span>être<span class="w"> </span>entré<span class="w"> </span>dans<span class="w"> </span>le<span class="w"> </span>système,<span class="w"> </span>récupérez<span class="w"> </span>de<span class="w"> </span>l<span class="s1">'erreur, si le problème spécifique n'</span>est<span class="w"> </span>pas<span class="w"> </span>clair,<span class="w"> </span>effacez<span class="w"> </span>directement<span class="w"> </span>les<span class="w"> </span>données<span class="w"> </span>NoWakeLock
 </span></code></pre></div></p>
 <p><strong>En cas de cause incertaine</strong> :
 - Après être entré dans le système, effacez directement les données de l'application NoWakeLock
@@ -2016,7 +2016,7 @@
       <script id="__config" type="application/json">{"annotate": {"json": [".s2"]}, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

@@ -35,7 +35,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -43,7 +43,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1784,7 +1784,7 @@
 </ol>
 <p>【Capture d'écran nécessaire : exemple d'échec de vérification du module】</p>
 <h4 id="verification-du-framework-xposed">Vérification du framework Xposed<a class="headerlink" href="#verification-du-framework-xposed" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Vérifier l&#39;état de LSPosed</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Vérifier l'état de LSPosed</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>adb<span class="w"> </span>shell<span class="w"> </span>am<span class="w"> </span>start<span class="w"> </span>-n<span class="w"> </span>org.lsposed.manager/.ui.activity.MainActivity
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Voir la liste des modules</span>
@@ -1823,7 +1823,7 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>adb<span class="w"> </span>install<span class="w"> </span>nowakelock.apk
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Effacer le cache du framework</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Dans LSPosed : &quot;Paramètres&quot; → &quot;Effacer le cache&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Dans LSPosed : "Paramètres" → "Effacer le cache"</span>
 </span></code></pre></div></p>
 <h4 id="dysfonctionnement-de-la-fonction-hook">Dysfonctionnement de la fonction Hook<a class="headerlink" href="#dysfonctionnement-de-la-fonction-hook" title="Permanent link">&para;</a></h4>
 <p><strong>Symptômes</strong> : Module chargé mais Hook ne fonctionne pas</p>
@@ -1835,10 +1835,10 @@
 1. Confirmez que la portée inclut <code>android</code>
 2. Vérifiez l'état SELinux :
    <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>adb<span class="w"> </span>shell<span class="w"> </span>getenforce
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Si c&#39;est Enforcing, cela peut affecter la fonction Hook</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Si c'est Enforcing, cela peut affecter la fonction Hook</span>
 </span></code></pre></div>
 3. Consultez les journaux Xposed :
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;(Xposed|nowakelock)&quot;</span>
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"(Xposed|nowakelock)"</span>
 </span></code></pre></div></p>
 <h3 id="problemes-fonctionnels">Problèmes fonctionnels<a class="headerlink" href="#problemes-fonctionnels" title="Permanent link">&para;</a></h3>
 <h4 id="les-regles-ne-prennent-pas-effet">Les règles ne prennent pas effet<a class="headerlink" href="#les-regles-ne-prennent-pas-effet" title="Permanent link">&para;</a></h4>
@@ -1880,7 +1880,7 @@
 <h4 id="ralentissement-du-systeme">Ralentissement du système<a class="headerlink" href="#ralentissement-du-systeme" title="Permanent link">&para;</a></h4>
 <p><strong>Symptômes</strong> : Le système répond plus lentement après installation de NoWakeLock</p>
 <p><strong>Analyse de performance</strong> :
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Taux d&#39;utilisation CPU</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Taux d'utilisation CPU</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>adb<span class="w"> </span>shell<span class="w"> </span>top<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nowakelock
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Utilisation mémoire</span>
@@ -1912,7 +1912,7 @@
 3. Journaux ANR (Application Not Responding)</p>
 <p><strong>Stratégies de traitement</strong> :
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Solution temporaire</span><span class="p">:</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ajouter l&#39;application à la liste blanche</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ajouter l'application à la liste blanche</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Désactiver les règles associées</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="nt">Solution à long terme</span><span class="p">:</span>
@@ -1947,7 +1947,7 @@
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>adb<span class="w"> </span>logcat<span class="w"> </span>--pid<span class="o">=</span><span class="k">$(</span>adb<span class="w"> </span>shell<span class="w"> </span>pidof<span class="w"> </span>com.js.nowakelock<span class="k">)</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Journal de plantage</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;(FATAL|AndroidRuntime)&quot;</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>adb<span class="w"> </span>logcat<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"(FATAL|AndroidRuntime)"</span>
 </span></code></pre></div>
 <h3 id="analyse-des-journaux_1">Analyse des journaux<a class="headerlink" href="#analyse-des-journaux_1" title="Permanent link">&para;</a></h3>
 <h4 id="identification-des-erreurs-critiques">Identification des erreurs critiques<a class="headerlink" href="#identification-des-erreurs-critiques" title="Permanent link">&para;</a></h4>
@@ -2004,7 +2004,7 @@
 <h4 id="outils-de-test-hook">Outils de test Hook<a class="headerlink" href="#outils-de-test-hook" title="Permanent link">&para;</a></h4>
 <div class="language-kotlin highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// Tester un point Hook spécifique</span>
 </span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kd">fun</span><span class="w"> </span><span class="nf">testWakeLockHook</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span><span class="c1">// Déclencher manuellement l&#39;acquisition de WakeLock</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span><span class="c1">// Déclencher manuellement l'acquisition de WakeLock</span>
 </span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="c1">// Observer si Hook est appelé</span>
 </span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="p">}</span>
 </span></code></pre></div>
@@ -2075,7 +2075,7 @@
 <li><strong>GitHub</strong> : <a href="https://github.com/NoWakeLock/NoWakeLock/issues">Issues</a></li>
 </ul>
 <h3 id="modele-de-rapport-de-probleme">Modèle de rapport de problème<a class="headerlink" href="#modele-de-rapport-de-probleme" title="Permanent link">&para;</a></h3>
-<div class="language-markdown highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="gu">## Informations d&#39;environnement</span>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="gu">## Informations d'environnement</span>
 </span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="k">-</span><span class="w"> </span>Appareil : [Marque Modèle]
 </span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="k">-</span><span class="w"> </span>Version Android : [Numéro de version]
 </span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="k">-</span><span class="w"> </span>Framework Xposed : [Version LSPosed/EdXposed]
@@ -2288,7 +2288,7 @@
       <script id="__config" type="application/json">{"annotate": {"json": [".s2"]}, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

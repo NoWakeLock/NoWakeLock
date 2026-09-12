@@ -35,7 +35,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -43,7 +43,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -847,6 +847,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v3011-build-89-test-release-preparation-2026-09-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [v3.0.11 Build 89] - Test release preparation (2026-09-12)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[v3.0.11 Build 89] - Test release preparation (2026-09-12)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changes-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes and fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-and-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading and validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v3010-build-87-2026-05-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [v3.0.10 Build 87] - 2026-05-17
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v309-build-86-2026-03-15" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1623,6 +1673,30 @@
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <p>This document records the version update history and important changes of NoWakeLock.</p>
+<h2 id="v3011-build-89-test-release-preparation-2026-09-12">[v3.0.11 Build 89] - Test release preparation (2026-09-12)<a class="headerlink" href="#v3011-build-89-test-release-preparation-2026-09-12" title="Permanent link">&para;</a></h2>
+<p>This version is for the GitHub <strong>Pre-release</strong> channel before a stable rollout.</p>
+<h3 id="changes-and-fixes">Changes and fixes<a class="headerlink" href="#changes-and-fixes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Keep legacy Xposed and add an isolated official API 102 runtime for wakelocks, alarms and services. Intermediate API revisions are outside the compatibility target.</li>
+<li>Atomically publish and confirm live rule snapshots without a reboot or resident app; batch statistics in a bounded background queue with drop/failure diagnostics.</li>
+<li>Add API 102 manual and APK-triggered module reload, handing over rules, statistics and active locks, and verifying executing build identities.</li>
+<li>Fix publication with empty regex groups, accidental statistics clearing after read/cache failures, duplicate modern Service overload counts, inflated duration after a first blocked wakelock, and legacy bindService blocking return values.</li>
+</ul>
+<h3 id="upgrading-and-validation">Upgrading and validation<a class="headerlink" href="#upgrading-and-validation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Back up rules. Matching v3.x signatures allow in-place updates; switching from local debug to CI signing may require backup and reinstall.</li>
+<li>The initial migration from a build without reload callbacks may still need a reboot. Later code reload requires framework support; legacy APK updates keep their normal restart requirement.</li>
+<li>The preceding 3.0.10 / 88 candidate passed OP13 / Vector 2.2 manual/automatic reload, active lock continuity, user 0/10 allow/block/restore tests and 120 unit tests.</li>
+<li>The final implementation still needs legacy-device, separate-Provider, pre-unlock and some concurrent-reload coverage. Previous candidate evidence does not establish installation acceptance of the new CI artifact.</li>
+<li><a href="https://github.com/NoWakeLock/NoWakeLock/blob/dev/fastlane/release-notes/3.0.11.md">Full bilingual release notes and test limits</a></li>
+</ul>
+<hr />
+<h2 id="v3010-build-87-2026-05-17">[v3.0.10 Build 87] - 2026-05-17<a class="headerlink" href="#v3010-build-87-2026-05-17" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Fix app/event list sorting and filtering flows, with unit and device sorting tests.</li>
+<li>Later local compatibility candidates reused 3.0.10, reaching Build 88; their changes are covered by the 3.0.11 test release above.</li>
+</ul>
+<hr />
 <h2 id="v309-build-86-2026-03-15">[v3.0.9 Build 86] - 2026-03-15<a class="headerlink" href="#v309-build-86-2026-03-15" title="Permanent link">&para;</a></h2>
 <h3 id="fixes">🐛 Fixes<a class="headerlink" href="#fixes" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1919,7 +1993,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 15, 2026 01:57:42 UTC"><span class="timeago" datetime="2026-03-15T01:57:42+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 15, 2026 01:57:42 UTC">2026-03-15</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 12, 2026 09:05:50 UTC"><span class="timeago" datetime="2026-09-12T09:05:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 12, 2026 09:05:50 UTC">2026-09-12</span>
   </span>
 
     
@@ -2075,7 +2149,7 @@
       <script id="__config" type="application/json">{"annotate": {"json": [".s2"]}, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

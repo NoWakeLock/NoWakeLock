@@ -35,7 +35,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -43,7 +43,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -847,6 +847,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v3011-build-89-preparation-de-la-preversion-2026-09-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [v3.0.11 Build 89] - Préparation de la préversion (2026-09-12)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[v3.0.11 Build 89] - Préparation de la préversion (2026-09-12)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nouveautes-et-corrections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nouveautés et corrections
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mise-a-niveau-et-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mise à niveau et validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v3010-build-87-2026-05-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [v3.0.10 Build 87] - 2026-05-17
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v309-build-86-2026-03-15" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1623,6 +1673,30 @@
 
 <h1 id="journal-des-modifications">Journal des modifications<a class="headerlink" href="#journal-des-modifications" title="Permanent link">&para;</a></h1>
 <p>Ce document enregistre l'historique des mises à jour de version et les changements importants de NoWakeLock.</p>
+<h2 id="v3011-build-89-preparation-de-la-preversion-2026-09-12">[v3.0.11 Build 89] - Préparation de la préversion (2026-09-12)<a class="headerlink" href="#v3011-build-89-preparation-de-la-preversion-2026-09-12" title="Permanent link">&para;</a></h2>
+<p>Cette version est destinée au canal GitHub <strong>Pre-release</strong>, avant une diffusion stable.</p>
+<h3 id="nouveautes-et-corrections">Nouveautés et corrections<a class="headerlink" href="#nouveautes-et-corrections" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Conservation de Xposed historique et ajout d'un chemin distinct pour l'API officielle 102 : wakelocks, alarmes et services. Les API intermédiaires ne font pas partie de la cible.</li>
+<li>Publication atomique des règles avec confirmation, sans redémarrage ni application résidente ; statistiques par lots dans une file bornée avec diagnostic des pertes et erreurs.</li>
+<li>Rechargement du module via l'API 102, manuel ou après mise à jour de l'APK, avec transfert des règles, statistiques et verrous actifs et vérification du code exécuté.</li>
+<li>Correction des groupes regex vides, de l'effacement des statistiques après erreur de lecture/cache, des doubles comptes Service, des durées gonflées après un premier blocage et du retour bindService sur l'ancien framework.</li>
+</ul>
+<h3 id="mise-a-niveau-et-validation">Mise à niveau et validation<a class="headerlink" href="#mise-a-niveau-et-validation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Sauvegarder les règles. Une signature identique permet la mise à jour sur place ; passer d'une signature locale de débogage à celle de CI peut nécessiter une réinstallation après sauvegarde.</li>
+<li>La première migration depuis un module sans callbacks de rechargement peut encore demander un redémarrage. Les mises à jour suivantes dépendent du framework ; l'ancien chemin conserve son besoin de redémarrage.</li>
+<li>Le candidat précédent 3.0.10 / 88 a passé les tests OP13 / Vector 2.2 : rechargement manuel/automatique, continuité des verrous, autorisation/blocage/rétablissement pour les utilisateurs 0/10, et 120 tests unitaires.</li>
+<li>Restent à vérifier l'implémentation finale sur un ancien framework, un Provider séparé, le démarrage avant déverrouillage et certains cas concurrents. Ces résultats ne valident pas l'installation du nouvel APK CI.</li>
+<li><a href="https://github.com/NoWakeLock/NoWakeLock/blob/dev/fastlane/release-notes/3.0.11.md">Notes complètes et limites en anglais/chinois</a></li>
+</ul>
+<hr />
+<h2 id="v3010-build-87-2026-05-17">[v3.0.10 Build 87] - 2026-05-17<a class="headerlink" href="#v3010-build-87-2026-05-17" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Correction des flux de tri/filtrage des listes d'applications et d'événements, avec tests unitaires et sur appareil.</li>
+<li>Les candidats locaux suivants ont conservé 3.0.10 jusqu'au Build 88 ; leurs changements sont décrits dans la préversion 3.0.11 ci-dessus.</li>
+</ul>
+<hr />
 <h2 id="v309-build-86-2026-03-15">[v3.0.9 Build 86] - 2026-03-15<a class="headerlink" href="#v309-build-86-2026-03-15" title="Permanent link">&para;</a></h2>
 <h3 id="corrections">🐛 Corrections<a class="headerlink" href="#corrections" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1919,7 +1993,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 15, 2026 01:57:42 UTC"><span class="timeago" datetime="2026-03-15T01:57:42+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 15, 2026 01:57:42 UTC">2026-03-15</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="September 12, 2026 09:05:50 UTC"><span class="timeago" datetime="2026-09-12T09:05:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 12, 2026 09:05:50 UTC">2026-09-12</span>
   </span>
 
     
@@ -2075,7 +2149,7 @@
       <script id="__config" type="application/json">{"annotate": {"json": [".s2"]}, "base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       
