@@ -19,7 +19,7 @@ Diese Version ist für den GitHub-Kanal **Pre-release** vor einer stabilen Verö
 - Das erste Upgrade von einem Modul ohne Reload-Callbacks kann weiterhin einen Neustart benötigen. Spätere Reloads erfordern Framework-Unterstützung; alte Frameworks behalten den bisherigen Neustartbedarf.
 - Der vorherige Kandidat 3.0.10 / 88 bestand OP13-/Vector-2.2-Tests für manuelles/automatisches Neuladen, durchgehendes Halten von Wakelocks, Erlauben/Blockieren/Wiederherstellen für Benutzer 0/10 und 120 Unit-Tests.
 - Ausstehend sind Tests der finalen Implementierung auf einem alten Framework, mit separatem Provider, vor dem ersten Entsperren und bei einigen gleichzeitigen Reload-Vorgängen. Frühere Ergebnisse bestätigen keine Installation des neuen CI-APKs.
-- [Vollständige Hinweise und Testgrenzen auf Englisch/Chinesisch](https://github.com/NoWakeLock/NoWakeLock/blob/master/fastlane/release-notes/3.0.11.md)
+- [Vollständige Hinweise und Testgrenzen auf Englisch/Chinesisch](https://github.com/NoWakeLock/NoWakeLock/blob/dev/fastlane/release-notes/3.0.11.md)
 
 ---
 

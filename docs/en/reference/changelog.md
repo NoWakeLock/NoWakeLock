@@ -19,7 +19,7 @@ This version is for the GitHub **Pre-release** channel before a stable rollout.
 - The initial migration from a build without reload callbacks may still need a reboot. Later code reload requires framework support; legacy APK updates keep their normal restart requirement.
 - The preceding 3.0.10 / 88 candidate passed OP13 / Vector 2.2 manual/automatic reload, active lock continuity, user 0/10 allow/block/restore tests and 120 unit tests.
 - The final implementation still needs legacy-device, separate-Provider, pre-unlock and some concurrent-reload coverage. Previous candidate evidence does not establish installation acceptance of the new CI artifact.
-- [Full bilingual release notes and test limits](https://github.com/NoWakeLock/NoWakeLock/blob/master/fastlane/release-notes/3.0.11.md)
+- [Full bilingual release notes and test limits](https://github.com/NoWakeLock/NoWakeLock/blob/dev/fastlane/release-notes/3.0.11.md)
 
 ---
 
