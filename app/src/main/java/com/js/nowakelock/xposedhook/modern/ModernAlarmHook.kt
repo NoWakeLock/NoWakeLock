@@ -8,15 +8,18 @@ import com.js.nowakelock.base.getUserId
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
+import com.js.nowakelock.xposedhook.model.RuntimeTransfer
+import java.util.concurrent.atomic.AtomicBoolean
 import io.github.libxposed.api.XposedInterface
 import java.lang.reflect.Field
 import java.util.concurrent.ConcurrentHashMap
 
 object ModernAlarmHook {
-    @Volatile
-    var booted = false
+    var booted: Boolean
+        get() = RuntimeTransfer.get<AtomicBoolean>("booted").get()
+        set(value) { RuntimeTransfer.get<AtomicBoolean>("booted").set(value) }
 
-    private val lastAllowTime = ConcurrentHashMap<String, Long>()
+    private val lastAllowTime = RuntimeTransfer.get<ConcurrentHashMap<String, Long>>("alarmTimes")
 
     private val positionsByMethod = ConcurrentHashMap<java.lang.reflect.Executable, AlarmParamPositions>()
 

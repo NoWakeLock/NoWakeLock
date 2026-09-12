@@ -9,10 +9,13 @@ import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
 import io.github.libxposed.api.XposedInterface
 import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.AtomicBoolean
+import com.js.nowakelock.xposedhook.model.RuntimeTransfer
 
 object ModernServiceHook {
-    @Volatile
-    var booted = false
+    var booted: Boolean
+        get() = RuntimeTransfer.get<AtomicBoolean>("booted").get()
+        set(value) { RuntimeTransfer.get<AtomicBoolean>("booted").set(value) }
 
     fun hook(xposed: XposedInterface, classLoader: ClassLoader) {
         val cls = ModernHookSupport.loadClass(

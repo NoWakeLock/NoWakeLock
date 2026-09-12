@@ -1,0 +1,8 @@
+<resources>
+    <string name="code_reload_title">模組程式碼更新</string>
+    <string name="code_reload_description">透過 API 102 套用已安裝的更新。規則修改獨立生效。正在執行的舊版本若不支援重新載入，需要正常重新啟動裝置；此按鈕不會重新啟動裝置。</string>
+    <string name="code_reload_action">套用已安裝的更新</string>
+    <string name="code_reloading">等待框架結果…</string>
+    <string name="code_reload_verified">已確認所有必要程序正在執行目前的程式碼。</string>
+    <string name="code_reload_unverified">尚未完整確認更新。拒絕或不支援重新載入的程序需要正常重新啟動；失敗或部分更新請查看下方詳情。</string>
+</resources>

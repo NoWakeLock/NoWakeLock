@@ -10,7 +10,37 @@ import org.mockito.kotlin.*
 class ModernHookSupportTest {
     class Target { fun call(): Int = 1 }
     private val method = Target::class.java.getDeclaredMethod("call")
-    @Before fun reset() = HookInstallRegistry.clearForTest()
+    @Before fun reset() { HookInstallRegistry.clearForTest(); ModernHookSupport.abandonReload() }
+
+    @Test fun `matching handle is replaced through official handle and not registered twice`() {
+        val api = mock<XposedInterface>()
+        val old = mock<XposedInterface.HookHandle>()
+        whenever(old.executable).thenReturn(method)
+        ModernHookSupport.beginReload(listOf(old))
+        ModernHookSupport.hookMethod(api, method) { 99 }
+        ModernHookSupport.finishReload()
+        val callback = argumentCaptor<XposedInterface.Hooker>()
+        verify(old).replaceHook(callback.capture())
+        verify(api, never()).hook(any())
+        verify(old, never()).unhook()
+        assertEquals(99, callback.firstValue.intercept(mock()))
+    }
+
+    @Test fun `missing required discovery preserves unmatched old hook and fails reload`() {
+        val old = mock<XposedInterface.HookHandle>()
+        whenever(old.executable).thenReturn(method)
+        ModernHookSupport.beginReload(listOf(old))
+        assertThrows(IllegalStateException::class.java) { ModernHookSupport.finishReload() }
+        verify(old, never()).unhook()
+    }
+
+    @Test fun `obsolete hook removal requires explicit intent`() {
+        val old = mock<XposedInterface.HookHandle>()
+        whenever(old.executable).thenReturn(method)
+        ModernHookSupport.beginReload(listOf(old))
+        ModernHookSupport.finishReload(setOf(method.toGenericString()))
+        verify(old).unhook()
+    }
 
     private fun installed(hooker: XposedInterface.Hooker): XposedInterface.Hooker {
         val api = mock<XposedInterface>()

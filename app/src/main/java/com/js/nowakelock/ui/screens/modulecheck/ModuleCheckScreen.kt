@@ -84,6 +84,9 @@ fun ModuleCheckScreen(
                 uiState.result != null -> {
                     ModuleCheckContent(
                         result = uiState.result!!,
+                        reloading = uiState.reloading,
+                        reloadReport = uiState.reloadReport,
+                        onReload = viewModel::reloadCode,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 16.dp, vertical = 16.dp)
@@ -100,7 +103,10 @@ fun ModuleCheckScreen(
 @Composable
 fun ModuleCheckContent(
     result: ModuleCheckResult,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    reloading: Boolean = false,
+    reloadReport: com.js.nowakelock.data.config.CodeReloadReport? = null,
+    onReload: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -136,6 +142,20 @@ fun ModuleCheckContent(
             status = result.configBackendStatus,
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(Modifier.height(16.dp))
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
+                Text(stringResource(R.string.code_reload_title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.code_reload_description))
+                Button(onClick = onReload, enabled = !reloading) {
+                    Text(stringResource(if (reloading) R.string.code_reloading else R.string.code_reload_action))
+                }
+                reloadReport?.let {
+                    Text(stringResource(if (it.verified) R.string.code_reload_verified else R.string.code_reload_unverified))
+                    Text(it.details(), style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
     }
 }
 

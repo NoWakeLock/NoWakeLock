@@ -7,8 +7,29 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import com.js.nowakelock.xposedhook.HookInstallRegistry
 import com.js.nowakelock.xposedhook.model.XpRecord
+import com.js.nowakelock.xposedhook.model.RuntimeTransfer
 
 internal object ModernHookSupport {
+    private var oldHandles: Map<java.lang.reflect.Executable, XposedInterface.HookHandle> = emptyMap()
+    private val replaced = HashSet<java.lang.reflect.Executable>()
+    private var reloading = false
+    fun beginReload(handles: List<XposedInterface.HookHandle>) {
+        oldHandles = handles.associateBy { it.executable }
+        replaced.clear()
+        reloading = true
+    }
+    fun finishReload(obsoleteIds: Set<String> = emptySet()) {
+        val unmatched = oldHandles.filterKeys { it !in replaced }
+        // Absence can mean discovery failed. Deletion requires explicit intent from this build.
+        check(unmatched.keys.all { it.toGenericString() in obsoleteIds }) {
+            "Previously installed hooks were not replaced: ${unmatched.keys.joinToString()}"
+        }
+        unmatched.values.forEach { it.unhook() }
+        oldHandles = emptyMap()
+        replaced.clear()
+        reloading = false
+    }
+    fun abandonReload() { oldHandles = emptyMap(); replaced.clear(); reloading = false }
     fun loadClass(name: String, classLoader: ClassLoader): Class<*>? {
         return try {
             Class.forName(name, false, classLoader)
@@ -26,15 +47,20 @@ internal object ModernHookSupport {
         try {
             HookInstallRegistry.install(method) {
                 method.isAccessible = true
-                xposed.hook(method).setId(method.toGenericString()).intercept { chain ->
-                    if (XpRecord.runtimeReportDue()) {
-                        findContext(chain)?.let { XpRecord.reportRuntime(it) }
+                val callback = XposedInterface.Hooker { chain ->
+                    if (!RuntimeTransfer.systemHookObserved && !RuntimeTransfer.retired &&
+                        method.declaringClass.name.startsWith("com.android.server.")) {
+                        RuntimeTransfer.systemHookObserved = true
                     }
                     hooker.intercept(chain)
                 }
+                val old = oldHandles[method]
+                if (old != null) { old.replaceHook(callback); replaced.add(method) }
+                else xposed.hook(method).setId(method.toGenericString()).intercept(callback)
             }
         } catch (e: Throwable) {
             ModernXposedLog.error("Hook installation failed: ${method.toGenericString()}", e)
+            if (reloading) throw e
         }
     }
 

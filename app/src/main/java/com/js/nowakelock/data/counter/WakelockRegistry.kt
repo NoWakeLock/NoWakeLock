@@ -11,6 +11,14 @@ import java.util.concurrent.ConcurrentHashMap
  * accurate non-overlapping duration times.
  */
 class WakelockRegistry private constructor() {
+    /** Called with the statistics consumer stopped and provider operations serialized. */
+    fun transferState(): HashMap<String, Array<Any>> = HashMap<String, Array<Any>>().also { out ->
+        counters.forEach { (key, counter) -> out[key] = counter.transferState() }
+    }
+    fun restore(state: Map<String, Array<Any>>) {
+        counters.clear()
+        state.forEach { (key, value) -> counters[key] = WakelockCounter().apply { restore(value) } }
+    }
     /**
      * Map of wakelock identifiers to their respective counters
      * The key is a combination of name, packageName, type, and userId
@@ -182,4 +190,4 @@ class WakelockRegistry private constructor() {
     fun getTotalTrackedWakelocks(): Int {
         return counters.size
     }
-} 
+}

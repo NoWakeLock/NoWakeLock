@@ -11,6 +11,10 @@ import com.js.nowakelock.data.db.dao.InfoDao
 import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.InfoEvent
+import com.js.nowakelock.xposedhook.model.RuntimeTransfer
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 @Database(
     entities = [
@@ -35,6 +39,16 @@ abstract class InfoDatabase : RoomDatabase() {
 
         @Volatile
         private var instance: InfoDatabase? = null
+        private val ownedExecutors = ArrayList<ExecutorService>()
+
+        @Synchronized fun closeForReload(): Boolean {
+            instance?.close()
+            instance = null
+            ownedExecutors.forEach { it.shutdown() }
+            val stopped = ownedExecutors.all { it.awaitTermination(1500, TimeUnit.MILLISECONDS) }
+            ownedExecutors.removeAll { it.isTerminated }
+            return stopped
+        }
 
         fun getInstance(context: Context): InfoDatabase =
             instance ?: synchronized(this) {
@@ -47,6 +61,19 @@ abstract class InfoDatabase : RoomDatabase() {
             context, InfoDatabase::class.java,
             DATABASE_NAME
         )
+            .apply {
+                if (RuntimeTransfer.modern) {
+                    val executor = Executors.newSingleThreadExecutor { task ->
+                        Thread(task, "NWL-database").apply {
+                            isDaemon = true
+                            contextClassLoader = ClassLoader.getSystemClassLoader()
+                        }
+                    }
+                    ownedExecutors.add(executor)
+                    setQueryExecutor(executor)
+                    setTransactionExecutor(executor)
+                }
+            }
             .fallbackToDestructiveMigration(true)
             .addMigrations(MIGRATION_10_12, MIGRATION_11_12)
             .build()

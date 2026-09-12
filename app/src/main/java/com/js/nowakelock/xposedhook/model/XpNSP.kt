@@ -11,6 +11,8 @@ class XpNSP(initialReader: HookConfigReader = EmptyHookConfigReader()) {
         return (captured as? ImmutableRuleReader)?.decision ?: XpNSP(captured)
     }
     @Volatile var api102SystemRuntime = false
+    fun disposeReader() { (reader as? SharedPreferencesHookConfigReader)?.dispose() }
+    fun resumeReader() { (reader as? SharedPreferencesHookConfigReader)?.resume() }
     fun acceptPushed(values: Map<String, *>): Long {
         check(api102SystemRuntime) { "API102 system runtime unavailable" }
         return (reader as? SharedPreferencesHookConfigReader
@@ -37,11 +39,23 @@ class XpNSP(initialReader: HookConfigReader = EmptyHookConfigReader()) {
             frameworkVersion: String?
         ) {
             if (getInstance().reader is SharedPreferencesHookConfigReader) return
+            val head = if (RuntimeTransfer.modern) {
+                RuntimeTransfer.state().getOrPut("ruleHead") { java.util.concurrent.atomic.AtomicReference<Array<Any>>() }
+            } else java.util.concurrent.atomic.AtomicReference<Array<Any>>()
+            @Suppress("UNCHECKED_CAST")
             getInstance().reader = SharedPreferencesHookConfigReader(
                 preferences,
                 frameworkName,
-                frameworkVersion
+                frameworkVersion,
+                head as java.util.concurrent.atomic.AtomicReference<Array<Any>>
             )
+        }
+
+        fun restoreRules() {
+            val frame = RuntimeTransfer.get<java.util.concurrent.atomic.AtomicReference<Array<Any>>>("ruleHead").get()
+                ?: error("No rule snapshot to restore")
+            installReader(ImmutableRuleReader.fromPrepared(frame, ConfigBackendStatus(
+                remoteReadable = true, activeBackend = ConfigBackendStatus.BACKEND_REMOTE)))
         }
 
         fun installReader(reader: HookConfigReader) {

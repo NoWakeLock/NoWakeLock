@@ -24,6 +24,7 @@ object ModernXposedSystemHookInstaller {
             action()
         } catch (e: Throwable) {
             ModernXposedLog.error("Unable to install $name", e)
+            if (com.js.nowakelock.xposedhook.model.RuntimeTransfer.reloaded) throw e
         }
     }
 

@@ -8,6 +8,26 @@ import org.mockito.kotlin.*
 import java.util.concurrent.atomic.AtomicReference
 
 class AtomicRuleSnapshotTest {
+    @Test fun `two code generations share rules and late old publication cannot downgrade them`() {
+        val prefs = mock<SharedPreferences>()
+        whenever(prefs.all).thenReturn(emptyMap())
+        val head = AtomicReference<Array<Any>>()
+        val old = SharedPreferencesHookConfigReader(prefs, null, null, head)
+        old.accept(mapOf("__nwl_revision" to 4L, "debug" to true))
+        val captured = old.capture()
+        old.dispose()
+        val next = SharedPreferencesHookConfigReader(prefs, null, null, head)
+        assertTrue(next.getBoolean("debug"))
+        next.accept(mapOf("__nwl_revision" to 5L, "debug" to false))
+        assertFalse(old.getBoolean("debug"))
+        assertTrue(captured.getBoolean("debug"))
+        assertThrows(IllegalArgumentException::class.java) {
+            old.accept(mapOf("__nwl_revision" to 4L, "debug" to true))
+        }
+        assertEquals(5L, next.status().observedRevision)
+        verify(prefs).unregisterOnSharedPreferenceChangeListener(any())
+        next.dispose()
+    }
     @Test fun `captured decision stays coherent while newer generations are published`() {
         val prefs = mock<SharedPreferences>()
         whenever(prefs.all).thenReturn(emptyMap())

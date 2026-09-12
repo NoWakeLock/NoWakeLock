@@ -1,0 +1,8 @@
+<resources>
+    <string name="code_reload_title">模块代码更新</string>
+    <string name="code_reload_description">通过 API 102 应用已安装的更新。规则修改独立生效。正在运行的旧版本若不支持重载，需要正常重启设备；此按钮不会重启设备。</string>
+    <string name="code_reload_action">应用已安装的更新</string>
+    <string name="code_reloading">等待框架结果…</string>
+    <string name="code_reload_verified">已确认所有必要进程正在执行当前代码。</string>
+    <string name="code_reload_unverified">尚未完整确认更新。拒绝或不支持重载的进程需要正常重启；失败或部分更新请查看下方详情。</string>
+</resources>

@@ -12,4 +12,5 @@ interface ModuleCheckRepository {
      * Perform module checks and return the result as a Flow
      */
     fun checkModuleStatus(): Flow<ModuleCheckResult>
-} 
+    suspend fun reloadCode(): com.js.nowakelock.data.config.CodeReloadReport
+}

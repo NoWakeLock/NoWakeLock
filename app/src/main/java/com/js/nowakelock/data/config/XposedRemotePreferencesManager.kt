@@ -6,6 +6,14 @@ import android.util.Log
 import io.github.libxposed.service.XposedService
 import io.github.libxposed.service.XposedServiceHelper
 import java.util.concurrent.atomic.AtomicBoolean
+import io.github.libxposed.service.HookedTarget
+import io.github.libxposed.service.HotReloadResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.CancellationException
+import kotlin.coroutines.resume
 
 interface XposedRemotePreferencesManager {
     fun supportsPush(): Boolean = false
@@ -13,6 +21,7 @@ interface XposedRemotePreferencesManager {
     fun getRemotePreferences(): SharedPreferences?
     fun status(legacyReadable: Boolean): ConfigBackendStatus
     fun diagnostics(): String? = null
+    suspend fun reloadCode(retryFailedLifecycle: Boolean = false): CodeReloadReport = CodeReloadReport(error = "API 102 hot reload is unavailable")
 }
 
 object XposedRemotePreferencesManagers {
@@ -52,6 +61,51 @@ private class LibXposedRemotePreferencesManager : XposedRemotePreferencesManager
     private var lastError: String? = null
 
     private val registered = AtomicBoolean(false)
+    private val reloadInProgress = AtomicBoolean(false)
+
+    override suspend fun reloadCode(retryFailedLifecycle: Boolean): CodeReloadReport = withContext(Dispatchers.IO) {
+        if (!reloadInProgress.compareAndSet(false, true)) return@withContext CodeReloadReport(error = "Reload is already in progress")
+        try {
+            val current = service ?: return@withContext CodeReloadReport(error = "Framework service is disconnected")
+            if (current.apiVersion != 102) return@withContext CodeReloadReport(error = "This framework does not support API 102 hot reload")
+            val targets = current.runningTargets
+            if (targets.isEmpty()) return@withContext CodeReloadReport(error = "Framework reports no running targets")
+            val results = targets.map { target ->
+                val result = when (target.state) {
+                    HookedTarget.State.UP_TO_DATE -> if (retryFailedLifecycle) requestReload(current, target) else "ALREADY_CURRENT" to null
+                    HookedTarget.State.RELOADING -> "IN_PROGRESS" to null
+                    else -> requestReload(current, target)
+                }
+                CodeReloadTarget(target.processName, target.pid, target.uid, result.first, target.state.name, result.second)
+            }
+            val refreshed = current.runningTargets
+            CodeReloadReport(targets = results.map { result ->
+                val after = refreshed.singleOrNull { it.pid == result.pid && it.uid == result.uid && it.processName == result.process }
+                result.copy(state = after?.state?.name ?: "TARGET_GONE")
+            })
+        } catch (e: CancellationException) { throw e }
+        catch (e: Exception) { CodeReloadReport(error = e.message ?: e.javaClass.simpleName) }
+        finally { reloadInProgress.set(false) }
+    }
+
+    private suspend fun requestReload(current: XposedService, target: HookedTarget): Pair<String, String?> {
+        return withTimeoutOrNull(15_000) {
+            suspendCancellableCoroutine { continuation ->
+                val delivered = AtomicBoolean(false)
+                try {
+                    current.hotReloadModule(target, null) { _, result ->
+                        val status = if (result.status() == HotReloadResult.Status.FAILED && result.message() == null)
+                            "REFUSED" else result.status().name
+                        if (delivered.compareAndSet(false, true) && continuation.isActive)
+                            continuation.resume(status to result.message())
+                    }
+                } catch (e: Exception) {
+                    if (delivered.compareAndSet(false, true) && continuation.isActive)
+                        continuation.resume("FAILED" to e.message)
+                }
+            }
+        } ?: ("TIMEOUT" to "No completion callback; refresh status before retrying")
+    }
 
     override fun register(onRemoteAvailable: () -> Unit) {
         if (!registered.compareAndSet(false, true)) return

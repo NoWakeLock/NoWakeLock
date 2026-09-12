@@ -10,17 +10,20 @@ import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.xposedhook.model.XpNSP
 import com.js.nowakelock.xposedhook.model.XpRecord
+import com.js.nowakelock.xposedhook.model.RuntimeTransfer
+import java.util.concurrent.atomic.AtomicBoolean
 import io.github.libxposed.api.XposedInterface
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 
 object ModernWakelockHook {
-    @Volatile
-    var booted = false
+    var booted: Boolean
+        get() = RuntimeTransfer.get<AtomicBoolean>("booted").get()
+        set(value) { RuntimeTransfer.get<AtomicBoolean>("booted").set(value) }
 
-    private val activeWakeLocks = ConcurrentHashMap<IBinder, WakeLockTrace>()
+    private val activeWakeLocks = RuntimeTransfer.get<ConcurrentHashMap<IBinder, Array<Any>>>("wakes")
 
-    private val lastAllowTime = ConcurrentHashMap<String, Long>()
+    private val lastAllowTime = RuntimeTransfer.get<ConcurrentHashMap<String, Long>>("wakeTimes")
 
     private val acquirePositions = ConcurrentHashMap<java.lang.reflect.Executable, WakeLockParamPositions>()
 
@@ -178,28 +181,24 @@ object ModernWakelockHook {
         }
 
         recordLastAllowTime(lastAllowTime, name, packageName, userId, now)
-        activeWakeLocks[lock] = WakeLockTrace(name, packageName, userId, now, instanceId)
+        activeWakeLocks[lock] = arrayOf(name, packageName, userId, now, instanceId)
         XpRecord.newEvent(name, packageName, Type.Wakelock, context, userId, now, instanceId)
         return false
     }
 
     private fun handleWakeLockRelease(lock: IBinder, context: Context) {
-        val trace = activeWakeLocks[lock] ?: return
+        val trace = activeWakeLocks.remove(lock) ?: return
         val now = SystemClock.elapsedRealtime()
-        if (trace.instanceId.isNotEmpty()) {
-            trace.instanceId = generateInstanceId(lock, trace.startTime)
-        }
         XpRecord.endEvent(
-            name = trace.name,
-            packageName = trace.packageName,
+            name = trace[0] as String,
+            packageName = trace[1] as String,
             type = Type.Wakelock,
             context = context,
-            userId = trace.userId,
-            startTime = trace.startTime,
+            userId = trace[2] as Int,
+            startTime = trace[3] as Long,
             endTime = now,
-            instanceId = trace.instanceId
+            instanceId = trace[4] as String
         )
-        activeWakeLocks.remove(lock)
     }
 
     private fun block(
@@ -241,14 +240,6 @@ object ModernWakelockHook {
     private fun lastAllowKey(name: String, packageName: String, userId: Int): String {
         return "$name|$packageName|$userId"
     }
-
-    private data class WakeLockTrace(
-        val name: String,
-        val packageName: String,
-        var userId: Int,
-        var startTime: Long,
-        var instanceId: String
-    )
 
     private data class WakeLockParamPositions(
         val lockPos: Int,

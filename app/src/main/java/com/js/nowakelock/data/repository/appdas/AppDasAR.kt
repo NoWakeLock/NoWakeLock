@@ -87,10 +87,8 @@ class AppDasAR(
                     daDao.insert(it)
                 }
             } catch (e: Exception) {
-                getCPResult(context, ProviderMethod.ClearData.value, Bundle())
-                LogUtil.d("AppDasAR", "getSerializable err: $e")
-            } finally {
-                LogUtil.d("AppDasAR", "getSerializable err clearAll")
+                // Mixed APK generations or a local cache failure must not destroy source data.
+                LogUtil.e("AppDasAR", "Statistics sync failed; preserving existing statistics: $e")
             }
         }
     }

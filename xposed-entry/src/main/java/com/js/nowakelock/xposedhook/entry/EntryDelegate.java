@@ -6,4 +6,6 @@ public interface EntryDelegate {
     void systemServer(ClassLoader loader);
     void packageLoaded(String packageName, ClassLoader loader);
     void packageReady(String packageName, ClassLoader loader);
+    default boolean hotReloading(Object param) { return false; }
+    default void hotReloaded(Object param) { throw new UnsupportedOperationException("Hot reload unsupported"); }
 }

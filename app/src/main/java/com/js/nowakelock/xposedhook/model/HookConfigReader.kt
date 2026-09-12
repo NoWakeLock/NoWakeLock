@@ -3,6 +3,7 @@ package com.js.nowakelock.xposedhook.model
 import android.content.SharedPreferences
 import com.js.nowakelock.data.config.ConfigBackendStatus
 import com.js.nowakelock.data.config.XposedConfigKeys
+import java.util.concurrent.atomic.AtomicReference
 
 interface HookConfigReader {
     fun capture(): HookConfigReader = this
@@ -32,7 +33,8 @@ class EmptyHookConfigReader : HookConfigReader {
 class SharedPreferencesHookConfigReader(
     private val preferences: SharedPreferences,
     private val frameworkName: String?,
-    private val frameworkVersion: String?
+    private val frameworkVersion: String?,
+    private val sharedHead: AtomicReference<Array<Any>> = AtomicReference()
 ) : HookConfigReader {
     private val metadata = ConfigBackendStatus(remoteReadable = true,
         activeBackend = ConfigBackendStatus.BACKEND_REMOTE,
@@ -40,29 +42,40 @@ class SharedPreferencesHookConfigReader(
     @Volatile private var snapshot = ImmutableRuleReader(emptyMap<String, Any>(), metadata)
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> refresh() }
     init {
+        sharedHead.compareAndSet(null, snapshot.transferState())
         preferences.registerOnSharedPreferenceChangeListener(listener)
         refresh()
     }
-    override fun capture(): HookConfigReader = snapshot
-    @Synchronized fun accept(values: Map<String, *>): Long {
+    fun dispose() { preferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    fun resume() { preferences.registerOnSharedPreferenceChangeListener(listener); refresh() }
+    override fun capture(): ImmutableRuleReader {
+        val frame = sharedHead.get()
+        val cached = snapshot
+        if (cached.transferState() === frame) return cached
+        return ImmutableRuleReader.fromPrepared(frame, metadata).also { snapshot = it }
+    }
+    fun accept(values: Map<String, *>): Long {
         val next = ImmutableRuleReader(values, metadata)
         val revision = next.status().observedRevision
-        val current = snapshot.status().observedRevision
         require(revision > 0) { "Missing revision" }
-        require(revision >= current) { "Stale configuration" }
-        if (revision == current) require(next.values == snapshot.values) { "Conflicting revision" }
-        snapshot = next
+        while (true) {
+            val previous = sharedHead.get()
+            val current = ImmutableRuleReader.fromPrepared(previous, metadata)
+            require(revision >= current.status().observedRevision) { "Stale configuration" }
+            if (revision == current.status().observedRevision) require(next.values == current.values) { "Conflicting revision" }
+            if (sharedHead.compareAndSet(previous, next.transferState())) break
+        }
         lastError = null
         return revision
     }
     override val backendName: String = ConfigBackendStatus.BACKEND_REMOTE
     override val isReadable: Boolean
-        get() = snapshot.isReadable
+        get() = capture().isReadable
 
     @Volatile private var lastError: String? = null
 
     override fun contains(key: String): Boolean {
-        return snapshot.contains(key)
+        return capture().contains(key)
     }
 
     override fun refresh() {
@@ -73,18 +86,19 @@ class SharedPreferencesHookConfigReader(
     }
 
     override fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-        return snapshot.getBoolean(key, defaultValue)
+        return capture().getBoolean(key, defaultValue)
     }
 
     override fun getLong(key: String, defaultValue: Long): Long {
-        return snapshot.getLong(key, defaultValue)
+        return capture().getLong(key, defaultValue)
     }
 
     override fun getStringSet(key: String): Set<String> {
-        return snapshot.getStringSet(key)
+        return capture().getStringSet(key)
     }
 
     override fun status(): ConfigBackendStatus {
-        return snapshot.status().copy(remoteReadable = snapshot.isReadable, lastError = lastError)
+        val current = capture()
+        return current.status().copy(remoteReadable = current.isReadable, lastError = lastError)
     }
 }

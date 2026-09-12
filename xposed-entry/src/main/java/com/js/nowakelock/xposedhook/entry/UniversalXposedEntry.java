@@ -43,6 +43,16 @@ public final class UniversalXposedEntry extends XposedModule {
         if (!oldRuntime && delegate != null) delegate.systemServer(param.getClassLoader());
     }
 
+    @Override public boolean onHotReloading(HotReloadingParam param) {
+        return !oldRuntime && delegate != null && delegate.hotReloading(param);
+    }
+
+    @Override public void onHotReloaded(HotReloadedParam param) {
+        if (oldRuntime) throw new IllegalStateException("Legacy generation cannot hot reload");
+        delegate = create("com.js.nowakelock.xposedhook.ModernXposedModule", this);
+        delegate.hotReloaded(param);
+    }
+
     private static EntryDelegate create(String name, Object framework) {
         try {
             return (EntryDelegate) Class.forName(name, true, UniversalXposedEntry.class.getClassLoader())

@@ -17,7 +17,9 @@ import kotlinx.coroutines.launch
 data class ModuleCheckUiState(
     val isLoading: Boolean = false,
     val result: ModuleCheckResult? = null,
-    val error: String? = null
+    val error: String? = null,
+    val reloading: Boolean = false,
+    val reloadReport: com.js.nowakelock.data.config.CodeReloadReport? = null
 )
 
 /**
@@ -29,6 +31,20 @@ class ModuleCheckViewModel(
     
     private val _uiState = MutableStateFlow(ModuleCheckUiState(isLoading = false))
     val uiState: StateFlow<ModuleCheckUiState> = _uiState.asStateFlow()
+    fun reloadCode() {
+        if (_uiState.value.reloading) return
+        _uiState.update { it.copy(reloading = true, reloadReport = null) }
+        viewModelScope.launch {
+            try {
+                val report = moduleCheckRepository.reloadCode()
+                _uiState.update { it.copy(reloadReport = report) }
+            } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+            catch (e: Exception) {
+                _uiState.update { it.copy(reloadReport = com.js.nowakelock.data.config.CodeReloadReport(error = e.message)) }
+            }
+            finally { _uiState.update { it.copy(reloading = false) } }
+        }
+    }
     
     init {
         checkModuleStatus()

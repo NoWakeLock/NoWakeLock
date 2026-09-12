@@ -22,6 +22,9 @@ android {
         targetSdk 35
         versionCode 87
         versionName "3.0.10"
+        def hookBuildId = providers.gradleProperty('hookBuildId').getOrElse('3.0.10:87-nwl22')
+        if (!(hookBuildId ==~ /[A-Za-z0-9._:-]{1,80}/)) throw new GradleException('Invalid hookBuildId')
+        buildConfigField 'String', 'HOOK_BUILD_ID', '"' + hookBuildId + '"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

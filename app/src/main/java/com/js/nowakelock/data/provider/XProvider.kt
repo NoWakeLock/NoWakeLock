@@ -17,11 +17,15 @@ import com.js.nowakelock.data.db.dao.InfoEventDao
 import com.js.nowakelock.data.db.entity.Info
 import com.js.nowakelock.data.db.entity.InfoEvent
 import com.js.nowakelock.xposedhook.XpUtil
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import androidx.room.withTransaction
 import com.js.nowakelock.xposedhook.model.XpRecord
 import com.js.nowakelock.xposedhook.model.XpNSP
+import com.js.nowakelock.xposedhook.model.RuntimeTransfer
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.withLock
 
 /**
  * Get the ContentProvider URI
@@ -58,10 +62,14 @@ enum class ProviderMethod(var value: String) {
  * Handles database interactions for tracking events and statistics
  */
 class XProvider(
-    context: Context
+    private val context: Context
 ) {
     private var db: InfoDatabase =
-        InfoDatabase.getInstance(context).also { it.clearAllTables() } // clear every time
+        InfoDatabase.getInstance(context).also {
+            val created = RuntimeTransfer.get<AtomicBoolean>("providerCreated")
+            if (!RuntimeTransfer.modern || !created.get()) it.clearAllTables()
+            if (RuntimeTransfer.modern) created.set(true)
+        }
     private var dao: InfoDao = db.infoDao()
     private var eventDao: InfoEventDao = db.infoEventDao()
     private var unixTimeBoot = System.currentTimeMillis() - SystemClock.elapsedRealtime()
@@ -72,8 +80,44 @@ class XProvider(
     @Volatile private var clearCutoff = 0L
     private var lastDropped = 0L
     private var durationReliable = true
+    @Volatile private var retired = false
+    private val operations = ReentrantLock()
 
-    @Synchronized fun invalidateDuration() {
+    init {
+        if (RuntimeTransfer.modern) {
+            RuntimeTransfer.put("providerContext", context)
+            @Suppress("UNCHECKED_CAST")
+            (RuntimeTransfer.state()["providerState"] as? Array<Any>)?.let { state ->
+                clearCutoff = state[0] as Long
+                lastDropped = state[1] as Long
+                durationReliable = state[2] as Boolean
+                @Suppress("UNCHECKED_CAST")
+                wakelockRegistry.restore(state[3] as Map<String, Array<Any>>)
+                unixTimeBoot = state[4] as Long
+            }
+        }
+    }
+
+    private fun retire(): Boolean {
+        if (!operations.tryLock(1500, TimeUnit.MILLISECONDS)) return false
+        try {
+            retired = true
+            RuntimeTransfer.put("providerState", arrayOf(clearCutoff, lastDropped, durationReliable,
+                wakelockRegistry.transferState(), unixTimeBoot))
+            return InfoDatabase.closeForReload()
+        } finally { operations.unlock() }
+    }
+    private fun resume() {
+        if (!retired) return // A timed-out retirement must not wait again on the busy operation.
+        operations.withLock {
+            db = InfoDatabase.getInstance(context)
+            dao = db.infoDao()
+            eventDao = db.infoEventDao()
+            retired = false
+        }
+    }
+
+    fun invalidateDuration() = operations.withLock {
         durationReliable = false
         wakelockRegistry.clearAll()
     }
@@ -81,19 +125,29 @@ class XProvider(
     companion object {
         @Volatile
         private var instance: XProvider? = null
+        private val ownership = ReentrantLock()
+        fun retireForReload(): Boolean {
+            if (!ownership.tryLock(1500, TimeUnit.MILLISECONDS)) return false
+            try {
+                RuntimeTransfer.retired = true
+                return instance?.retire() ?: true
+            } finally { ownership.unlock() }
+        }
+        fun resumeAfterRefusal() { instance?.resume() }
 
-        @Synchronized fun getInstance(context: Context): XProvider {
+        fun getInstance(context: Context): XProvider = ownership.withLock {
             if (instance == null) {
+                check(!RuntimeTransfer.retired) { "Provider generation is retired" }
                 instance = XProvider(context).also { XpRecord.attachProvider(it) }
             }
-            return instance!!
+            instance!!
         }
     }
 
     /**
      * Route method calls to appropriate handler functions
      */
-    @Synchronized fun recordBatch(events: List<XpRecord.Event>) {
+    fun recordBatch(events: List<XpRecord.Event>) = operations.withLock {
         val dropped = XpRecord.diagnostics().getLong("recordDropped")
         if (dropped != lastDropped) {
             // Lost acquire/release information must not leave a phantom active interval.
@@ -117,18 +171,19 @@ class XProvider(
     private fun stale(bundle: Bundle): Boolean =
         bundle.containsKey("__recordEnqueuedAt") && bundle.getLong("__recordEnqueuedAt") <= clearCutoff
 
-    @Synchronized fun getMethod(methodName: String, bundle: Bundle): Bundle? {
-        if ((methodName == ProviderMethod.NewEvent.value || methodName == ProviderMethod.EndEvent.value) && stale(bundle)) return Bundle()
+    fun getMethod(methodName: String, bundle: Bundle): Bundle? = operations.withLock {
+        if (retired) return@withLock null // Modern ingress is queued before reaching this point.
+        if ((methodName == ProviderMethod.NewEvent.value || methodName == ProviderMethod.EndEvent.value) && stale(bundle)) return@withLock Bundle()
         if (methodName == ProviderMethod.ReportRuntime.value) {
             // Reports are diagnostic evidence only; never permit arbitrary apps to forge them.
-            if (android.os.Binder.getCallingUid() != 1000) return null
+            if (android.os.Binder.getCallingUid() != 1000) return@withLock null
             val pid = android.os.Binder.getCallingPid()
             val now = SystemClock.elapsedRealtime()
             runtimeReports.entries.removeAll { now - it.value.getLong("observedAt") > 60_000 }
             runtimeReports[pid] = Bundle(bundle)
-            return Bundle()
+            return@withLock Bundle()
         }
-        return when (methodName) {
+        when (methodName) {
             ProviderMethod.NewEvent.value -> runBlocking { db.withTransaction { newEvent(bundle) } }
             ProviderMethod.EndEvent.value -> runBlocking { db.withTransaction { endEvent(bundle) } }
             ProviderMethod.LoadInfos.value -> loadInfos(bundle)
@@ -325,7 +380,7 @@ class XProvider(
         val startTime = bundle.getLong("startTime", 0)
         val endTime = bundle.getLong("endTime", System.currentTimeMillis())
 
-        val events: Array<InfoEvent> = runBlocking(Dispatchers.IO) {
+        val events: Array<InfoEvent> = runBlocking {
             if (packageName.isEmpty() && type == Type.UnKnow) {
                 eventDao.loadAllEvents().toTypedArray()
             } else if (packageName.isEmpty() && type != Type.UnKnow) {
@@ -365,7 +420,7 @@ class XProvider(
         val type: Type = stringToType(bundle.getString("type") ?: "")
         val packageName = bundle.getString("packageName") ?: ""
         val userId: Int = bundle.getInt("userId", 0)
-        val infos: Array<Info> = runBlocking(Dispatchers.IO) {
+        val infos: Array<Info> = runBlocking {
             if (packageName.isEmpty() && type == Type.UnKnow) {
                 dao.loadInfos().toTypedArray()
             } else if (packageName.isEmpty() && type != Type.UnKnow) {
@@ -423,6 +478,21 @@ class XProvider(
         return Bundle().apply {
             putBoolean("active", true)
             putString("version", BuildConfig.VERSION_NAME)
+            putString("providerBuildId", BuildConfig.HOOK_BUILD_ID)
+            putInt("providerPid", android.os.Process.myPid())
+            val system = runtimeReports.entries.filter {
+                it.value.getString("process") == "system_server" &&
+                    SystemClock.elapsedRealtime() - it.value.getLong("observedAt") in 0..60_000
+            }.maxByOrNull { it.value.getLong("observedAt") }
+            putString("systemBuildId", if (XpNSP.getInstance().api102SystemRuntime && RuntimeTransfer.systemHookObserved)
+                BuildConfig.HOOK_BUILD_ID else system?.value?.takeIf { it.getBoolean("hookCodeObserved") }?.getString("hookBuildId"))
+            putInt("systemPid", if (XpNSP.getInstance().api102SystemRuntime) android.os.Process.myPid() else system?.key ?: 0)
+            putBoolean("providerCodeReady", RuntimeTransfer.providerInstalled && RuntimeTransfer.reloadFailure == null)
+            putBoolean("systemCodeReady", if (XpNSP.getInstance().api102SystemRuntime)
+                RuntimeTransfer.systemInstalled && RuntimeTransfer.reloadFailure == null else system?.value?.getBoolean("hookCodeReady") == true)
+            putString("providerReloadFailure", RuntimeTransfer.reloadFailure)
+            putString("systemReloadFailure", if (XpNSP.getInstance().api102SystemRuntime)
+                RuntimeTransfer.reloadFailure else system?.value?.getString("hookReloadFailure"))
         }
     }
 
@@ -440,7 +510,7 @@ class XProvider(
         var hasData = false
         
         // Check if there's any data for the given type
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             val count = dao.getCountByType(type)
             hasData = count > 0
         }
@@ -474,6 +544,7 @@ class XProvider(
                 putLong("hookObservedRevision", status.observedRevision)
             }
             putAll(XpRecord.diagnostics())
+            putAll(checkHookActive(Bundle()))
             putBoolean("recordDurationReliable", durationReliable)
             putBoolean("pathExists", status.backendAvailable)
             putString("processName", "SettingsProvider pid=${android.os.Process.myPid()}")

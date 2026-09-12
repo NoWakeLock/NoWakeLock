@@ -10,6 +10,13 @@ import kotlin.math.max
  * This class is thread-safe using AtomicInteger for the counter and a volatile variable for timestamp.
  */
 class WakelockCounter {
+    fun transferState(): Array<Any> = arrayOf(intervalStartTime, HashSet(trackedInstances))
+    fun restore(state: Array<Any>) {
+        intervalStartTime = state[0] as Long
+        @Suppress("UNCHECKED_CAST")
+        trackedInstances.addAll(state[1] as Set<String>)
+        activeCount.set(trackedInstances.size)
+    }
     /**
      * Number of active wakelock instances with this identifier
      */
@@ -118,4 +125,4 @@ class WakelockCounter {
     fun isTracked(instanceId: String): Boolean {
         return trackedInstances.contains(instanceId)
     }
-} 
+}

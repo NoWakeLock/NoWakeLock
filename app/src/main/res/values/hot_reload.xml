@@ -1,0 +1,8 @@
+<resources>
+    <string name="code_reload_title">Module code update</string>
+    <string name="code_reload_description">Apply an installed update through API 102. Rule changes already take effect separately. A running version without reload support needs a normal device restart; this button never restarts your device.</string>
+    <string name="code_reload_action">Apply installed update</string>
+    <string name="code_reloading">Waiting for framework…</string>
+    <string name="code_reload_verified">Current code confirmed in all required targets.</string>
+    <string name="code_reload_unverified">Update not fully confirmed. Refused or unsupported targets need a normal restart; failed or partial results require checking the details below.</string>
+</resources>

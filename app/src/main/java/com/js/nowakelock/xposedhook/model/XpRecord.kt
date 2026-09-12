@@ -5,45 +5,62 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import com.js.nowakelock.data.counter.BoundedEventQueue
+import com.js.nowakelock.data.counter.ReloadableEventConsumer
 import com.js.nowakelock.data.db.Type
 import com.js.nowakelock.data.provider.ProviderMethod
 import com.js.nowakelock.data.provider.XProvider
 import com.js.nowakelock.data.provider.getURI
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.LockSupport
+import java.util.concurrent.Semaphore
 
 /** Hooks submit events only. The single worker owns communication and persistence. */
 object XpRecord {
     data class Event(val generation: Long, val context: Context, val method: String, val args: Bundle)
-    private val generation = AtomicLong()
-    private val sequence = AtomicLong()
-    private val queue = BoundedEventQueue<Event>(4096)
-    private val submitted = AtomicLong()
-    private val failed = AtomicLong()
-    private val batches = AtomicLong()
-    private val directEvents = AtomicLong()
-    private val providerEvents = AtomicLong()
+    private val counters = RuntimeTransfer.get<Array<AtomicLong>>("recordCounters")
+    private val generation = counters[0]
+    private val sequence = counters[1]
+    private val queue = BoundedEventQueue.adopt<Array<Any>>(RuntimeTransfer.get("queue"))
+    private val signal = RuntimeTransfer.get<Semaphore>("signal")
+    private val submitted = counters[2]
+    private val failed = counters[3]
+    private val batches = counters[4]
+    private val directEvents = counters[5]
+    private val providerEvents = counters[6]
     private val lastRuntimeReport = AtomicLong()
     @Volatile private var localProvider: XProvider? = null
     @Volatile private var lastError: String? = null
-    private val worker = Thread({
-        while (true) {
-            val first = queue.poll()
-            if (first == null) { LockSupport.park(); continue }
+    private fun decode(value: Array<Any>) = Event(value[0] as Long, value[1] as Context,
+        value[2] as String, value[3] as Bundle)
+    private val worker = ReloadableEventConsumer(signal) {
+            val first = queue.poll()?.let(::decode)
+            if (first != null) {
             // Coalesce a short burst without a periodic idle timer.
             LockSupport.parkNanos(25_000_000L)
             val batch = ArrayList<Event>(256)
             batch.add(first)
-            while (batch.size < 256) batch.add(queue.poll() ?: break)
+            while (batch.size < 256) {
+                val next = queue.poll() ?: break
+                signal.tryAcquire()
+                batch.add(decode(next))
+            }
             try {
                 val provider = localProvider
                 if (provider != null && batch.none { it.method == ProviderMethod.ClearData.value }) {
                     provider.recordBatch(batch)
                     directEvents.addAndGet(batch.size.toLong())
+                } else if (provider != null) {
+                    batch.filter { it.generation == generation.get() }.forEach {
+                        provider.getMethod(it.method, it.args)
+                        directEvents.incrementAndGet()
+                    }
                 } else {
                     // The provider may be hosted in a different process on other ROMs.
                     batch.filter { it.generation == generation.get() }.forEach {
-                        it.context.contentResolver.call(getURI(), "NoWakelock", it.method, it.args)
+                        val args = Bundle(it.args).apply { putInt("__recordWorkerPid", android.os.Process.myPid()) }
+                        checkNotNull(it.context.contentResolver.call(getURI(), "NoWakelock", it.method, args)) {
+                            "Statistics provider did not acknowledge delivery"
+                        }
                         providerEvents.incrementAndGet()
                     }
                 }
@@ -55,8 +72,11 @@ object XpRecord {
                 lastError = e.toString()
                 Log.e("NoWakeLockRecord", "Statistics batch failed", e)
             }
-        }
-    }, "NWL-statistics").apply { isDaemon = true; priority = Thread.MIN_PRIORITY; start() }
+            }
+    }.apply { if (!RuntimeTransfer.reloaded) start() }
+
+    fun stopForReload(): Boolean = worker.stop(1500)
+    fun resumeAfterReload() { worker.start(); signal.release() }
 
     fun attachProvider(provider: XProvider) { localProvider = provider }
     fun currentGeneration(): Long = generation.get()
@@ -76,7 +96,7 @@ object XpRecord {
 
     private fun submit(context: Context, method: String, args: Bundle, epoch: Long) {
         submitted.incrementAndGet()
-        if (queue.offer(Event(epoch, context, method, args))) LockSupport.unpark(worker)
+        if (queue.offer(arrayOf(epoch, context, method, args))) signal.release()
     }
     private fun newEvent(name: String, packageName: String, type: Type, context: Context,
                          userId: Int, startTime: Long, isBlocked: Boolean, instanceId: String) {
@@ -113,6 +133,11 @@ object XpRecord {
     fun clearData(context: Context, clearAll: Boolean = false) {
         submit(context, ProviderMethod.ClearData.value, Bundle().apply { putBoolean("clearAll", clearAll) }, generation.get())
     }
+    /** Provider IPC ingress joins the same queue, including old callbacks finishing after retirement. */
+    fun receive(context: Context, method: String, args: Bundle): Bundle {
+        submit(context, method, Bundle(args), generation.get())
+        return Bundle()
+    }
     fun checkHookActive(context: Context): Bundle? =
         context.contentResolver.call(getURI(), "NoWakelock", ProviderMethod.CheckHookActive.value, Bundle())
 
@@ -126,6 +151,10 @@ object XpRecord {
                 putString("process", "system_server")
                 putLong("observedAt", now)
                 putString("hooks", com.js.nowakelock.xposedhook.HookInstallRegistry.summary())
+                putString("hookBuildId", com.js.nowakelock.BuildConfig.HOOK_BUILD_ID)
+                putBoolean("hookCodeObserved", RuntimeTransfer.systemHookObserved)
+                putBoolean("hookCodeReady", RuntimeTransfer.systemInstalled && RuntimeTransfer.reloadFailure == null)
+                putString("hookReloadFailure", RuntimeTransfer.reloadFailure)
             }
             context.contentResolver.call(getURI(), "NoWakelock", ProviderMethod.ReportRuntime.value, args)
         } catch (e: Exception) { lastError = e.toString() }
