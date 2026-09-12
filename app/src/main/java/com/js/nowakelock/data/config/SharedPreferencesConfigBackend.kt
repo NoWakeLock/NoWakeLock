@@ -16,7 +16,9 @@ class SharedPreferencesConfigBackend(
             when (value) {
                 is Boolean -> editor.putBoolean(key, value)
                 is Long -> editor.putLong(key, value)
-                is Set<*> -> editor.putStringSet(key, value.filterIsInstance<String>().toSet())
+                // RemotePreferences serializes the concrete collection across processes.
+                // Kotlin's EmptySet (including its R8 name) is not known to the framework.
+                is Set<*> -> editor.putStringSet(key, value.filterIsInstanceTo(HashSet<String>()))
                 else -> error("Unsupported configuration value for $key")
             }
         }
@@ -33,6 +35,6 @@ class SharedPreferencesConfigBackend(
     }
 
     override fun putStringSet(key: String, value: Set<String>): Boolean {
-        return preferences.edit().putStringSet(key, value).commit()
+        return preferences.edit().putStringSet(key, HashSet(value)).commit()
     }
 }
